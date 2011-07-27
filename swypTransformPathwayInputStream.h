@@ -3,7 +3,7 @@
 //  swyp
 //
 //  Created by Alexander List on 7/27/11.
-//  Copyright 2011 ExoMachina. All rights reserved.
+//  Copyright 2011 ExoMachina. Some rights reserved -- check online.
 //
 
 //passes data from dataInStream through each of the transformStreams, beginning at index zero

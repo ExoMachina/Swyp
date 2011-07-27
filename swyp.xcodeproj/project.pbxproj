@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03613E0C3CD00509CF2 /* CFNetwork.framework */; };
+		680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03813E0C3D600509CF2 /* Security.framework */; };
+		680FC04E13E0C40100509CF2 /* SecKeyWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */; };
+		680FC04F13E0C40100509CF2 /* SecKeyWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */; };
+		680FC05213E0C63700509CF2 /* swypInfoRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC05013E0C63700509CF2 /* swypInfoRef.h */; };
+		680FC05313E0C63700509CF2 /* swypInfoRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC05113E0C63700509CF2 /* swypInfoRef.m */; };
+		680FC05613E0CA8D00509CF2 /* swypWorkspaceViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */; };
+		680FC05713E0CA8D00509CF2 /* swypWorkspaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */; };
+		680FC08013E0CFF900509CF2 /* swypClientCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */; };
+		680FC08113E0CFF900509CF2 /* swypClientCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */; };
+		680FC08413E0D00700509CF2 /* swypServerCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC08213E0D00700509CF2 /* swypServerCandidate.h */; };
+		680FC08513E0D00700509CF2 /* swypServerCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC08313E0D00700509CF2 /* swypServerCandidate.m */; };
+		680FC0BC13E0D62100509CF2 /* swypFileTypeString.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */; };
+		680FC0BD13E0D62100509CF2 /* swypFileTypeString.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */; };
 		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
 		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
 		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
@@ -48,6 +62,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		680FC03613E0C3CD00509CF2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		680FC03813E0C3D600509CF2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeyWrapper.h; sourceTree = "<group>"; };
+		680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecKeyWrapper.m; sourceTree = "<group>"; };
+		680FC05013E0C63700509CF2 /* swypInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInfoRef.h; sourceTree = "<group>"; };
+		680FC05113E0C63700509CF2 /* swypInfoRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInfoRef.m; sourceTree = "<group>"; };
+		680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceViewController.h; sourceTree = "<group>"; };
+		680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceViewController.m; sourceTree = "<group>"; };
+		680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypClientCandidate.h; sourceTree = "<group>"; };
+		680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypClientCandidate.m; sourceTree = "<group>"; };
+		680FC08213E0D00700509CF2 /* swypServerCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypServerCandidate.h; sourceTree = "<group>"; };
+		680FC08313E0D00700509CF2 /* swypServerCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypServerCandidate.m; sourceTree = "<group>"; };
+		680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypFileTypeString.h; sourceTree = "<group>"; };
+		680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypFileTypeString.m; sourceTree = "<group>"; };
 		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
 		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
 		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
@@ -95,6 +123,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
+				680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */,
+				680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,7 +156,9 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				680FC03613E0C3CD00509CF2 /* CFNetwork.framework */,
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
+				680FC03813E0C3D600509CF2 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,6 +169,19 @@
 				AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		680FC08613E0D03C00509CF2 /* Candidates */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E1E13E0B3A900D094A9 /* swypCandidate.h */,
+				68B18E1F13E0B3A900D094A9 /* swypCandidate.m */,
+				680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */,
+				680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */,
+				680FC08213E0D00700509CF2 /* swypServerCandidate.h */,
+				680FC08313E0D00700509CF2 /* swypServerCandidate.m */,
+			);
+			name = Candidates;
 			sourceTree = "<group>";
 		};
 		68B18DE913E0B08F00D094A9 /* Streams */ = {
@@ -169,6 +214,8 @@
 		68B18DEC13E0B11300D094A9 /* View Components */ = {
 			isa = PBXGroup;
 			children = (
+				680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */,
+				680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */,
 				68B18E0313E0B2D600D094A9 /* gestures */,
 			);
 			name = "View Components";
@@ -189,10 +236,9 @@
 		68B18DEE13E0B16200D094A9 /* Connections */ = {
 			isa = PBXGroup;
 			children = (
-				68B18E1E13E0B3A900D094A9 /* swypCandidate.h */,
-				68B18E1F13E0B3A900D094A9 /* swypCandidate.m */,
 				68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */,
 				68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */,
+				680FC08613E0D03C00509CF2 /* Candidates */,
 			);
 			name = Connections;
 			sourceTree = "<group>";
@@ -211,6 +257,8 @@
 		68B18DF013E0B17600D094A9 /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
+				680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */,
+				680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */,
 				68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */,
 				68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */,
 				68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */,
@@ -242,6 +290,8 @@
 			children = (
 				68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */,
 				68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */,
+				680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */,
+				680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */,
 			);
 			name = Content;
 			sourceTree = "<group>";
@@ -255,6 +305,8 @@
 				68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */,
 				68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */,
 				68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */,
+				680FC05013E0C63700509CF2 /* swypInfoRef.h */,
+				680FC05113E0C63700509CF2 /* swypInfoRef.m */,
 			);
 			name = gestures;
 			sourceTree = "<group>";
@@ -285,6 +337,12 @@
 				68B18E4013E0B4B800D094A9 /* swypInputToOutputStreamConnector.h in Headers */,
 				68B18E5313E0B52000D094A9 /* swypEncryptingTransform.h in Headers */,
 				68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */,
+				680FC04E13E0C40100509CF2 /* SecKeyWrapper.h in Headers */,
+				680FC05213E0C63700509CF2 /* swypInfoRef.h in Headers */,
+				680FC05613E0CA8D00509CF2 /* swypWorkspaceViewController.h in Headers */,
+				680FC08013E0CFF900509CF2 /* swypClientCandidate.h in Headers */,
+				680FC08413E0D00700509CF2 /* swypServerCandidate.h in Headers */,
+				680FC0BC13E0D62100509CF2 /* swypFileTypeString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,6 +417,12 @@
 				68B18E4113E0B4B800D094A9 /* swypInputToOutputStreamConnector.m in Sources */,
 				68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */,
 				68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */,
+				680FC04F13E0C40100509CF2 /* SecKeyWrapper.m in Sources */,
+				680FC05313E0C63700509CF2 /* swypInfoRef.m in Sources */,
+				680FC05713E0CA8D00509CF2 /* swypWorkspaceViewController.m in Sources */,
+				680FC08113E0CFF900509CF2 /* swypClientCandidate.m in Sources */,
+				680FC08513E0D00700509CF2 /* swypServerCandidate.m in Sources */,
+				680FC0BD13E0D62100509CF2 /* swypFileTypeString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

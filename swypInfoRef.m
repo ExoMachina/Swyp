@@ -1,14 +1,15 @@
 //
-//  swypConnectionSession.m
+//  swypInfoRef.m
 //  swyp
 //
 //  Created by Alexander List on 7/27/11.
 //  Copyright 2011 ExoMachina. Some rights reserved -- check online.
 //
 
-#import "swypConnectionSession.h"
+#import "swypInfoRef.h"
 
 
-@implementation swypConnectionSession
+@implementation swypInfoRef
+@synthesize velocity,startPoint,endPoint,startDate,endDate;
 
 @end

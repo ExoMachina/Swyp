@@ -1,14 +1,14 @@
 //
-//  swypConnectionSession.m
+//  swypClientCandidate.m
 //  swyp
 //
 //  Created by Alexander List on 7/27/11.
 //  Copyright 2011 ExoMachina. Some rights reserved -- check online.
 //
 
-#import "swypConnectionSession.h"
+#import "swypClientCandidate.h"
 
 
-@implementation swypConnectionSession
+@implementation swypClientCandidate
 
 @end

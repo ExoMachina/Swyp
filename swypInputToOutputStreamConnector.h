@@ -3,7 +3,7 @@
 //  swyp
 //
 //  Created by Alexander List on 7/27/11.
-//  Copyright 2011 ExoMachina. All rights reserved.
+//  Copyright 2011 ExoMachina. Some rights reserved -- check online.
 //
 
 //doesn't close output stream, allows new streams to be set for input, these get pulled as soon as ready 
