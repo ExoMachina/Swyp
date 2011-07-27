@@ -7,11 +7,83 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
+		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
+		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
+		68B18DFE13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */; };
+		68B18E0113E0B2B800D094A9 /* swypBonjourServiceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */; };
+		68B18E0213E0B2B800D094A9 /* swypBonjourServiceListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */; };
+		68B18E0A13E0B2FB00D094A9 /* swypGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */; };
+		68B18E0B13E0B2FB00D094A9 /* swypGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */; };
+		68B18E0E13E0B31B00D094A9 /* swypInGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */; };
+		68B18E0F13E0B31B00D094A9 /* swypInGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */; };
+		68B18E1213E0B33A00D094A9 /* swypOutGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */; };
+		68B18E1313E0B33A00D094A9 /* swypOutGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */; };
+		68B18E1C13E0B38600D094A9 /* swypHandshakeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */; };
+		68B18E1D13E0B38600D094A9 /* swypHandshakeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */; };
+		68B18E2013E0B3A900D094A9 /* swypCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1E13E0B3A900D094A9 /* swypCandidate.h */; };
+		68B18E2113E0B3A900D094A9 /* swypCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1F13E0B3A900D094A9 /* swypCandidate.m */; };
+		68B18E2413E0B3B700D094A9 /* swypConnectionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */; };
+		68B18E2513E0B3B700D094A9 /* swypConnectionSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */; };
+		68B18E2813E0B3DE00D094A9 /* swypCryptoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */; };
+		68B18E2913E0B3DE00D094A9 /* swypCryptoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */; };
+		68B18E2C13E0B3E900D094A9 /* swypCryptoSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */; };
+		68B18E2D13E0B3E900D094A9 /* swypCryptoSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2B13E0B3E900D094A9 /* swypCryptoSession.m */; };
+		68B18E3013E0B42300D094A9 /* swypContentInteractionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */; };
+		68B18E3113E0B42300D094A9 /* swypContentInteractionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */; };
+		68B18E3413E0B45600D094A9 /* swypConcatenatedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */; };
+		68B18E3513E0B45600D094A9 /* swypConcatenatedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */; };
+		68B18E3813E0B47500D094A9 /* swypTransformInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */; };
+		68B18E3913E0B47500D094A9 /* swypTransformInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */; };
+		68B18E3C13E0B49A00D094A9 /* swypTransformPathwayInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */; };
+		68B18E3D13E0B49A00D094A9 /* swypTransformPathwayInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */; };
+		68B18E4013E0B4B800D094A9 /* swypInputToOutputStreamConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */; };
+		68B18E4113E0B4B800D094A9 /* swypInputToOutputStreamConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */; };
+		68B18E5313E0B52000D094A9 /* swypEncryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */; };
+		68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */; };
+		68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */; };
+		68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
+		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
+		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
+		68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourServiceAdvertiser.m; sourceTree = "<group>"; };
+		68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceListener.h; sourceTree = "<group>"; };
+		68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourServiceListener.m; sourceTree = "<group>"; };
+		68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypOutGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypOutGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypHandshakeManager.h; sourceTree = "<group>"; };
+		68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManager.m; sourceTree = "<group>"; };
+		68B18E1E13E0B3A900D094A9 /* swypCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCandidate.h; sourceTree = "<group>"; };
+		68B18E1F13E0B3A900D094A9 /* swypCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCandidate.m; sourceTree = "<group>"; };
+		68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionSession.h; sourceTree = "<group>"; };
+		68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionSession.m; sourceTree = "<group>"; };
+		68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCryptoManager.h; sourceTree = "<group>"; };
+		68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCryptoManager.m; sourceTree = "<group>"; };
+		68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCryptoSession.h; sourceTree = "<group>"; };
+		68B18E2B13E0B3E900D094A9 /* swypCryptoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCryptoSession.m; sourceTree = "<group>"; };
+		68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentInteractionManager.h; sourceTree = "<group>"; };
+		68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypContentInteractionManager.m; sourceTree = "<group>"; };
+		68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConcatenatedInputStream.h; sourceTree = "<group>"; };
+		68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConcatenatedInputStream.m; sourceTree = "<group>"; };
+		68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTransformInputStream.h; sourceTree = "<group>"; };
+		68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTransformInputStream.m; sourceTree = "<group>"; };
+		68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTransformPathwayInputStream.h; sourceTree = "<group>"; };
+		68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTransformPathwayInputStream.m; sourceTree = "<group>"; };
+		68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputToOutputStreamConnector.h; sourceTree = "<group>"; };
+		68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToOutputStreamConnector.m; sourceTree = "<group>"; };
+		68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypEncryptingTransform.h; sourceTree = "<group>"; };
+		68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypEncryptingTransform.m; sourceTree = "<group>"; };
+		68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypUnencryptingTransform.h; sourceTree = "<group>"; };
+		68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypUnencryptingTransform.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,7 +112,10 @@
 		0867D691FE84028FC02AAC07 /* swyp */ = {
 			isa = PBXGroup;
 			children = (
-				08FB77AEFE84172EC02AAC07 /* Classes */,
+				68B18DF613E0B20000D094A9 /* Content */,
+				68B18DED13E0B14500D094A9 /* Communications */,
+				68B18DEC13E0B11300D094A9 /* View Components */,
+				68B18DE913E0B08F00D094A9 /* Streams */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -56,19 +131,132 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		08FB77AEFE84172EC02AAC07 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
 				AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		68B18DE913E0B08F00D094A9 /* Streams */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */,
+				68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */,
+				68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */,
+				68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */,
+				68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */,
+				68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */,
+				68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */,
+				68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */,
+				68B18DEB13E0B0A800D094A9 /* Transforms */,
+			);
+			name = Streams;
+			sourceTree = "<group>";
+		};
+		68B18DEB13E0B0A800D094A9 /* Transforms */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */,
+				68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */,
+				68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */,
+				68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */,
+			);
+			name = Transforms;
+			sourceTree = "<group>";
+		};
+		68B18DEC13E0B11300D094A9 /* View Components */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E0313E0B2D600D094A9 /* gestures */,
+			);
+			name = "View Components";
+			sourceTree = "<group>";
+		};
+		68B18DED13E0B14500D094A9 /* Communications */ = {
+			isa = PBXGroup;
+			children = (
+				68B18DF713E0B23200D094A9 /* swypConnectionManager.h */,
+				68B18DF813E0B23200D094A9 /* swypConnectionManager.m */,
+				68B18DF413E0B1A400D094A9 /* Connecting */,
+				68B18DF013E0B17600D094A9 /* Crypto */,
+				68B18DEE13E0B16200D094A9 /* Connections */,
+			);
+			name = Communications;
+			sourceTree = "<group>";
+		};
+		68B18DEE13E0B16200D094A9 /* Connections */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E1E13E0B3A900D094A9 /* swypCandidate.h */,
+				68B18E1F13E0B3A900D094A9 /* swypCandidate.m */,
+				68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */,
+				68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */,
+			);
+			name = Connections;
+			sourceTree = "<group>";
+		};
+		68B18DEF13E0B16900D094A9 /* Bonjour */ = {
+			isa = PBXGroup;
+			children = (
+				68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */,
+				68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */,
+				68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */,
+				68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */,
+			);
+			name = Bonjour;
+			sourceTree = "<group>";
+		};
+		68B18DF013E0B17600D094A9 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */,
+				68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */,
+				68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */,
+				68B18E2B13E0B3E900D094A9 /* swypCryptoSession.m */,
+			);
+			name = Crypto;
+			sourceTree = "<group>";
+		};
+		68B18DF413E0B1A400D094A9 /* Connecting */ = {
+			isa = PBXGroup;
+			children = (
+				68B18DF513E0B1B000D094A9 /* Handshake */,
+				68B18DEF13E0B16900D094A9 /* Bonjour */,
+			);
+			name = Connecting;
+			sourceTree = "<group>";
+		};
+		68B18DF513E0B1B000D094A9 /* Handshake */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */,
+				68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */,
+			);
+			name = Handshake;
+			sourceTree = "<group>";
+		};
+		68B18DF613E0B20000D094A9 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */,
+				68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */,
+			);
+			name = Content;
+			sourceTree = "<group>";
+		};
+		68B18E0313E0B2D600D094A9 /* gestures */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */,
+				68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */,
+				68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */,
+				68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */,
+				68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */,
+				68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */,
+			);
+			name = gestures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,6 +267,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */,
+				68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */,
+				68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */,
+				68B18E0113E0B2B800D094A9 /* swypBonjourServiceListener.h in Headers */,
+				68B18E0A13E0B2FB00D094A9 /* swypGestureRecognizer.h in Headers */,
+				68B18E0E13E0B31B00D094A9 /* swypInGestureRecognizer.h in Headers */,
+				68B18E1213E0B33A00D094A9 /* swypOutGestureRecognizer.h in Headers */,
+				68B18E1C13E0B38600D094A9 /* swypHandshakeManager.h in Headers */,
+				68B18E2013E0B3A900D094A9 /* swypCandidate.h in Headers */,
+				68B18E2413E0B3B700D094A9 /* swypConnectionSession.h in Headers */,
+				68B18E2813E0B3DE00D094A9 /* swypCryptoManager.h in Headers */,
+				68B18E2C13E0B3E900D094A9 /* swypCryptoSession.h in Headers */,
+				68B18E3013E0B42300D094A9 /* swypContentInteractionManager.h in Headers */,
+				68B18E3413E0B45600D094A9 /* swypConcatenatedInputStream.h in Headers */,
+				68B18E3813E0B47500D094A9 /* swypTransformInputStream.h in Headers */,
+				68B18E3C13E0B49A00D094A9 /* swypTransformPathwayInputStream.h in Headers */,
+				68B18E4013E0B4B800D094A9 /* swypInputToOutputStreamConnector.h in Headers */,
+				68B18E5313E0B52000D094A9 /* swypEncryptingTransform.h in Headers */,
+				68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +313,9 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = ExoMachina;
+			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "swyp" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -132,6 +341,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */,
+				68B18DFE13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m in Sources */,
+				68B18E0213E0B2B800D094A9 /* swypBonjourServiceListener.m in Sources */,
+				68B18E0B13E0B2FB00D094A9 /* swypGestureRecognizer.m in Sources */,
+				68B18E0F13E0B31B00D094A9 /* swypInGestureRecognizer.m in Sources */,
+				68B18E1313E0B33A00D094A9 /* swypOutGestureRecognizer.m in Sources */,
+				68B18E1D13E0B38600D094A9 /* swypHandshakeManager.m in Sources */,
+				68B18E2113E0B3A900D094A9 /* swypCandidate.m in Sources */,
+				68B18E2513E0B3B700D094A9 /* swypConnectionSession.m in Sources */,
+				68B18E2913E0B3DE00D094A9 /* swypCryptoManager.m in Sources */,
+				68B18E2D13E0B3E900D094A9 /* swypCryptoSession.m in Sources */,
+				68B18E3113E0B42300D094A9 /* swypContentInteractionManager.m in Sources */,
+				68B18E3513E0B45600D094A9 /* swypConcatenatedInputStream.m in Sources */,
+				68B18E3913E0B47500D094A9 /* swypTransformInputStream.m in Sources */,
+				68B18E3D13E0B49A00D094A9 /* swypTransformPathwayInputStream.m in Sources */,
+				68B18E4113E0B4B800D094A9 /* swypInputToOutputStreamConnector.m in Sources */,
+				68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */,
+				68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
