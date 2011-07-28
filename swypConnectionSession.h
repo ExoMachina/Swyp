@@ -14,6 +14,7 @@
 #import "swypConcatenatedInputStream.h"
 #import "swypTransformPathwayInputStream.h"
 #import "swypInputToOutputStreamConnector.h"
+#import "swypFileTypeString.h"
 
 @class swypConnectionSession;
 
@@ -50,5 +51,14 @@
 -(void)	addConnectionSessionDelegate:(id<swypConnectionSessionDelegate>)delegate;
 -(void)	removeConnectionSessionDelegate:(id<swypConnectionSessionDelegate>)delegate;
 
+//sending data
+/*
+	length: the length of the 'stream' property
+		if no length is specified, the entire stream will be read to memory before any of it can be written (to allow packet size conveyance)
+	if there is already a stream sending, this stream will be queued
+*/
+-(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
+/* same as above, a convinience method for those who wish to use data already in-memory */
+-(void)	beginSendingDataWithTag:(NSString*)tag type:(swypContentTypeString:NSString*)type dataForSend:(NSData*)sendData; 
 
 @end

@@ -10,5 +10,6 @@
 
 
 @implementation swypServerCandidate
+@synthesize netService;
 
 @end

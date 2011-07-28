@@ -10,7 +10,10 @@
 #import "swypCandidate.h"
 
 @interface swypServerCandidate : swypCandidate {
+	NSNetService*		netService;
 
 }
+//this one is valid only for server candidates
+@property (nonatomic, retain) NSNetService*		netService;
 
 @end

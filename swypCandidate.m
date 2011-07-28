@@ -10,6 +10,6 @@
 
 
 @implementation swypCandidate
-@synthesize serverNetService,swypInfo,deviceID,nametag,supportedFiletypes,role,matchedLocalSwypInfo;
+@synthesize swypInfo,deviceID,nametag,supportedFiletypes,role,matchedLocalSwypInfo,appearanceDate;
 @end
 

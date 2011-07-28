@@ -16,8 +16,8 @@ typedef enum {
 }swypCandidateRole;
 
 
-@interface swypCandidate : NSObject {
-	NSNetService*		serverNetService;
+@interface swypCandidate : NSObject {	
+	NSDate *			appearanceDate;
 	swypInfoRef*		swypInfo;
 	NSString*			deviceID;
 	NSString*			nametag;
@@ -25,10 +25,8 @@ typedef enum {
 	swypCandidateRole	role;
 	swypInfoRef*		matchedLocalSwypInfo;
 }
-//this one is valid only for server candidates
-@property (nonatomic, retain) NSNetService*		serverNetService;
-
 @property (nonatomic, retain) swypInfoRef*		swypInfo;
+@property (nonatomic, retain) NSDate *			appearanceDate;
 @property (nonatomic, retain) NSString*			deviceID;
 @property (nonatomic, retain) NSString*			nametag;
 @property (nonatomic, retain) NSArray*			supportedFiletypes;

@@ -10,7 +10,8 @@
 
 
 @interface swypHandshakeManager : NSObject {
-
+	NSMutableSet *	helloPendingClientConnectionSessions;
+	NSMutableSet *	helloRespnsePendingServerConnectionSessions;
 }
 
 @end

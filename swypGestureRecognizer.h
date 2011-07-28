@@ -10,7 +10,8 @@
 #import "swypInfoRef.h"
 
 @interface swypGestureRecognizer : UIPanGestureRecognizer {
-	
+	swypInfoRef *	_recognizedGestureInfoRef;
 }
+-(swypInfoRef)	swypGestureInfo; //reset with gesture recognizer
 
 @end

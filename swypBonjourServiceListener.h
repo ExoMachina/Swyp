@@ -7,18 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "swypClientCandidate.h"
+#import "swypServerCandidate.h"
 
 @class swypBonjourServiceListener;
 
 @protocol swypBonjourServiceListenerDelegate <NSObject>
--(void) receivedClientConnectionFromCandidate:(swypClientCandidate*) withReadStream:(NSInputStream*)inputStream writeStream:(NSOutputStream*)outputStream;
+-(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate;
 @end
 
-
-@interface swypBonjourServiceListener : NSObject {
-
+@interface swypBonjourServiceListener : NSObject <NSNetServiceDelegate> {
+	NSMutableSet *		serverCandidates;
 }
+//swypServerCandidate
+-(NSSet*) allServerCandidates;
+
 -(BOOL)	isListening;
 -(void)	setListening:(BOOL)listeningEnabled;
 @end

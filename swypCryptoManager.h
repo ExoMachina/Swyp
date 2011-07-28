@@ -8,9 +8,31 @@
 
 #import <Foundation/Foundation.h>
 #import "swypCryptoSession.h"
+#import "swypConnectionSession.h"
 
-@interface swypCryptoManager : NSObject {
+@class swypCryptoManager;
 
+@protocol swypCryptoManagerDelegate <NSObject>
+-(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning;
+-(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError;
+@end
+
+
+@interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate>  {
+	NSMutableSet*			sessionsPendingCryptoSetup;
+	
 }
++(swypCryptoManager*)	sharedCryptoManager;
++(NSData*)				localPrivateKey;
++(NSData*)				localPublicKey;
+
+-(void) beginNegotiatingCryptoSessionWithSwypConnectionSession:	(swypConnectionSession*)session;
+
+//
+//private
+-(void)	_initializeCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
+-(void)	_beginMandatingCryptoInConnectionSession:		(swypConnectionSession*)session;
+
+-(void)	_handleCryptoHandshakeStage:(swypCryptoSessionStage)stage withReceivedData:(NSData*)handshakeData; 
 
 @end

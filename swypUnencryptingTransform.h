@@ -10,7 +10,8 @@
 
 
 @interface swypUnencryptingTransform: swypTransformInputStream {
-
+	NSData *		_sessionAESKey;
 }
+-(id)	initWithSessionAES128Key:	(NSData*)sessionKey;
 
 @end

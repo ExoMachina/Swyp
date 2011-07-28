@@ -6,7 +6,7 @@
 //  Copyright 2011 ExoMachina. Some rights reserved -- check online.
 //
 
-//makes a transformation on input data, is a stream itself that can be read and passed down
+//makes a transformation on input data; is a stream itself that can be read and passed down a pathway
 
 #import <Foundation/Foundation.h>
 
@@ -19,6 +19,7 @@
 }
 @property (nonatomic, readonly) BOOL			waitsForAllInput;
 @property (nonatomic, readonly) BOOL			inputStreamIsFinished; 
+@property (nonatomic, readonly) NSUInteger		transformationChunkSize; //0 if chunk size is irrelevant
 @property (nonatomic, retain)	NSInputStream*	inputStream;
 
 -(id)	initWithInputStream:(NSInputStream*)stream;
@@ -27,10 +28,20 @@
 -(void)	reset;
 
 //
-//privates
--(void) _transformData:(NSData*)sourceData inRange:(NSRange)range;
--(void) _didYeildTransformedData:(NSData)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range;
+//to subclass 
 
+/*
+	if waitsForAllInput == NO, data will be passed in quantities of transformationChunkSize, until inputStreamIsFinished == YES
+*/
+-(void) transformData:(NSData*)sourceData inRange:(NSRange)range;
+
+/*
+	don't need to transform all data passed in transformData:inRange:
+	if bytes remaining >transformationChunkSize, or if inputStreamIsFinished == YES, transformData:: will be called until all bytes are transformed
+*/
+-(void) didYeildTransformedData:(NSData)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range;
+
+//
 // these are just scratch-pads, know your stuff before modifying them 
 -(NSMutableData*) __transformedData;
 -(NSMutableData*) __untransformedData;

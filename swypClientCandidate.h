@@ -10,7 +10,6 @@
 #import "swypCandidate.h"
 
 @interface swypClientCandidate : swypCandidate {
-
 }
 
 @end

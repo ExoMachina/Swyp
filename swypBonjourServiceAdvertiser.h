@@ -7,10 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "swypClientCandidate.h"
+
+@class swypBonjourServiceAdvertiser;
+
+@protocol swypBonjourServiceAdvertiserDelegate <NSObject>
+-(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream; 
+@end
 
 
 @interface swypBonjourServiceAdvertiser : NSObject <NSNetServiceDelegate>  {
 
 }
+
+-(BOOL)	isAdvertising;
+-(void)	setAdvertising:(BOOL)advertisingEnabled;
+
+
 
 @end
