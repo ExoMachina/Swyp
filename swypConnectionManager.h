@@ -10,19 +10,23 @@
 #import "swypConnectionSession.h"
 #import "swypBonjourServiceListener.h"
 #import "swypBonjourServiceAdvertiser.h"
+#import "swypHandshakeManager.h"
 
 @class swypConnectionManagerDelegate;
 
 @protocol swypConnectionManagerDelegate <NSObject>
-
+-(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
+-(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error;
 @end
 
 
-@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate> {
+@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
 	swypBonjourServiceListener *	_bonjourListener;
 	swypBonjourServiceAdvertiser *	_bonjourAdvertiser;
+	
+	swypHandshakeManager *			_handshakeManager;
 	
 	//swypInfoRefs
 	NSMutableSet *			_swypIns;

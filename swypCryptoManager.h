@@ -19,7 +19,7 @@
 
 
 @interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate>  {
-	NSMutableSet*			sessionsPendingCryptoSetup;
+	NSMutableSet*			_sessionsPendingCryptoSetup;
 	
 }
 +(swypCryptoManager*)	sharedCryptoManager;

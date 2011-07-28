@@ -9,11 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "swypCandidate.h"
 
-@interface swypServerCandidate : swypCandidate {
+@interface swypServerCandidate : swypCandidate <NSNetServiceDelegate> {
 	NSNetService*		netService;
 
 }
-//this one is valid only for server candidates
+/*
+	this one is valid only for server candidates
+	if the service stops, the netService property will be set to nil
+*/
 @property (nonatomic, retain) NSNetService*		netService;
 
 @end

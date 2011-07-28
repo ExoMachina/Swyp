@@ -18,10 +18,16 @@
 
 @class swypConnectionSession;
 
+typedef enum {
+	swypConnectionSessionStatusNotReady,
+	swypConnectionSessionStatusPreparing,
+	swypConnectionSessionStatusReady
+} swypConnectionSessionStatus;
+
 @protocol swypConnectionSessionDelegate <NSObject>
--(void) sessionIsReady:	(swypConnectionSession*)session;
--(void) sessionWillDie:	(swypConnectionSession*)session;
--(void) sessionDied:	(swypConnectionSession*)session withError:(NSError*)error;
+-(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session;
+-(void) sessionWillDie:			(swypConnectionSession*)session;
+-(void) sessionDied:			(swypConnectionSession*)session withError:(NSError*)error;
 @end
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
@@ -34,8 +40,12 @@
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionDelegates;
 	
+	UIColor *		_sessionHueColor;
+	
 	swypCryptoSession *		_cryptoSession;
 	swypCandidate *			_swypCandidate;
+	
+	swypConnectionSessionStatus			_connectionStatus;
 	
 	swypConcatenatedInputStream *		_sendDataQueueStream;				//setCloseWhenFinished:NO 
 	swypTransformPathwayInputStream *	_socketOutputTransformInputStream;	//initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil 
@@ -44,6 +54,8 @@
 	NSInputStream *			_socketInputStream;
 	NSOutputStream *		_socketOutputStream;
 }
+@property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
+@property (nonatomic, retain)	UIColor*					sessionHueColor;
 
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 -(void)	removeDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
@@ -54,7 +66,8 @@
 //sending data
 /*
 	length: the length of the 'stream' property
-		if no length is specified, the entire stream will be read to memory before any of it can be written (to allow packet size conveyance)
+		if length is specified as 0, the entire stream will be read to memory before any of it can be written (to allow packet size conveyance)
+		if length is specified as NSUIntegerMax (UIn!), the stream will be written without a length specifier, to allow devs to do fun stuff
 	if there is already a stream sending, this stream will be queued
 */
 -(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;

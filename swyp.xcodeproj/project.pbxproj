@@ -184,6 +184,15 @@
 			name = Candidates;
 			sourceTree = "<group>";
 		};
+		680FC1B713E1C4E600509CF2 /* For Reference Only */ = {
+			isa = PBXGroup;
+			children = (
+				680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */,
+				680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */,
+			);
+			name = "For Reference Only";
+			sourceTree = "<group>";
+		};
 		68B18DE913E0B08F00D094A9 /* Streams */ = {
 			isa = PBXGroup;
 			children = (
@@ -257,8 +266,7 @@
 		68B18DF013E0B17600D094A9 /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
-				680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */,
-				680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */,
+				680FC1B713E1C4E600509CF2 /* For Reference Only */,
 				68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */,
 				68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */,
 				68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */,
