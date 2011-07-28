@@ -8,6 +8,7 @@ Pronounced 'Swipe.' The goal of Swyp is to allow any two apps to communicate wit
 Interoperability
 ---------------
 The core principal of Swyp is "if you export data, you support png."
+
 * Swyp apps will have native file formats, and usually support many formats, but they must export PNG.
 * Swyp supports streaming-data pathways for music, video, or multiplayer games.
 	* This is not an excuse not to support PNG export
