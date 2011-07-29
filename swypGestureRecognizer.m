@@ -7,8 +7,47 @@
 //
 
 #import "swypGestureRecognizer.h"
-
+#import <UIKit/UIGestureRecognizerSubclass.h>
 
 @implementation swypGestureRecognizer
 
+- (void)reset{
+	[super reset];
+	
+	SRELS(_recognizedGestureInfoRef);
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{	
+	[super touchesBegan:touches withEvent:event];
+	
+	self.state = UIGestureRecognizerStatePossible;
+	
+	if (_recognizedGestureInfoRef == nil){
+		_recognizedGestureInfoRef = [[swypInfoRef alloc] init];
+	}
+	[_recognizedGestureInfoRef setStartDate:[NSDate date]];
+	[_recognizedGestureInfoRef setStartPoint:[self locationInView:self.view]];
+}
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesMoved:touches withEvent:event];
+	
+	self.state = UIGestureRecognizerStatePossible; //don't let it set recognized until you're ready
+}
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{	
+	[super touchesEnded:touches withEvent:event];
+	
+	[_recognizedGestureInfoRef setEndDate:[NSDate date]];
+	[_recognizedGestureInfoRef setEndPoint:[self locationInView:self.view]];
+}
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesCancelled:touches withEvent:event];
+}
+
+-(void) dealloc{
+	SRELS(_recognizedGestureInfoRef);
+	
+	[super dealloc];
+}
+
 @end
+

@@ -29,7 +29,7 @@
 
 @property (nonatomic, readonly) NSArray *								queuedStreams;
 @property (nonatomic, assign) BOOL										closeStreamAtQueueEnd;
-@property (nonatomic, assign) swypConcatenatedInputStreamDelegate		delegate;
+@property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	delegate;
 
 //NSInputStream array
 -(id)	initWithInputStreamArray:	(NSArray*)inputStreams; 

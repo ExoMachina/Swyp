@@ -12,7 +12,7 @@
 #import "swypBonjourServiceAdvertiser.h"
 #import "swypHandshakeManager.h"
 
-@class swypConnectionManagerDelegate;
+@class swypConnectionManager;
 
 @protocol swypConnectionManagerDelegate <NSObject>
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
@@ -39,4 +39,19 @@
 @property (nonatomic, assign)	id<swypConnectionManagerDelegate>	delegate;
 
 
+/*
+	Begin listening, allow new connections, etc. 
+	The swyp window has been opened.
+*/
+-(void)	beginServices;
+/*
+	Stop listening, disallow new connections, terminate existing swypConnectionSessions, etc. 
+	The swyp window has probably been closed.
+*/
+-(void)	stopServices;
+
+-(void) swypInOccuredWithSwypInfoRef:	(swypInfoRef*)inInfo;
+-(void)	swypOutBeganWithSwypInfoRef:	(swypInfoRef*)outInfo;
+-(void)	swypOutEndedWithSwypInfoRef:	(swypInfoRef*)outInfo; 
+-(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo;
 @end

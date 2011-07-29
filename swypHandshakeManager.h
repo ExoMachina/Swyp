@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 #import "swypInfoRef.h"
+#import "swypCryptoManager.h"
 #import "swypClientCandidate.h"
 #import "swypServerCandidate.h"
 #import "swypConnectionSession.h"

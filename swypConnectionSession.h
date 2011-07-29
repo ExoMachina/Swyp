@@ -43,7 +43,7 @@ typedef enum {
 	UIColor *		_sessionHueColor;
 	
 	swypCryptoSession *		_cryptoSession;
-	swypCandidate *			_swypCandidate;
+	swypCandidate *			_representedCandidate;
 	
 	swypConnectionSessionStatus			_connectionStatus;
 	
@@ -56,6 +56,9 @@ typedef enum {
 }
 @property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
 @property (nonatomic, retain)	UIColor*					sessionHueColor;
+@property (nonatomic, readonly)	swypCandidate *				representedCandidate;
+
+-(id)	initWithSwypCandidate:	(swypCandidate*)candidate;
 
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 -(void)	removeDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
@@ -72,6 +75,6 @@ typedef enum {
 */
 -(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
 /* same as above, a convinience method for those who wish to use data already in-memory */
--(void)	beginSendingDataWithTag:(NSString*)tag type:(swypContentTypeString:NSString*)type dataForSend:(NSData*)sendData; 
+-(void)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData; 
 
 @end

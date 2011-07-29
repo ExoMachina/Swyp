@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "swypTransformInputStream.h"
 
 @interface swypUnencryptingTransform: swypTransformInputStream {
 	NSData *		_sessionAESKey;

@@ -12,6 +12,6 @@
 @interface swypGestureRecognizer : UIPanGestureRecognizer {
 	swypInfoRef *	_recognizedGestureInfoRef;
 }
--(swypInfoRef)	swypGestureInfo; //reset with gesture recognizer
+-(swypInfoRef*)	swypGestureInfo; //reset with gesture recognizer
 
 @end

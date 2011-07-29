@@ -39,7 +39,7 @@
 	don't need to transform all data passed in transformData:inRange:
 	if bytes remaining >transformationChunkSize, or if inputStreamIsFinished == YES, transformData:: will be called until all bytes are transformed
 */
--(void) didYeildTransformedData:(NSData)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range;
+-(void) didYeildTransformedData:(NSData*)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range;
 
 //
 // these are just scratch-pads, know your stuff before modifying them 

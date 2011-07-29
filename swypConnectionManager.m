@@ -9,5 +9,5 @@
 #import "swypConnectionManager.h"
 
 @implementation swypConnectionManager
-
+@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions;
 @end
