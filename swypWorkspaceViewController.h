@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "swypContentInteractionManager.h"
 #import "swypConnectionManager.h"
+#import "swypSessionViewController.h"
 
 @interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;

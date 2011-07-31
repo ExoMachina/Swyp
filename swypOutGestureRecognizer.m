@@ -14,14 +14,26 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{	
 	[super touchesEnded:touches withEvent:event];
 	
+	
+	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
 	CGPoint lastPoint			= [[self swypGestureInfo] endPoint];
+	CGPoint viewCenterPoint	= self.view.center;
+	
+	double firstEuclid, lastEuclid, euclidDelta;
+	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
+	lastEuclid		= euclideanDistance(viewCenterPoint, lastPoint);
+	euclidDelta		= lastEuclid - firstEuclid; //positive values move away from the center point
+	
+	
 	CGRect	viewRect			= self.view.frame;
 	CGRect	validSwypOutRect	= CGRectInset(viewRect, 30, 30);
-	if (CGRectContainsPoint(validSwypOutRect, lastPoint) == YES){
+	if (CGRectContainsPoint(validSwypOutRect, lastPoint) == YES && euclidDelta > 20){
 		[[self swypGestureInfo] setEndDate:[NSDate date]];
 		[[self swypGestureInfo] setEndPoint:lastPoint];
 		[[self swypGestureInfo] setVelocity: euclideanDistance([self velocityInView:self.view], CGPointZero)]; //pythag		
 		self.state = UIGestureRecognizerStateRecognized;
+		
+		EXOLog(@"SwypOut: velocity:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
 	}else {
 		self.state = UIGestureRecognizerStateFailed;
 	}
@@ -42,14 +54,6 @@
 	
 	if (euclidDelta < -10){
 		self.state = UIGestureRecognizerStateFailed;
-	}else if (euclidDelta > 10){
-		if (self.state == UIGestureRecognizerStateBegan){
-			self.state = UIGestureRecognizerStateChanged;
-		}else if (self.state == UIGestureRecognizerStateChanged) {
-			self.state = UIGestureRecognizerStateChanged;
-		}else if (self.state == UIGestureRecognizerStatePossible) {
-			self.state = UIGestureRecognizerStateBegan;			
-		}
 	}else{
 		self.state = UIGestureRecognizerStatePossible;
 	}

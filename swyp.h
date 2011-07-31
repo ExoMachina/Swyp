@@ -30,3 +30,7 @@
 #else
 	#define EXOLog(format, ...)
 #endif
+
+
+#pragma mark includes
+#import "NSDictionary+BSJSONAdditions.h"

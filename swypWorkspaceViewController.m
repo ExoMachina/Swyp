@@ -25,13 +25,14 @@
 }
 
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager{
-	UIView *symbolView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
-	[symbolView setBackgroundColor:[session sessionHueColor]];
-	[symbolView setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
 	
-	[self.view addSubview:symbolView];
+	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
+	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
+	[self.view addSubview:sessionViewController.view];
+	SRELS(sessionViewController);
+
+	//maybe create dict of sessions to sessionVCs
 	
-	SRELS(symbolView);
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
 	
@@ -44,12 +45,18 @@
 #pragma mark -
 #pragma mark UIGestureRecognizerDelegate
 -(void)	swypInGestureChanged:(swypInGestureRecognizer*)recognizer{
-	
+	if (recognizer.state == UIGestureRecognizerStateRecognized){
+		[_connectionManager swypInCompletedWithSwypInfoRef:[recognizer swypGestureInfo]];
+	}
 }
 
 -(void)	swypOutGestureChanged:(swypOutGestureRecognizer*)recognizer{
-	if (recognizer.state == UIGestureRecognizerStateBegan){
-		
+	if (recognizer.state == UIGestureRecognizerStatePossible){
+		[_connectionManager swypOutStartedWithSwypInfoRef:[recognizer swypGestureInfo]];
+	}else if (recognizer.state == UIGestureRecognizerStateFailed){
+		[_connectionManager swypOutFailedWithSwypInfoRef:[recognizer swypGestureInfo]];
+	}else if (recognizer.state == UIGestureRecognizerStateRecognized){
+		[_connectionManager swypOutCompletedWithSwypInfoRef:[recognizer swypGestureInfo]];
 	}
 }
 

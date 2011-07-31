@@ -10,5 +10,5 @@
 
 
 @implementation swypBonjourServiceAdvertiser
-
+@synthesize delegate = _delegate;
 @end

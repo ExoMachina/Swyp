@@ -19,13 +19,20 @@
 @end
 
 
-@interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate>  {
-	NSMutableSet*			_sessionsPendingCryptoSetup;
+@interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate,swypConnectionSessionInfoDelegate>  {
+	NSMutableSet*					_sessionsPendingCryptoSetup;
+	
+	
+	id<swypCryptoManagerDelegate>	_delegate;
 	
 }
+@property (nonatomic, assign)	id<swypCryptoManagerDelegate>	delegate;
+@property (nonatomic, readonly)	NSSet*							sessionsPendingCryptoSetup;
+
 +(swypCryptoManager*)	sharedCryptoManager;
 +(NSData*)				localPrivateKey;
 +(NSData*)				localPublicKey;
++(NSString*)			localPersistantPeerID;
 
 -(void) beginNegotiatingCryptoSessionWithSwypConnectionSession:	(swypConnectionSession*)session;
 

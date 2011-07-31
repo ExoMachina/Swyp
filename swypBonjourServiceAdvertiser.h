@@ -18,7 +18,10 @@
 
 @interface swypBonjourServiceAdvertiser : NSObject <NSNetServiceDelegate>  {
 
+	
+	id<swypBonjourServiceAdvertiserDelegate>	_delegate;
 }
+@property (nonatomic, assign) id<swypBonjourServiceAdvertiserDelegate>	delegate;
 
 -(BOOL)	isAdvertising;
 -(void)	setAdvertising:(BOOL)advertisingEnabled;

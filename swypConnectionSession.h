@@ -16,29 +16,41 @@
 #import "swypInputToOutputStreamConnector.h"
 #import "swypFileTypeString.h"
 
+static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
+typedef enum {
+	swypConnectionSessionSocketError
+}	swypConnectionSessionErrorCode;
+
+
 @class swypConnectionSession;
 
 typedef enum {
-	swypConnectionSessionStatusNotReady,
+	swypConnectionSessionStatusNotReady = 0,
 	swypConnectionSessionStatusPreparing,
 	swypConnectionSessionStatusReady
 } swypConnectionSessionStatus;
 
-@protocol swypConnectionSessionDelegate <NSObject>
--(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session;
--(void) sessionWillDie:			(swypConnectionSession*)session;
+@protocol swypConnectionSessionInfoDelegate <NSObject>
 -(void) sessionDied:			(swypConnectionSession*)session withError:(NSError*)error;
+
+@optional
+-(void) sessionWillDie:			(swypConnectionSession*)session;
+-(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session;
 @end
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
+/*
+	Though there are several data delegates, only one delegate should return a stream, all else returning nil
+	All delegates will receive the output stream in the finnishedReceiving call
+*/
 -(NSOutputStream*) streamToWriteReceivedDataWithTag:(NSString*)tag type:(swypFileTypeString*)type length:(NSUInteger)streamLength connectionSession:(swypConnectionSession*)session;
 -(void) finishedReceivingDataWithOutputStream:(NSOutputStream*)stream error:(NSError*)error tag:(NSString*)tag type:(swypFileTypeString*)type connectionSession:(swypConnectionSession*)session;
 @end
 
 
-@interface swypConnectionSession : NSObject {
+@interface swypConnectionSession : NSObject <NSStreamDelegate> {
 	NSMutableSet *	_dataDelegates;
-	NSMutableSet *	_connectionSessionDelegates;
+	NSMutableSet *	_connectionSessionInfoDelegates;
 	
 	UIColor *		_sessionHueColor;
 	
@@ -58,13 +70,15 @@ typedef enum {
 @property (nonatomic, retain)	UIColor*					sessionHueColor;
 @property (nonatomic, readonly)	swypCandidate *				representedCandidate;
 
--(id)	initWithSwypCandidate:	(swypCandidate*)candidate;
+-(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
+
+-(void)	invalidate;
 
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 -(void)	removeDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 
--(void)	addConnectionSessionDelegate:(id<swypConnectionSessionDelegate>)delegate;
--(void)	removeConnectionSessionDelegate:(id<swypConnectionSessionDelegate>)delegate;
+-(void)	addConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
+-(void)	removeConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 
 //sending data
 /*
@@ -76,5 +90,10 @@ typedef enum {
 -(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
 /* same as above, a convinience method for those who wish to use data already in-memory */
 -(void)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData; 
+
+
+//
+//private
+-(void)	_changeStatus:	(swypConnectionSessionStatus)status;
 
 @end

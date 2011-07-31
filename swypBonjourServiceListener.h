@@ -13,14 +13,23 @@
 
 @protocol swypBonjourServiceListenerDelegate <NSObject>
 -(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate;
+-(void)	bonjourServiceListenerFailedToBeginListen:	(swypServerCandidate*) serverCandidate	error:(NSError*)error;
 @end
 
-@interface swypBonjourServiceListener : NSObject <NSNetServiceDelegate> {
-	NSMutableSet *		serverCandidates;
+@interface swypBonjourServiceListener : NSObject <NSNetServiceBrowserDelegate> {
+	NSMutableDictionary *	_serverCandidates; //candidates by netservice
+	
+	NSNetServiceBrowser	*	_serverBrowser;
+	
+	BOOL					_serviceIsListening;
+	
+	id<swypBonjourServiceListenerDelegate>	_delegate;
 }
+@property (nonatomic, assign)	id<swypBonjourServiceListenerDelegate>	delegate;
+@property (nonatomic, assign)	BOOL	serviceIsListening;
+
+
 //swypServerCandidate
 -(NSSet*) allServerCandidates;
 
--(BOOL)	isListening;
--(void)	setListening:(BOOL)listeningEnabled;
 @end

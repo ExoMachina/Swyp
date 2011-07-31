@@ -31,7 +31,8 @@
 	//swypInfoRefs
 	NSMutableSet *			_swypIns;
 	NSMutableSet *			_swypOuts;	
-	
+	NSMutableSet *			_swypOutTimeouts;
+	NSMutableSet *			_swypInTimeouts;
 	
 	id<swypConnectionManagerDelegate>	_delegate;
 }
@@ -50,8 +51,10 @@
 */
 -(void)	stopServices;
 
--(void) swypInOccuredWithSwypInfoRef:	(swypInfoRef*)inInfo;
--(void)	swypOutBeganWithSwypInfoRef:	(swypInfoRef*)outInfo;
--(void)	swypOutEndedWithSwypInfoRef:	(swypInfoRef*)outInfo; 
+-(swypInfoRef*)	oldestSwypInSet:(NSSet*)swypSet;
+
+-(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo;
+-(void)	swypOutStartedWithSwypInfoRef:	(swypInfoRef*)outInfo;
+-(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo; 
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo;
 @end

@@ -22,6 +22,16 @@
 		680FC1F713E2407E00509CF2 /* swyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC1F613E2407E00509CF2 /* swyp.h */; };
 		680FC4F013E2473E00509CF2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC4EF13E2473E00509CF2 /* UIKit.framework */; };
 		680FC5B713E251DA00509CF2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC5B613E251DA00509CF2 /* CoreFoundation.framework */; };
+		680FC62A13E3109500509CF2 /* swypSessionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC62813E3109500509CF2 /* swypSessionViewController.h */; };
+		680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC62913E3109500509CF2 /* swypSessionViewController.m */; };
+		680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */; };
+		680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */; };
+		680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */; };
+		680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */; };
+		680FC70613E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */; };
+		680FC70A13E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */; };
+		680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */; };
+		680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */; };
 		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
 		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
 		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
@@ -80,6 +90,16 @@
 		680FC1F613E2407E00509CF2 /* swyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp.h; sourceTree = "<group>"; };
 		680FC4EF13E2473E00509CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		680FC5B613E251DA00509CF2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		680FC62813E3109500509CF2 /* swypSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypSessionViewController.h; sourceTree = "<group>"; };
+		680FC62913E3109500509CF2 /* swypSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypSessionViewController.m; sourceTree = "<group>"; };
+		680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+BSJSONAdditions.h"; sourceTree = "<group>"; };
+		680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BSJSONAdditions.m"; sourceTree = "<group>"; };
+		680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+BSJSONAdditions.h"; sourceTree = "<group>"; };
+		680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+BSJSONAdditions.m"; sourceTree = "<group>"; };
+		680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManagerHelloImplementations.m; sourceTree = "<group>"; };
+		680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManagerSocketResolveImplementations.m; sourceTree = "<group>"; };
+		680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoBlockOperationAlertView.h; sourceTree = "<group>"; };
+		680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoBlockOperationAlertView.m; sourceTree = "<group>"; };
 		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
 		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
 		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
@@ -205,9 +225,54 @@
 		680FC1F513E2405C00509CF2 /* Other Logic */ = {
 			isa = PBXGroup;
 			children = (
+				680FC8EE13E4D5FB00509CF2 /* UIKit Subclasses */,
+				680FC64D13E3460E00509CF2 /* Additions */,
 				680FC1F613E2407E00509CF2 /* swyp.h */,
 			);
 			name = "Other Logic";
+			sourceTree = "<group>";
+		};
+		680FC61413E30F2300509CF2 /* Content Display */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Content Display";
+			sourceTree = "<group>";
+		};
+		680FC61513E30F2B00509CF2 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				680FC62813E3109500509CF2 /* swypSessionViewController.h */,
+				680FC62913E3109500509CF2 /* swypSessionViewController.m */,
+			);
+			name = Sessions;
+			sourceTree = "<group>";
+		};
+		680FC61613E30F4000509CF2 /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Interface;
+			sourceTree = "<group>";
+		};
+		680FC64D13E3460E00509CF2 /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */,
+				680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */,
+				680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */,
+				680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
+		680FC8EE13E4D5FB00509CF2 /* UIKit Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */,
+				680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */,
+			);
+			name = "UIKit Subclasses";
 			sourceTree = "<group>";
 		};
 		68B18DE913E0B08F00D094A9 /* Streams */ = {
@@ -242,6 +307,9 @@
 			children = (
 				680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */,
 				680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */,
+				680FC61613E30F4000509CF2 /* Interface */,
+				680FC61513E30F2B00509CF2 /* Sessions */,
+				680FC61413E30F2300509CF2 /* Content Display */,
 				68B18E0313E0B2D600D094A9 /* gestures */,
 			);
 			name = "View Components";
@@ -306,6 +374,8 @@
 			children = (
 				68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */,
 				68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */,
+				680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */,
+				680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */,
 			);
 			name = Handshake;
 			sourceTree = "<group>";
@@ -368,6 +438,10 @@
 				680FC08413E0D00700509CF2 /* swypServerCandidate.h in Headers */,
 				680FC0BC13E0D62100509CF2 /* swypFileTypeString.h in Headers */,
 				680FC1F713E2407E00509CF2 /* swyp.h in Headers */,
+				680FC62A13E3109500509CF2 /* swypSessionViewController.h in Headers */,
+				680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */,
+				680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */,
+				680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +521,12 @@
 				680FC08113E0CFF900509CF2 /* swypClientCandidate.m in Sources */,
 				680FC08513E0D00700509CF2 /* swypServerCandidate.m in Sources */,
 				680FC0BD13E0D62100509CF2 /* swypFileTypeString.m in Sources */,
+				680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */,
+				680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */,
+				680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */,
+				680FC70613E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m in Sources */,
+				680FC70A13E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m in Sources */,
+				680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

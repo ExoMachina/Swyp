@@ -15,10 +15,19 @@
 #import "swypServerCandidate.h"
 #import "swypConnectionSession.h"
 
+
+static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManagerErrorDomain";
+typedef enum {
+	swypHandshakeManagerSocketSetupError,
+	swypHandshakeManagerSocketHelloMismatchError,//not exactly an important error
+	swypHandshakeManagerSocketConnectionError
+}	swypHandshakeManagerErrorCode;
+
+
 @class swypHandshakeManager;
 
 @protocol swypHandshakeManagerDelegate <NSObject>
--(swypInfoRef*)	mostRelevantSwypInfoForCandidate:	(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager;
+-(NSArray*)	relevantSwypsForCandidate:				(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager;
 
 -(void)	connectionSessionCreationFailedForCandidate:(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error;
 -(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session	withHandshakeManager:	(swypHandshakeManager*)manager;
@@ -26,13 +35,16 @@
 @end
 
 
-@interface swypHandshakeManager : NSObject <swypConnectionSessionDelegate,swypConnectionSessionDataDelegate, swypCryptoManagerDelegate> {
-	NSMutableSet *	_resolvingServerCandidates;
-	NSMutableSet *	_pendingClientConnectionSessions;
-	NSMutableSet *	_pendingServerConnectionSessions;
+@interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypCryptoManagerDelegate> {
+	NSMutableDictionary *	_resolvingServerCandidates;
+	NSMutableSet *			_pendingConnectionSessions;
 	
 	swypCryptoManager*		_cryptoManager;
+	
+	
+	id<swypHandshakeManagerDelegate>	_delegate;
 }
+@property (nonatomic, assign)	id<swypHandshakeManagerDelegate>	delegate;
 /*
 	LEARN: We accept a set of Server candidates, why not a set of Client candidates?
 		Client candidates connect one by one, and need immediate servicing with 'hello' packets
@@ -47,19 +59,23 @@
 -(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate;
 -(void)	_startConnectionToServerCandidate:			(swypServerCandidate*)serverCandidate;
 
--(swypConnectionSession*)	_connectionSessionObjectForServerCandidate:	(swypServerCandidate*)serverCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
--(swypConnectionSession*)	_connectionSessionObjectForClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
+-(void)	_initializeConnectionSessionObjectForCandidate:	(swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
 
--(void)	_sendClientHelloPacketForSwypConnectionSession:	(swypConnectionSession*)session;
--(void)	_sendServerHelloPacketForSwypConnectionSession:	(swypConnectionSession*)session;
+-(void)	_sendServerHelloPacketToClientForSwypConnectionSession:	(swypConnectionSession*)session;
+-(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session;
 
+/*
+	The following method importantly shows that no clock synchronization is required between a server and client
+	We use "miliseconds in the past," instead.
+*/
 -(void)	_handleClientHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session;
 -(void)	_handleServerHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session;
 
 -(BOOL)	_clientCandidate:	(swypClientCandidate*)clientCandidate	isMatchForSwypInfo:	(swypInfoRef*)swypInfo;
 -(BOOL)	_serverCandidate:	(swypServerCandidate*)serverCandidate	isMatchForSwypInfo:	(swypInfoRef*)swypInfo;
 
--(BOOL)	_handSessionOffForCryptoNegotiation:	(swypConnectionSession*)session;
+-(void)	_handSessionOffForCryptoNegotiation:	(swypConnectionSession*)session;
 
--(BOOL)	_completeHandshakeManagementOfSession:	(swypConnectionSession*)session;
+-(void) _removeAndInvalidateSession:			(swypConnectionSession*)session;
+
 @end
