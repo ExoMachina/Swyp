@@ -12,7 +12,43 @@
 @implementation swypConnectionSession
 @synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
 
+#pragma mark -
+#pragma mark public
+#pragma mark send data
 
+-(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)payloadStream length:(NSUInteger)streamLength{
+	if (StringHasText(tag) == NO || StringHasText(fileType) == NO || payloadStream == nil){
+		return;
+	}
+	
+	NSMutableDictionary *	streamHeaderDictionary	=	[NSMutableDictionary dictionary];
+	[streamHeaderDictionary setValue:fileType forKey:@"type"];
+	[streamHeaderDictionary setValue:tag forKey:@"tag"];
+	[streamHeaderDictionary setValue:[NSNumber numberWithUnsignedInt:streamLength] forKey:@"length"];
+	
+	NSString *	jsonHeaderString	=	[streamHeaderDictionary jsonStringValue];
+	NSData	*	jsonHeaderData		=	[jsonHeaderString dataUsingEncoding:NSUTF8StringEncoding];
+	NSInputStream * headerStream	=	[NSInputStream inputStreamWithData:jsonHeaderData];
+	EXOLog(@"Sending header json: %@", jsonHeaderString);
+	
+	swypConcatenatedInputStream * concatenatedSendPacket	=	[[swypConcatenatedInputStream alloc] initWithInputStreamArray:[NSArray arrayWithObjects:headerStream,payloadStream]];
+	[concatenatedSendPacket setHoldCompletedStreams:TRUE];
+	[_sendDataQueueStream addInputStreamToQueue:concatenatedSendPacket];
+	SRELS(concatenatedSendPacket);
+}
+
+-(void)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData{
+	NSUInteger dataLength	=	[sendData length];
+	if (dataLength == 0)	return;
+	
+	NSInputStream * payloadStream	=	[NSInputStream inputStreamWithData:sendData];
+	
+	[self beginSendingFileStreamWithTag:tag type:type dataStreamForSend:payloadStream length:dataLength];
+}
+
+
+#pragma mark -
+#pragma mark NSObject
 
 -(id)initWithSwypCandidate:(swypCandidate *)candidate inputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream{
 	if (self = [super init]){
@@ -48,6 +84,23 @@
 }
 
 
+#pragma mark -
+#pragma mark private
+
+-(void) _setupStreamPathways{
+	//data send queue holds all outgoing streams, transform pathway does encryption (after crypto negotiation) on everything, and connector slaps it to the output
+	
+	_sendDataQueueStream = [[swypConcatenatedInputStream alloc] init];
+	[_sendDataQueueStream setDelegate:self];
+	[_sendDataQueueStream setCloseStreamAtQueueEnd:FALSE];
+	
+	_socketOutputTransformInputStream	= [[swypTransformPathwayInputStream alloc] initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil];
+	
+	_outputStreamConnector				= [[swypInputToOutputStreamConnector alloc] initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream];
+	
+	//Alex: yeah, we're at the HNL
+}
+
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status{
 	if (_connectionStatus != status){
 		_connectionStatus = status;
@@ -77,4 +130,59 @@
 	}
 }
 
+#pragma mark swypConcatenatedInputStreamDelegate
+-(void) didFinishAllQueuedStreamsWithConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
+	
+}
+-(void) didCompleteInputStream:(NSInputStream*)stream withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
+	NSInputStream * notifyStream = nil;
+	if ([stream isKindOfClass:[swypConcatenatedInputStream class]]){
+		NSArray * completedStreams = [(swypConcatenatedInputStream *)stream completedStreams];
+		if ([completedStreams count] == 2){
+			//certainly a user packet
+			notifyStream	=	[completedStreams objectAtIndex:1];
+		}
+	}
+	
+	if (notifyStream == nil)
+		notifyStream = stream;
+	
+	for (id<swypConnectionSessionDataDelegate> delegate in _dataDelegates){
+		if ([delegate respondsToSelector:@selector(completedSendingStream:connectionSession:)])
+			[delegate completedSendingStream:notifyStream connectionSession:self];
+	}
+	
+}
+-(void) didBeginInputStream:(NSInputStream*)stream withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
+	
+}
+-(bool) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
+	/*
+		Returning NO will close the stream and invalidate the session
+	 
+		if both are still queued in passed input stream, then try to recover, otherwise, die.
+	*/
+	
+	
+	NSInputStream * notifyStream = nil;
+	if ([stream isKindOfClass:[swypConcatenatedInputStream class]]){
+		NSArray * completedStreams = [(swypConcatenatedInputStream *)stream completedStreams];
+		if ([completedStreams count] == 2){
+			//certainly a user packet
+			notifyStream	=	[completedStreams objectAtIndex:1];
+		}
+	}
+	
+	if (notifyStream == nil)
+		notifyStream = stream;
+	
+	for (id<swypConnectionSessionDataDelegate> delegate in _dataDelegates){
+		if ([delegate respondsToSelector:@selector(failedSendingStream:error:connectionSession:)])
+			[delegate failedSendingStream:notifyStream error:nil connectionSession:self];
+	}
+	
+	
+	[self invalidate];
+	return NO;
+}
 @end

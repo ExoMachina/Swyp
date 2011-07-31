@@ -30,7 +30,7 @@
 }
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didNotSearch:(NSDictionary *)errorDict{
 	_serviceIsListening	= NO;
-	[_delegate bonjourServiceListenerFailedToBeginListen:self error:[NSError errorWithDomain:[errorDict valueForKey:NSNetServicesErrorDomain] code:[errorDict valueForKey:NSNetServicesErrorCode] userInfo:nil]];
+	[_delegate bonjourServiceListenerFailedToBeginListen:self error:[NSError errorWithDomain:[errorDict valueForKey:NSNetServicesErrorDomain] code:[[errorDict valueForKey:NSNetServicesErrorCode] intValue] userInfo:nil]];
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didFindService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{

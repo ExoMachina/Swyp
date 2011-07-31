@@ -24,7 +24,7 @@
 -(void)	setDataInputStream:			(NSInputStream*)dataInStream;
 
 //
-//privates
+//private
 -(void) _setupLastStepStreamForRead:	(NSInputStream*)readStream;
 -(void) _tearDownLastStepInputStream:	(NSInputStream*)stream;
 -(void)	_connectTransformPathway;

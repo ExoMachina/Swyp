@@ -55,7 +55,7 @@ typedef enum {
 -(void)	beginHandshakeProcessWithClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
 
 //
-//privates
+//private
 -(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate;
 -(void)	_startConnectionToServerCandidate:			(swypServerCandidate*)serverCandidate;
 

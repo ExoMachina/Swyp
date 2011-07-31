@@ -39,16 +39,20 @@ typedef enum {
 @end
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
+@optional
 /*
 	Though there are several data delegates, only one delegate should return a stream, all else returning nil
 	All delegates will receive the output stream in the finnishedReceiving call
 */
 -(NSOutputStream*) streamToWriteReceivedDataWithTag:(NSString*)tag type:(swypFileTypeString*)type length:(NSUInteger)streamLength connectionSession:(swypConnectionSession*)session;
 -(void) finishedReceivingDataWithOutputStream:(NSOutputStream*)stream error:(NSError*)error tag:(NSString*)tag type:(swypFileTypeString*)type connectionSession:(swypConnectionSession*)session;
+
+-(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
+-(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
 @end
 
 
-@interface swypConnectionSession : NSObject <NSStreamDelegate> {
+@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
 	
@@ -83,8 +87,9 @@ typedef enum {
 //sending data
 /*
 	length: the length of the 'stream' property
-		if length is specified as 0, the entire stream will be read to memory before any of it can be written (to allow packet size conveyance)
-		if length is specified as NSUIntegerMax (UIn!), the stream will be written without a length specifier, to allow devs to do fun stuff
+		if length is specified as 0, the stream will be written without a length specifier, to allow devs to do fun stuff
+		be aware, some malicious endpoints will try to overload the length of a stream to cause buffer overruns 
+			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!
 	if there is already a stream sending, this stream will be queued
 */
 -(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
