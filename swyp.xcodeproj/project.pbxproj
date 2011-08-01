@@ -32,6 +32,7 @@
 		680FC70A13E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */; };
 		680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */; };
 		680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */; };
+		680FCB0513E757B500509CF2 /* libSwyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FCB0413E757B500509CF2 /* libSwyp.h */; };
 		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
 		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
 		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
@@ -100,6 +101,7 @@
 		680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManagerSocketResolveImplementations.m; sourceTree = "<group>"; };
 		680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoBlockOperationAlertView.h; sourceTree = "<group>"; };
 		680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoBlockOperationAlertView.m; sourceTree = "<group>"; };
+		680FCB0413E757B500509CF2 /* libSwyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libSwyp.h; sourceTree = "<group>"; };
 		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
 		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
 		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 		0867D691FE84028FC02AAC07 /* swyp */ = {
 			isa = PBXGroup;
 			children = (
+				680FCB0413E757B500509CF2 /* libSwyp.h */,
 				680FC1F513E2405C00509CF2 /* Other Logic */,
 				68B18DF613E0B20000D094A9 /* Content */,
 				68B18DED13E0B14500D094A9 /* Communications */,
@@ -225,9 +228,9 @@
 		680FC1F513E2405C00509CF2 /* Other Logic */ = {
 			isa = PBXGroup;
 			children = (
+				680FC1F613E2407E00509CF2 /* swyp.h */,
 				680FC8EE13E4D5FB00509CF2 /* UIKit Subclasses */,
 				680FC64D13E3460E00509CF2 /* Additions */,
-				680FC1F613E2407E00509CF2 /* swyp.h */,
 			);
 			name = "Other Logic";
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 				680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */,
 				680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */,
 				680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */,
+				680FCB0513E757B500509CF2 /* libSwyp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
