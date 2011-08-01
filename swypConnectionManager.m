@@ -128,7 +128,7 @@
 
 #pragma mark -
 #pragma mark bonjourAdvertiser 
--(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream{
+-(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
 	[_handshakeManager beginHandshakeProcessWithClientCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
 }
 

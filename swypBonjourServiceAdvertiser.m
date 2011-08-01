@@ -10,32 +10,50 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#import <arpa/inet.h>
+#import  <arpa/inet.h>
 #include <CFNetwork/CFSocketStream.h>
 
 
 static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourServiceAdvertiserErrorDomain";
 
 @implementation swypBonjourServiceAdvertiser
-@synthesize delegate = _delegate;
+@synthesize delegate = _delegate, ipv4socket = _ipv4socket, ipv6socket = _ipv6socket;
 
 #pragma mark -
 #pragma mark public
 -(BOOL)	isAdvertising{
 	
-	return FALSE;
+	return _isPublished;
 }
 -(void)	setAdvertising:(BOOL)advertisingEnabled{
+	if( advertisingEnabled == _isPublished)
+		return;
 	
+	if (advertisingEnabled == YES){
+		EXOLog(@"Began advertisment publish at time %@",[[NSDate date] description]);
+		[self _setupBonjourAdvertising];
+	}else {
+		[self _teardownBonjourAdvertising:nil];
+	}
+
 }
 
 
 #pragma mark NSObject
+-(void)	dealloc{
+	[self _teardownBonjourAdvertising:nil]; //this should handle both bonjour and sockets
+	
+	[super dealloc];
+}
 
 
 #pragma mark -
 #pragma mark private
 -(void)	_setupBonjourAdvertising{
+	
+	if (_ipv4socket == NULL && _ipv6socket == NULL){
+		[self _setupServerSockets];
+	}
 	
 	if (_ipv4socket != NULL){
 		uint16_t chosenV4Port = 0;
@@ -44,7 +62,15 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		memcpy(&v4ServerAddress, [v4Addr bytes], [v4Addr length]);
 		chosenV4Port = ntohs(v4ServerAddress.sin_port); 
 		EXOLog(@"Setting up advertising on v4 with port: %i",chosenV4Port);
+
+		if (_v4AdvertiserService != nil){
+			[self _teardownBonjourAdvertising:_v4AdvertiserService];
+		}
 		
+		_v4AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:[[UIDevice currentDevice] name] port:chosenV4Port];
+		[_v4AdvertiserService setDelegate:self];
+		[_v4AdvertiserService scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		[_v4AdvertiserService publishWithOptions:0];
 		
 	}
 	
@@ -56,12 +82,42 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		chosenV6Port = ntohs(v6ServerAddress.sin6_port);
 		EXOLog(@"Setting up advertising on v6 with port: %i",chosenV6Port);
 		
-		NSNetService * v6AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:[[UIDevice currentDevice] name] port:chosenV6Port];
+		if (_v6AdvertiserService != nil){
+			[self _teardownBonjourAdvertising:_v6AdvertiserService];
+		}
+
+		_v6AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:[[UIDevice currentDevice] name] port:chosenV6Port];
+		[_v6AdvertiserService setDelegate:self];
+		[_v6AdvertiserService scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		[_v6AdvertiserService publishWithOptions:0];
+
+	}
+	
+	if (_v6AdvertiserService == nil && _v4AdvertiserService == nil){
+		[_delegate bonjourServiceAdvertiserFailedAdvertisingWithError:[NSError errorWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserFailedNetServicePublicationError userInfo:nil] serviceAdvertiser:self];
+		_isPublished = FALSE;
 	}
 	
 }
--(void) _teardownBonjourAdvertising{
+-(void) _teardownBonjourAdvertising:(NSNetService*)specificOrNil{
+	if (_v6AdvertiserService != nil && (_v6AdvertiserService == specificOrNil || specificOrNil == nil)){
+		[_v6AdvertiserService setDelegate:nil];
+		[_v6AdvertiserService stop];
+		[_v6AdvertiserService removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		SRELS(_v6AdvertiserService);
+	}	
 	
+	if (_v4AdvertiserService != nil && (_v4AdvertiserService == specificOrNil || specificOrNil == nil)){
+		[_v4AdvertiserService setDelegate:nil];
+		[_v4AdvertiserService stop];
+		[_v4AdvertiserService removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		SRELS(_v4AdvertiserService);	
+	}
+	
+	if (_v6AdvertiserService == nil && _v4AdvertiserService == nil){
+		_isPublished = FALSE;
+		[self _teardownServerSockets];
+	}
 }
 -(void) _setupServerSockets{	
 	if (_ipv4socket != NULL){
@@ -154,21 +210,99 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 	
 }
 -(void) _teardownServerSockets{
-	
+	if (_ipv4socket) {
+		CFSocketInvalidate(_ipv4socket);
+		CFRelease(_ipv4socket);
+		_ipv4socket =	NULL;
+	}
+
+	if (_ipv6socket){
+		CFSocketInvalidate(_ipv6socket);
+		CFRelease(_ipv6socket);
+		_ipv6socket	=	NULL;
+	}
 }
 
 #pragma mark CFSocketCallBack
 static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info) {
+	EXOLog(@"Accepted connection callback at time %@",[[NSDate date] description]);
+	swypBonjourServiceAdvertiser * advertisingSelf	=	(swypBonjourServiceAdvertiser*)info;
 	
+	if (type == kCFSocketAcceptCallBack) { 
+		
+        CFSocketNativeHandle nativeSocketHandle = *(CFSocketNativeHandle *)data;
+
+		CFReadStreamRef		readStream		= NULL;
+		CFWriteStreamRef	writeStream		= NULL;
+		
+		NSString *			clientIPAddress	= nil;
+		NSUInteger			adrBufferLength	= 50;
+		
+		if (socket == advertisingSelf.ipv4socket){
+			struct sockaddr_in peerAddress;
+			socklen_t peerLen = sizeof(peerAddress);
+			char		addressBuffer[adrBufferLength];
+			
+			if (getpeername(nativeSocketHandle, (struct sockaddr *)&peerAddress, (socklen_t *)&peerLen) == 0) {
+				if (inet_ntop(AF_INET,&peerAddress,addressBuffer,adrBufferLength) != NULL)
+					clientIPAddress	=	[NSString stringWithUTF8String:addressBuffer];
+			}
+		}else if (socket == advertisingSelf.ipv6socket){
+			struct		sockaddr_in6 peerAddress;
+			socklen_t	peerLen = sizeof(peerAddress);
+			char		addressBuffer[adrBufferLength];
+			
+			if (getpeername(nativeSocketHandle, (struct sockaddr *)&peerAddress, (socklen_t *)&peerLen) == 0) {
+				if (inet_ntop(AF_INET6,&peerAddress,addressBuffer,adrBufferLength) != NULL)
+					clientIPAddress	=	[NSString stringWithUTF8String:addressBuffer];
+			}			
+		}
+		
+		CFStreamCreatePairWithSocket(kCFAllocatorDefault, nativeSocketHandle, &readStream, &writeStream);
+				
+        if (readStream && writeStream) {
+            CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
+            CFWriteStreamSetProperty(writeStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
+			EXOLog(@"Created a successful socket connection at date: %@; with peer at address: %@",[[NSDate date]description],clientIPAddress);
+			[[advertisingSelf delegate] bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:[[[swypClientCandidate alloc] init] autorelease] withStreamIn:(NSInputStream *)readStream streamOut:(NSOutputStream *)writeStream serviceAdvertiser:advertisingSelf];
+        } else {
+			EXOLog(@"Failed creating socket connection at time: %@", [[NSDate date] description]);
+            // on any failure, need to destroy the CFSocketNativeHandle 
+            // since we are not going to use it any more
+            close(nativeSocketHandle);
+        }
+		
+        if (readStream) 
+			CFRelease(readStream);
+        if (writeStream) 
+			CFRelease(writeStream);
+
+		
+        // for an AcceptCallBack, the data parameter is a pointer to a CFSocketNativeHandle
+    }
 	
 }
 
 #pragma mark NSNetServiceDelegate
 - (void)netServiceDidPublish:(NSNetService *)sender{
-	
+	_isPublished = TRUE;
+	EXOLog(@"Published bonjour on ip at time %@",[[NSDate date] description]);
 }
 - (void)netService:(NSNetService *)sender didNotPublish:(NSDictionary *)errorDict{
-	
+	if (sender == _v6AdvertiserService){
+		EXOLog(@"Failed publishing v6 at time %@",[[NSDate date] description]);
+		[self _teardownBonjourAdvertising:_v6AdvertiserService];
+		if (_v4AdvertiserService == nil){
+			[_delegate bonjourServiceAdvertiserFailedAdvertisingWithError:[NSError errorWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserFailedNetServicePublicationError userInfo:errorDict] serviceAdvertiser:self];
+		}
+
+	}else if (sender == _v4AdvertiserService){
+		EXOLog(@"Failed publishing v4 at time %@",[[NSDate date] description]);
+		[self _teardownBonjourAdvertising:_v4AdvertiserService];
+		if (_v6AdvertiserService == nil){
+			[_delegate bonjourServiceAdvertiserFailedAdvertisingWithError:[NSError errorWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserFailedNetServicePublicationError userInfo:errorDict] serviceAdvertiser:self];
+		}
+	}
 }
 
 @end
