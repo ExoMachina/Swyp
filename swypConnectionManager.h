@@ -20,7 +20,7 @@
 @end
 
 
-@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate> {
+@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
 	swypBonjourServiceListener *	_bonjourListener;

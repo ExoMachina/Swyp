@@ -18,14 +18,17 @@
 
 static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
 typedef enum {
-	swypConnectionSessionSocketError
+	swypConnectionSessionSocketError,
+	swypConnectionSessionStreamError
 }	swypConnectionSessionErrorCode;
 
 
 @class swypConnectionSession;
 
 typedef enum {
+	swypConnectionSessionStatusClosed = -1,
 	swypConnectionSessionStatusNotReady = 0,
+	swypConnectionSessionStatusWillDie,
 	swypConnectionSessionStatusPreparing,
 	swypConnectionSessionStatusReady
 } swypConnectionSessionStatus;
@@ -92,13 +95,14 @@ typedef enum {
 			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!
 	if there is already a stream sending, this stream will be queued
 */
--(void)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
+-(swypConcatenatedInputStream*)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
 /* same as above, a convinience method for those who wish to use data already in-memory */
--(void)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData; 
+-(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData; 
 
 
 //
 //private
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status;
+-(void) _teardownConnection;
 
 @end

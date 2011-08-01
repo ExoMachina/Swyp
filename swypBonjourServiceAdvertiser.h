@@ -27,5 +27,11 @@
 -(void)	setAdvertising:(BOOL)advertisingEnabled;
 
 
+//
+//private
+-(void)	_setupBonjourAdvertising;
+-(void) _teardownBonjourAdvertising;
+-(void) _setupServerSockets;
+-(void) _teardownServerSockets;
 
 @end

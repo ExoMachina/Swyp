@@ -53,6 +53,13 @@
 -(void)	addInputStreamsToQueue:		(NSArray*)inputStreams;
 
 /*
+	Clears queue of any stream not running now.
+	Streams don't give notifications
+	Eg. This should used when invalidating a stream --> afterwards pass the goodbye packet to the session
+*/
+-(void)	removelAllQueuedStreamsAfterCurrent;
+
+/*
 	if delegate is set, the following function will give an update each time bytes are read from the stream
 	'queuedStream' is a stream already queued
 	'lengthToTrack' is the length that a given stream has

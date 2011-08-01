@@ -50,6 +50,13 @@
 	}
 	SRELS(_swypInTimeouts);
 	
+	for (swypConnectionSession * session in _activeConnectionSessions){
+		[session removeConnectionSessionInfoDelegate:self];
+		[session removeDataDelegate:self];
+		[session invalidate];
+	}
+	SRELS(_activeConnectionSessions);
+	
 	
 	SRELS(_swypIns);
 	SRELS(_swypOuts);
@@ -141,6 +148,8 @@
 		
 		return [_swypOuts allObjects];
 	}
+	
+	return nil;
 }
 
 -(void)	connectionSessionCreationFailedForCandidate:(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error{
