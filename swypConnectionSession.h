@@ -16,7 +16,7 @@
 #import "swypInputToOutputStreamConnector.h"
 #import "swypFileTypeString.h"
 
-static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
+static NSString * const swypConnectionSessionErrorDomain;
 typedef enum {
 	swypConnectionSessionSocketError,
 	swypConnectionSessionStreamError

@@ -9,6 +9,8 @@
 #import "swypConnectionSession.h"
 
 
+static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
+
 @implementation swypConnectionSession
 @synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
 

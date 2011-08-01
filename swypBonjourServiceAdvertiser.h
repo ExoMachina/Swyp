@@ -9,6 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "swypClientCandidate.h"
 
+
+static NSString * const swypBonjourServiceAdvertiserErrorDomain;
+
+typedef enum {
+	swypBonjourServiceAdvertiserNoSocketsAvailableError,
+	swypBonjourServiceAdvertiserCouldNotBindToIPv4AddressError,
+	swypBonjourServiceAdvertiserCouldNotBindToIPv6AddressError
+}swypBonjourServiceAdvertiserError;
+
 @class swypBonjourServiceAdvertiser;
 
 @protocol swypBonjourServiceAdvertiserDelegate <NSObject>
@@ -18,6 +27,8 @@
 
 @interface swypBonjourServiceAdvertiser : NSObject <NSNetServiceDelegate>  {
 
+	CFSocketRef _ipv4socket;
+	CFSocketRef _ipv6socket;
 	
 	id<swypBonjourServiceAdvertiserDelegate>	_delegate;
 }
@@ -33,5 +44,9 @@
 -(void) _teardownBonjourAdvertising;
 -(void) _setupServerSockets;
 -(void) _teardownServerSockets;
+
+
+//CFSocketCallBack
+static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info);
 
 @end
