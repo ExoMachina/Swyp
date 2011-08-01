@@ -11,3 +11,4 @@
 #import "swypFileTypeString.h"
 #import "swypConnectionSession.h"
 #import "swypWorkspaceViewController.h"
+#import "swyp.h"

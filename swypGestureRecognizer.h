@@ -14,4 +14,6 @@
 }
 -(swypInfoRef*)	swypGestureInfo; //reset with gesture recognizer
 
++(double)	currentDevicePixelsPerLinearMillimeter;
+
 @end

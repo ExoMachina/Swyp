@@ -16,7 +16,7 @@
 #import "swypConnectionSession.h"
 
 
-static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManagerErrorDomain";
+static NSString * const swypHandshakeManagerErrorDomain;
 typedef enum {
 	swypHandshakeManagerSocketSetupError,
 	swypHandshakeManagerSocketHelloMismatchError,//not exactly an important error

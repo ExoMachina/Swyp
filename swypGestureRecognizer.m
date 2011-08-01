@@ -11,6 +11,20 @@
 
 @implementation swypGestureRecognizer
 
++(double)currentDevicePixelsPerLinearMillimeter{
+	if (deviceIsPad){
+		return 5.1975;
+	}else if (deviceIsPhone_ish) {
+		return 6.299; //iPhone 4 pretends to have same resolution as others
+	}
+
+	return 0;
+}
+
+-(swypInfoRef*)	swypGestureInfo{
+	return _recognizedGestureInfoRef;
+}
+
 - (void)reset{
 	[super reset];
 	

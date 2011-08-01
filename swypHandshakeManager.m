@@ -9,6 +9,8 @@
 #import "swypHandshakeManager.h"
 #import "exoBlockOperationAlertView.h"
 
+static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManagerErrorDomain";
+
 @implementation swypHandshakeManager
 @synthesize delegate = _delegate;
 #pragma mark -

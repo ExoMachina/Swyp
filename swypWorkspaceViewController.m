@@ -66,14 +66,13 @@
 	if (self = [super initWithNibName:nil bundle:nil]){
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCrossDissolve];
-		
 	}
 	return self;
 }
 -(void)	viewDidLoad{
 	[super viewDidLoad];
 	
-	[self.view setBackgroundColor:[UIColor blackColor]];
+	[self.view setBackgroundColor:[UIColor grayColor]];
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];	
 	[[self connectionManager] beginServices];
 	

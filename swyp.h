@@ -15,6 +15,7 @@
 #define RELEASE_SAFELY(__POINTER) { [__POINTER release]; __POINTER = nil; }
 
 #define deviceIsPad ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+#define deviceIsPhone_ish ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
 #define ArrayHasItems(array) (array != nil && [array count] > 0)
 #define StringHasText(string) (string != nil && [string length] > 0)
 #define SetHasItems(set) (set != nil && [set count] > 0)
