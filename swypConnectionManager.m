@@ -11,6 +11,23 @@
 @implementation swypConnectionManager
 @synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions;
 
+#pragma mark -
+#pragma mark public 
+
+-(void)	beginServices{
+	[_bonjourListener	setServiceIsListening:TRUE];
+}
+
+-(void)	stopServices{
+	[_bonjourListener	setServiceIsListening:FALSE];
+	[_bonjourAdvertiser setAdvertising:FALSE];
+
+	for (swypConnectionSession * session in _activeConnectionSessions){
+		[session removeConnectionSessionInfoDelegate:self];
+		[session removeDataDelegate:self];
+		[session invalidate];
+	}	
+}
 
 -(id) init{
 	if (self = [super init]){
@@ -50,11 +67,6 @@
 	}
 	SRELS(_swypInTimeouts);
 	
-	for (swypConnectionSession * session in _activeConnectionSessions){
-		[session removeConnectionSessionInfoDelegate:self];
-		[session removeDataDelegate:self];
-		[session invalidate];
-	}
 	SRELS(_activeConnectionSessions);
 	
 	
@@ -126,6 +138,8 @@
 	}
 }
 
+#pragma mark -
+#pragma mark private
 #pragma mark -
 #pragma mark bonjourAdvertiser 
 -(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
