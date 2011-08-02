@@ -10,6 +10,8 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
+#import "swypWorkspaceBackgroundView.h"
+
 @implementation swypWorkspaceViewController
 @synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager;
 
@@ -80,15 +82,19 @@
 }
 -(void)	viewDidLoad{
 	[super viewDidLoad];
-	
-	[self.view setBackgroundColor:[UIColor grayColor]];
+
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];	
+	
+	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
+	self.view	= backgroundView;
+	
 	[[self connectionManager] beginServices];
 	
 	swypInGestureRecognizer*	swypInRecognizer =	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
 	[swypInRecognizer setDelegate:self];
 	[swypInRecognizer setDelaysTouchesBegan:FALSE];
 	[swypInRecognizer setDelaysTouchesEnded:FALSE];
+	[swypInRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypInRecognizer];
 	SRELS(swypInRecognizer);
 
@@ -96,6 +102,7 @@
 	[swypOutRecognizer setDelegate:self];
 	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
+	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
 	
