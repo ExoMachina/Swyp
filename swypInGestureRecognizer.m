@@ -25,25 +25,31 @@
 
 }
 
+- (void)reset{
+	
+	[super reset];
+}
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
 	[super touchesMoved:touches withEvent:event];
 	
 	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
 		
 	CGPoint viewCenterPoint	= self.view.center;
-	CGPoint currentPoint	= CGPointApplyAffineTransform(firstPoint, CGAffineTransformMakeTranslation([self translationInView:self.view].x, [self translationInView:self.view].x));
+	CGPoint currentPoint	= [self locationInView:self.view];
 	
 	double firstEuclid, currentEuclid, euclidDelta;
 	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
 	currentEuclid	= euclideanDistance(viewCenterPoint, currentPoint);
 	euclidDelta		= currentEuclid - firstEuclid; //positive values move away from the center point
-		
+	
+	double velocity		= [self velocity];	
+
 	if (euclidDelta > 10){
 		self.state = UIGestureRecognizerStateFailed;
 	}else if (euclidDelta < -40){
 		[[self swypGestureInfo] setEndDate:[NSDate date]];
 		[[self swypGestureInfo] setEndPoint:currentPoint];
-		double velocity	=	euclideanDistance([self velocityInView:self.view], CGPointZero)/[swypGestureRecognizer currentDevicePixelsPerLinearMillimeter];
 		[[self swypGestureInfo] setVelocity:velocity]; //pythag
 		self.state = UIGestureRecognizerStateRecognized;
 		

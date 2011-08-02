@@ -15,7 +15,16 @@
 	[super touchesEnded:touches withEvent:event];
 	
 	
-	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
+	CGPoint firstPoint						= [[self swypGestureInfo] startPoint];
+	
+	CGRect	viewRect						= self.view.frame;
+	CGRect	edgeBeginSwypOutExclusionRect	= CGRectInset(viewRect, 30, 30);
+	if (CGRectContainsPoint(edgeBeginSwypOutExclusionRect, firstPoint) == NO){
+		//if you started in the margin, you're given an unfair disadvantage on euclidian deltas
+		//		-so we'll just pretend we started in the center
+		firstPoint					= self.view.center;
+	}
+	
 	CGPoint lastPoint			= [[self swypGestureInfo] endPoint];
 	CGPoint viewCenterPoint	= self.view.center;
 	
@@ -23,14 +32,12 @@
 	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
 	lastEuclid		= euclideanDistance(viewCenterPoint, lastPoint);
 	euclidDelta		= lastEuclid - firstEuclid; //positive values move away from the center point
-	
-	
-	CGRect	viewRect			= self.view.frame;
+		
 	CGRect	invalidSwypOutRect	= CGRectInset(viewRect, 30, 30);
 	if (CGRectContainsPoint(invalidSwypOutRect, lastPoint) == NO && euclidDelta > 20){
 		[[self swypGestureInfo] setEndDate:[NSDate date]];
 		[[self swypGestureInfo] setEndPoint:lastPoint];
-		double velocity	=	 euclideanDistance([self velocityInView:self.view], CGPointZero)/[swypGestureRecognizer currentDevicePixelsPerLinearMillimeter];
+		double velocity	=		[self velocity];
 		[[self swypGestureInfo] setVelocity:velocity]; 	
 		self.state = UIGestureRecognizerStateRecognized;
 		
@@ -40,24 +47,29 @@
 	}
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-	[super touchesMoved:touches withEvent:event];
-	
-	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
-	
-	CGPoint viewCenterPoint	= self.view.center;
-	CGPoint currentPoint	= CGPointApplyAffineTransform(firstPoint, CGAffineTransformMakeTranslation([self translationInView:self.view].x, [self translationInView:self.view].x));
-	
-	double firstEuclid, currentEuclid, euclidDelta;
-	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
-	currentEuclid	= euclideanDistance(viewCenterPoint, currentPoint);
-	euclidDelta		= currentEuclid - firstEuclid; //positive values move away from the center point
-	
-	if (euclidDelta < -10){
-		self.state = UIGestureRecognizerStateFailed;
-	}else{
-		self.state = UIGestureRecognizerStatePossible;
-	}
-	
-}
+//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+//	[super touchesMoved:touches withEvent:event];
+//	
+//	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
+//	
+//	CGPoint viewCenterPoint	= self.view.center;
+//	CGPoint currentPoint	= [self locationInView:self.view];
+//	
+//	double firstEuclid, currentEuclid, euclidDelta;
+//	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
+//	currentEuclid	= euclideanDistance(viewCenterPoint, currentPoint);
+//	euclidDelta		= currentEuclid - firstEuclid; //positive values move away from the center point
+//	
+//	EXOLog(@"Current delta %f, travel %f, velocity (mm/s): %f", euclidDelta, [self absoluteTravel], [self velocity]);
+//	
+//	CGRect	viewRect				= self.view.frame;
+//	CGRect	edgeBeginSwypOutRect	= CGRectInset(viewRect, 30, 30);
+//	
+////	if (euclidDelta < -10){
+////		self.state = UIGestureRecognizerStateFailed;
+////	}else{
+////		self.state = UIGestureRecognizerStatePossible;
+////	}
+//	
+//}
 @end

@@ -28,12 +28,35 @@
 - (void)reset{
 	[super reset];
 	
+	SRELS(_trackedTouch);
+	
 	SRELS(_recognizedGestureInfoRef);
+}
+
+- (double)velocity{
+	double velocity		= [self absoluteTravel] / [[NSDate date] timeIntervalSinceDate:[[self swypGestureInfo] startDate]] / [swypGestureRecognizer currentDevicePixelsPerLinearMillimeter];
+	return velocity;
+}
+
+- (double)absoluteTravel{
+	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
+	CGPoint currentPoint		= [self locationInView:self.view];
+	return	euclideanDistance(currentPoint, firstPoint);
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{	
 	[super touchesBegan:touches withEvent:event];
 	
+	if (_trackedTouch == nil){
+		_trackedTouch = [[touches anyObject] retain];
+	}
+	
+	for (UITouch * touch in touches){
+		if (touch != _trackedTouch){
+			[self ignoreTouch:touch forEvent:event];
+		}
+	}
+		
 	self.state = UIGestureRecognizerStatePossible;
 	
 	if (_recognizedGestureInfoRef == nil){

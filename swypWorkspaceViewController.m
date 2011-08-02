@@ -61,6 +61,15 @@
 }
 
 
+-(BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+	
+	if ([gestureRecognizer isKindOfClass:[swypGestureRecognizer class]])
+		return TRUE;
+	
+	return FALSE;
+}
+
+
 #pragma mark UIViewController
 -(id)	initWithContentWorkspaceID:(NSString*)workspaceID{
 	if (self = [super initWithNibName:nil bundle:nil]){
@@ -78,12 +87,16 @@
 	
 	swypInGestureRecognizer*	swypInRecognizer =	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
 	[swypInRecognizer setDelegate:self];
+	[swypInRecognizer setDelaysTouchesBegan:FALSE];
+	[swypInRecognizer setDelaysTouchesEnded:FALSE];
 	[self.view addGestureRecognizer:swypInRecognizer];
 	SRELS(swypInRecognizer);
 
 	swypOutGestureRecognizer*	swypOutRecognizer =	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
-	[swypInRecognizer setDelegate:self];
-	[self.view addGestureRecognizer:swypOutRecognizer];
+	[swypOutRecognizer setDelegate:self];
+	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
+	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
+	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
 	
 }

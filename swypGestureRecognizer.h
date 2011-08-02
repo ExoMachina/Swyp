@@ -9,11 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "swypInfoRef.h"
 
-@interface swypGestureRecognizer : UIPanGestureRecognizer {
+@interface swypGestureRecognizer : UIGestureRecognizer {
 	swypInfoRef *	_recognizedGestureInfoRef;
+	
+	UITouch *		_trackedTouch;
 }
 -(swypInfoRef*)	swypGestureInfo; //reset with gesture recognizer
 
+-(double)	velocity;
+-(double)	absoluteTravel;
 +(double)	currentDevicePixelsPerLinearMillimeter;
 
 @end
