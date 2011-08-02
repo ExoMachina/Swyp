@@ -150,6 +150,9 @@
 -(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate{
 	EXOLog(@"Listener found server candidate!: %@", [[serverCandidate netService] description]);
 }
+-(void)	bonjourServiceListenerFailedToBeginListen:	(swypServerCandidate*) serverCandidate	error:(NSError*)error{
+	EXOLog(@"Listener failed to begin listen with error!:%@",[error description]);	
+}
 
 
 #pragma mark -

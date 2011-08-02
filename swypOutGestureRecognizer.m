@@ -47,29 +47,4 @@
 	}
 }
 
-//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-//	[super touchesMoved:touches withEvent:event];
-//	
-//	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
-//	
-//	CGPoint viewCenterPoint	= self.view.center;
-//	CGPoint currentPoint	= [self locationInView:self.view];
-//	
-//	double firstEuclid, currentEuclid, euclidDelta;
-//	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
-//	currentEuclid	= euclideanDistance(viewCenterPoint, currentPoint);
-//	euclidDelta		= currentEuclid - firstEuclid; //positive values move away from the center point
-//	
-//	EXOLog(@"Current delta %f, travel %f, velocity (mm/s): %f", euclidDelta, [self absoluteTravel], [self velocity]);
-//	
-//	CGRect	viewRect				= self.view.frame;
-//	CGRect	edgeBeginSwypOutRect	= CGRectInset(viewRect, 30, 30);
-//	
-////	if (euclidDelta < -10){
-////		self.state = UIGestureRecognizerStateFailed;
-////	}else{
-////		self.state = UIGestureRecognizerStatePossible;
-////	}
-//	
-//}
 @end
