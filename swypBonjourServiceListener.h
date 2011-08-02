@@ -12,8 +12,8 @@
 @class swypBonjourServiceListener;
 
 @protocol swypBonjourServiceListenerDelegate <NSObject>
--(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate;
--(void)	bonjourServiceListenerFailedToBeginListen:	(swypServerCandidate*) serverCandidate	error:(NSError*)error;
+-(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate 	withListener:(swypBonjourServiceListener*) serviceListener;
+-(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) serverListener	error:(NSError*)error;
 @end
 
 @interface swypBonjourServiceListener : NSObject <NSNetServiceBrowserDelegate> {

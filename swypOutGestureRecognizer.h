@@ -13,4 +13,6 @@
 
 }
 
+-(BOOL) startedOnEdge;
+
 @end

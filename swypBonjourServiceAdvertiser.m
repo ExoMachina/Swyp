@@ -26,13 +26,14 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 	return _isPublished;
 }
 -(void)	setAdvertising:(BOOL)advertisingEnabled{
-	if( advertisingEnabled == _isPublished)
+	if( advertisingEnabled == _isPublished && advertisingEnabled == TRUE)
 		return;
 	
 	if (advertisingEnabled == YES){
 		EXOLog(@"Began advertisment publish at time %@",[[NSDate date] description]);
 		[self _setupBonjourAdvertising];
 	}else {
+		EXOLog(@"Tore-down advertisement at time %@",[[NSDate date] description]);
 		[self _teardownBonjourAdvertising:nil];
 	}
 
@@ -67,7 +68,7 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 			[self _teardownBonjourAdvertising:_v4AdvertiserService];
 		}
 		
-		_v4AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:[[UIDevice currentDevice] name] port:chosenV4Port];
+		_v4AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:def_bonjourHostName port:chosenV4Port];
 		[_v4AdvertiserService setDelegate:self];
 		[_v4AdvertiserService scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 		[_v4AdvertiserService publishWithOptions:0];
@@ -86,7 +87,7 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 			[self _teardownBonjourAdvertising:_v6AdvertiserService];
 		}
 
-		_v6AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:[[UIDevice currentDevice] name] port:chosenV6Port];
+		_v6AdvertiserService	= [[NSNetService alloc] initWithDomain:@"" type:@"_swyp._tcp." name:def_bonjourHostName port:chosenV6Port];
 		[_v6AdvertiserService setDelegate:self];
 		[_v6AdvertiserService scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 		[_v6AdvertiserService publishWithOptions:0];
@@ -156,11 +157,13 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 			_ipv4socket = NULL;
 		}
 				
-		// set up the run loop sources for the sockets
-		CFRunLoopRef cfrl = CFRunLoopGetCurrent();
-		CFRunLoopSourceRef source = CFSocketCreateRunLoopSource(kCFAllocatorDefault, _ipv4socket, 0);
-		CFRunLoopAddSource(cfrl, source, kCFRunLoopCommonModes);
-		CFRelease(source);
+		if (_ipv4socket != NULL){
+			// set up the run loop sources for the sockets
+			CFRunLoopRef cfrl = CFRunLoopGetCurrent();
+			CFRunLoopSourceRef source = CFSocketCreateRunLoopSource(kCFAllocatorDefault, _ipv4socket, 0);
+			CFRunLoopAddSource(cfrl, source, kCFRunLoopCommonModes);
+			CFRelease(source);
+		}
 		
 	}
 	
@@ -191,8 +194,8 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		NSData * address4 = [NSData dataWithBytes:&v6ServerAddress length:nameLen];
 		
 		if (kCFSocketSuccess != CFSocketSetAddress(_ipv6socket, (CFDataRef)address4)) {
-			NSError *error = [[NSError alloc] initWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserCouldNotBindToIPv6AddressError userInfo:nil];
-			EXOLog(@"Could not bind to ipv6 socket %@", [error description]); 
+//			NSError *error = [[NSError alloc] initWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserCouldNotBindToIPv6AddressError userInfo:nil];
+			EXOLog(@"Could not bind to ipv6 socket"); 
 			
 			if (_ipv6socket) 
 				CFRelease(_ipv6socket);
@@ -200,11 +203,14 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 			_ipv6socket = NULL;
 		}
 		
-		// set up the run loop sources for the sockets
-		CFRunLoopRef cfrl = CFRunLoopGetCurrent();
-		CFRunLoopSourceRef source = CFSocketCreateRunLoopSource(kCFAllocatorDefault, _ipv6socket, 0);
-		CFRunLoopAddSource(cfrl, source, kCFRunLoopCommonModes);
-		CFRelease(source);		
+		
+		if (_ipv6socket != NULL){
+			// set up the run loop sources for the sockets
+			CFRunLoopRef cfrl = CFRunLoopGetCurrent();
+			CFRunLoopSourceRef source = CFSocketCreateRunLoopSource(kCFAllocatorDefault, _ipv6socket, 0);
+			CFRunLoopAddSource(cfrl, source, kCFRunLoopCommonModes);
+			CFRelease(source);	
+		}
 	}
 
 	
@@ -284,8 +290,11 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 }
 
 #pragma mark NSNetServiceDelegate
+-(void)netServiceWillPublish:(NSNetService *)sender{
+	_isPublished = TRUE;	
+}
+
 - (void)netServiceDidPublish:(NSNetService *)sender{
-	_isPublished = TRUE;
 	EXOLog(@"Published bonjour on ip at time %@",[[NSDate date] description]);
 }
 - (void)netService:(NSNetService *)sender didNotPublish:(NSDictionary *)errorDict{

@@ -34,17 +34,24 @@
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didFindService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{
-	swypServerCandidate * nextCandidate = [_serverCandidates objectForKey:[NSValue valueWithNonretainedObject:aNetService]];
+	swypServerCandidate * nextCandidate = [_serverCandidates objectForKey:[aNetService name]];
 	if (nextCandidate == nil){
+		
+		if ([def_bonjourHostName isEqualToString:[aNetService name]]){
+			EXOLog(@"Ignoring published self '%@'", def_bonjourHostName);
+			return;
+		}
+		
 		nextCandidate =	[[swypServerCandidate alloc] init];
 		[nextCandidate	setNetService:aNetService];
 		[nextCandidate	setAppearanceDate:[NSDate date]];
 		
-		[_serverCandidates setObject:nextCandidate forKey:[NSValue valueWithNonretainedObject:aNetService]];
+		[_serverCandidates setObject:nextCandidate forKey:[aNetService name]];
+		[_delegate bonjourServiceListenerFoundServerCandidate:nextCandidate withListener:self];
 	}
 }
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{
-	[_serverCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:aNetService]];
+	[_serverCandidates removeObjectForKey:[aNetService name]];
 }
 
 #pragma mark NSObject

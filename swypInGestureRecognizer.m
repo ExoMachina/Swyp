@@ -53,7 +53,8 @@
 		[[self swypGestureInfo] setVelocity:velocity]; //pythag
 		self.state = UIGestureRecognizerStateRecognized;
 		
-		EXOLog(@"SwypIN: velocity:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], euclidDelta,[[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
+		EXOLog(@"Swyp in with velocity: %f",[self velocity]);
+//		EXOLog(@"SwypIN: velocity:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], euclidDelta,[[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
 	}else {
 		self.state = UIGestureRecognizerStatePossible;
 	}

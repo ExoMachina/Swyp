@@ -20,6 +20,8 @@
 #define StringHasText(string) (string != nil && [string length] > 0)
 #define SetHasItems(set) (set != nil && [set count] > 0)
 
+#define def_bonjourHostName [[UIDevice currentDevice] name]
+
 #define euclideanDistance(pointOne, pointTwo) sqrt(pow((pointOne.x - pointTwo.x),2) + pow((pointOne.y - pointTwo.y),2))
 
 #if DEBUG_MODE_ENABLED == 1

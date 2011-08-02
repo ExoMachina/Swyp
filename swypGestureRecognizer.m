@@ -9,6 +9,8 @@
 #import "swypGestureRecognizer.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
+
+
 @implementation swypGestureRecognizer
 
 +(double)currentDevicePixelsPerLinearMillimeter{

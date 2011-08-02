@@ -51,9 +51,9 @@
 }
 
 -(void)	swypOutGestureChanged:(swypOutGestureRecognizer*)recognizer{
-	if (recognizer.state == UIGestureRecognizerStatePossible){
+	if (recognizer.state == UIGestureRecognizerStateBegan){
 		[_connectionManager swypOutStartedWithSwypInfoRef:[recognizer swypGestureInfo]];
-	}else if (recognizer.state == UIGestureRecognizerStateFailed){
+	}else if (recognizer.state == UIGestureRecognizerStateCancelled){
 		[_connectionManager swypOutFailedWithSwypInfoRef:[recognizer swypGestureInfo]];
 	}else if (recognizer.state == UIGestureRecognizerStateRecognized){
 		[_connectionManager swypOutCompletedWithSwypInfoRef:[recognizer swypGestureInfo]];

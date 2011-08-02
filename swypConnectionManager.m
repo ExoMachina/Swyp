@@ -147,10 +147,10 @@
 }
 
 #pragma mark bonjourListener
--(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate{
+-(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate withListener:(swypBonjourServiceListener*) serviceListener{
 	EXOLog(@"Listener found server candidate!: %@", [[serverCandidate netService] description]);
 }
--(void)	bonjourServiceListenerFailedToBeginListen:	(swypServerCandidate*) serverCandidate	error:(NSError*)error{
+-(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) listener	error:(NSError*)error{
 	EXOLog(@"Listener failed to begin listen with error!:%@",[error description]);	
 }
 
