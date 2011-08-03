@@ -16,7 +16,7 @@
 	
 	if (self.state == UIGestureRecognizerStatePossible){
 		if ([self startedOnEdge]){
-			if ([self absoluteTravel] > 250){
+			if ([self absoluteTravel] > 400){
 				self.state = UIGestureRecognizerStateBegan;
 			}else {
 				self.state = UIGestureRecognizerStatePossible;
@@ -39,7 +39,7 @@
 	CGPoint firstPoint						= [[self swypGestureInfo] startPoint];
 	
 	CGRect	viewRect						= self.view.frame;
-	CGRect	edgeBeginSwypOutExclusionRect	= CGRectInset(viewRect, 30, 30);
+	CGRect	edgeBeginSwypOutExclusionRect	= CGRectInset(viewRect, 40, 40);
 	if (CGRectContainsPoint(edgeBeginSwypOutExclusionRect, firstPoint) == NO){
 		
 		return YES;
@@ -68,6 +68,10 @@
 	firstEuclid		= euclideanDistance(viewCenterPoint, firstPoint);
 	lastEuclid		= euclideanDistance(viewCenterPoint, lastPoint);
 	euclidDelta		= lastEuclid - firstEuclid; //positive values move away from the center point
+	
+	
+	EXOLog(@"SwypOut: velocity:%f travel:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [self absoluteTravel],euclidDelta, [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
+
 		
 	CGRect	invalidSwypOutRect	= CGRectInset(viewRect, 30, 30);
 	if (CGRectContainsPoint(invalidSwypOutRect, lastPoint) == NO && euclidDelta > 20){
@@ -77,9 +81,9 @@
 		[[self swypGestureInfo] setVelocity:velocity]; 	
 		self.state = UIGestureRecognizerStateRecognized;
 		
-		EXOLog(@"SwypOut with velocity:%f",[self velocity]);
+//		EXOLog(@"SwypOut with velocity:%f",[self velocity]);
 
-		//EXOLog(@"SwypOut: velocity:%f travel:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [self absoluteTravel],euclidDelta, [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
+//		EXOLog(@"SwypOut: velocity:%f travel:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [self absoluteTravel],euclidDelta, [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
 	}else {
 		//EXOLog(@"Failed SwypOut: velocity:%f travel:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [self absoluteTravel],euclidDelta, [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
 

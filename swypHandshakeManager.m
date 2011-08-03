@@ -56,8 +56,13 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark -
 #pragma mark resolution and connection
 -(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate{
-	EXOLog(@"Began resolving server candidate found at time %@", [[serverCandidate appearanceDate] description]);
 	NSNetService * resolveService	=	[serverCandidate netService];
+	
+	if ([_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:resolveService]] != nil){
+		return;
+	}
+	
+	EXOLog(@"Began resolving server candidate found at time %@", [[serverCandidate appearanceDate] description]);
 	[resolveService				setDelegate:self];
 	[resolveService				resolveWithTimeout:1];
 	[_resolvingServerCandidates setObject:serverCandidate forKey:[NSValue valueWithNonretainedObject:resolveService]];

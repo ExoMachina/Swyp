@@ -10,5 +10,6 @@
 
 
 @implementation swypConcatenatedInputStream
+@synthesize delegate = _delegate;
 
 @end

@@ -104,5 +104,6 @@ typedef enum {
 //private
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status;
 -(void) _teardownConnection;
+-(void) _setupStreamPathways;
 
 @end

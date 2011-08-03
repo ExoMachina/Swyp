@@ -112,7 +112,7 @@
 	[_swypOuts addObject:outInfo];
 }
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo{
-	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:3 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
+	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:6 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
 	[[NSRunLoop mainRunLoop] addTimer:swypOutTimeout forMode:NSRunLoopCommonModes];
 	[_swypOutTimeouts addObject:swypOutTimeout];
 	SRELS(swypOutTimeout);
@@ -148,6 +148,9 @@
 
 #pragma mark bonjourListener
 -(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate withListener:(swypBonjourServiceListener*) serviceListener{
+	if ([_swypInTimeouts count] > 0){
+		[_handshakeManager beginHandshakeProcessWithServerCandidates:[NSSet setWithObject:serverCandidate]];
+	}
 	EXOLog(@"Listener found server candidate!: %@", [[serverCandidate netService] description]);
 }
 -(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) listener	error:(NSError*)error{

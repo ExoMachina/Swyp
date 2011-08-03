@@ -162,10 +162,14 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 		if ([_socketInputStream streamStatus] >= NSStreamStatusOpen && [_socketOutputStream streamStatus] >= NSStreamStatusOpen){
+			EXOLog(@"Stream open occured in connection session w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
+			[self _setupStreamPathways];
 			[self _changeStatus:swypConnectionSessionStatusReady];
 		}
 	}else if (eventCode == NSStreamEventErrorOccurred){
-		[self _changeStatus:swypConnectionSessionStatusNotReady];
+		EXOLog(@"Stream error occured in connection session w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
+		[self _teardownConnection];
+		[self _changeStatus:swypConnectionSessionStatusClosed];
 
 		NSError *error = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionSocketError userInfo:nil];
 		for (NSValue * delegateValue in _connectionSessionInfoDelegates){
@@ -174,6 +178,10 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 				[delegate sessionDied:self withError:error];
 		}
 		
+	}else if (eventCode == NSStreamEventEndEncountered){
+		EXOLog(@"Stream end encountered in connection session with represented candidate w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
+		[self _teardownConnection];
+		[self _changeStatus:swypConnectionSessionStatusClosed];
 	}
 }
 

@@ -8,7 +8,7 @@
  */
 
 
-#define DEBUG_MODE_ENABLED 1
+#define DEBUG_MODE_ENABLED 2
 
 //	Developer conviniences
 #define SRELS RELEASE_SAFELY
@@ -30,6 +30,9 @@
 	#else
 		#error verbose outputs of EXOLog -- DEBUG_MODE_ENABLED = 1 for non-debug build
 	#endif
+#elif DEBUG_MODE_ENABLED == 2
+#import "exoLogOverlay.h"
+#define EXOLog(format, ...) [[exoLogOverlay sharedLogOverlay] log:[NSString stringWithFormat:format]];
 #else
 	#define EXOLog(format, ...)
 #endif

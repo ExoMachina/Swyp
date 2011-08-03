@@ -50,7 +50,8 @@
 		[_delegate bonjourServiceListenerFoundServerCandidate:nextCandidate withListener:self];
 	}
 }
-- (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{
+- (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{\
+	EXOLog(@"Removed service :%@",[aNetService name]);
 	[_serverCandidates removeObjectForKey:[aNetService name]];
 }
 
