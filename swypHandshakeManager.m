@@ -56,15 +56,15 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark -
 #pragma mark resolution and connection
 -(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate{
-	NSNetService * resolveService	=	[serverCandidate netService];
+	NSNetService * resolveService	=	[serverCandidate netService]; 
 	
 	if ([_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:resolveService]] != nil){
 		return;
 	}
 	
-	EXOLog(@"Began resolving server candidate found at time %@", [[serverCandidate appearanceDate] description]);
+	EXOLog(@"Began resolving server candidate: %@", [[serverCandidate netService] name]);
 	[resolveService				setDelegate:self];
-	[resolveService				resolveWithTimeout:1];
+	[resolveService				resolveWithTimeout:3];
 	[_resolvingServerCandidates setObject:serverCandidate forKey:[NSValue valueWithNonretainedObject:resolveService]];
 }
 
@@ -86,8 +86,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark NSNetServiceDelegate
 - (void)netServiceDidResolveAddress:(NSNetService *)sender{
 	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
+
 	
-	EXOLog(@"Resolved service to address!:%@",[sender description]);
+	EXOLog(@"Resolved candidate: %@", [sender name]);
 	
 	if (candidate != nil){
 		[self _startConnectionToServerCandidate:candidate];
@@ -98,9 +99,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 - (void)netService:(NSNetService *)sender didNotResolve:(NSDictionary *)errorDict{
 	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
 	
+	EXOLog(@"Did not resolve candidate: %@", [sender name]);
 	if (candidate != nil){
 		[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:[NSError errorWithDomain:[errorDict valueForKey:NSNetServicesErrorDomain] code:[[errorDict valueForKey:NSNetServicesErrorCode] intValue] userInfo:nil]];
 		[sender setDelegate:nil];
+		[sender stop];
 		[_resolvingServerCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:sender]];
 	}
 }

@@ -90,11 +90,12 @@
 }
 #pragma mark IN
 -(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo{
-	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];
-	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:3 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
+	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:4 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
 	[[NSRunLoop mainRunLoop] addTimer:swypInTimeout forMode:NSRunLoopCommonModes];
 	[_swypInTimeouts addObject:swypInTimeout];
 	SRELS(swypInTimeout);
+
+	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];
 
 }
 -(void) swypInResponseTimeoutOccuredWithTimer:	(NSTimer*)timeoutTimer{
@@ -103,6 +104,10 @@
 	swypInfoRef* swypInfo =	[timeoutTimer userInfo];
 	if ([swypInfo isKindOfClass:[swypInfoRef class]]){
 		[_swypIns removeObject:swypInfo];
+	}
+	
+	if ([_swypInTimeouts count] == 0){
+		EXOLog(@"no longer within swyp-in window");
 	}
 }
 
@@ -148,10 +153,10 @@
 
 #pragma mark bonjourListener
 -(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate withListener:(swypBonjourServiceListener*) serviceListener{
+	EXOLog(@"Listener found server candidate: %@", [[serverCandidate netService] name]);
 	if ([_swypInTimeouts count] > 0){
 		[_handshakeManager beginHandshakeProcessWithServerCandidates:[NSSet setWithObject:serverCandidate]];
 	}
-	EXOLog(@"Listener found server candidate!: %@", [[serverCandidate netService] description]);
 }
 -(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) listener	error:(NSError*)error{
 	EXOLog(@"Listener failed to begin listen with error!:%@",[error description]);	

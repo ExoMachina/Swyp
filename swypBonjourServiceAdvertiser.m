@@ -115,10 +115,12 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		SRELS(_v4AdvertiserService);	
 	}
 	
-	if (_v6AdvertiserService == nil && _v4AdvertiserService == nil){
 		_isPublished = FALSE;
-		[self _teardownServerSockets];
-	}
+	
+//	if (_v6AdvertiserService == nil && _v4AdvertiserService == nil){
+//		_isPublished = FALSE;
+//		[self _teardownServerSockets];
+//	}
 }
 -(void) _setupServerSockets{	
 	if (_ipv4socket != NULL){

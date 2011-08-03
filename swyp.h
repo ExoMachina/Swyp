@@ -32,7 +32,7 @@
 	#endif
 #elif DEBUG_MODE_ENABLED == 2
 #import "exoLogOverlay.h"
-#define EXOLog(format, ...) [[exoLogOverlay sharedLogOverlay] log:[NSString stringWithFormat:format]];
+#define EXOLog(args...) [[exoLogOverlay sharedLogOverlay] log:[NSString stringWithFormat:args]]; NSLog(args);
 #else
 	#define EXOLog(format, ...)
 #endif

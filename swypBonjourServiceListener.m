@@ -21,6 +21,7 @@
 	return [NSSet setWithArray:[_serverCandidates allValues]];
 }
 
+
 #pragma mark NSNetServiceBrowserDelegate
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)aNetServiceBrowser{
 	_serviceIsListening	= YES;
@@ -36,7 +37,7 @@
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didFindService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{
 	swypServerCandidate * nextCandidate = [_serverCandidates objectForKey:[aNetService name]];
 	if (nextCandidate == nil){
-		
+
 		if ([def_bonjourHostName isEqualToString:[aNetService name]]){
 			EXOLog(@"Ignoring published self '%@'", def_bonjourHostName);
 			return;
@@ -48,7 +49,10 @@
 		
 		[_serverCandidates setObject:nextCandidate forKey:[aNetService name]];
 		[_delegate bonjourServiceListenerFoundServerCandidate:nextCandidate withListener:self];
+	}else {
+		EXOLog(@"candidate already exists in dict: %@", [[nextCandidate netService] name]);
 	}
+
 }
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{\
 	EXOLog(@"Removed service :%@",[aNetService name]);
