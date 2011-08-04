@@ -10,6 +10,235 @@
 
 
 @implementation swypConcatenatedInputStream
-@synthesize delegate = _delegate;
+@synthesize infoDelegate = _infoDelegate, closeStreamAtQueueEnd = _closeStreamAtQueueEnd, holdCompletedStreams = _holdCompletedStreams, completedStreams = _completedStreams, queuedStreams = _queuedStreams;
+
+#pragma mark -
+#pragma mark public
+-(void)	addInputStreamsToQueue:		(NSArray*)inputStreams{
+	for (NSInputStream * inputStream in inputStreams){
+		[self addInputStreamToQueue:inputStream];
+	}
+}
+
+-(void)	addInputStreamToQueue:		(NSInputStream*)input{
+	[_queuedStreams addObject:input];
+	if (_currentInputStream == nil)
+		[self _queueNextInputStream]; 
+}
+
+
+-(void)	removelAllQueuedStreamsAfterCurrent{
+	
+	if ([_queuedStreams count] <= 1)
+		return;
+	
+	if (_currentInputStream == nil){
+		[_queuedStreams removeAllObjects];
+		return;
+	}
+	
+	NSInteger startIndex = [_queuedStreams indexOfObject:_currentInputStream] +1;
+	if (startIndex >= [_queuedStreams count])
+		return;
+	
+	[_queuedStreams removeObjectsInRange:NSMakeRange(startIndex, [_queuedStreams count]-startIndex)];
+}
+#pragma mark NSObject
+-(id)initWithInputStreamArray:(NSArray *)inputStreams{
+	if (self = [self init]){
+		[self addInputStreamsToQueue:inputStreams];
+	}
+	return self;
+}
+
+-(id)	init{
+	if (self = [super init]){
+		_dataOutBuffer	=	[[NSMutableData alloc] init];
+	}
+	return self;
+}
+
+-(void)	dealloc{
+	[self _teardownInputStream:_currentInputStream];
+	
+	SRELS(_queuedStreams);
+	SRELS(_completedStreams);
+	
+	
+	SRELS(_streamLengthsRemaining);
+	SRELS(_streamLengths);
+	
+	SRELS(_dataOutBuffer);
+	
+	[super dealloc];
+}
+
+
+
+-(void)			setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream{
+	if (_streamLengths == nil){
+		_streamLengths			= [[NSMutableDictionary alloc] init];
+		_streamLengthsRemaining	= [[NSMutableDictionary alloc] init];
+	}
+	NSNumber *	value	=	[NSNumber numberWithInt:lengthToTrack];
+	NSValue	*	key		=	[NSValue valueWithNonretainedObject:queuedStream];
+	
+	[_streamLengths setObject:value forKey:key];
+	[_streamLengthsRemaining setObject:value forKey:key];
+}
+
+-(NSUInteger)	remainingByteCountForQueuedStream:	(NSInputStream*)queuedStream withTotalLength:(NSUInteger *)refForTotalBytes{
+	NSValue	*	key						=	[NSValue valueWithNonretainedObject:queuedStream];
+	NSNumber * remainingBytesForStream	=	[_streamLengthsRemaining objectForKey:key];
+	
+	if (remainingBytesForStream == nil){
+		return 0;
+	}
+	
+	NSInteger remainingBytes			=	[remainingBytesForStream intValue];
+	
+	if (refForTotalBytes != NULL){
+		NSInteger totalBytes			=	[[_streamLengths objectForKey:key] intValue];
+		*refForTotalBytes				=	totalBytes;
+	}
+	
+	return remainingBytes;
+}
+
+
+#pragma mark -
+#pragma mark private 
+#pragma mark NSStreamDelegate
+- (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
+	if (eventCode == NSStreamEventOpenCompleted){
+		EXOLog(@"Opened stream as substream of concatenatedInputStream");
+	}else if (eventCode == NSStreamEventHasBytesAvailable){
+		uint8_t readBuffer[1024];
+		unsigned int readLength = 0;
+		readLength = [stream read:readBuffer maxLength:1024];
+		if(!readLength){ 
+			return;
+		}
+		[_dataOutBuffer appendBytes:readBuffer length:readLength];
+		
+		if (_streamLengths != nil)
+			[self _didReadByteCount:readLength inStream:stream];
+
+		[[self delegate] stream:self handleEvent:NSStreamEventHasBytesAvailable];
+	}else if (eventCode == NSStreamEventEndEncountered){
+		if ([_infoDelegate respondsToSelector:@selector(didCompleteInputStream:withConcatenatedInputStream:)])
+			[_infoDelegate didCompleteInputStream:(NSInputStream*)stream withConcatenatedInputStream:self];
+		
+		if( [self _queueNextInputStream] == NO){
+			if ([_infoDelegate respondsToSelector:@selector(didFinishAllQueuedStreamsWithConcatenatedInputStream:)])
+				[_infoDelegate didFinishAllQueuedStreamsWithConcatenatedInputStream:self];
+			if(_closeStreamAtQueueEnd)
+				[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+		}
+	}else if (eventCode == NSStreamEventErrorOccurred){
+		[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
+	}
+}
+
+#pragma mark NSInputStream subclass
+
+- (BOOL)getBuffer:(uint8_t **)buffer length:(NSUInteger *)len{
+	return NO; //doesn't matter, honestly..
+}
+-(NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)maxLength{
+	NSUInteger readableBytes = [_dataOutBuffer length] - _lastReadDataOutputIndex;
+	if (readableBytes == 0)
+		return 0;
+	
+	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
+	NSRange readRange		= NSMakeRange(_lastReadDataOutputIndex, bytesToRead);
+
+	[_dataOutBuffer getBytes:buffer range:readRange];
+	
+	_lastReadDataOutputIndex += bytesToRead;
+	[_dataOutBuffer replaceBytesInRange:readRange withBytes:NULL length:0];
+	_lastReadDataOutputIndex -= bytesToRead; //cleared out now-useless data
+	
+	return bytesToRead;
+}
+-(BOOL)	hasBytesAvailable{
+	if (_lastReadDataOutputIndex < [_dataOutBuffer length]){
+		return TRUE;
+	}
+	return FALSE; 
+}
+
+#pragma mark concatStream
+-(void) _didReadByteCount:(NSUInteger)bytes inStream:(NSInputStream*)stream{
+
+	NSValue	*	key		=	[NSValue valueWithNonretainedObject:stream];
+	
+	NSNumber * remainingBytesForStream	=	[_streamLengthsRemaining objectForKey:key];
+	if (remainingBytesForStream == nil)
+		return;
+	
+	NSNumber * newValue					=	[NSNumber numberWithInt:[remainingBytesForStream intValue] - bytes];
+	
+	[_streamLengthsRemaining setObject:newValue forKey:key];
+	
+	NSUInteger totalLength	= [[_streamLengths objectForKey:key] intValue];
+	NSInteger byteNumber 	= totalLength - [newValue intValue];
+	EXOLog(@"Read byte #:%i of total:%i",byteNumber, totalLength);
+	
+	if ([_infoDelegate respondsToSelector:@selector(streamDidWriteByteNumber:ofTotalLength:forInputStream:withConcatenatedInputStream:)]){
+		[_infoDelegate streamDidWriteByteNumber:byteNumber ofTotalLength:totalLength forInputStream:stream withConcatenatedInputStream:self];	
+	}
+}
+
+-(BOOL)_queueNextInputStream{
+	//perhaps we'll need to be alerting to finished streams here
+	if (_currentInputStream != nil){
+		NSInteger currentIndex = [_queuedStreams indexOfObject:_currentInputStream];
+		
+		if (_holdCompletedStreams){
+			if (_completedStreams == nil){
+				_completedStreams = [[NSMutableArray alloc] init];
+			}
+			[_completedStreams addObject:_currentInputStream];
+		}
+		
+		if (_streamLengths != nil){
+			NSValue	*	key		=	[NSValue valueWithNonretainedObject:_currentInputStream];
+			[_streamLengths removeObjectForKey:key];
+			[_streamLengthsRemaining removeObjectForKey:key];
+		}
+
+		[self	_teardownInputStream:_currentInputStream];//_current is nil
+		[_queuedStreams removeObjectAtIndex:currentIndex];
+	}
+	
+	if ([_queuedStreams count] > 0){
+		NSInputStream* nextInputStream	= [_queuedStreams objectAtIndex:0];
+		[self _setupInputStreamForRead:nextInputStream];
+		return YES;
+	}else{
+		return NO;
+	}
+}
+
+
+
+-(void) _setupInputStreamForRead:(NSInputStream*)readStream{
+	_currentInputStream = [readStream retain];
+	[readStream setDelegate:self];
+	[_currentInputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	[_currentInputStream open];
+	
+	if ([_infoDelegate respondsToSelector:@selector(didBeginInputStream:withConcatenatedInputStream:)]){
+		[_infoDelegate didBeginInputStream:(NSInputStream*)readStream withConcatenatedInputStream:self];
+	}
+}
+-(void) _teardownInputStream:(NSInputStream*)stream{
+	[stream close];
+	[stream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	if (stream == _currentInputStream)
+		SRELS(_currentInputStream);
+}
+
 
 @end

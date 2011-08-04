@@ -27,23 +27,29 @@
 
 @interface swypConcatenatedInputStream : NSInputStream <NSStreamDelegate> {
 	NSMutableArray *		_queuedStreams;
-	BOOL					closeStreamAtQueueEnd;
+	NSInputStream *			_currentInputStream;
+	
+	BOOL					_closeStreamAtQueueEnd;
 
 	//nil unless delegate && lengths are tracked
 	NSMutableDictionary*	_streamLengthsRemaining;
 	NSMutableDictionary*	_streamLengths;
 	
-	BOOL					holdCompletedStreams;
+	BOOL					_holdCompletedStreams;
 	NSMutableArray *		_completedStreams;
 
-	id<swypConcatenatedInputStreamDelegate>		_delegate;
+	id<swypConcatenatedInputStreamDelegate>		_infoDelegate;
+
+	//--THE DATA
+	NSMutableData *			_dataOutBuffer;
+	NSUInteger				_lastReadDataOutputIndex;
 }
 
 @property (nonatomic, readonly) NSArray *								queuedStreams;
 @property (nonatomic, assign) BOOL										closeStreamAtQueueEnd;
 @property (nonatomic, assign) BOOL										holdCompletedStreams;
 @property (nonatomic, readonly) NSArray *								completedStreams; //only non-nil if above is YES
-@property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	delegate;
+@property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	infoDelegate;
 
 //NSInputStream array
 -(id)	initWithInputStreamArray:	(NSArray*)inputStreams; 
@@ -55,6 +61,7 @@
 /*
 	Clears queue of any stream not running now.
 	Streams don't give notifications
+	Streams don't get added to completedStreams
 	Eg. This should used when invalidating a stream --> afterwards pass the goodbye packet to the session
 */
 -(void)	removelAllQueuedStreamsAfterCurrent;
@@ -77,5 +84,7 @@
 -(void) _setupInputStreamForRead:	(NSInputStream*)readStream;
 -(void) _teardownInputStream:		(NSInputStream*)stream;
 -(BOOL)	_queueNextInputStream; 
+
+-(void) _didReadByteCount:(NSUInteger)bytes inStream:(NSInputStream*)stream;
 
 @end

@@ -83,7 +83,7 @@
 -(void)	viewDidLoad{
 	[super viewDidLoad];
 
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];	
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];	
 	
 	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
 	self.view	= backgroundView;
