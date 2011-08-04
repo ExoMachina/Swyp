@@ -43,6 +43,14 @@
 	
 	[_queuedStreams removeObjectsInRange:NSMakeRange(startIndex, [_queuedStreams count]-startIndex)];
 }
+
+-(BOOL)	finishedRelayingAllQueuedStreamData{
+	if ([_queuedStreams count] == 0 && [_dataOutBuffer length] == 0){
+		return TRUE;
+	}
+	return NO;
+}
+
 #pragma mark NSObject
 -(id)initWithInputStreamArray:(NSArray *)inputStreams{
 	if (self = [self init]){
@@ -59,6 +67,13 @@
 }
 
 -(void)	dealloc{
+	if ([self finishedRelayingAllQueuedStreamData]){
+		if ([self closeStreamAtQueueEnd] == NO)
+			[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+	}else {
+		[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
+	}
+
 	[self _teardownInputStream:_currentInputStream];
 	
 	SRELS(_queuedStreams);
@@ -75,7 +90,7 @@
 
 
 
--(void)			setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream{
+-(void)		setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream{
 	if (_streamLengths == nil){
 		_streamLengths			= [[NSMutableDictionary alloc] init];
 		_streamLengthsRemaining	= [[NSMutableDictionary alloc] init];
@@ -127,16 +142,27 @@
 		[[self delegate] stream:self handleEvent:NSStreamEventHasBytesAvailable];
 	}else if (eventCode == NSStreamEventEndEncountered){
 		if ([_infoDelegate respondsToSelector:@selector(didCompleteInputStream:withConcatenatedInputStream:)])
-			[_infoDelegate didCompleteInputStream:(NSInputStream*)stream withConcatenatedInputStream:self];
+			[_infoDelegate didCompleteInputStream:stream withConcatenatedInputStream:self];
 		
 		if( [self _queueNextInputStream] == NO){
 			if ([_infoDelegate respondsToSelector:@selector(didFinishAllQueuedStreamsWithConcatenatedInputStream:)])
 				[_infoDelegate didFinishAllQueuedStreamsWithConcatenatedInputStream:self];
-			if(_closeStreamAtQueueEnd)
-				[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
 		}
 	}else if (eventCode == NSStreamEventErrorOccurred){
-		[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
+		EXOLog(@"Stream error occured in concatenatedInputStream");
+		
+		if ([_infoDelegate respondsToSelector:@selector(shouldContinueAfterFailingStream:withError:withConcatenatedInputStream:)]){
+			if ([_infoDelegate shouldContinueAfterFailingStream:stream withError:nil withConcatenatedInputStream:self]){
+				EXOLog(@"We'll continue through stream error that occured in concatenatedInputStream");
+				
+				[self _queueNextInputStream];
+			}else {
+				[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
+			}
+
+		}else {
+			[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
+		}
 	}
 }
 
@@ -146,25 +172,31 @@
 	return NO; //doesn't matter, honestly..
 }
 -(NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)maxLength{
-	NSUInteger readableBytes = [_dataOutBuffer length] - _lastReadDataOutputIndex;
+	NSUInteger readableBytes = [_dataOutBuffer length] - _nextDataOutputIndex;
 	if (readableBytes == 0)
 		return 0;
 	
 	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
-	NSRange readRange		= NSMakeRange(_lastReadDataOutputIndex, bytesToRead);
+	NSRange readRange		= NSMakeRange(_nextDataOutputIndex, bytesToRead);
 
 	[_dataOutBuffer getBytes:buffer range:readRange];
 	
-	_lastReadDataOutputIndex += bytesToRead;
+	_nextDataOutputIndex += bytesToRead;
 	[_dataOutBuffer replaceBytesInRange:readRange withBytes:NULL length:0];
-	_lastReadDataOutputIndex -= bytesToRead; //cleared out now-useless data
+	_nextDataOutputIndex -= bytesToRead; //cleared out now-useless data
 	
 	return bytesToRead;
 }
 -(BOOL)	hasBytesAvailable{
-	if (_lastReadDataOutputIndex < [_dataOutBuffer length]){
+	if (_nextDataOutputIndex < [_dataOutBuffer length]){
 		return TRUE;
+	}else if ([self finishedRelayingAllQueuedStreamData]){
+		if ([self closeStreamAtQueueEnd]){
+			[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+		}
 	}
+	
+
 	return FALSE; 
 }
 

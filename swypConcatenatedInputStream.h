@@ -42,7 +42,7 @@
 
 	//--THE DATA
 	NSMutableData *			_dataOutBuffer;
-	NSUInteger				_lastReadDataOutputIndex;
+	NSUInteger				_nextDataOutputIndex;
 }
 
 @property (nonatomic, readonly) NSArray *								queuedStreams;
@@ -57,6 +57,9 @@
 
 -(void)	addInputStreamToQueue:		(NSInputStream*)input;
 -(void)	addInputStreamsToQueue:		(NSArray*)inputStreams;
+
+
+-(BOOL)	finishedRelayingAllQueuedStreamData;
 
 /*
 	Clears queue of any stream not running now.
