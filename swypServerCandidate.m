@@ -11,5 +11,10 @@
 
 @implementation swypServerCandidate
 @synthesize netService;
-
+-(id)init{
+	if (self= [super init]){
+		[self setRole:swypCandidateRoleServer];
+	}
+	return self;
+}
 @end

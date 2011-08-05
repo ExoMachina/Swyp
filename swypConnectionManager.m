@@ -90,9 +90,10 @@
 }
 #pragma mark IN
 -(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo{
-	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:4 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
+	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:7 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
 	[[NSRunLoop mainRunLoop] addTimer:swypInTimeout forMode:NSRunLoopCommonModes];
 	[_swypInTimeouts addObject:swypInTimeout];
+	[_swypIns addObject:inInfo];
 	SRELS(swypInTimeout);
 
 	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];
@@ -117,9 +118,10 @@
 	[_swypOuts addObject:outInfo];
 }
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo{
-	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:6 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
+	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:8 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
 	[[NSRunLoop mainRunLoop] addTimer:swypOutTimeout forMode:NSRunLoopCommonModes];
 	[_swypOutTimeouts addObject:swypOutTimeout];
+	[_swypOuts addObject:outInfo];
 	SRELS(swypOutTimeout);
 }
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo{
@@ -167,8 +169,9 @@
 #pragma mark swypHandshakeManagerDelegate
 -(NSArray*)	relevantSwypsForCandidate:	(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager{
 	if ([candidate isKindOfClass:[swypServerCandidate class]]){
+		NSArray * swypArray	=	(SetHasItems(_swypIns))? [NSArray arrayWithObject:[self oldestSwypInSet:_swypIns]] : nil;
 		
-		return [NSArray arrayWithObject:[self oldestSwypInSet:_swypIns]];
+		return swypArray;
 	}else if ([candidate isKindOfClass:[swypClientCandidate class]]){
 		
 		return [_swypOuts allObjects];

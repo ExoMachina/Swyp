@@ -13,8 +13,18 @@
 #import "swypTransformInputStream.h"
 
 @interface swypTransformPathwayInputStream : NSInputStream <NSStreamDelegate>  {
+	NSArray	*					_orderedTransformPathwayStreams;
+	NSInputStream *				_dataInputStream;
 	
+	swypTransformInputStream *	_lastTransformStream;
+	
+	id<NSStreamDelegate>		_delegate;
+	NSStreamStatus				_streamStatus;
 }
+@property (nonatomic, readonly) NSInputStream *		dataInputStream;
+@property (nonatomic, readonly) NSArray	*			transformStreams;
+@property (nonatomic, assign) id<NSStreamDelegate>	delegate;
+
 //array of swypTransformInputStreams
 -(id)	initWithDataInputStream:	(NSInputStream*)dataInStream transformStreamArray:(NSArray*)transformStreams; 
 
@@ -25,7 +35,7 @@
 
 //
 //private
--(void) _setupLastStepStreamForRead:	(NSInputStream*)readStream;
--(void) _tearDownLastStepInputStream:	(NSInputStream*)stream;
+-(void) _setupLastTransformStreamForRead:	(swypTransformInputStream*)readStream;
+-(void) _teardownInputStream:	(NSInputStream*)stream;
 -(void)	_connectTransformPathway;
 @end

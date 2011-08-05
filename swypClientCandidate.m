@@ -10,5 +10,10 @@
 
 
 @implementation swypClientCandidate
-
+-(id)init{
+	if (self= [super init]){
+		[self setRole:swypCandidateRoleClient];
+	}
+	return self;
+}
 @end

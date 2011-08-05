@@ -12,23 +12,29 @@
 
 
 @interface swypTransformInputStream : NSInputStream <NSStreamDelegate> {
+	
+	NSInputStream*			_inputStream;
+	BOOL					_inputStreamIsFinished;
+	
+	NSStreamStatus			_streamStatus;
+	
+	id<NSStreamDelegate>	_delegate;
+	NSTimer	*				_runloopTimer;
+	
 	//#
 	// these are just scratch-pads, know your stuff before modifying them 
 	NSMutableData*		_transformedData;
 	NSUInteger			_transformedNextByteIndex;
 	NSMutableData*		_untransformedData;
 	NSUInteger			_untransformedNextByteIndex;
-	//#
-	
-	NSInputStream*		_inputStream;
-	BOOL				_inputStreamIsFinished;
-
+	//#	
 }
 /* 
 	view the implementation of this property before overwriting an existing inputStream 
 		the current stream ended and self is reset
 */
-@property (nonatomic, retain)	NSInputStream*	inputStream; 
+@property (nonatomic, retain)	NSInputStream*			inputStream; 
+@property (nonatomic, assign) 	id<NSStreamDelegate>	delegate;
 
 -(id)	initWithInputStream:(NSInputStream*)stream;
 

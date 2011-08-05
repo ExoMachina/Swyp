@@ -272,7 +272,9 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
             CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
             CFWriteStreamSetProperty(writeStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
 			EXOLog(@"Created a successful socket connection at date: %@; with peer at address: %@",[[NSDate date]description],clientIPAddress);
-			[[advertisingSelf delegate] bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:[[[swypClientCandidate alloc] init] autorelease] withStreamIn:(NSInputStream *)readStream streamOut:(NSOutputStream *)writeStream serviceAdvertiser:advertisingSelf];
+			swypClientCandidate * candidate = [[[swypClientCandidate alloc] init] autorelease];
+			[candidate setAppearanceDate:[NSDate date]];
+			[[advertisingSelf delegate] bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:candidate withStreamIn:(NSInputStream *)readStream streamOut:(NSOutputStream *)writeStream serviceAdvertiser:advertisingSelf];
         } else {
 			EXOLog(@"Failed creating socket connection at time: %@", [[NSDate date] description]);
             // on any failure, need to destroy the CFSocketNativeHandle 

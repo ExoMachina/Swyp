@@ -10,7 +10,7 @@
 
 
 @implementation swypConcatenatedInputStream
-@synthesize infoDelegate = _infoDelegate, closeStreamAtQueueEnd = _closeStreamAtQueueEnd, holdCompletedStreams = _holdCompletedStreams, completedStreams = _completedStreams, queuedStreams = _queuedStreams;
+@synthesize delegate = _delegate, infoDelegate = _infoDelegate, closeStreamAtQueueEnd = _closeStreamAtQueueEnd, holdCompletedStreams = _holdCompletedStreams, completedStreams = _completedStreams, queuedStreams = _queuedStreams;
 
 #pragma mark -
 #pragma mark public
@@ -22,12 +22,12 @@
 
 -(void)	addInputStreamToQueue:		(NSInputStream*)input{
 	[_queuedStreams addObject:input];
-	if (_currentInputStream == nil)
+	if (_currentInputStream == nil && [self streamStatus]== NSStreamStatusOpen)
 		[self _queueNextInputStream]; 
 }
 
 
--(void)	removelAllQueuedStreamsAfterCurrent{
+-(void)	removeAllQueuedStreamsAfterCurrent{
 	
 	if ([_queuedStreams count] <= 1)
 		return;
@@ -51,6 +51,55 @@
 	return NO;
 }
 
+#pragma mark NSInputStream
+-(void)	open{
+	[self _queueNextInputStream];
+	_streamStatus = NSStreamStatusOpening;
+}
+
+-(void) close{
+	[self removeFromRunLoop:nil forMode:nil];
+	[self removeAllQueuedStreamsAfterCurrent];
+	[self _teardownInputStream:_currentInputStream];
+	_streamStatus = NSStreamStatusClosed;
+}
+
+-(NSStreamStatus) streamStatus{
+	return _streamStatus;
+}
+
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+	if (_runloopTimer != nil){
+		[self removeFromRunLoop:aRunLoop forMode:mode];
+	}
+	
+	_runloopTimer = [[NSTimer timerWithTimeInterval:0.001 target:self selector:@selector(runloopTimerFired:) userInfo:nil repeats:YES] retain];
+	[aRunLoop addTimer:_runloopTimer forMode:mode]; 
+}
+
+- (void)removeFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+	[_runloopTimer invalidate];
+	SRELS(_runloopTimer);
+}
+
+-(void) runloopTimerFired:(id)sender{	
+	if ([self hasBytesAvailable]){
+		[_delegate stream:self handleEvent:NSStreamEventHasBytesAvailable];
+	}
+}
+
+- (id)propertyForKey:(NSString *)key {
+    return nil;
+}
+
+- (BOOL)setProperty:(id)property forKey:(NSString *)key {
+    return NO;
+}
+
+- (NSError *)streamError {
+    return nil;
+}
+
 #pragma mark NSObject
 -(id)initWithInputStreamArray:(NSArray *)inputStreams{
 	if (self = [self init]){
@@ -62,6 +111,7 @@
 -(id)	init{
 	if (self = [super init]){
 		_dataOutBuffer	=	[[NSMutableData alloc] init];
+		_streamStatus = NSStreamStatusNotOpen;
 	}
 	return self;
 }
@@ -127,6 +177,10 @@
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 		EXOLog(@"Opened stream as substream of concatenatedInputStream");
+		if (_streamStatus == NSStreamStatusOpening){
+			_streamStatus = NSStreamStatusOpen;
+			[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
+		}
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
@@ -157,10 +211,12 @@
 				
 				[self _queueNextInputStream];
 			}else {
+				_streamStatus = NSStreamStatusError;
 				[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
 			}
 
 		}else {
+			_streamStatus = NSStreamStatusError;
 			[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
 		}
 	}
@@ -192,6 +248,7 @@
 		return TRUE;
 	}else if ([self finishedRelayingAllQueuedStreamData]){
 		if ([self closeStreamAtQueueEnd]){
+			_streamStatus = NSStreamStatusAtEnd;
 			[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
 		}
 	}

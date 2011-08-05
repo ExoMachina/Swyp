@@ -11,8 +11,10 @@
 
 @implementation swypTransformInputStream
 @synthesize inputStream = _inputStream;
+@synthesize delegate = _delegate;
 #pragma mark -
 #pragma mark public 
+
 
 -(void)	reset{
 	[self setInputStream:nil];
@@ -29,8 +31,14 @@
 		[[self delegate] stream:_inputStream handleEvent:NSStreamEventEndEncountered];
 		[self _teardownInputStream:_inputStream];
 		[self reset];
+		if ([self streamStatus] == NSStreamStatusOpen){
+			[self close];
+		}			
 		[self _setupInputStreamForRead:stream];
+	}else {
+		[self _teardownInputStream:_inputStream];
 	}
+
 }
 
 -(BOOL)			isFinnishedTransformingData{
@@ -51,6 +59,7 @@
 	return _inputStreamIsFinished;
 	
 }
+
 
 #pragma mark -
 #pragma mark subclasses
@@ -90,6 +99,56 @@
 	[self _handleAvailableUntransformedData];
 }
 
+#pragma mark NSInputStream
+
+-(void) open{	
+	[_inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	[_inputStream open];
+	_streamStatus = NSStreamStatusOpening;
+}
+
+-(void) close{
+	[self reset];
+	[self removeFromRunLoop:nil forMode:nil];
+	_streamStatus = NSStreamStatusClosed;
+}
+
+-(NSStreamStatus) streamStatus{
+	return _streamStatus;
+}
+
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+	if (_runloopTimer != nil){
+		[self removeFromRunLoop:aRunLoop forMode:mode];
+	}
+	
+	_runloopTimer = [[NSTimer timerWithTimeInterval:0.001 target:self selector:@selector(runloopTimerFired:) userInfo:nil repeats:YES] retain];
+	[aRunLoop addTimer:_runloopTimer forMode:mode]; 
+}
+
+- (void)removeFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+	[_runloopTimer invalidate];
+	SRELS(_runloopTimer);
+}
+
+-(void) runloopTimerFired:(id)sender{	
+	if ([self hasBytesAvailable]){
+		[_delegate stream:self handleEvent:NSStreamEventHasBytesAvailable];
+	}
+}
+
+- (id)propertyForKey:(NSString *)key {
+    return nil;
+}
+
+- (BOOL)setProperty:(id)property forKey:(NSString *)key {
+    return NO;
+}
+
+- (NSError *)streamError {
+    return nil;
+}
+
 #pragma mark -
 #pragma mark NSObject
 -(id)	initWithInputStream:(NSInputStream*)stream{
@@ -109,6 +168,7 @@
 }
 
 -(void)	dealloc{
+	[self close];
 	SRELS(_transformedData);
 	SRELS(_untransformedData);
 	
@@ -120,10 +180,7 @@
 #pragma mark private 
 -(void) _setupInputStreamForRead:(NSInputStream*)readStream{
 	_inputStream = [readStream retain];
-	[_inputStream setDelegate:self];
-	[_inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-	[_inputStream open];
-	
+	[_inputStream setDelegate:self];	
 }
 -(void) _teardownInputStream:(NSInputStream*)stream{
 	[stream close];
@@ -153,6 +210,10 @@
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 		EXOLog(@"Opened stream in transformInput");
+		if (_streamStatus == NSStreamStatusOpening){
+			_streamStatus = NSStreamStatusOpen;
+			[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
+		}		
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
@@ -170,6 +231,7 @@
 		[self _teardownInputStream:stream];
 		
 	}else if (eventCode == NSStreamEventErrorOccurred){
+		_streamStatus = NSStreamStatusError;
 		[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
 	}
 }
@@ -202,7 +264,8 @@
 		return TRUE;
 	}else if ([self allTransformedDataIsRead]) {
 		EXOLog(@"Ended transformInputStream");
-		[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+		_streamStatus = NSStreamStatusAtEnd;
+		[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];		
 	}
 
 	return FALSE; 

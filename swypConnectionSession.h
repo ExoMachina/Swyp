@@ -55,7 +55,7 @@ typedef enum {
 @end
 
 
-@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate> {
+@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
 	

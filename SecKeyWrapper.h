@@ -62,7 +62,7 @@
 // hardware accelerators for those particular algorithms and therefore are energy efficient.
 
 #define kChosenCipherBlockSize	kCCBlockSizeAES128
-#define kChosenCipherKeySize	kCCKeySizeAES256
+#define kChosenCipherKeySize	kCCKeySizeAES128
 #define kChosenDigestLength		CC_SHA1_DIGEST_LENGTH
 
 // Global constants for padding schemes.

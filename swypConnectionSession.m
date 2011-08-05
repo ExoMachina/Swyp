@@ -59,7 +59,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}
 	[self _changeStatus:swypConnectionSessionStatusWillDie];
 	
-	[_sendDataQueueStream removelAllQueuedStreamsAfterCurrent];
+	[_sendDataQueueStream removeAllQueuedStreamsAfterCurrent];
 	
 	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
 	[self beginSendingDataWithTag:@"goodbye" type:[swypFileTypeString swypControlPacketFileType] dataForSend:sendDictionaryData];
@@ -86,7 +86,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 -(id)initWithSwypCandidate:(swypCandidate *)candidate inputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream{
 	if (self = [super init]){
-
+		_representedCandidate	=	[candidate retain];
+		
 		if ([inputStream streamStatus] < NSStreamStatusOpen){
 			[inputStream	setDelegate:self];
 			[inputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
@@ -119,6 +120,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	SRELS(_socketOutputTransformInputStream);
 	SRELS(_sendDataQueueStream);
 	
+	SRELS(_representedCandidate);
+	
 	[super dealloc];
 }
 
@@ -136,12 +139,13 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	//data send queue holds all outgoing streams, transform pathway does encryption (after crypto negotiation) on everything, and connector slaps it to the output
 	
 	_sendDataQueueStream = [[swypConcatenatedInputStream alloc] init];
-	[_sendDataQueueStream setDelegate:self];
+	[_sendDataQueueStream setInfoDelegate:self];
 	[_sendDataQueueStream setCloseStreamAtQueueEnd:FALSE];
 	
 	_socketOutputTransformInputStream	= [[swypTransformPathwayInputStream alloc] initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil];
 	
 	_outputStreamConnector				= [[swypInputToOutputStreamConnector alloc] initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream];
+	[_outputStreamConnector setDelegate:self];
 	
 	//Alex: yeah, we're at the HNL
 }
@@ -224,4 +228,19 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[self invalidate];
 	return NO;
 }
+
+#pragma mark swypInputToOutputStreamConnectorDelegate
+-(void) encounteredErrorInInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
+	EXOLog(@"encounteredErrorInInputStream withInputToOutputConnector");
+}
+-(void) encounteredErrorInOutputStream: (NSOutputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
+	EXOLog(@"encounteredErrorInOutputStream withInputToOutputConnector");
+}
+
+-(void) completedInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
+//@"Shouldn't always need to be a delegate of the connector"
+	
+	EXOLog(@"Completed inputStream withInputToOutputConnector");
+}
+
 @end

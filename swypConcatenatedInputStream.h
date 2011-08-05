@@ -39,7 +39,13 @@
 	NSMutableArray *		_completedStreams;
 
 	id<swypConcatenatedInputStreamDelegate>		_infoDelegate;
+	id<NSStreamDelegate>						_delegate;
+	NSTimer	*									_runloopTimer;
 
+	
+	NSStreamStatus			_streamStatus;
+	
+	
 	//--THE DATA
 	NSMutableData *			_dataOutBuffer;
 	NSUInteger				_nextDataOutputIndex;
@@ -50,6 +56,7 @@
 @property (nonatomic, assign) BOOL										holdCompletedStreams;
 @property (nonatomic, readonly) NSArray *								completedStreams; //only non-nil if above is YES
 @property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	infoDelegate;
+@property (nonatomic, assign) id<NSStreamDelegate>						delegate;
 
 //NSInputStream array
 -(id)	initWithInputStreamArray:	(NSArray*)inputStreams; 
@@ -67,7 +74,7 @@
 	Streams don't get added to completedStreams
 	Eg. This should used when invalidating a stream --> afterwards pass the goodbye packet to the session
 */
--(void)	removelAllQueuedStreamsAfterCurrent;
+-(void)	removeAllQueuedStreamsAfterCurrent;
 
 /*
 	if delegate is set, the following function will give an update each time bytes are read from the stream

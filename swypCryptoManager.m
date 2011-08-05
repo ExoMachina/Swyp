@@ -11,4 +11,7 @@
 
 @implementation swypCryptoManager
 @synthesize delegate = _delegate, sessionsPendingCryptoSetup = _sessionsPendingCryptoSetup;
++(NSString*)			localPersistantPeerID{
+	
+}
 @end
