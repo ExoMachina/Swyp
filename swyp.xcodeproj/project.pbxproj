@@ -28,8 +28,6 @@
 		680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */; };
 		680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */; };
 		680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */; };
-		680FC70613E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */; };
-		680FC70A13E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */; };
 		680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */; };
 		680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */; };
 		680FCB0513E757B500509CF2 /* libSwyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FCB0413E757B500509CF2 /* libSwyp.h */; };
@@ -37,6 +35,10 @@
 		680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */; };
 		680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FD34613E9CC9F00509CF2 /* exoLogOverlay.h */; };
 		680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FD34713E9CC9F00509CF2 /* exoLogOverlay.m */; };
+		686A5A7413EC766C00EDD24B /* NSDataAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 686A5A7213EC766C00EDD24B /* NSDataAdditions.h */; };
+		686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 686A5A7313EC766C00EDD24B /* NSDataAdditions.m */; };
+		686A5A7813EC767200EDD24B /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 686A5A7613EC767200EDD24B /* NSStringAdditions.h */; };
+		686A5A7913EC767200EDD24B /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 686A5A7713EC767200EDD24B /* NSStringAdditions.m */; };
 		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
 		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
 		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
@@ -101,8 +103,6 @@
 		680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BSJSONAdditions.m"; sourceTree = "<group>"; };
 		680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+BSJSONAdditions.h"; sourceTree = "<group>"; };
 		680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+BSJSONAdditions.m"; sourceTree = "<group>"; };
-		680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManagerHelloImplementations.m; sourceTree = "<group>"; };
-		680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManagerSocketResolveImplementations.m; sourceTree = "<group>"; };
 		680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoBlockOperationAlertView.h; sourceTree = "<group>"; };
 		680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoBlockOperationAlertView.m; sourceTree = "<group>"; };
 		680FCB0413E757B500509CF2 /* libSwyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libSwyp.h; sourceTree = "<group>"; };
@@ -110,6 +110,10 @@
 		680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceBackgroundView.m; sourceTree = "<group>"; };
 		680FD34613E9CC9F00509CF2 /* exoLogOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoLogOverlay.h; sourceTree = "<group>"; };
 		680FD34713E9CC9F00509CF2 /* exoLogOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoLogOverlay.m; sourceTree = "<group>"; };
+		686A5A7213EC766C00EDD24B /* NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataAdditions.h; sourceTree = "<group>"; };
+		686A5A7313EC766C00EDD24B /* NSDataAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataAdditions.m; sourceTree = "<group>"; };
+		686A5A7613EC767200EDD24B /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
+		686A5A7713EC767200EDD24B /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
 		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
 		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
 		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
@@ -276,6 +280,10 @@
 				680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */,
 				680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */,
 				680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */,
+				686A5A7213EC766C00EDD24B /* NSDataAdditions.h */,
+				686A5A7313EC766C00EDD24B /* NSDataAdditions.m */,
+				686A5A7613EC767200EDD24B /* NSStringAdditions.h */,
+				686A5A7713EC767200EDD24B /* NSStringAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -397,8 +405,6 @@
 			children = (
 				68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */,
 				68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */,
-				680FC70813E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m */,
-				680FC70513E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m */,
 			);
 			name = Handshake;
 			sourceTree = "<group>";
@@ -468,6 +474,8 @@
 				680FCB0513E757B500509CF2 /* libSwyp.h in Headers */,
 				680FD27D13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h in Headers */,
 				680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */,
+				686A5A7413EC766C00EDD24B /* NSDataAdditions.h in Headers */,
+				686A5A7813EC767200EDD24B /* NSStringAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,11 +558,11 @@
 				680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */,
 				680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */,
 				680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */,
-				680FC70613E352BD00509CF2 /* swypHandshakeManagerHelloImplementations.m in Sources */,
-				680FC70A13E3530E00509CF2 /* swypHandshakeManagerSocketResolveImplementations.m in Sources */,
 				680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */,
 				680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */,
 				680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */,
+				686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */,
+				686A5A7913EC767200EDD24B /* NSStringAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
