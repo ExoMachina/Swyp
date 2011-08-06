@@ -161,6 +161,18 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}
 }
 
+-(void)	_handleSocketInputData{
+	if (_socketInputStream != nil){
+		uint8_t readBuffer[1024];
+		unsigned int readLength = 0;
+		readLength = [_socketInputStream read:readBuffer maxLength:1024];
+		
+		if (readLength > 0){
+			EXOLog(@"Read %i# bytes of data data from socket input stream: %s", readLength, readBuffer);
+		}
+	}
+}
+
 #pragma mark -
 #pragma mark NSStreamDelegate
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode{
@@ -186,6 +198,10 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		EXOLog(@"Stream end encountered in connection session with represented candidate w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
 		[self _teardownConnection];
 		[self _changeStatus:swypConnectionSessionStatusClosed];
+	}else if (eventCode == NSStreamEventHasBytesAvailable){
+		if (aStream == _socketInputStream){
+			[self _handleSocketInputData];
+		}
 	}
 }
 
