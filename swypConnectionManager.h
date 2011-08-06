@@ -44,7 +44,7 @@
 	Begin listening, allow new connections, etc. 
 	The swyp window has been opened.
 */
--(void)	beginServices;
+-(void)	startServices;
 /*
 	Stop listening, disallow new connections, terminate existing swypConnectionSessions, etc. 
 	The swyp window has probably been closed.

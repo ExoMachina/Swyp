@@ -88,7 +88,7 @@
 	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
 	self.view	= backgroundView;
 	
-	[[self connectionManager] beginServices];
+	[[self connectionManager] startServices];
 	
 	swypInGestureRecognizer*	swypInRecognizer =	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
 	[swypInRecognizer setDelegate:self];

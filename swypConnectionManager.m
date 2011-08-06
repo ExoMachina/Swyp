@@ -14,7 +14,7 @@
 #pragma mark -
 #pragma mark public 
 
--(void)	beginServices{
+-(void)	startServices{
 	[_bonjourListener	setServiceIsListening:TRUE];
 }
 
