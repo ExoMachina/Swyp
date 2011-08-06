@@ -153,7 +153,7 @@
 
 #pragma mark NSStreamDelegate
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode{
-	[[self delegate] stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode];
+	[[self delegate] stream:self handleEvent:(NSStreamEvent)eventCode];
 }
 #pragma mark NSInputStream subclass
 - (BOOL)getBuffer:(uint8_t **)buffer length:(NSUInteger *)len{

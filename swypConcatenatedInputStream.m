@@ -22,6 +22,7 @@
 
 -(void)	addInputStreamToQueue:		(NSInputStream*)input{
 	[_queuedStreams addObject:input];
+	EXOLog(@"Queued stream #%i",[_queuedStreams count]);
 	if (_currentInputStream == nil && [self streamStatus]== NSStreamStatusOpen)
 		[self _queueNextInputStream]; 
 }
@@ -53,8 +54,10 @@
 
 #pragma mark NSInputStream
 -(void)	open{
+	_streamStatus = NSStreamStatusOpen;
 	[self _queueNextInputStream];
-	_streamStatus = NSStreamStatusOpening;
+	[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
+	EXOLog(@"Opened swypConcatenatedInputStream, no data is necessary yet");
 }
 
 -(void) close{
@@ -111,7 +114,8 @@
 -(id)	init{
 	if (self = [super init]){
 		_dataOutBuffer	=	[[NSMutableData alloc] init];
-		_streamStatus = NSStreamStatusNotOpen;
+		_streamStatus	= NSStreamStatusNotOpen;
+		_queuedStreams	=	[[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -174,13 +178,13 @@
 #pragma mark -
 #pragma mark private 
 #pragma mark NSStreamDelegate
+/*
+	need to pretend we're open even before we get streams to concatenate
+	A sort of parallel to CloseStreamAtEndOfQueue
+*/
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 		EXOLog(@"Opened stream as substream of concatenatedInputStream");
-		if (_streamStatus == NSStreamStatusOpening){
-			_streamStatus = NSStreamStatusOpen;
-			[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
-		}
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
@@ -314,7 +318,7 @@
 
 -(void) _setupInputStreamForRead:(NSInputStream*)readStream{
 	_currentInputStream = [readStream retain];
-	[readStream setDelegate:self];
+	[_currentInputStream setDelegate:self];
 	[_currentInputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 	[_currentInputStream open];
 	

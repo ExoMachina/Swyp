@@ -107,10 +107,9 @@
 		unsigned int writeLength = 0;
 		writeLength = [_outputStream write:writeBuffer maxLength:maxWriteLength];
 		
-		EXOLog(@"Wrote '%i' bytes to outputStream",writeLength);
-		
-		[_bufferedData replaceBytesInRange:NSMakeRange(0, writeLength) withBytes:NULL];
+		EXOLog(@"Wrote '%i' bytes to outputStream: %s",writeLength,writeBuffer);
 
+		[_bufferedData replaceBytesInRange:NSMakeRange(0, writeLength) withBytes:NULL length:0];
 	}
 	
 }

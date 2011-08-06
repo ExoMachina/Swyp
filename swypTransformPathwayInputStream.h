@@ -35,7 +35,7 @@
 
 //
 //private
--(void) _setupLastTransformStreamForRead:	(swypTransformInputStream*)readStream;
+-(void) _setupLastTransformStreamForRead:	(NSInputStream*)readStream;
 -(void) _teardownInputStream:	(NSInputStream*)stream;
 -(void)	_connectTransformPathway;
 @end
