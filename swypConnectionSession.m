@@ -30,7 +30,29 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	NSString *	jsonHeaderString	=	[streamHeaderDictionary jsonStringValue];
 	NSData	*	jsonHeaderData		=	[jsonHeaderString dataUsingEncoding:NSUTF8StringEncoding];
-	NSInputStream * headerStream	=	[NSInputStream inputStreamWithData:jsonHeaderData];
+    NSUInteger  jsonHeaderLength    =   [jsonHeaderData length];
+	
+	NSString *  headerLengthString	=   [NSString stringWithFormat:@"%i;",jsonHeaderLength];
+	NSData *	headerLengthData	=	[headerLengthString dataUsingEncoding:NSUTF8StringEncoding];
+
+	NSInteger	overallPacketLength	=	jsonHeaderLength + [headerLengthData length];
+
+	// If streamLength is zero, this will be handled specially by recipient
+	if (streamLength > 0 ){
+		overallPacketLength		+=	streamLength;
+	}else{
+		overallPacketLength		= 0;
+	}
+	
+	NSString *	packetLengthString			=	[NSString stringWithFormat:@"%i;",overallPacketLength];
+	NSData *	overallPacketLengthData		=	[packetLengthString dataUsingEncoding:NSUTF8StringEncoding];
+
+	NSMutableData *	concatenatedHeaderData	=	[NSMutableData dataWithData:overallPacketLengthData];
+	[concatenatedHeaderData appendData:headerLengthData];
+	[concatenatedHeaderData	appendData:jsonHeaderData];
+
+	
+	NSInputStream * headerStream	=	[NSInputStream inputStreamWithData:concatenatedHeaderData];
 	EXOLog(@"Sending header json: %@", jsonHeaderString);
 	
 	swypConcatenatedInputStream * concatenatedSendPacket	=	[[swypConcatenatedInputStream alloc] initWithInputStreamArray:[NSArray arrayWithObjects:headerStream,payloadStream,nil]];
