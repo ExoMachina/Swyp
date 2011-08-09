@@ -75,6 +75,10 @@
 		68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */; };
 		68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */; };
 		68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */; };
+		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
+		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
+		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
+		7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -150,6 +154,10 @@
 		68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypEncryptingTransform.m; sourceTree = "<group>"; };
 		68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypUnencryptingTransform.h; sourceTree = "<group>"; };
 		68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypUnencryptingTransform.m; sourceTree = "<group>"; };
+		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; };
+		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
+		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
+		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,7 +193,6 @@
 				680FCB0413E757B500509CF2 /* libSwyp.h */,
 				680FC1F513E2405C00509CF2 /* Other Logic */,
 				68B18DF613E0B20000D094A9 /* Content */,
-				68B18DE913E0B08F00D094A9 /* Streams */,
 				68B18DED13E0B14500D094A9 /* Communications */,
 				68B18DEC13E0B11300D094A9 /* View Components */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
@@ -309,6 +316,7 @@
 		68B18DE913E0B08F00D094A9 /* Streams */ = {
 			isa = PBXGroup;
 			children = (
+				7977201F13F1730800CF4F60 /* Inputs */,
 				68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */,
 				68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */,
 				68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */,
@@ -349,6 +357,7 @@
 		68B18DED13E0B14500D094A9 /* Communications */ = {
 			isa = PBXGroup;
 			children = (
+				68B18DE913E0B08F00D094A9 /* Streams */,
 				68B18DF713E0B23200D094A9 /* swypConnectionManager.h */,
 				68B18DF813E0B23200D094A9 /* swypConnectionManager.m */,
 				68B18DF413E0B1A400D094A9 /* Connecting */,
@@ -435,6 +444,17 @@
 			name = gestures;
 			sourceTree = "<group>";
 		};
+		7977201F13F1730800CF4F60 /* Inputs */ = {
+			isa = PBXGroup;
+			children = (
+				79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */,
+				79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */,
+				7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */,
+				7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */,
+			);
+			name = Inputs;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -476,6 +496,8 @@
 				680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */,
 				686A5A7413EC766C00EDD24B /* NSDataAdditions.h in Headers */,
 				686A5A7813EC767200EDD24B /* NSStringAdditions.h in Headers */,
+				79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */,
+				7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,6 +586,8 @@
 				680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */,
 				686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */,
 				686A5A7913EC767200EDD24B /* NSStringAdditions.m in Sources */,
+				79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */,
+				7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
