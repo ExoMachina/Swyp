@@ -11,7 +11,7 @@
 
 
 @class swypInputStreamDiscerner;
-@protocol swypInputDiscernerDelegate <NSObject>
+@protocol swypInputStreamDiscernerDelegate <NSObject>
 
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
 -(void)	inputStreamDiscernerFailedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner;
@@ -30,13 +30,13 @@
 	
 	swypDiscernedInputStream*		_lastYieldedStream;
 	
-	id<swypInputDiscernerDelegate>	_delegate;
+	id<swypInputStreamDiscernerDelegate>	_delegate;
 
 }
 @property (nonatomic, readonly) NSInputStream *					discernmentStream;
-@property (nonatomic, assign)	id<swypInputDiscernerDelegate>	delegate;
+@property (nonatomic, assign)	id<swypInputStreamDiscernerDelegate>	delegate;
 
--(id)	initWithInputStream:(NSInputStream*)discernmentStream discernerDelegate:(id<swypInputDiscernerDelegate>)delegate;
+-(id)	initWithInputStream:(NSInputStream*)discernmentStream discernerDelegate:(id<swypInputStreamDiscernerDelegate>)delegate;
 
 //
 //private

@@ -34,7 +34,7 @@
 @property (nonatomic, retain)	NSInputStream*		inputStream;
 @property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate;
 
--(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inputStream; 
+-(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inStream; 
 
 //
 //private

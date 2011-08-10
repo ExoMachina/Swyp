@@ -11,7 +11,7 @@
 //Yielded data != nil once successfully completed
 
 #import <Foundation/Foundation.h>
-#import "swypInputToOutputStreamConnector.m"
+#import "swypInputToOutputStreamConnector.h"
 
 
 static NSString * const swypInputToOutputStreamConnectorErrorDomain = @"swypInputToOutputStreamConnectorErrorDomain";
@@ -36,6 +36,7 @@ typedef enum{
 	NSInputStream*	_inputStream;
 	NSOutputStream*	_outputStream;
 	NSData *		_yieldedData;
+	
 	id<swypInputToDataBridgeDelegate>	_delegate;
 }
 @property (nonatomic, readonly) NSInputStream * inputStream;

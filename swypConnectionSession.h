@@ -15,6 +15,8 @@
 #import "swypTransformPathwayInputStream.h"
 #import "swypInputToOutputStreamConnector.h"
 #import "swypFileTypeString.h"
+#import "swypInputStreamDiscerner.h"
+#import "swypDiscernedInputStream.h"
 
 static NSString * const swypConnectionSessionErrorDomain;
 typedef enum {
@@ -44,18 +46,18 @@ typedef enum {
 @protocol swypConnectionSessionDataDelegate <NSObject>
 @optional
 /*
-	Though there are several data delegates, only one delegate should return a stream, all else returning nil
-	All delegates will receive the output stream in the finnishedReceiving call
+	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
+	If no one handles, an exception is thrown
 */
--(NSOutputStream*) streamToWriteReceivedDataWithTag:(NSString*)tag type:(swypFileTypeString*)type length:(NSUInteger)streamLength connectionSession:(swypConnectionSession*)session;
--(void) finishedReceivingDataWithOutputStream:(NSOutputStream*)stream error:(NSError*)error tag:(NSString*)tag type:(swypFileTypeString*)type connectionSession:(swypConnectionSession*)session;
+-(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)stream inConnectionSession:(swypConnectionSession*)session;
+-(void) connectionFailedWithError:(NSError*)connectionError	inConnectionSession:(swypConnectionSession*)session;
 
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
 @end
 
 
-@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate> {
+@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
 	
@@ -69,6 +71,8 @@ typedef enum {
 	swypConcatenatedInputStream *		_sendDataQueueStream;				//setCloseWhenFinished:NO 
 	swypTransformPathwayInputStream *	_socketOutputTransformInputStream;	//initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil 
 	swypInputToOutputStreamConnector *	_outputStreamConnector;				//initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream
+	
+	swypInputStreamDiscerner *			_inputStreamDiscerner;				//splits up input data
 	
 	NSInputStream *			_socketInputStream;
 	NSOutputStream *		_socketOutputStream;

@@ -124,6 +124,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		_socketInputStream	= [inputStream retain];
 		_socketOutputStream	= [outputStream retain];
 		
+		
+		
 		_dataDelegates						=	[[NSMutableSet alloc] init];
 		_connectionSessionInfoDelegates		=	[[NSMutableSet alloc] init];
 		[self _changeStatus:swypConnectionSessionStatusPreparing];
@@ -134,6 +136,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 }
 
 -(void)	dealloc{
+	
+	SRELS(_inputStreamDiscerner);
+	
 	[self _teardownConnection];
 	SRELS(_dataDelegates);					
 	SRELS(_connectionSessionInfoDelegates);	
@@ -158,6 +163,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 }
 
 -(void) _setupStreamPathways{
+	_inputStreamDiscerner	=	[[swypInputStreamDiscerner alloc] initWithInputStream:_socketInputStream discernerDelegate:self];
+	
 	//data send queue holds all outgoing streams, transform pathway does encryption (after crypto negotiation) on everything, and connector slaps it to the output
 	
 	_sendDataQueueStream = [[swypConcatenatedInputStream alloc] init];
@@ -194,6 +201,31 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		}
 	}
 }
+#pragma mark -
+#pragma mark swypInputStreamDiscernerDelegate
+
+-(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
+	BOOL willHandleStream = FALSE;
+	for (NSValue * delegateValue in _dataDelegates){
+		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
+		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:inConnectionSession:)]){
+			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream inConnectionSession:self];
+			if (willHandleStream){
+				break;
+			}
+		}
+	}	
+	
+	if (willHandleStream == FALSE){
+		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
+	}
+}
+-(void)	inputStreamDiscernerFailedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner{
+	EXOLog(@"closing; Error occured in inputStreamDiscerner w/ error: %@", [error description]);
+	[self _teardownConnection];
+	[self _changeStatus:swypConnectionSessionStatusClosed];
+}
+
 
 #pragma mark -
 #pragma mark NSStreamDelegate

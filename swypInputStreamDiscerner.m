@@ -18,7 +18,7 @@ static NSUInteger const memoryPageSize	=	4096;
 
 #pragma mark -
 #pragma mark NSObject
--(id)	initWithInputStream:(NSInputStream*)discernmentStream discernerDelegate:(id<swypInputDiscernerDelegate>)delegate{
+-(id)	initWithInputStream:(NSInputStream*)discernmentStream discernerDelegate:(id<swypInputStreamDiscernerDelegate>)delegate{
 	if (self = [super init]){
 		_bufferedData = [[NSMutableData alloc] init];
 		[self _setupInputStreamForRead:discernmentStream];

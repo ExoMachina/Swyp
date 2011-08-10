@@ -29,12 +29,12 @@
 }
 
 #pragma mark NSObject
--(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inputStream{
+-(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inStream{
 	if (self = [super init]){
 		_bufferedData = [[NSMutableData alloc] init];
 		
 		[self _setupOutputStreamForWrite:outputStream];
-		[self setInputStream:inputStream];
+		[self setInputStream:inStream];
 	}
 	return self;
 }
@@ -79,7 +79,7 @@
 -(void) _teardownInputStream:(NSInputStream*)stream{
 	[stream close];
 	[stream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-	if (stream == _inputStream)
+	if (stream ==_inputStream)
 		SRELS(_inputStream);
 }
 
@@ -89,7 +89,7 @@
 	if ([_bufferedData length] < 1024 && [_inputStream hasBytesAvailable]){
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
-		readLength = [_inputStream read:readBuffer maxLength:1024];
+		readLength =	[_inputStream read:readBuffer maxLength:1024];
 		if(readLength > 0){ 
 			[_bufferedData appendBytes:readBuffer length:readLength];
 		}
