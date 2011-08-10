@@ -275,7 +275,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	EXOLog(@"encounteredErrorInOutputStream withInputToOutputConnector");
 }
 
--(void) completedInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
+-(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
 //@"Shouldn't always need to be a delegate of the connector"
 	
 	EXOLog(@"Completed inputStream withInputToOutputConnector");

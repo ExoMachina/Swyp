@@ -153,6 +153,10 @@
 	[_handshakeManager beginHandshakeProcessWithClientCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
 }
 
+-(void)	bonjourServiceAdvertiserFailedAdvertisingWithError:(NSError*) error serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
+	EXOLog(@"Failed advertising with error: %@", [error description]);
+}
+
 #pragma mark bonjourListener
 -(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate withListener:(swypBonjourServiceListener*) serviceListener{
 	EXOLog(@"Listener found server candidate: %@", [[serverCandidate netService] name]);
@@ -163,6 +167,8 @@
 -(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) listener	error:(NSError*)error{
 	EXOLog(@"Listener failed to begin listen with error!:%@",[error description]);	
 }
+
+
 
 
 #pragma mark -

@@ -11,11 +11,11 @@
 #import <Foundation/Foundation.h>
 @class swypInputToOutputStreamConnector;
 
-@protocol swypInputToOutputStreamConnectorDelegate
+@protocol swypInputToOutputStreamConnectorDelegate <NSObject>
 -(void) encounteredErrorInInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
 -(void) encounteredErrorInOutputStream: (NSOutputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
 
--(void) completedInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
+-(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
 
 @end
 
@@ -35,8 +35,6 @@
 @property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate;
 
 -(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inputStream; 
-
-
 
 //
 //private

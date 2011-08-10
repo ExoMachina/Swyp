@@ -6,6 +6,9 @@
 //  Copyright 2011 ExoMachina. All rights reserved.
 //
 
+
+static NSUInteger const memoryPageSize	=	4096;
+
 #import "swypInputStreamDiscerner.h"
 
 @implementation swypInputStreamDiscerner
@@ -43,19 +46,50 @@
 
 #pragma mark swypDiscernedInputStreamDataSource
 -(void)		discernedStreamEndedAtStreamByteIndex:(NSUInteger)endByteIndex discernedInputStream:(swypDiscernedInputStream*)inputStream{
-	//clear up
+	
+	if (endByteIndex < _bufferedDatasZeroIndexByteLocationInYieldedStream)  {
+		[NSException raise:@"swypDiscernedInputStreamException" format:@"endByteIndex '%i' is less than lowest index cached by bufferedData '%i'",endByteIndex,_bufferedDatasZeroIndexByteLocationInYieldedStream];
+	}
+	 
+	NSUInteger endOfStreamIndexInBuffer	=	endByteIndex - _bufferedDatasZeroIndexByteLocationInYieldedStream;
+	
+	if (endOfStreamIndexInBuffer < [_bufferedData length]){ //if the end of the stream is inside the buffer
+		[_bufferedData replaceBytesInRange:NSMakeRange(0, endOfStreamIndexInBuffer) withBytes:NULL length:0];//move the entire buffer back to the beginning of the next stream
+		[self _cleanupForNextDiscernmentCycle];
+		
+	}
+	
 }
--(NSData*)	pullDataFromIndex:(NSUInteger)lastReadPoint	discernedInputStream:(swypDiscernedInputStream*)inputStream{
-	static NSUInteger maxReadLength	=	1024;
-	NSUInteger	readLength	=	MIN(maxReadLength, [_bufferedData length]-_bufferedDataNextReadIndex);
-	NSRange	readRange		=	NSMakeRange(_bufferedDataNextReadIndex, readLength);
-	NSData*	returnData		=	[_bufferedData subdataWithRange:readRange];
+
+-(NSData*)	pullDataWithLength:(NSUInteger)maxLength	discernedInputStream:(swypDiscernedInputStream*)inputStream{
+	NSUInteger maxReadLength	=	MIN(maxLength, memoryPageSize);
+	NSUInteger	readLength		=	MIN(maxReadLength, [_bufferedData length]-_bufferedDataNextReadIndex);
+	NSRange	readRange			=	NSMakeRange(_bufferedDataNextReadIndex, readLength);
+	NSData*	returnData			=	[_bufferedData subdataWithRange:readRange];
 	
+	_bufferedDataNextReadIndex += readLength;
 	
-	return nil;
+	//the bellow section gets rid of old data in the moving frame, but it won't get rid of data from the recent cycle
+	if (_bufferedDataNextReadIndex > memoryPageSize){
+		NSUInteger usedDataOverReserve	=	_bufferedDataNextReadIndex - memoryPageSize;
+		[_bufferedData replaceBytesInRange:NSMakeRange(0, usedDataOverReserve) withBytes:NULL length:0];
+		_bufferedDataNextReadIndex		-= usedDataOverReserve;
+		
+		//the location on the yielded stream at the zero index of bufferedData will only change when we expire some of the used buffered data
+		_bufferedDatasZeroIndexByteLocationInYieldedStream	+= usedDataOverReserve;
+	}
+		
+	return returnData;
 }
 
 #pragma mark swypInputStreamDiscerner
+-(void) _cleanupForNextDiscernmentCycle{
+	_bufferedDatasZeroIndexByteLocationInYieldedStream	= 0;
+	_bufferedDataNextReadIndex							= 0;
+	[_lastYieldedStream setDataSource:nil];
+	SRELS(_lastYieldedStream);
+}
+
 -(void) _setupInputStreamForRead:(NSInputStream*)readStream{
 	if (_discernmentStream != nil){
 		[self _teardownInputStream];
@@ -78,19 +112,23 @@
 }
 
 -(void) _handleInputDataRead{
-	NSUInteger	currentBufferLength	=	[_bufferedData length];
+	//the goal is to not slow down the consumption of on-wire data too much
 	
+	if ([_bufferedData length] > memoryPageSize * 10){ //40k seems to be a good arbitrary max
+		return;
+	}
+
 	static NSUInteger readLength	=	1024;
 	
-	if (_lastYieldedStream == nil || currentBufferLength < readLength * 2){
-		uint8_t readBuffer[readLength];
-		unsigned int readLength = 0;
-		readLength = [_discernmentStream read:readBuffer maxLength:readLength];
-		if(!readLength){ 
-			return;
-		}
-		[_bufferedData appendBytes:readBuffer length:readLength];	
+	uint8_t readBuffer[readLength];
+	NSUInteger readByteCount = 0;
+	readByteCount	= [_discernmentStream read:readBuffer maxLength:readLength];
+	
+	if(!readByteCount){ 
+		return;
 	}
+	
+	[_bufferedData appendBytes:readBuffer length:readLength];
 	
 	if (_lastYieldedStream == nil){
 		[self _handleHeaderPacketFromCurrentBufferLocation:_bufferedDataNextReadIndex];

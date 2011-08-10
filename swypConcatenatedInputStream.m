@@ -53,6 +53,39 @@
 }
 
 #pragma mark NSInputStream
+- (BOOL)getBuffer:(uint8_t **)buffer length:(NSUInteger *)len{
+	return NO; //doesn't matter, honestly..
+}
+-(NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)maxLength{
+	NSUInteger readableBytes = [_dataOutBuffer length] - _nextDataOutputIndex;
+	if (readableBytes == 0)
+		return 0;
+	
+	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
+	NSRange readRange		= NSMakeRange(_nextDataOutputIndex, bytesToRead);
+	
+	[_dataOutBuffer getBytes:buffer range:readRange];
+	
+	_nextDataOutputIndex += bytesToRead;
+	[_dataOutBuffer replaceBytesInRange:readRange withBytes:NULL length:0];
+	_nextDataOutputIndex -= bytesToRead; //cleared out now-useless data
+	
+	return bytesToRead;
+}
+-(BOOL)	hasBytesAvailable{
+	if (_nextDataOutputIndex < [_dataOutBuffer length]){
+		return TRUE;
+	}else if ([self finishedRelayingAllQueuedStreamData]){
+		if ([self closeStreamAtQueueEnd]){
+			_streamStatus = NSStreamStatusAtEnd;
+			[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+		}
+	}
+	
+	
+	return FALSE; 
+}
+
 -(void)	open{
 	_streamStatus = NSStreamStatusOpen;
 	[self _queueNextInputStream];
@@ -224,41 +257,6 @@
 			[[self delegate] stream:self handleEvent:NSStreamEventErrorOccurred];
 		}
 	}
-}
-
-#pragma mark NSInputStream subclass
-
-- (BOOL)getBuffer:(uint8_t **)buffer length:(NSUInteger *)len{
-	return NO; //doesn't matter, honestly..
-}
--(NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)maxLength{
-	NSUInteger readableBytes = [_dataOutBuffer length] - _nextDataOutputIndex;
-	if (readableBytes == 0)
-		return 0;
-	
-	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
-	NSRange readRange		= NSMakeRange(_nextDataOutputIndex, bytesToRead);
-
-	[_dataOutBuffer getBytes:buffer range:readRange];
-	
-	_nextDataOutputIndex += bytesToRead;
-	[_dataOutBuffer replaceBytesInRange:readRange withBytes:NULL length:0];
-	_nextDataOutputIndex -= bytesToRead; //cleared out now-useless data
-	
-	return bytesToRead;
-}
--(BOOL)	hasBytesAvailable{
-	if (_nextDataOutputIndex < [_dataOutBuffer length]){
-		return TRUE;
-	}else if ([self finishedRelayingAllQueuedStreamData]){
-		if ([self closeStreamAtQueueEnd]){
-			_streamStatus = NSStreamStatusAtEnd;
-			[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
-		}
-	}
-	
-
-	return FALSE; 
 }
 
 #pragma mark concatStream

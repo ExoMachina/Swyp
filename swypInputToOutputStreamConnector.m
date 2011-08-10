@@ -124,7 +124,7 @@
 		}else if (eventCode == NSStreamEventHasBytesAvailable){
 			[self _attemptDataHandoff];
 		}else if (eventCode == NSStreamEventEndEncountered){
-			[_delegate completedInputStream:_inputStream withInputToOutputConnector:self];
+			[_delegate completedInputStream:_inputStream forOutputStream:_outputStream withInputToOutputConnector:self];
 		}else if (eventCode == NSStreamEventErrorOccurred){
 			[_delegate encounteredErrorInInputStream:_inputStream withInputToOutputConnector:self];
 		}

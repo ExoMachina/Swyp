@@ -25,7 +25,8 @@
 	
 	//holds last KB of read data, plus 1 kb of new data!
 	NSMutableData*					_bufferedData;
-	NSUInteger						_bufferedDataNextReadIndex;; 
+	NSUInteger						_bufferedDataNextReadIndex;
+	NSUInteger						_bufferedDatasZeroIndexByteLocationInYieldedStream;
 	
 	swypDiscernedInputStream*		_lastYieldedStream;
 	
@@ -49,8 +50,10 @@
 -(void)	_handleHeaderPacketFromCurrentBufferLocation:(NSUInteger)		location; 
 
 -(void)	_generateDiscernedStreamWithHeaderDictionary:(NSDictionary*) headerDictionary payloadLength: (NSUInteger)length;
+-(void) _cleanupForNextDiscernmentCycle;
 
 -(void) _handleInputDataRead;
+
 
 
 -(void) _setupInputStreamForRead:	(NSInputStream*)readStream;

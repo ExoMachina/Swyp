@@ -8,17 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "swypFileTypeString.h"
+#import "swypInputToDataBridge.h"
 
 @class swypDiscernedInputStream;
 
-@protocol swypDiscernedInputStreamSimpleDataDelegate <NSObject>
--(void)	yieldedData:(NSData*)data forDiscernedInputStream:(swypDiscernedInputStream*)inputStream;
-@end
-
 @protocol swypDiscernedInputStreamDataSource <NSObject>
 
--(void)		discernedStreamEndedAtStreamByteIndex:(NSUInteger)endByteIndex discernedInputStream:(swypDiscernedInputStream*)inputStream;
--(NSData*)	pullDataFromIndex:(NSUInteger)lastReadPoint	discernedInputStream:(swypDiscernedInputStream*)inputStream;
+-(void)		discernedStreamEndedAtStreamByteIndex:(NSUInteger)endByteIndex  discernedInputStream:(swypDiscernedInputStream*)inputStream;
+-(NSData*)	pullDataWithLength:(NSUInteger)maxLength discernedInputStream:(swypDiscernedInputStream*)inputStream;
 
 @end
 
@@ -31,7 +28,6 @@
 	NSUInteger				_streamEndByteIndex;
 	
 	id<swypDiscernedInputStreamDataSource>			_dataSource;
-	id<swypDiscernedInputStreamSimpleDataDelegate>	_simpleDelegate;
 	
 	id<NSStreamDelegate>				_delegate;
 	NSTimer	*							_runloopTimer;
@@ -39,9 +35,10 @@
 
 	
 	//internals
-	NSMutableData *			_providerDataBuffer;
 	NSMutableData *			_pulledDataBuffer;
 	NSUInteger				_lastPulledByteIndex;
+	
+	swypInputToDataBridge *	_inputToDataBridge;
 }
 
 
@@ -51,27 +48,27 @@
 @property (nonatomic, readonly) NSString*				streamTag;
 @property (nonatomic, readonly)	swypFileTypeString*		streamType;
 @property (nonatomic, readonly)	NSUInteger				lastProvidedByteIndex;
+@property (nonatomic, readonly)	NSUInteger				streamEndByteIndex;
 
-@property (nonatomic, readonly) id<swypDiscernedInputStreamDataSource>			dataSource;
+@property (nonatomic, assign)	id<swypDiscernedInputStreamDataSource>			dataSource;
 @property (nonatomic, assign)	id<NSStreamDelegate>							delegate;
-
-/*
-	Setting this property allows buffering of all data in an _isIndefinite == NO stream, and passing a yieldedData:: message of all data when done buffering
-	This functionality cannot be used in conjunction with NSInputStream support -- such will result in exception raising
-		Internally, this property sets the stream delegate to self
-*/
-@property (nonatomic, assign)	id<swypDiscernedInputStreamSimpleDataDelegate>	simpleDelegate;
 
 
 -(id)	initWithStreamDataSource:(id<swypDiscernedInputStreamDataSource>)dataSource type:(swypFileTypeString*)type tag:(NSString*)tag length:(NSUInteger)streamLength;
 
 /*
-	This method enables the next input stream to queued out of data already consumed by reading this object's NSStream
+	This method enables the next input stream to be queued out of data already consumed by reading this object's NSStream
 	byteIndex must exist within the most recent read, or in the future
 		eg, it can't be from two stream reads back
+	Calling this method on a discernedInputStream makes it become definite
 */
 -(void) endIndefiniteStreamAtByteIndex:(NSUInteger)byteIndex;
 
+/*
+	Just get the bridge, set the delegate, and you'll get NSData when it's finished reading the inputStream
+	You can't use the bridge with the NSInputStream functionalities of the discernedStream -- you'll get exceptions
+*/
+-(swypInputToDataBridge*) inputToDataBridge;
 
 //
 //private
