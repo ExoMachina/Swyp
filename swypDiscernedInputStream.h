@@ -38,7 +38,6 @@
 	NSMutableData *			_pulledDataBuffer;
 	NSUInteger				_lastPulledByteIndex;
 	
-	swypInputToDataBridge *	_inputToDataBridge;
 }
 
 
@@ -67,6 +66,7 @@
 /*
 	Just get the bridge, set the delegate, and you'll get NSData when it's finished reading the inputStream
 	You can't use the bridge with the NSInputStream functionalities of the discernedStream -- you'll get exceptions
+	You'll only ever get one per discerned stream, and it will be *autoreleased*; subsequent calls will return nil and an angry log message
 */
 -(swypInputToDataBridge*) inputToDataBridge;
 

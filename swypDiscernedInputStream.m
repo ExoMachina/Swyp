@@ -52,15 +52,14 @@
 
 
 -(swypInputToDataBridge*) inputToDataBridge{
-	if (_inputToDataBridge == nil){	
-		if ([self streamStatus] == NSStreamStatusNotOpen){
-			_inputToDataBridge = [[swypInputToDataBridge alloc] initWithInputStream:self dataBrdigeDelegate:nil];
-		}else{
-			[NSException raise:@"swypDiscernedInputStreamBridgeGenerationException" format:@"You tried to create an inputToDataBridge on a discernedStream that is already open-- make up your mind."];
-		}
+	swypInputToDataBridge * inputToDataBridge = nil;
+	if ([self streamStatus] == NSStreamStatusNotOpen){
+			inputToDataBridge = [[swypInputToDataBridge alloc] initWithInputStream:self dataBrdigeDelegate:nil];
+	}else{
+		EXOLog(@"swypDiscernedInputStreamBridgeGenerationLOGGEDException -- You tried to create an inputToDataBridge on a discernedStream that is already open-- make up your mind.");
 	}
 	
-	return _inputToDataBridge;
+	return inputToDataBridge;
 }
 #pragma mark NSObject
 - (id)init
@@ -71,7 +70,6 @@
 -(void)dealloc{
 	
 	[self removeFromRunLoop:nil forMode:nil];
-	SRELS(_inputToDataBridge);
 	SRELS(_pulledDataBuffer);
 	SRELS(_streamType);
 	SRELS(_streamTag);
