@@ -261,7 +261,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
 		if([self _clientCandidate:candidate isMatchForSwypInfo:localSwyp]){
 			firstMatchingSwyp	=	localSwyp;
-			return;
+			break;
 		}
 	}
 	
@@ -363,9 +363,10 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	NSInteger milisecondDifference =	 abs([[[clientCandidate swypInfo] startDate] timeIntervalSinceDate:[swypInfo endDate]] * 1000);
 
-	EXOLog(@"Milisecond difference with client of ID %@ is %i",[clientCandidate persistentPeerID],milisecondDifference);
+	EXOLog(@"Milisecond difference with client is %i-- Their start %f our end %f",milisecondDifference,[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow] );
 	
-	if (milisecondDifference < 1000){
+	//I've gotten ~2700 on bluetooth
+	if (milisecondDifference < 3000){
 		return TRUE;		
 	}else {
 		return FALSE;
@@ -403,7 +404,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];	
+#warning "Do yo thang, and implement this, fool!"
+	EXOLog(@"We're happy and would hand off to the crypto manager now!");
+//	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];	
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{

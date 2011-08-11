@@ -53,7 +53,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 	
 	NSInputStream * headerStream	=	[NSInputStream inputStreamWithData:concatenatedHeaderData];
-	EXOLog(@"Sending header json: %@", jsonHeaderString);
 	
 	swypConcatenatedInputStream * concatenatedSendPacket	=	[[swypConcatenatedInputStream alloc] initWithInputStreamArray:[NSArray arrayWithObjects:headerStream,payloadStream,nil]];
 	[concatenatedSendPacket setHoldCompletedStreams:TRUE];
@@ -197,17 +196,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}
 }
 
--(void)	_handleSocketInputData{
-	if (_socketInputStream != nil){
-		uint8_t readBuffer[1024];
-		unsigned int readLength = 0;
-		readLength = [_socketInputStream read:readBuffer maxLength:1024];
-		
-		if (readLength > 0){
-			EXOLog(@"Read %i# bytes of data data from socket input stream: %s", readLength, readBuffer);
-		}
-	}
-}
 #pragma mark -
 #pragma mark swypInputStreamDiscernerDelegate
 

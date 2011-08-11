@@ -70,7 +70,6 @@
 -(void)	open{
 	_streamStatus = NSStreamStatusOpen;
 	[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
-	EXOLog(@"Opened swypDiscernedInputStream, no data is necessary yet");
 }
 
 -(void) close{

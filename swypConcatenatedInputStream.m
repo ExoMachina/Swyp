@@ -215,7 +215,6 @@
 */
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
-		EXOLog(@"Opened stream as substream of concatenatedInputStream");
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
