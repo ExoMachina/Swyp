@@ -18,7 +18,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 #pragma mark public
 #pragma mark send data
 
--(swypConcatenatedInputStream*)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)payloadStream length:(NSUInteger)streamLength{
+-(swypConcatenatedInputStream*)	beginSendingFileStreamWithTag:(NSString*)tag  type:(NSString*)fileType dataStreamForSend:(NSInputStream*)payloadStream length:(NSUInteger)streamLength{
 	if (StringHasText(tag) == NO || StringHasText(fileType) == NO || payloadStream == nil){
 		return nil;
 	}
@@ -61,7 +61,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	return [concatenatedSendPacket autorelease];
 }
 
--(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData{
+-(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(NSString*)type dataForSend:(NSData*)sendData{
 	NSUInteger dataLength	=	[sendData length];
 	if (dataLength == 0)	return nil;
 	
@@ -84,7 +84,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[_sendDataQueueStream removeAllQueuedStreamsAfterCurrent];
 	
 	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
-	[self beginSendingDataWithTag:@"goodbye" type:[swypFileTypeString swypControlPacketFileType] dataForSend:sendDictionaryData];
+	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
 }
 
 #pragma mark delegatation
@@ -136,6 +136,13 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 }
 
 -(void)	dealloc{
+
+	SRELS(_delegatesForPendingInputBridges);
+	for (NSValue * unretainedBridge in _pendingInputBridges){
+		swypInputToDataBridge * bridge	=	[unretainedBridge nonretainedObjectValue];
+		[bridge setDelegate:nil];
+	}
+	SRELS(_pendingInputBridges);
 	
 	SRELS(_inputStreamDiscerner);
 	
@@ -208,9 +215,27 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	BOOL willHandleStream = FALSE;
 	for (NSValue * delegateValue in _dataDelegates){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
-		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:inConnectionSession:)]){
-			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream inConnectionSession:self];
+		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
+			
+			BOOL	delegateWantsData = FALSE;
+			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
+			
 			if (willHandleStream){
+				if (delegateWantsData){
+					
+					swypInputToDataBridge* pendingInputBridge = [[swypInputToDataBridge alloc] initWithInputStream:discernedStream dataBrdigeDelegate:self];
+					
+					if (_delegatesForPendingInputBridges == nil)
+						_delegatesForPendingInputBridges = [[NSMutableDictionary alloc] init];
+					[_delegatesForPendingInputBridges setObject:[NSValue valueWithNonretainedObject:delegate] forKey:[NSValue valueWithNonretainedObject:pendingInputBridge]];
+					
+					if (_pendingInputBridges == nil)
+						_pendingInputBridges = [[NSMutableSet alloc] init];
+					[_pendingInputBridges addObject:pendingInputBridge];
+					
+					SRELS(pendingInputBridge);
+					
+				}
 				break;
 			}
 		}
@@ -226,6 +251,39 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[self _changeStatus:swypConnectionSessionStatusClosed];
 }
 
+#pragma mark -
+#pragma mark swypInputToDataBridgeDelegate
+
+-(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge{
+	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){
+		swypDiscernedInputStream * discernedStream 	=	(swypDiscernedInputStream*) inputStream;
+		id <swypConnectionSessionDataDelegate> delegate	=	[[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]] nonretainedObjectValue];
+		
+		if ([delegate respondsToSelector:@selector(yieldedData:discernedStream:inConnectionSession:)]){
+			[delegate yieldedData:yieldedData discernedStream:discernedStream inConnectionSession:self];
+		}
+		
+		
+		[_delegatesForPendingInputBridges removeObjectForKey:[NSValue valueWithNonretainedObject:bridge]];
+		[_pendingInputBridges removeObject:bridge];
+	}
+}
+
+-(void)	dataBridgeFailedYieldingDataFromInputStream:(NSInputStream*) inputStream withError: (NSError*) error inInputToDataBridge:(swypInputToDataBridge*)bridge{
+	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){
+		swypDiscernedInputStream * discernedStream 	=	(swypDiscernedInputStream*) inputStream;
+		EXOLog(@"Failed data yield on stream with tag '%@' type '%@'",[discernedStream streamTag],[discernedStream streamType]);
+		
+		
+		id <swypConnectionSessionDataDelegate> delegate	=	[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]];
+		if ([delegate respondsToSelector:@selector(yieldedData:discernedStream:inConnectionSession:)]){
+			[delegate yieldedData:nil discernedStream:discernedStream inConnectionSession:self];
+		}
+		
+		[_delegatesForPendingInputBridges removeObjectForKey:[NSValue valueWithNonretainedObject:bridge]];
+		[_pendingInputBridges removeObject:bridge];
+	}
+}
 
 #pragma mark -
 #pragma mark NSStreamDelegate
@@ -253,9 +311,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		[self _teardownConnection];
 		[self _changeStatus:swypConnectionSessionStatusClosed];
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
-		if (aStream == _socketInputStream){
-			[self _handleSocketInputData];
-		}
+		//data is not ours to handle...
 	}
 }
 

@@ -12,7 +12,7 @@
 @implementation swypCryptoManager
 @synthesize delegate = _delegate, sessionsPendingCryptoSetup = _sessionsPendingCryptoSetup;
 +(NSString*)			localPersistantPeerID{
-	NSString * toHash	= [[NSString localAppName] stringByAppendingString:[[[UIDevice currentDevice] name] stringByAppendingString:[[UIDevice currentDevice] uniqueIdentifier]]];
+	NSString * toHash	= [[[NSString localAppName] stringByAppendingString:[[UIDevice currentDevice] name]] stringByAppendingString:[[UIDevice currentDevice] uniqueIdentifier]];
 	return	[toHash SHA1AlphanumericHash];
 }
 @end

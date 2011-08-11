@@ -22,7 +22,6 @@
 
 -(void)	addInputStreamToQueue:		(NSInputStream*)input{
 	[_queuedStreams addObject:input];
-	EXOLog(@"Queued stream #%i",[_queuedStreams count]);
 	if (_currentInputStream == nil && [self streamStatus]== NSStreamStatusOpen)
 		[self _queueNextInputStream]; 
 }
@@ -90,7 +89,6 @@
 	_streamStatus = NSStreamStatusOpen;
 	[self _queueNextInputStream];
 	[[self delegate] stream:self handleEvent:NSStreamEventOpenCompleted];
-	EXOLog(@"Opened swypConcatenatedInputStream, no data is necessary yet");
 }
 
 -(void) close{

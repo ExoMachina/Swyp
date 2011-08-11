@@ -10,6 +10,7 @@
 static NSUInteger const memoryPageSize	=	4096;
 
 #import "swypInputStreamDiscerner.h"
+#import "swypFileTypeString.h"
 
 @implementation swypInputStreamDiscerner
 @synthesize discernmentStream = _discernmentStream, delegate = _delegate;
@@ -51,12 +52,15 @@ static NSUInteger const memoryPageSize	=	4096;
 		[NSException raise:@"swypDiscernedInputStreamException" format:@"endByteIndex '%i' is less than lowest index cached by bufferedData '%i'",endByteIndex,_bufferedDatasZeroIndexByteLocationInYieldedStream];
 	}
 	 
+	
 	NSUInteger endOfStreamIndexInBuffer	=	endByteIndex - _bufferedDatasZeroIndexByteLocationInYieldedStream;
 	
 	if (endOfStreamIndexInBuffer < [_bufferedData length]){ //if the end of the stream is inside the buffer
-		[_bufferedData replaceBytesInRange:NSMakeRange(0, endOfStreamIndexInBuffer) withBytes:NULL length:0];//move the entire buffer back to the beginning of the next stream
+		[_bufferedData replaceBytesInRange:NSMakeRange(0, endOfStreamIndexInBuffer + 1) withBytes:NULL length:0];//move the entire buffer back to the beginning of the next stream; index is zero-delimited whilst range length is 1, so add one
 		[self _cleanupForNextDiscernmentCycle];
 		
+	}else{
+		EXOLog(@"Endbyte index %i is in the future somewhere....",endByteIndex);
 	}
 	
 }
@@ -128,7 +132,7 @@ static NSUInteger const memoryPageSize	=	4096;
 		return;
 	}
 	
-	[_bufferedData appendBytes:readBuffer length:readLength];
+	[_bufferedData appendBytes:readBuffer length:readByteCount];
 	
 	if (_lastYieldedStream == nil){
 		[self _handleHeaderPacketFromCurrentBufferLocation:_bufferedDataNextReadIndex];
@@ -137,7 +141,7 @@ static NSUInteger const memoryPageSize	=	4096;
 -(void)	_handleHeaderPacketFromCurrentBufferLocation:(NSUInteger)	location{
 	NSRange		relevantSearchSpace		=	NSMakeRange(location, [_bufferedData length] - location);
 	NSData*		relevantData			=	[_bufferedData subdataWithRange:relevantSearchSpace];
-	NSString*	headerCandidateString	=	[NSString stringWithCString:[relevantData bytes] encoding:NSUTF8StringEncoding];
+	NSString*	headerCandidateString	=	[NSString stringWithUTF8String:[relevantData bytes]];
 
 	NSRange		firstSemicolonRange		=	[headerCandidateString rangeOfString:@";" options:0];	
 	if (firstSemicolonRange.location == NSNotFound)
@@ -155,7 +159,7 @@ static NSUInteger const memoryPageSize	=	4096;
 	NSString * 	headerLengthString		=	[remainingHeaderString substringToIndex:secondSemicolonRange.location];
 	NSUInteger	headerLength			=	[headerLengthString intValue];
 	
-	if (headerLength > ([remainingHeaderString length] - secondSemicolonRange.location + secondSemicolonRange.length))
+	if (headerLength > ([remainingHeaderString length] - (secondSemicolonRange.location + secondSemicolonRange.length)))
 		return;
 	
 	NSString *	packetHeaderString		=	[remainingHeaderString substringWithRange:NSMakeRange(secondSemicolonRange.location + secondSemicolonRange.length, headerLength)];	
@@ -171,7 +175,7 @@ static NSUInteger const memoryPageSize	=	4096;
 	
 	NSUInteger payloadLength	=	0;
 	if (packetLength > 0){
-		payloadLength	=	packetLength - prePayloadLength;
+		payloadLength	=	(packetLength + [packetLengthString length] +1)  - prePayloadLength; //payload length begins after first semicolon
 	}
 	EXOLog(@"Extracted header with payloadLength %i, packet length %i, headerLength %i, value: %@",payloadLength,packetLength,headerLength, packetHeaderString);
 	[self _generateDiscernedStreamWithHeaderDictionary:headerDictionary payloadLength:payloadLength];
@@ -190,7 +194,7 @@ static NSUInteger const memoryPageSize	=	4096;
 	if (StringHasText(typeString) && StringHasText(tagString)){
 		EXOLog(@"Tag :%@ ; Type :%@ ;",tagString,typeString);
 		SRELS( _lastYieldedStream);
-		_lastYieldedStream =	[[swypDiscernedInputStream alloc] initWithStreamDataSource:self type:[swypFileTypeString stringWithString:typeString] tag:tagString length:[lengthNumber intValue]];
+		_lastYieldedStream =	[[swypDiscernedInputStream alloc] initWithStreamDataSource:self type:typeString tag:tagString length:[lengthNumber intValue]];
 		[[self delegate] discernedStream:_lastYieldedStream withDiscerner:self];
 	}else{
 		EXOLog(@"Tag or type are missing");

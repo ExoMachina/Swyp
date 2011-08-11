@@ -7,6 +7,7 @@
 //
 
 #import "swypConnectionManager.h"
+#import "swypDiscernedInputStream.h"
 
 @implementation swypConnectionManager
 @synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions;
@@ -197,6 +198,19 @@
 }
 
 #pragma mark -
+#pragma mark swypInputToDataBridgeDelegate
+-(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge{
+	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){
+		EXOLog(@"Yielded data %@ with type '%@' tag '%@'",[NSString  stringWithUTF8String:[yieldedData bytes]], [(swypDiscernedInputStream*)inputStream streamType], [(swypDiscernedInputStream*)inputStream streamTag]);	
+	}else{
+		EXOLog(@"Unexpected bridge response with data :%@",[NSString  stringWithUTF8String:[yieldedData bytes]]);
+	}
+}
+-(void)	dataBridgeFailedYieldingDataFromInputStream:(NSInputStream*) inputStream withError: (NSError*) error inInputToDataBridge:(swypInputToDataBridge*)bridge{
+	
+}
+
+#pragma mark -
 #pragma mark swypConnectionSessionInfoDelegate
 -(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session{
 }
@@ -207,29 +221,31 @@
 	[_delegate swypConnectionSessionWasInvalidated:session withConnectionManager:self error:error];
 }
 #pragma mark swypConnectionSessionDataDelegate
--(NSOutputStream*) streamToWriteReceivedDataWithTag:(NSString*)tag type:(swypFileTypeString*)type length:(NSUInteger)streamLength connectionSession:(swypConnectionSession*)session{
-	if ([type isFileType:[swypFileTypeString swypControlPacketFileType]]){
-		return [NSOutputStream outputStreamToMemory];
+
+-(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
+	if ([[discernedStream streamType] isFileType:[NSString swypControlPacketFileType]]){
+		wantsProvidedAsNSData = (BOOL*) TRUE;
+		return TRUE;
 	}	
-	
-	return nil;
+	return FALSE;
 }
--(void) finishedReceivingDataWithOutputStream:(NSOutputStream*)stream error:(NSError*)error tag:(NSString*)tag type:(swypFileTypeString*)type connectionSession:(swypConnectionSession*)session{
-	if ([type isFileType:[swypFileTypeString swypControlPacketFileType]]){
+
+-(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+	if ([[discernedStream streamType] isFileType:[NSString swypControlPacketFileType]]){
 		//do something to handle this :)
-		NSData	*	readStreamData	=	[stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
 		
 		NSDictionary *	receivedDictionary = nil;
-		if ([readStreamData length] >0){
-			NSString *	readStreamString	=	[NSString stringWithUTF8String:[readStreamData bytes]];
+		if ([streamData length] >0){
+			NSString *	readStreamString	=	[NSString stringWithUTF8String:[streamData bytes]];
 			if (StringHasText(readStreamString))
 				receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
 		}		
 		
 		if (receivedDictionary != nil){
-			EXOLog(@"Received %@ dictionary of contents:%@",type,[receivedDictionary description]);
+			EXOLog(@"Received %@ dictionary of contents:%@",[discernedStream streamType],[receivedDictionary description]);
 		}
 	}
+	
 }
 
 

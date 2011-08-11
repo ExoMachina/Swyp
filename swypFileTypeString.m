@@ -9,12 +9,13 @@
 #import "swypFileTypeString.h"
 
 
-@implementation swypFileTypeString
+@implementation NSString (swypFileTypeString)
 
 
--(BOOL) isFileType:	(swypFileTypeString*)fileType{
+-(BOOL) isFileType:	(NSString*)fileType{
 	return [self isEqualToString:fileType];
 }
+
 
 +(id) imagePNGFileType{
 	static NSString * type = @"image/png";

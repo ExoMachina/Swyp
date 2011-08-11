@@ -7,14 +7,16 @@
 //
 
 //defines file types used by swypConnectionSession for sending and receiving data
+// don't read into this too much, it's really just conviniencies for standardized string constants
+////this class is not concrete, it can't be used as a full-on string
+
 
 #import <Foundation/Foundation.h>
 
 
-@interface swypFileTypeString : NSString {
+@interface NSString (swypFileTypeString)
 
-}
--(BOOL) isFileType:	(swypFileTypeString*)fileType;
+-(BOOL) isFileType:	(NSString*)fileType;
 
 /*
 		This is the one type that all swypDataContent *must* support exporting. I'm serious-- I will develop blacklisting, implement exceptions, etc.

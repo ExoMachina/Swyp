@@ -139,53 +139,54 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 #pragma mark connectionSession data delegates
--(NSOutputStream*) streamToWriteReceivedDataWithTag:(NSString*)tag type:(swypFileTypeString*)type length:(NSUInteger)streamLength connectionSession:(swypConnectionSession*)session{
-
-	if ([type isFileType:[swypFileTypeString swypControlPacketFileType]]){
-		return [NSOutputStream outputStreamToMemory];
+-(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
+	
+	if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
+		*wantsProvidedAsNSData = TRUE;
+		return TRUE;
 	}else {
 		swypCandidate	*	candidate	=	[session representedCandidate];
-		EXOLog(@"Session connection returned unexpected  'type' during HELLO sequence for candidate appearing at time:%@",[candidate appearanceDate]);
-		[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:[NSError errorWithDomain:swypHandshakeManagerErrorDomain code:swypHandshakeManagerSocketHelloMismatchError userInfo:nil]];
-		[session removeConnectionSessionInfoDelegate:self];
-		[session removeDataDelegate:self];
-		[session invalidate];
-		[_pendingConnectionSessions	removeObject:session];		
+		EXOLog(@"Session connection returned unexpected type '%@' during HELLO sequence for candidate appearing at time:%@",[discernedStream streamType],[candidate appearanceDate]);
+		[self _removeAndInvalidateSession:session];		
+		return FALSE;
+	}
+}
+
+-(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+	if ([streamData length] > 0){
+		if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
+						
+			NSDictionary *	receivedDictionary = nil;
+			if ([streamData length] >0){
+				NSString *	readStreamString	=	[NSString stringWithUTF8String:[streamData bytes]];
+				if (StringHasText(readStreamString))
+					receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
+			}
+			
+			if (receivedDictionary != nil){
+//				EXOLog(@"Received %@ dictionary of contents:%@",[discernedStream streamType],[receivedDictionary description]);
+				if ([[session representedCandidate] role] == swypCandidateRoleClient && [[discernedStream streamTag] isEqualToString:@"clientHello"]){
+					[self _handleClientHelloPacket:receivedDictionary forConnectionSession:session];
+				}else if ([[session representedCandidate] role] == swypCandidateRoleServer && [[discernedStream streamTag] isEqualToString:@"serverHello"]){
+					[self _handleServerHelloPacket:receivedDictionary forConnectionSession:session];
+				}else {
+					EXOLog(@"Invalid tag during handshake %@", [discernedStream streamTag]);
+					[self _removeAndInvalidateSession:session];
+				}
+			}else{
+				EXOLog(@"Bad receive dict for handshake");
+				[self _removeAndInvalidateSession:session];
+			}
+		}
+
+	}else{
+		swypCandidate	*	candidate	=	[session representedCandidate];
+		EXOLog(@"Session connection failed without HELLO packet data for candidate appearing at time:%@",[candidate appearanceDate]);
+		[self _removeAndInvalidateSession:session];
 	}
 	
-	return nil;	
 }
--(void) finishedReceivingDataWithOutputStream:(NSOutputStream*)stream error:(NSError*)error tag:(NSString*)tag type:(swypFileTypeString*)type connectionSession:(swypConnectionSession*)session{
-	if ([type isFileType:[swypFileTypeString swypControlPacketFileType]]){
-		
-		NSData	*	readStreamData	=	[stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-		
-		NSDictionary *	receivedDictionary = nil;
-		if ([readStreamData length] >0){
-			NSString *	readStreamString	=	[NSString stringWithUTF8String:[readStreamData bytes]];
-			if (StringHasText(readStreamString))
-				receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
-		}
-		
-		if (receivedDictionary != nil){
-			EXOLog(@"Received %@ dictionary of contents:%@",type,[receivedDictionary description]);
-			if ([[session representedCandidate] role] == swypCandidateRoleClient && [tag isEqualToString:@"clientHello"]){
-				[self _handleClientHelloPacket:receivedDictionary forConnectionSession:session];
-			}else if ([[session representedCandidate] role] == swypCandidateRoleServer && [tag isEqualToString:@"serverHello"]){
-				[self _handleServerHelloPacket:receivedDictionary forConnectionSession:session];
-			}else {
-				EXOLog(@"Invalid tag during handshake %@", tag);
-				swypCandidate	*	candidate	=	[session representedCandidate];
-				[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:error];
-				[session removeConnectionSessionInfoDelegate:self];
-				[session removeDataDelegate:self];
-				[session invalidate];
-				[_pendingConnectionSessions	removeObject:session];					
-			}
 
-		}
-	}
-}
 #pragma mark -
 #pragma mark helloPacket
 -(void)	_sendServerHelloPacketToClientForSwypConnectionSession:	(swypConnectionSession*)session{
@@ -204,7 +205,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 
 	EXOLog(@"Sending server hello packet: %@", jsonString);
-	[session beginSendingDataWithTag:@"serverHello" type:[swypFileTypeString swypControlPacketFileType] dataForSend:jsonData];
+	[session beginSendingDataWithTag:@"serverHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];
 	
 }
 -(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session{
@@ -227,20 +228,20 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 	
 	EXOLog(@"Sending client hello packet: %@", jsonString);
-	[session beginSendingDataWithTag:@"clientHello" type:[swypFileTypeString swypControlPacketFileType] dataForSend:jsonData];	
+	[session beginSendingDataWithTag:@"clientHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];	
 }
 
 -(void)	_handleClientHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
 	swypClientCandidate	*	candidate		=	(swypClientCandidate*)[session representedCandidate];
 	swypInfoRef *	swypRefFromClientInfo	=	[[swypInfoRef alloc] init];	
 	NSString * persistentPeerID				= [helloPacket valueForKey:@"persistentPeerID"];
-	id intervalSinceSwyp					= [helloPacket valueForKey:@"intervalSinceSwypIn"];
+	NSNumber* intervalSinceSwypNumber		= [helloPacket valueForKey:@"intervalSinceSwypIn"];
 	
-	if ([intervalSinceSwyp isKindOfClass:[NSNumber class]]){
-		NSInteger intervalSinceSwyp	= [(NSNumber*) intervalSinceSwyp intValue];
-		if (intervalSinceSwyp > 0){
-			double intervalInPast	= (double)intervalSinceSwyp/1000 * -1;
-			[swypRefFromClientInfo	setStartDate:[NSDate dateWithTimeIntervalSinceNow:intervalInPast]];
+	if ([intervalSinceSwypNumber isKindOfClass:[NSNumber class]]){
+		double doubleIntervalSinceSwyp	=	[intervalSinceSwypNumber doubleValue];
+		if (doubleIntervalSinceSwyp > 0){
+			double secondsInPast		= doubleIntervalSinceSwyp * -1;
+			[swypRefFromClientInfo	setStartDate:[NSDate dateWithTimeIntervalSinceNow:secondsInPast]];
 		}
 	}
 	

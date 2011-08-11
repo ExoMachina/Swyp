@@ -17,6 +17,7 @@
 #import "swypFileTypeString.h"
 #import "swypInputStreamDiscerner.h"
 #import "swypDiscernedInputStream.h"
+#import "swypInputToDataBridge.h"
 
 static NSString * const swypConnectionSessionErrorDomain;
 typedef enum {
@@ -47,17 +48,26 @@ typedef enum {
 @optional
 /*
 	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
-	If no one handles, an exception is thrown
+		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
+		If no one handles, an exception is thrown
+	
+	discernedStream can be read as an input stream, and attached to output streams using SwypInputToOutput, for example
+	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, *wantsProvidedAsNSData = TRUE;, to have data provided in a method bellow
 */
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)stream inConnectionSession:(swypConnectionSession*)session;
--(void) connectionFailedWithError:(NSError*)connectionError	inConnectionSession:(swypConnectionSession*)session;
+-(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session;
+/*
+	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
+*/
+
+-(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
+
 
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
 @end
 
 
-@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate> {
+@interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
 	
@@ -72,7 +82,13 @@ typedef enum {
 	swypTransformPathwayInputStream *	_socketOutputTransformInputStream;	//initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil 
 	swypInputToOutputStreamConnector *	_outputStreamConnector;				//initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream
 	
+	
 	swypInputStreamDiscerner *			_inputStreamDiscerner;				//splits up input data
+
+	//for NSData-wanting delegates
+	NSMutableDictionary	*				_delegatesForPendingInputBridges;
+	NSMutableSet *						_pendingInputBridges;
+	
 	
 	NSInputStream *			_socketInputStream;
 	NSOutputStream *		_socketOutputStream;
@@ -99,9 +115,9 @@ typedef enum {
 			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!
 	if there is already a stream sending, this stream will be queued
 */
--(swypConcatenatedInputStream*)	beginSendingFileStreamWithTag:(NSString*)tag  type:(swypFileTypeString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
+-(swypConcatenatedInputStream*)	beginSendingFileStreamWithTag:(NSString*)tag  type:(NSString*)fileType dataStreamForSend:(NSInputStream*)stream length:(NSUInteger)streamLength;
 /* same as above, a convinience method for those who wish to use data already in-memory */
--(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(swypFileTypeString*)type dataForSend:(NSData*)sendData; 
+-(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(NSString*)type dataForSend:(NSData*)sendData; 
 
 
 //

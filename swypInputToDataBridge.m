@@ -13,7 +13,7 @@
 @synthesize  yieldedData = _yieldedData, inputStream = _inputStream, delegate = _delegate;
 
 #pragma mark -
-#pragma mark private
+#pragma mark public
 
 -(id)	initWithInputStream:(NSInputStream*)inputStream dataBrdigeDelegate: (id<swypInputToDataBridgeDelegate>)connectorDelegate{
 	if (self = [super init]){
@@ -59,7 +59,7 @@
 }
 
 -(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
-	NSData * yield = [outputStream valueForKey:NSStreamDataWrittenToMemoryStreamKey];
+	NSData * yield = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
 	if (yield){
 		_yieldedData = [yield retain];
 		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];

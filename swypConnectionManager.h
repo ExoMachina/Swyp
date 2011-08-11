@@ -11,6 +11,7 @@
 #import "swypBonjourServiceListener.h"
 #import "swypBonjourServiceAdvertiser.h"
 #import "swypHandshakeManager.h"
+#import "swypInputToDataBridge.h"
 
 @class swypConnectionManager;
 
@@ -20,7 +21,7 @@
 @end
 
 
-@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate> {
+@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
 	swypBonjourServiceListener *	_bonjourListener;

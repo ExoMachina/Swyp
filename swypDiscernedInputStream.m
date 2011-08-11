@@ -10,14 +10,14 @@
 
 @implementation swypDiscernedInputStream
 @synthesize isIndefinite = _isIndefinite, streamLength = _streamLength, streamTag = _streamTag, streamType = _streamType,lastProvidedByteIndex = _lastProvidedByteIndex, streamEndByteIndex=_streamEndByteIndex;
-@synthesize dataSource, delegate;
+@synthesize dataSource = _dataSource, delegate = _delegate;
 
 
 #pragma mark -
 #pragma mark public
--(id)	initWithStreamDataSource:(id<swypDiscernedInputStreamDataSource>)source type:(swypFileTypeString*)type tag:(NSString*)tag length:(NSUInteger)streamLength{
+-(id)	initWithStreamDataSource:(id<swypDiscernedInputStreamDataSource>)source type:(NSString*)type tag:(NSString*)tag length:(NSUInteger)streamLength{
 	if (self = [super init]){
-		_dataSource = dataSource;
+		_dataSource = source;
 		_streamTag	= [tag retain];
 		_streamType	= [type retain];
 
@@ -50,17 +50,6 @@
 	//if (endStreamOffset < 0){ //you're in the future, just hang out until ready to end
 }
 
-
--(swypInputToDataBridge*) inputToDataBridge{
-	swypInputToDataBridge * inputToDataBridge = nil;
-	if ([self streamStatus] == NSStreamStatusNotOpen){
-			inputToDataBridge = [[swypInputToDataBridge alloc] initWithInputStream:self dataBrdigeDelegate:nil];
-	}else{
-		EXOLog(@"swypDiscernedInputStreamBridgeGenerationLOGGEDException -- You tried to create an inputToDataBridge on a discernedStream that is already open-- make up your mind.");
-	}
-	
-	return inputToDataBridge;
-}
 #pragma mark NSObject
 - (id)init
 {
@@ -166,7 +155,7 @@
 	NSInteger	neededDataQuantity	=	memPageLength - [_pulledDataBuffer length];
 	
 	if ([self isIndefinite] == NO){
-		NSInteger	lengthToStreamEnd	= _streamEndByteIndex - _lastPulledByteIndex;
+		NSInteger	lengthToStreamEnd	= _streamLength - _lastPulledByteIndex;
 		neededDataQuantity	=	MIN(neededDataQuantity, lengthToStreamEnd);
 	}
 	
@@ -177,12 +166,15 @@
 			_lastPulledByteIndex += [newData length];
 			[_pulledDataBuffer appendData:newData];
 		}
+		
+		
+		NSInteger	remainingLengthToStreamEnd	= _streamLength - _lastPulledByteIndex;
+		if (remainingLengthToStreamEnd <= 0){
+			[_dataSource discernedStreamEndedAtStreamByteIndex:_streamEndByteIndex discernedInputStream:self];
+		}
 	}
 	
-	NSInteger	remainingLengthToStreamEnd	= _streamEndByteIndex - _lastPulledByteIndex;
-	if (remainingLengthToStreamEnd <= 0){
-		[_dataSource discernedStreamEndedAtStreamByteIndex:_streamEndByteIndex discernedInputStream:self];
-	}
+
 }
 
 @end
