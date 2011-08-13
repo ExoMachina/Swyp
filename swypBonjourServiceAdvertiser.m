@@ -30,10 +30,9 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		return;
 	
 	if (advertisingEnabled == YES){
-		EXOLog(@"Began advertisment publish at time %@",[[NSDate date] description]);
 		[self _setupBonjourAdvertising];
 	}else {
-		EXOLog(@"Tore-down advertisement at time %@",[[NSDate date] description]);
+		EXOLog(@"Tore-down advertisement");
 		[self _teardownBonjourAdvertising:nil];
 	}
 
@@ -233,7 +232,6 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 
 #pragma mark CFSocketCallBack
 static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info) {
-	EXOLog(@"Accepted connection callback at time %@",[[NSDate date] description]);
 	swypBonjourServiceAdvertiser * advertisingSelf	=	(swypBonjourServiceAdvertiser*)info;
 	
 	if (type == kCFSocketAcceptCallBack) { 
@@ -271,7 +269,7 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
         if (readStream && writeStream) {
             CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
             CFWriteStreamSetProperty(writeStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
-			EXOLog(@"Created a successful socket connection at date: %@; with peer at address: %@",[[NSDate date]description],clientIPAddress);
+			EXOLog(@"successful socket to peer at address: %@",clientIPAddress);
 			swypClientCandidate * candidate = [[[swypClientCandidate alloc] init] autorelease];
 			[candidate setAppearanceDate:[NSDate date]];
 			[[advertisingSelf delegate] bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:candidate withStreamIn:(NSInputStream *)readStream streamOut:(NSOutputStream *)writeStream serviceAdvertiser:advertisingSelf];
@@ -299,7 +297,7 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 }
 
 - (void)netServiceDidPublish:(NSNetService *)sender{
-	EXOLog(@"Published bonjour on ip at time %@",[[NSDate date] description]);
+	EXOLog(@"Published bonjour on ip");
 }
 - (void)netService:(NSNetService *)sender didNotPublish:(NSDictionary *)errorDict{
 	if (sender == _v6AdvertiserService){

@@ -15,4 +15,8 @@
 	NSString * toHash	= [[[NSString localAppName] stringByAppendingString:[[UIDevice currentDevice] name]] stringByAppendingString:[[UIDevice currentDevice] uniqueIdentifier]];
 	return	[toHash SHA1AlphanumericHash];
 }
+
+-(void) beginNegotiatingCryptoSessionWithSwypConnectionSession:	(swypConnectionSession*)session{
+	
+}
 @end

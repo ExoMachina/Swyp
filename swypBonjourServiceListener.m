@@ -39,7 +39,6 @@
 	if (nextCandidate == nil){
 
 		if ([def_bonjourHostName isEqualToString:[aNetService name]]){
-			EXOLog(@"Ignoring published self '%@'", def_bonjourHostName);
 			return;
 		}
 		

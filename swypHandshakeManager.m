@@ -121,7 +121,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	if (status == swypConnectionSessionStatusReady){
 		swypCandidate	*	candidate	=	[session representedCandidate];
 		[session addDataDelegate:self];
-		EXOLog(@"Session connection dataReady for candidate appearing at time:%@",[candidate appearanceDate]);
+		EXOLog(@"Session connection dataReady for candidate");
 
 		if ([candidate role] == swypCandidateRoleServer){
 			[self _sendClientHelloPacketToServerForSwypConnectionSession:session];
@@ -132,7 +132,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 -(void) sessionDied:	(swypConnectionSession*)session withError:(NSError*)error{
 	swypCandidate	*	candidate	=	[session representedCandidate];
-	EXOLog(@"Session connection died for candidate appearing at time:%@",[candidate appearanceDate]);
+	EXOLog(@"Session connection died for candidate: %@",[error description]);
 	[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:error];
 	[session removeConnectionSessionInfoDelegate:self];
 	[_pendingConnectionSessions	removeObject:session];
@@ -204,7 +204,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSString *jsonString	=	[helloDictionary jsonStringValue];
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 
-	EXOLog(@"Sending server hello packet: %@", jsonString);
+	EXOLog(@"Sending server hello packet");
 	[session beginSendingDataWithTag:@"serverHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];
 	
 }
@@ -227,7 +227,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSString *jsonString	=	[helloDictionary jsonStringValue];
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 	
-	EXOLog(@"Sending client hello packet: %@", jsonString);
+	EXOLog(@"Sending client hello");
 	[session beginSendingDataWithTag:@"clientHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];	
 }
 
@@ -246,7 +246,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 	
 	if ([persistentPeerID isKindOfClass:[NSString class]] && StringHasText(persistentPeerID)){
-		EXOLog(@"Persistent peer ID of candidate is: %@", persistentPeerID);
 		[candidate setPersistentPeerID:persistentPeerID];
 	}else {
 		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
@@ -275,7 +274,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		[self		_handSessionOffForCryptoNegotiation:session];
 		
 	}else {
-		EXOLog(@"No matching swyp found for peerID:%@",persistentPeerID);
+		EXOLog(@"NO matching swyp for client candidate");
 		/*
 			No match from any of our swypInfoRefs
 			The server should return an invalid packet, so I'm being careful to ensure "invalidate" doesn't kill a halfway-done transmission
@@ -293,12 +292,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	swypInfoRef *	swypRefFromServerInfo	=	[[swypInfoRef alloc] init];	
 	NSString *		statusString			=	[helloPacket valueForKey:@"status"];
 	NSString *		persistentPeerID		=	[helloPacket valueForKey:@"persistentPeerID"];
-	id				swypOutVelocity			=	[helloPacket valueForKey:@"swypOutVelocity"];
+	NSNumber *		swypOutVelocityNumber	=	[helloPacket valueForKey:@"swypOutVelocity"];
 	
 	
 	if ([statusString isKindOfClass:[NSString class]] && StringHasText(statusString)){
 		if ([statusString isEqualToString:@"accepted"]){
-			EXOLog(@"Swyp accepted by server");
 			//you're cool, so don't do anything
 		}else{
 			EXOLog(@"Swyp rejected by server with status: %@",statusString);
@@ -311,15 +309,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 
 	
-	if ([swypOutVelocity isKindOfClass:[NSNumber class]]){
-		NSInteger swypOutVelocity	= [(NSNumber*) swypOutVelocity intValue];
-		if (swypOutVelocity > 0){
-			[swypRefFromServerInfo	setVelocity:swypOutVelocity];
+	if ([swypOutVelocityNumber isKindOfClass:[NSNumber class]]){
+		double swypOutVelocityDouble	= [swypOutVelocityNumber doubleValue];
+		if (swypOutVelocityDouble > 0){
+			[swypRefFromServerInfo	setVelocity:swypOutVelocityDouble];
 		}
 	}
 	
 	if ([persistentPeerID isKindOfClass:[NSString class]] && StringHasText(persistentPeerID)){
-		EXOLog(@"Persistent peer ID of server candidate is: %@", persistentPeerID);
 		[candidate setPersistentPeerID:persistentPeerID];
 	}else {
 		[self _removeAndInvalidateSession:session];
@@ -339,7 +336,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 	
 	if (firstMatchingSwyp != nil){
-		EXOLog(@"Server was happy, and a matching swyp-in found for peerID:%@",persistentPeerID);
+		EXOLog(@"Server accepted hello:, Matching swyp-in found");
 		[candidate setMatchedLocalSwypInfo:firstMatchingSwyp];
 		/*
 			The server has returned a matching swyp so we're happy to begin crypto!
@@ -347,7 +344,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		[self		_handSessionOffForCryptoNegotiation:session];
 		
 	}else {
-		EXOLog(@"Though the server was happy, no matching swyp-in found for peerID:%@",persistentPeerID);
+		EXOLog(@"Server accepted Hello: No matching swyp-in found");
 		/*
 			No match from any of our swypInfoRefs -- which is sorta odd if we got this far, 
 				so set a breakpoint here if things are off..
@@ -363,10 +360,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	NSInteger milisecondDifference =	 abs([[[clientCandidate swypInfo] startDate] timeIntervalSinceDate:[swypInfo endDate]] * 1000);
 
-	EXOLog(@"Milisecond difference with client is %i-- Their start %f our end %f",milisecondDifference,[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow] );
+	EXOLog(@"Swyp match: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 	
-	//I've gotten ~2700 on bluetooth
-	if (milisecondDifference < 3000){
+	//mostly under 700ms when not debugging
+	//when debugging, make sure no breakpoints delay absorbtion of remote intervalInPast into NSDate
+	if (milisecondDifference < 1500){
 		return TRUE;		
 	}else {
 		return FALSE;
@@ -386,7 +384,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	EXOLog(@"Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
 	
-	if (velocityDifference < 20){
+	if (velocityDifference < 40){
 		return TRUE;
 	}
 	
@@ -404,9 +402,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-#warning "Do yo thang, and implement this, fool!"
-	EXOLog(@"We're happy and would hand off to the crypto manager now!");
-//	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];	
+	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];	
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{

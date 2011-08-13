@@ -278,7 +278,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 		if ([_socketInputStream streamStatus] >= NSStreamStatusOpen && [_socketOutputStream streamStatus] >= NSStreamStatusOpen){
-			EXOLog(@"Stream open occured in connection session w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
 			[self _setupStreamPathways];
 			[self _changeStatus:swypConnectionSessionStatusReady];
 		}

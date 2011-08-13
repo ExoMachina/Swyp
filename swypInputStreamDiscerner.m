@@ -60,7 +60,7 @@ static NSUInteger const memoryPageSize	=	4096;
 		[self _cleanupForNextDiscernmentCycle];
 		
 	}else{
-		EXOLog(@"Endbyte index %i is in the future somewhere....",endByteIndex);
+		EXOLog(@"Indefinite: Endbyte index %i is in the future somewhere....",endByteIndex);
 	}
 	
 }
@@ -103,7 +103,7 @@ static NSUInteger const memoryPageSize	=	4096;
 	[_discernmentStream setDelegate:self];
 	
 	if ([_discernmentStream streamStatus] == NSStreamStatusOpen){
-		EXOLog(@"Discernment stream already open");
+
 	}else{
 		[_discernmentStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		[_discernmentStream open];	
@@ -177,7 +177,6 @@ static NSUInteger const memoryPageSize	=	4096;
 	if (packetLength > 0){
 		payloadLength	=	(packetLength + [packetLengthString length] +1)  - prePayloadLength; //payload length begins after first semicolon
 	}
-	EXOLog(@"Extracted header with payloadLength %i, packet length %i, headerLength %i, value: %@",payloadLength,packetLength,headerLength, packetHeaderString);
 	[self _generateDiscernedStreamWithHeaderDictionary:headerDictionary payloadLength:payloadLength];
 }
 
@@ -192,7 +191,6 @@ static NSUInteger const memoryPageSize	=	4096;
 	}
 	
 	if (StringHasText(typeString) && StringHasText(tagString)){
-		EXOLog(@"Tag :%@ ; Type :%@ ;",tagString,typeString);
 		SRELS( _lastYieldedStream);
 		_lastYieldedStream =	[[swypDiscernedInputStream alloc] initWithStreamDataSource:self type:typeString tag:tagString length:[lengthNumber intValue]];
 		[[self delegate] discernedStream:_lastYieldedStream withDiscerner:self];
@@ -206,7 +204,6 @@ static NSUInteger const memoryPageSize	=	4096;
 #pragma mark -
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
-		EXOLog(@"Opened stream for swypInputStreamDiscerner");
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
 		[self _handleInputDataRead];
 		
