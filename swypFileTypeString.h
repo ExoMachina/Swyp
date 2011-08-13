@@ -39,4 +39,11 @@
 		MIME: "swyp/ControlPacket"
 */
 +(id) swypControlPacketFileType;
+
+
+/*
+		Used exclusively by crypto manager during crypto negotiation.
+		MIME: "swyp/CryptoNegotiation"
+*/
++(id) swypCryptoNegotiationFileType;
 @end

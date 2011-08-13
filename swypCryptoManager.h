@@ -12,11 +12,21 @@
 #import "swypConnectionSession.h"
 
 @class swypCryptoManager;
-
-@protocol swypCryptoManagerDelegate <NSObject>
--(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning;
--(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError;
+@protocol swypCryptoManagerDelegate <NSObject, swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate>
+-(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning cryptoManager:(swypCryptoManager*)cryptoManager;
+-(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError cryptoManager:(swypCryptoManager*)cryptoManager;
 @end
+
+static NSString * const swypCryptoManagerErrorDomain = @"swypCryptoManagerErrorDomain";
+
+typedef enum{
+	swypCryptoManagerErrorNone = 0,
+	swypCryptoManagerErrorAborted,
+	swypCryptoManagerErrorHandshakeFormat,
+	swypCryptoManagerErrorConnectivity,
+	swypCryptoManagerErrorKeyValidity,
+	swypCryptoManagerErrorSessionCorruption
+} swypCryptoManagerErrorCode;
 
 
 @interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate,swypConnectionSessionInfoDelegate>  {
@@ -29,7 +39,6 @@
 @property (nonatomic, assign)	id<swypCryptoManagerDelegate>	delegate;
 @property (nonatomic, readonly)	NSSet*							sessionsPendingCryptoSetup;
 
-+(swypCryptoManager*)	sharedCryptoManager;
 +(NSData*)				localPrivateKey;
 +(NSData*)				localPublicKey;
 +(NSString*)			localPersistantPeerID;
@@ -38,9 +47,12 @@
 
 //
 //private
--(void)	_initializeCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
+-(void)	_handleNextCryptoHandshakeStageWithSession:(swypConnectionSession*)session anyReceivedData:(NSData*)relevantHandshakeData; 
+
+-(void)	_happilyConcludeNegotiatingCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
+-(void)	_abortNegotiatingCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
+-(void)	_failWithCryptoManagerErrorCode:(swypCryptoManagerErrorCode)errorCode forConnectionSession:(swypConnectionSession*)session;
+-(BOOL)	_removeConnectionSession:	(swypConnectionSession*)session;
+
 -(void)	_beginMandatingCryptoInConnectionSession:		(swypConnectionSession*)session;
-
--(void)	_handleCryptoHandshakeStage:(swypCryptoSessionStage)stage withReceivedData:(NSData*)handshakeData; 
-
 @end

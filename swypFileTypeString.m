@@ -32,4 +32,9 @@
 	return type;
 }
 
++(id) swypCryptoNegotiationFileType{
+	static NSString * type = @"swyp/CryptoNegotiation";
+	return type;
+}
+
 @end

@@ -11,6 +11,7 @@
 #import "swypUnencryptingTransform.h"
 
 typedef enum {
+	swypCryptoSessionStageFailedNegotiation = -1,
 			/* nothing has occured yet, no crypto happening */
 	swypCryptoSessionStagePreKeyShare = 0,
 			/*1) client has sent a public key */
@@ -25,7 +26,12 @@ typedef enum {
 }swypCryptoSessionStage;
 
 @interface swypCryptoSession : NSObject {
-	
+	swypCryptoSessionStage		_cryptoStage;
+	BOOL						_encryptedCommunicationRequired;
+	NSData*						_candidatePublicKey;
+	NSData*						_sharedSessionKey;
+	swypEncryptingTransform*	_encryptingTransform;
+	swypUnencryptingTransform*	_unencryptingTransform;
 }
 @property (nonatomic, assign)	swypCryptoSessionStage	cryptoStage;
 @property (nonatomic, readonly)	BOOL					encryptedCommunicationRequired;

@@ -230,12 +230,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSString *jsonString	=	[helloDictionary jsonStringValue];
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 	
-#warning remove this test eventually
-	NSString *jsonEval		=	[[[NSString alloc]  initWithBytes:[jsonData bytes] length:[jsonData length] encoding: NSUTF8StringEncoding] autorelease];
-	if ([jsonEval isEqualToString:jsonString] == NO){
-		EXOLog(@"Datas not equal after encoding");
-	}
-	
 	EXOLog(@"Sending client hello");
 	[session beginSendingDataWithTag:@"clientHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];	
 }

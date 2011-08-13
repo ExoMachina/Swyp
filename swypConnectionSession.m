@@ -12,7 +12,8 @@
 static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
 
 @implementation swypConnectionSession
-@synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
+@synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor, cryptoSession = _cryptoSession;
+@synthesize socketOutputTransformStream = _socketOutputTransformStream, socketInputTransformStream = _socketInputTransformStream;
 
 #pragma mark -
 #pragma mark public
@@ -144,6 +145,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	SRELS(_pendingInputBridges);
 	
 	SRELS(_inputStreamDiscerner);
+	SRELS(_socketInputTransformInputStream);
 	
 	[self _teardownConnection];
 	SRELS(_dataDelegates);					
@@ -169,7 +171,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 }
 
 -(void) _setupStreamPathways{
-	_inputStreamDiscerner	=	[[swypInputStreamDiscerner alloc] initWithInputStream:_socketInputStream discernerDelegate:self];
+	
+	_socketInputTransformInputStream	= [[swypTransformPathwayInputStream alloc] initWithDataInputStream:_socketInputStream transformStreamArray:nil];
+	_inputStreamDiscerner				=	[[swypInputStreamDiscerner alloc] initWithInputStream:_socketInputTransformInputStream discernerDelegate:self];
 	
 	//data send queue holds all outgoing streams, transform pathway does encryption (after crypto negotiation) on everything, and connector slaps it to the output
 	
@@ -182,7 +186,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	_outputStreamConnector				= [[swypInputToOutputStreamConnector alloc] initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream];
 	[_outputStreamConnector setDelegate:self];
 	
-	//Alex: yeah, we're at the HNL
+	//Alex: yeah, we're abstracting at the HNL
 }
 
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status{

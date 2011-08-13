@@ -78,11 +78,11 @@ typedef enum {
 	
 	swypConnectionSessionStatus			_connectionStatus;
 	
-	swypConcatenatedInputStream *		_sendDataQueueStream;				//setCloseWhenFinished:NO 
-	swypTransformPathwayInputStream *	_socketOutputTransformInputStream;	//initWithDataInputStream:_sendDataQueueStream transformStreamArray:nil 
-	swypInputToOutputStreamConnector *	_outputStreamConnector;				//initWithOutputStream:_socketOutputStream readStream:_socketOutputTransformInputStream
+	swypConcatenatedInputStream *		_sendDataQueueStream;
+	swypTransformPathwayInputStream *	_socketOutputTransformInputStream;	 
+	swypInputToOutputStreamConnector *	_outputStreamConnector;
 	
-	
+	swypTransformPathwayInputStream *	_socketInputTransformInputStream;
 	swypInputStreamDiscerner *			_inputStreamDiscerner;				//splits up input data
 
 	//for NSData-wanting delegates
@@ -96,6 +96,9 @@ typedef enum {
 @property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
 @property (nonatomic, retain)	UIColor*					sessionHueColor;
 @property (nonatomic, readonly)	swypCandidate *				representedCandidate;
+@property (nonatomic, retain)	swypCryptoSession *			cryptoSession;
+@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
+@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 
 -(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
 
