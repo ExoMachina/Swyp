@@ -159,8 +159,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 			NSDictionary *	receivedDictionary = nil;
 			if ([streamData length] >0){
 				NSString *	readStreamString	=	[NSString stringWithUTF8String:[streamData bytes]];
-				if (StringHasText(readStreamString))
+				if (StringHasText(readStreamString)){
 					receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
+				}else{
+					EXOLog(@"No valid text for dict string %@",readStreamString);
+				}
 			}
 			
 			if (receivedDictionary != nil){
@@ -226,6 +229,12 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	NSString *jsonString	=	[helloDictionary jsonStringValue];
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
+	
+#warning remove this test eventually
+	NSString *jsonEval		=	[NSString stringWithUTF8String:[jsonData bytes]];
+	if ([jsonEval isEqualToString:jsonString] == NO){
+		EXOLog(@"Datas not equal after encoding");
+	}
 	
 	EXOLog(@"Sending client hello");
 	[session beginSendingDataWithTag:@"clientHello" type:[NSString swypControlPacketFileType] dataForSend:jsonData];	

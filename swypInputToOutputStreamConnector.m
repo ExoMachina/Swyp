@@ -99,7 +99,7 @@
 	NSUInteger bufferedDataLength	=	[_bufferedData length];
 	if (bufferedDataLength > 0 && [_outputStream hasSpaceAvailable]){
 		
-		NSUInteger maxWriteLength = MIN(bufferedDataLength, 1024);
+		NSUInteger maxWriteLength = MIN(bufferedDataLength, 1024);//don't need to NULL-terminate, because write length is passed
 		
 		uint8_t writeBuffer[maxWriteLength];
 		[_bufferedData getBytes:writeBuffer range:NSMakeRange(0, maxWriteLength)];

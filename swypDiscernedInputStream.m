@@ -122,10 +122,11 @@
 	if (readableBytes == 0)
 		return 0;
 	
-	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
+	NSUInteger bytesToRead	= MIN (maxLength -1, readableBytes); //need to null terminate the last byte, and this gets put into the range...
 	NSRange readRange		= NSMakeRange(0, bytesToRead);
 	
 	[_pulledDataBuffer getBytes:buffer range:readRange];
+	buffer[readRange.location + readRange.length]	=	0x00;
 
 	_lastProvidedByteIndex	+= bytesToRead;
 	

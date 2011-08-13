@@ -246,10 +246,11 @@
 	if (readableBytes == 0)
 		return 0;
 	
-	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
+	NSUInteger bytesToRead	= MIN (maxLength -1, readableBytes);//need to null-terminate
 	NSRange readRange		= NSMakeRange(_untransformedNextByteIndex, bytesToRead);
 	
 	[_transformedData getBytes:buffer range:readRange];
+	buffer[readRange.location + readRange.length]	=	0x00;
 	
 	_untransformedNextByteIndex += bytesToRead;
 	[_transformedData replaceBytesInRange:readRange withBytes:NULL length:0];

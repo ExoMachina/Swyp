@@ -60,10 +60,11 @@
 	if (readableBytes == 0)
 		return 0;
 	
-	NSUInteger bytesToRead	= MIN (maxLength, readableBytes);
+	NSUInteger bytesToRead	= MIN (maxLength -1, readableBytes); //null termination is necessary on last byte
 	NSRange readRange		= NSMakeRange(_nextDataOutputIndex, bytesToRead);
 	
 	[_dataOutBuffer getBytes:buffer range:readRange];
+	buffer[readRange.location + readRange.length]	=	0x00;
 	
 	_nextDataOutputIndex += bytesToRead;
 	[_dataOutBuffer replaceBytesInRange:readRange withBytes:NULL length:0];
