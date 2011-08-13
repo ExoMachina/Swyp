@@ -54,8 +54,14 @@
 
 }
 - (void)netServiceBrowser:(NSNetServiceBrowser *)aNetServiceBrowser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing{\
-	EXOLog(@"Removed service :%@",[aNetService name]);
-	[_serverCandidates removeObjectForKey:[aNetService name]];
+	NSString * serviceName	=	[aNetService name];
+	if (!StringHasText(serviceName))
+		return;
+
+	if ([_serverCandidates objectForKey:serviceName]){
+		EXOLog(@"Removed service :%@",[aNetService name]);
+		[_serverCandidates removeObjectForKey:serviceName];
+	}
 }
 
 #pragma mark NSObject

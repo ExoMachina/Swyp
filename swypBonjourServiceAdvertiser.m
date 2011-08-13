@@ -61,7 +61,7 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 		NSData * v4Addr = [(NSData *)CFSocketCopyAddress(_ipv4socket) autorelease];
 		memcpy(&v4ServerAddress, [v4Addr bytes], [v4Addr length]);
 		chosenV4Port = ntohs(v4ServerAddress.sin_port); 
-		EXOLog(@"Setting up advertising on v4 with port: %i",chosenV4Port);
+//		EXOLog(@"Setting up advertising on v4 with port: %i",chosenV4Port);
 
 		if (_v4AdvertiserService != nil){
 			[self _teardownBonjourAdvertising:_v4AdvertiserService];
