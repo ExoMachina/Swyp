@@ -158,7 +158,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 						
 			NSDictionary *	receivedDictionary = nil;
 			if ([streamData length] >0){
-				NSString *	readStreamString	=	[NSString stringWithUTF8String:[streamData bytes]];
+				NSString *	readStreamString	=	[[[NSString alloc]  initWithBytes:[streamData bytes] length:[streamData length] encoding: NSUTF8StringEncoding] autorelease];
 				if (StringHasText(readStreamString)){
 					receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
 				}else{
@@ -231,7 +231,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSData	 *jsonData		= 	[jsonString		dataUsingEncoding:NSUTF8StringEncoding];
 	
 #warning remove this test eventually
-	NSString *jsonEval		=	[NSString stringWithUTF8String:[jsonData bytes]];
+	NSString *jsonEval		=	[[[NSString alloc]  initWithBytes:[jsonData bytes] length:[jsonData length] encoding: NSUTF8StringEncoding] autorelease];
 	if ([jsonEval isEqualToString:jsonString] == NO){
 		EXOLog(@"Datas not equal after encoding");
 	}

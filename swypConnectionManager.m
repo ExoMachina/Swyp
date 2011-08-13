@@ -236,7 +236,7 @@
 		
 		NSDictionary *	receivedDictionary = nil;
 		if ([streamData length] >0){
-			NSString *	readStreamString	=	[NSString stringWithUTF8String:[streamData bytes]];
+			NSString *	readStreamString	=	[[[NSString alloc]  initWithBytes:[streamData bytes] length:[streamData length] encoding: NSUTF8StringEncoding] autorelease];
 			if (StringHasText(readStreamString))
 				receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
 		}		

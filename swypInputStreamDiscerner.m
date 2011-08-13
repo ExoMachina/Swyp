@@ -141,7 +141,7 @@ static NSUInteger const memoryPageSize	=	4096;
 -(void)	_handleHeaderPacketFromCurrentBufferLocation:(NSUInteger)	location{
 	NSRange		relevantSearchSpace		=	NSMakeRange(location, [_bufferedData length] - location);
 	NSData*		relevantData			=	[_bufferedData subdataWithRange:relevantSearchSpace];
-	NSString*	headerCandidateString	=	[NSString stringWithUTF8String:[relevantData bytes]];
+	NSString*	headerCandidateString	=	[[[NSString alloc]  initWithBytes:[relevantData bytes] length:[relevantData length] encoding: NSUTF8StringEncoding] autorelease]; //this is MUCH safer against non-null-termed strings
 
 	NSRange		firstSemicolonRange		=	[headerCandidateString rangeOfString:@";" options:0];	
 	if (firstSemicolonRange.location == NSNotFound)
