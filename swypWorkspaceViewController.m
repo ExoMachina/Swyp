@@ -29,6 +29,7 @@
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager{
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
+	[sessionViewController.view setBounds:CGRectMake(0, 0, 200, 200)];
 	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
 	[self.view addSubview:sessionViewController.view];
 	SRELS(sessionViewController);

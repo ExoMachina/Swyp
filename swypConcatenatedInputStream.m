@@ -148,6 +148,7 @@
 		_dataOutBuffer	=	[[NSMutableData alloc] init];
 		_streamStatus	= NSStreamStatusNotOpen;
 		_queuedStreams	=	[[NSMutableArray alloc] init];
+		_closeStreamAtQueueEnd	=	 YES;
 	}
 	return self;
 }
@@ -236,6 +237,10 @@
 		if( [self _queueNextInputStream] == NO){
 			if ([_infoDelegate respondsToSelector:@selector(didFinishAllQueuedStreamsWithConcatenatedInputStream:)])
 				[_infoDelegate didFinishAllQueuedStreamsWithConcatenatedInputStream:self];
+			if ([self closeStreamAtQueueEnd]){
+				_streamStatus = NSStreamStatusAtEnd;
+				[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
+			}
 		}
 	}else if (eventCode == NSStreamEventErrorOccurred){
 		EXOLog(@"Stream error occured in concatenatedInputStream");

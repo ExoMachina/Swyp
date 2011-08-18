@@ -52,7 +52,7 @@
 }
 
 @property (nonatomic, readonly) NSArray *								queuedStreams;
-@property (nonatomic, assign) BOOL										closeStreamAtQueueEnd;
+@property (nonatomic, assign) BOOL										closeStreamAtQueueEnd; // default is YES
 @property (nonatomic, assign) BOOL										holdCompletedStreams;
 @property (nonatomic, readonly) NSArray *								completedStreams; //only non-nil if above is YES
 @property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	infoDelegate;

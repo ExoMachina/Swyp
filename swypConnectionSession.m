@@ -38,7 +38,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 	NSInteger	overallPacketLength	=	jsonHeaderLength + [headerLengthData length];
 
-	// If streamLength is zero, this will be handled specially by recipient
+	// If streamLength is zero, this will be handled specially by recipient as an "indefinite stream"
 	if (streamLength > 0 ){
 		overallPacketLength		+=	streamLength;
 	}else{
@@ -234,7 +234,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}	
 	
 	if (willHandleStream == FALSE){
-		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
+		EXOLog(@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]);
+//		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
 	}
 }
 -(void)	inputStreamDiscernerFailedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner{

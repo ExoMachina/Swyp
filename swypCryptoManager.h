@@ -41,7 +41,7 @@ typedef enum{
 
 +(NSData*)				localPrivateKey;
 +(NSData*)				localPublicKey;
-+(NSString*)			localPersistantPeerID;
++(NSString*)			localpersistentPeerID;
 
 -(void) beginNegotiatingCryptoSessionWithSwypConnectionSession:	(swypConnectionSession*)session;
 
@@ -55,4 +55,17 @@ typedef enum{
 -(BOOL)	_removeConnectionSession:	(swypConnectionSession*)session;
 
 -(void)	_beginMandatingCryptoInConnectionSession:		(swypConnectionSession*)session;
+
+//client handlers
+-(void)	_clientShareStageSharedPublicKeyWithSession:(swypConnectionSession*)session;
+-(BOOL)	_clientHandleStageSharedPublicKeyWithSession:(swypConnectionSession*)session data:(NSData*)	data;
+-(void)	_clientShareStageConfirmedSymetricKeyWithSession:(swypConnectionSession*)session;
+-(BOOL) _clientHandleStageConfirmedSymetricKeyWithSession:(swypConnectionSession*)session data:(NSData*)	data;
+
+//server handlers
+-(BOOL)	_serverHandleStagePreKeyShareWithSession:(swypConnectionSession*)session data:(NSData*) data;
+-(void)	_serverShareStageSharedSymetricKeyWithSession:(swypConnectionSession*)session;
+-(BOOL)	_serverHandleStageSharedSymetricKeyWithSession:(swypConnectionSession*)session data:(NSData*) data;
+-(void)	_serverShareStageReadyWithSession:(swypConnectionSession*)session;
+
 @end

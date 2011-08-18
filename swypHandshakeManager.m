@@ -198,7 +198,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	if (matchedSwyp != nil){
 		[helloDictionary setValue:@"accepted" forKey:@"status"];
-		[helloDictionary setValue:[swypCryptoManager localPersistantPeerID] forKey:@"persistentPeerID"];
+		[helloDictionary setValue:[swypCryptoManager localpersistentPeerID] forKey:@"persistentPeerID"];
 		[helloDictionary setValue:[NSNumber numberWithDouble:[matchedSwyp velocity]] forKey:@"swypOutVelocity"];
 	}else {
 		[helloDictionary setValue:@"rejected" forKey:@"status"];
@@ -218,7 +218,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	
 	if (querySwyp != nil){
-		[helloDictionary setValue:[swypCryptoManager localPersistantPeerID] forKey:@"persistentPeerID"];
+		[helloDictionary setValue:[swypCryptoManager localpersistentPeerID] forKey:@"persistentPeerID"];
 		double intervalSinceSwyp	=	[[querySwyp startDate] timeIntervalSinceNow] * -1;
 		[helloDictionary setValue:[NSNumber numberWithDouble:intervalSinceSwyp] forKey:@"intervalSinceSwypIn"];
 	}else {
@@ -387,7 +387,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	EXOLog(@"Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
 	
-	if (velocityDifference < 40){
+	if (velocityDifference < 60){
 		return TRUE;
 	}
 	
@@ -418,11 +418,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 
 #pragma mark swypCryptoManagerDelegate
--(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning{
+-(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning cryptoManager:(swypCryptoManager*)cryptoManager{
 
 	/*
 		crypto warnings are important, they represent that something is wrong  --give the user a chance to invalidate the connection
-		could be as simple as new certifcate for an old persistantID, could be as malicious as a man-in-the-middle attack
+		could be as simple as new certifcate for an old persistentID, could be as malicious as a man-in-the-middle attack
 	*/
 	if (StringHasText(cryptoWarning)){
 		exoBlockOperationAlertView * warningView	=	[[exoBlockOperationAlertView alloc] initWithoutDelegateWithTitle:[[NSBundle mainBundle]localizedStringForKey:@"ConnectionUserWarning" value:@"Connection Warning!" table:nil] message:[[NSBundle mainBundle]localizedStringForKey:cryptoWarning value:cryptoWarning table:nil]  cancelButtonTitle:[[NSBundle mainBundle]localizedStringForKey:@"proceedResponseButtonTitle" value:@"Proceed" table:nil] otherButtonTitles:[NSArray arrayWithObject:[[NSBundle mainBundle]localizedStringForKey:@"closeResponseButtonTitle" value:@"Close" table:nil]] blockOperations:nil];
@@ -438,7 +438,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	[_delegate connectionSessionWasCreatedSuccessfully:session withHandshakeManager:self];
 }
--(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError{
+
+
+-(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError cryptoManager:(swypCryptoManager*)cryptoManager{
 	EXOLog(@"Failed crypto for session with persistentPeerID %@ for reason %@", [[session representedCandidate] persistentPeerID], [cryptoError description]);
 	[_delegate connectionSessionCreationFailedForCandidate:[session representedCandidate] withHandshakeManager:self error:cryptoError];
 }

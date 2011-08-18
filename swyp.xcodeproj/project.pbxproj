@@ -75,6 +75,10 @@
 		68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */; };
 		68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */; };
 		68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */; };
+		790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 790A397A13FC5F8E0053A47D /* UIColorAdditions.h */; };
+		790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 790A397B13FC5F8E0053A47D /* UIColorAdditions.m */; };
+		790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 790A39E713FC6D580053A47D /* NSData+Base64.h */; };
+		790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 790A39E813FC6D590053A47D /* NSData+Base64.m */; };
 		792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */; };
 		792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */; };
 		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
@@ -156,6 +160,10 @@
 		68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypEncryptingTransform.m; sourceTree = "<group>"; };
 		68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypUnencryptingTransform.h; sourceTree = "<group>"; };
 		68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypUnencryptingTransform.m; sourceTree = "<group>"; };
+		790A397A13FC5F8E0053A47D /* UIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorAdditions.h; sourceTree = "<group>"; };
+		790A397B13FC5F8E0053A47D /* UIColorAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorAdditions.m; sourceTree = "<group>"; };
+		790A39E713FC6D580053A47D /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		790A39E813FC6D590053A47D /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputToDataBridge.h; sourceTree = "<group>"; };
 		792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToDataBridge.m; sourceTree = "<group>"; };
 		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; };
@@ -287,6 +295,8 @@
 		680FC64D13E3460E00509CF2 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				790A39E713FC6D580053A47D /* NSData+Base64.h */,
+				790A39E813FC6D590053A47D /* NSData+Base64.m */,
 				680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */,
 				680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */,
 				680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */,
@@ -295,6 +305,8 @@
 				686A5A7313EC766C00EDD24B /* NSDataAdditions.m */,
 				686A5A7613EC767200EDD24B /* NSStringAdditions.h */,
 				686A5A7713EC767200EDD24B /* NSStringAdditions.m */,
+				790A397A13FC5F8E0053A47D /* UIColorAdditions.h */,
+				790A397B13FC5F8E0053A47D /* UIColorAdditions.m */,
 			);
 			name = Additions;
 			sourceTree = "<group>";
@@ -505,6 +517,8 @@
 				79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */,
 				7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */,
 				792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */,
+				790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */,
+				790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,6 +610,8 @@
 				79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */,
 				7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */,
 				792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */,
+				790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */,
+				790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

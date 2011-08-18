@@ -40,3 +40,4 @@
 
 #pragma mark includes
 #import "NSDictionary+BSJSONAdditions.h"
+#import "UIColorAdditions.h"
