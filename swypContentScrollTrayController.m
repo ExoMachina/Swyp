@@ -20,92 +20,43 @@
 
 
 @implementation swypContentScrollTrayController
-@synthesize delegate = _delegate, currentSelectedPageIndex =_currentSelectedPageIndex;
+@synthesize currentSelectedPageIndex =_currentSelectedPageIndex;
 @synthesize pageImageSize = _pageImageSize, pageSpacingWidth = _pageSpacingWidth;
 @synthesize fadeoutOrigin = _fadeoutOrigin, displayOrigin = _displayOrigin;
 @synthesize trayScrollView = _trayScrollView;
 
-#pragma mark first responder
-#pragma mark UIRespondermethods
--(BOOL)canBecomeFirstResponder{
-	return TRUE;
+
+#pragma mark -
+#pragma mark contentDisplayViewController
+-(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate{
+	[self removeContentFromDisplayAtIndex:removeIndex animated:animate];
+}
+-(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate{
+	[self insertPageToDisplayAtIndex:insertIndex animated:animate];
 }
 
--(BOOL)becomeFirstResponder{
-	[super becomeFirstResponder];
-	return TRUE;
+-(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate{
+	_contentDisplayControllerDelegate = contentDisplayControllerDelegate;
+}
+-(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate{
+	return _contentDisplayControllerDelegate;
 }
 
-
--(BOOL)resignFirstResponder{
-	
-	[super resignFirstResponder];
-	
-	return TRUE;
+-(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index{
+	[self gigglePageAtIndex:index];
 }
-
-
-
-#pragma mark - 
-#pragma mark UIMenu
-
--(BOOL)canPerformAction:(SEL)action withSender:(id)sender{
-	
-	if (action == @selector(deletePromptPressed:))
-		return YES;
-	if (action == @selector(duplicatePressed:) && [_delegate respondsToSelector:@selector(pageSelectionScrollTrayWantsDuplicatePageAtPageIndex:withswypContentScrollTrayController:)])
-		return YES;
-	//	//	if (action == @selector(exportPressed:))
-	//	//		return YES;
-	//	//	if (action == @selector(sharePressed:))
-	//	//		return YES;
-	//	
-	return NO;
-}
-
--(void)deletePromptPressed:(UIMenuController*)selectionMenu{
-	
-	CGRect		menueRect		=	[selectionMenu menuFrame];
-	
-#pragma mark iOSBug
-#pragma mark 4v2
-	//the uiMenueController is added to the overall device window, in a different coordinate system than the regular views
-	CGPoint		kludgePoint		= 	CGPointZero;
-	//additionally, the uidevice orientation is not set to landscape unless the user is physically holding it in landscape, even though the viewcontroller may only support landscape
-	
-	UIInterfaceOrientation currentOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-	if (currentOrientation == UIInterfaceOrientationLandscapeRight){
-		kludgePoint = CGPointMake(menueRect.origin.y +menueRect.size.height/2, 85); //kludge 
-	}else if (currentOrientation == UIInterfaceOrientationLandscapeLeft){
-		kludgePoint = CGPointMake(1024- menueRect.origin.y - menueRect.size.height/2, 85); //kludge 
+-(void)	returnContentAtIndexToNormalLocation:	(NSUInteger)index	animated:(BOOL)animate{
+	if (animate){
+		[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionBeginFromCurrentState animations:^{
+			[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];
+		}
+						 completion:nil];
+		
+	}else{
+		[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];
 	}
-	
-	
-	NSInteger	deleteIndex		=	[self pageObjectIndexOnTrayAtTapPoint:kludgePoint];
-	
-	if (deleteIndex >= 0)
-		[_delegate pageSelectionScrollTrayWantsDeletePageAtPageIndex:deleteIndex withswypContentScrollTrayController:self];	
 }
 
--(void)duplicatePressed:(UIMenuController*)selectionMenu{
-	CGRect		menueRect		=	[selectionMenu menuFrame];
-	
-	CGPoint		kludgePoint		= 	CGPointZero;
-	
-	UIInterfaceOrientation currentOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-	if (currentOrientation == UIInterfaceOrientationLandscapeRight){
-		kludgePoint = CGPointMake(menueRect.origin.y +menueRect.size.height/2, 85); //kludge 
-	}else if (currentOrientation == UIInterfaceOrientationLandscapeLeft){
-		kludgePoint = CGPointMake(1024- menueRect.origin.y - menueRect.size.height/2, 85); //kludge 
-	}
-	
-	
-	NSInteger	duplicateIndex		=	[self pageObjectIndexOnTrayAtTapPoint:kludgePoint];
-	
-	if (duplicateIndex >= 0)
-		[_delegate pageSelectionScrollTrayWantsDuplicatePageAtPageIndex:duplicateIndex withswypContentScrollTrayController:self];	
-	
-}
 
 #pragma mark - 
 #pragma mark interactions
@@ -142,23 +93,12 @@
 	}
 }
 
-// Andrew
-// need to handle moving page onto clipboard
--(void)		imagePreviewViewSwipedUpWithController:(UISwipeGestureRecognizer*)recognizer{
-}
-
--(void)		imagePreviewViewSwipedDownWithController:(UISwipeGestureRecognizer*)recognizer{
-}
-
-
 
 -(void)		imagePreviewViewPressedWithTapController:(UITapGestureRecognizer*)recognizer{
 	
 	NSInteger selectedSet	=	[self pageObjectIndexOnTrayAtTapPoint:[recognizer locationInView:self.view]];
 	
-	if (selectedSet >=0)
-		[_delegate controllerDidSelectPageAtIndex:selectedSet  withswypContentScrollTrayController:self];
-	
+	[self temporarilyExagerateContentAtIndex:selectedSet];	
 	
 }
 
@@ -221,7 +161,7 @@
 	SRELS(_cachedPageObjectSetsForTray);
 	_cachedPageObjectSetsForTray = [newIndexesAndKeys retain];
 	
-	[self setupPageSelectionViewWidthWithPageCount:[_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]];
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 }
 
 //1) add to datasource 2) call insertPageToDisplayAtIndex
@@ -269,7 +209,7 @@
 	} completion:^(BOOL finnished){
 		if (finnished){ } }];	
 		
-	[self setupPageSelectionViewWidthWithPageCount:[_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]];
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 }
 
 -(void)	gigglePageAtIndex:(NSInteger)displayedPage{
@@ -341,7 +281,7 @@
 	
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]];
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];	
 	
 }
@@ -364,7 +304,7 @@
 -(void)		reloadTrayPageImageData{
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]];
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];	
 }
 
@@ -384,14 +324,8 @@
 -(void)			scrollToRevealPageAtIndex:(NSInteger)pageIndex{
 	CGRect		selectedRect		=	[self	frameForPageImageAtIndex:pageIndex];
 	
-	[_trayScrollView	scrollRectToVisible:selectedRect animated:[_delegate pageSelectionScrollTrayIsVisibleWithController:self]];
+	[_trayScrollView	scrollRectToVisible:selectedRect animated:(self.view.superview != nil)];
 	
-}
-
--(void)			scrollToRevealCurrentlySelectedPage{
-	NSInteger	openAndSelectedPage	=	[_delegate currentlySelectedPageForScrollTrayWithController:self];
-	
-	[self scrollToRevealPageAtIndex:openAndSelectedPage];
 }
 
 -(void)releaseImageViewFromUseWithObjectSet:(trayPageObjectSet*)objectSet{
@@ -446,7 +380,7 @@
 	
 	
 	if ([pageViewSet pagePreviewImage] == nil){
-		UIImage * pageImagePreview	=	[_delegate pagePreviewImageForPageIndex:idx withswypContentScrollTrayController:self];
+		UIImage * pageImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
 		[pageViewSet setPagePreviewImage:pageImagePreview];
 	}		
 	[[pageViewSet pagePreviewImageView] setImage:[pageViewSet pagePreviewImage]];
@@ -459,10 +393,10 @@
 	
 	double minLoc = (double)layoutRange.location - 2.0;
 	NSRange preRelevanceRange = NSMakeRange(MAX(0, minLoc), 2);
-	preRelevanceRange = NSIntersectionRange(preRelevanceRange, NSMakeRange(0, [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]));
+	preRelevanceRange = NSIntersectionRange(preRelevanceRange, NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self]));
 
 	NSRange postRelevanceRange = NSMakeRange(layoutRange.location + layoutRange.length, 2);
-	postRelevanceRange = NSIntersectionRange(postRelevanceRange, NSMakeRange(0, [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]));
+	postRelevanceRange = NSIntersectionRange(postRelevanceRange, NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self]));
 
 	
 	NSMutableIndexSet* viewRemoveKeys = [NSMutableIndexSet indexSetWithIndexesInRange:preRelevanceRange];
@@ -511,7 +445,7 @@
 	
 	double		pageIndex			=	(xPageOffset - _pageSpacingWidth)/ (_pageImageSize.width + _pageSpacingWidth);
 	
-	NSInteger	insertLocation		= MIN((int) ceil( pageIndex), [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]);
+	NSInteger	insertLocation		= MIN((int) ceil( pageIndex), [_contentDisplayControllerDelegate totalContentCountInController:self]);
 	
 	return insertLocation;
  }
@@ -560,10 +494,10 @@
 	NSInteger startingIndex = MAX(0, floor(displayRect.origin.x / (_pageImageSize.width + _pageSpacingWidth)));
 	NSInteger displayCount = ceil((displayRect.size.width + (_pageImageSize.width + _pageSpacingWidth))/ (_pageImageSize.width + _pageSpacingWidth));
 	
-	if (startingIndex >= [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self])
+	if (startingIndex >= [_contentDisplayControllerDelegate totalContentCountInController:self])
 		return NSMakeRange(NSNotFound, 0);
-	if (startingIndex + displayCount >= [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self])
-		displayCount = [_delegate numberOfPagesInPageSelectionScrollTrayWithController:self] - startingIndex;
+	if (startingIndex + displayCount >= [_contentDisplayControllerDelegate totalContentCountInController:self])
+		displayCount = [_contentDisplayControllerDelegate totalContentCountInController:self] - startingIndex;
 	
 	return NSMakeRange(startingIndex, displayCount);
 }
@@ -575,23 +509,11 @@
 	[self setupLayoutForImagesInContentFrame:displayedFrame];		
 }
 
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-//	// called on start of dragging (may require some time and or distance to move)
-////	[_trayScrollView.layer setShouldRasterize:TRUE];
-//}
-//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-//	// called when scroll view grinds to a halt
-//
-////	[_trayScrollView.layer setShouldRasterize:FALSE];
-//
-//}
-
 
 #pragma mark -
 #pragma mark NSObject
--(id)initWithTrayDelegate:(id<swypContentScrollTrayControllerDelegate>)trayDelegate{
+-(id)init{
 	if ((self = [super initWithNibName:nil bundle:nil])){
-		_delegate = trayDelegate;
 		
 		_cachedPageObjectSetsForTray	= [[NSMutableDictionary alloc] init];
 		_unusedUIImageViewSet			= [[NSMutableSet	alloc]	init];
@@ -610,7 +532,7 @@
 }
 
 - (void)dealloc {
-	_delegate = nil;
+	_contentDisplayControllerDelegate = nil;
 	
 	SRELS(_unusedUIImageViewSet);
 	SRELS(_trayScrollView);
@@ -619,7 +541,6 @@
 	[super dealloc];
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
@@ -707,7 +628,7 @@
 	
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_delegate numberOfPagesInPageSelectionScrollTrayWithController:self]];
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];
 	
 	
@@ -715,12 +636,11 @@
 	[self.view setOrigin:_fadeoutOrigin];
 	
 }
-
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations.
-    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight);
-}
+//
+//- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+//    // Return YES for supported orientations.
+//    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight);
+//}
 
 
 - (void)didReceiveMemoryWarning {
@@ -739,7 +659,7 @@
 #pragma mark display
 
 -(BOOL)isDisplayed{
-	return (self.view.superview != nil && CGPointEqualToPoint(_displayOrigin, self.view.origin));
+	return (self.view.superview != nil && CGPointEqualToPoint(_displayOrigin, self.view.frame.origin));
 }
 
 -(void)displayAtPoint:(CGPoint)point inView:(UIView*)displayView belowView:(UIView*)below animated:(BOOL)animate{

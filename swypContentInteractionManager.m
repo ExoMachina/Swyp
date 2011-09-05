@@ -79,8 +79,8 @@
 
 -(void) dealloc{
 	[self stopMaintainingAllSessionViewControllers];
-	_contentDataSource	=	nil;
 	SRELS(_contentDisplayController);
+	SRELS(_contentDataSource);
 	SRELS(_mainWorkspaceView);
 	
 	[super dealloc];

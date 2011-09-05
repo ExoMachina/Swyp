@@ -37,13 +37,13 @@
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
 	
-	id<swypContentDataSourceProtocol>						_contentDataSource;
+	NSObject<swypContentDataSourceProtocol>*					_contentDataSource;
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
 	
 	UIView*													_mainWorkspaceView;
 }
-@property(nonatomic, assign)	id<swypContentDataSourceProtocol>	contentDataSource;
+@property(nonatomic, retain)	id<swypContentDataSourceProtocol>	contentDataSource;
 
 //if not set, the standard will be assigned
 @property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*	contentDisplayController;

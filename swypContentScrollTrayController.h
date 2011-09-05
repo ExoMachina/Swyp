@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "swypContentInteractionManager.h"
 
 @class swypContentScrollTrayController;
 
@@ -41,7 +42,7 @@
 
 
 
-@interface swypContentScrollTrayController : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate> {
+@interface swypContentScrollTrayController : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, swypContentDisplayViewController> {
 	NSMutableDictionary	*	_cachedPageObjectSetsForTray;
 	
 	NSMutableSet		*	_unusedUIImageViewSet;
@@ -54,12 +55,11 @@
 	CGPoint					_displayOrigin;
 	
 	
-	id<swypContentScrollTrayControllerDelegate>	_delegate;	
+	id<swypContentDisplayViewControllerDelegate>	_contentDisplayControllerDelegate;	
 }
 @property (nonatomic, assign) CGSize			pageImageSize;
 @property (nonatomic, assign) float				pageSpacingWidth;
 @property (nonatomic, assign)	NSInteger			currentSelectedPageIndex;
-@property (nonatomic, assign)	id<swypContentScrollTrayControllerDelegate>			delegate;
 @property (nonatomic, assign)	CGPoint fadeoutOrigin;
 @property (nonatomic, assign)	CGPoint displayOrigin;
 @property (nonatomic, readonly)	UIScrollView *		trayScrollView;
