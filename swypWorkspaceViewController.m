@@ -16,7 +16,7 @@
 @synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager;
 
 #pragma mark -
-#pragma mark swypConnectionManager
+#pragma mark swypConnectionManagerDelegate
 -(swypConnectionManager*)	connectionManager{
 	if (_connectionManager == nil){
 		_connectionManager = [[swypConnectionManager alloc] init];
@@ -29,18 +29,27 @@
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager{
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
-	[sessionViewController.view setBounds:CGRectMake(0, 0, 200, 200)];
 	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
 	[self.view addSubview:sessionViewController.view];
+	[self.view setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
-
-	//maybe create dict of sessions to sessionVCs
-	
+		
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
 	
 }
+#pragma mark -
+#pragma mark public
 
+-(swypContentInteractionManager*)	contentManager{
+	if (_contentManager == nil)
+		_contentManager = [[swypContentInteractionManager alloc] init];
+	
+	return _contentManager;
+}
+
+#pragma mark -
 #pragma mark workspaceInteraction
 
 

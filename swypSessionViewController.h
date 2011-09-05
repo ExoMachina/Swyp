@@ -9,11 +9,21 @@
 #import <Foundation/Foundation.h>
 #import "swypConnectionSession.h"
 
+@class swypSessionViewController;
+@protocol swypSessionViewControllerDelegate <NSObject>
+-(void)	swypSessionViewControllerWantsCancel:(swypSessionViewController*)sessionViewController;//press and hold make glow red
+-(void)	swypSessionViewControllerWantsSecurityIncrease:(swypSessionViewController*)sessionViewController;//single tap on padlock
+@end
+
 @interface swypSessionViewController : UIViewController {
 	swypConnectionSession *		_connectionSession;
+	
+	BOOL				*		_showActiveTransferIndicator; //UIActivityIndicator..
 }
 @property (nonatomic, readonly) swypConnectionSession *		connectionSession;
+@property (nonatomic, assign)	BOOL				*		showActiveTransferIndicator;
 
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session;
+-(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView;
 
 @end

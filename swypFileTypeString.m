@@ -9,7 +9,7 @@
 #import "swypFileTypeString.h"
 
 
-@implementation NSString (swypFileTypeString)
+@implementation NSString (swypFileTypeNSStringAdditions)
 
 
 -(BOOL) isFileType:	(NSString*)fileType{

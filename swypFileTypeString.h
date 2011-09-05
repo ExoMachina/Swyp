@@ -10,11 +10,12 @@
 // don't read into this too much, it's really just conviniencies for standardized string constants
 ////this class is not concrete, it can't be used as a full-on string
 
+#define swypFileTypeString NSString
 
 #import <Foundation/Foundation.h>
 
 
-@interface NSString (swypFileTypeString)
+@interface NSString (swypFileTypeNSStringAdditions)
 
 -(BOOL) isFileType:	(NSString*)fileType;
 

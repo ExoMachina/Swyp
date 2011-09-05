@@ -14,7 +14,7 @@
 @protocol swypInputStreamDiscernerDelegate <NSObject>
 
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
--(void)	inputStreamDiscernerFailedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner;
+-(void)	inputStreamDiscernerFinishedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner;
 
 @end
 

@@ -68,7 +68,7 @@
 	
 	//if doing crypto, for example, you may want to check if [self inputStreamIsFinished] to enact padding on sourceData in range
 	
-	[self didYeildTransformedData:[sourceData subdataWithRange:range] fromSource:sourceData withRange:range];
+	[self didYieldTransformedData:[sourceData subdataWithRange:range] fromSource:sourceData withRange:range];
 }
 
 -(BOOL)			waitsForAllInput{
@@ -83,7 +83,7 @@
 
 
 //you'll probably not subclass this one, but we leave it public for you
--(void) didYeildTransformedData:(NSData*)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range{
+-(void) didYieldTransformedData:(NSData*)transformedData fromSource:(NSData*)sourceData withRange:(NSRange)range{
 	
 	[_transformedData appendBytes:[transformedData bytes] length:range.length];
 	if (sourceData == _untransformedData){

@@ -15,6 +15,8 @@
 	swypContentInteractionManager *		_contentManager;
 	swypConnectionManager *				_connectionManager;
 	
+	//*Dictionary of sessions to their views
+	
 	NSString *							_workspaceID;
 }
 @property (nonatomic, readonly)	NSString *						workspaceID;

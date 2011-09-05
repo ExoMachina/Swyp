@@ -209,6 +209,7 @@ static NSUInteger const memoryPageSize	=	4096;
 		
 	}else if (eventCode == NSStreamEventEndEncountered){
 		EXOLog(@"Received stream end event in swypInputStreamDiscerner")
+		[_delegate inputStreamDiscernerFinishedWithError:nil withDiscerner:self];
 	}else if (eventCode == NSStreamEventErrorOccurred){
 		EXOLog(@"Stream error occured in swypInputStreamDiscerner");
 	}

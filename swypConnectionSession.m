@@ -238,10 +238,19 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 //		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
 	}
 }
--(void)	inputStreamDiscernerFailedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner{
+-(void)	inputStreamDiscernerFinishedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner{
 	EXOLog(@"closing; Error occured in inputStreamDiscerner w/ error: %@", [error description]);
+	
+	[self _changeStatus:swypConnectionSessionStatusWillDie];
 	[self _teardownConnection];
 	[self _changeStatus:swypConnectionSessionStatusClosed];
+	
+	NSError *delegateError = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionStreamError userInfo:nil];
+	for (NSValue * delegateValue in _connectionSessionInfoDelegates){
+		id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
+		if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
+			[delegate sessionDied:self withError:error];
+	}
 }
 
 #pragma mark -

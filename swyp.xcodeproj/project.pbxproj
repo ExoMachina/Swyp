@@ -81,6 +81,9 @@
 		790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 790A39E813FC6D590053A47D /* NSData+Base64.m */; };
 		792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */; };
 		792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */; };
+		794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B514152367000E0113 /* swypContentScrollTrayController.h */; };
+		794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181B614152367000E0113 /* swypContentScrollTrayController.m */; };
+		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
 		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
 		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
 		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
@@ -97,7 +100,7 @@
 		680FC05013E0C63700509CF2 /* swypInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInfoRef.h; sourceTree = "<group>"; };
 		680FC05113E0C63700509CF2 /* swypInfoRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInfoRef.m; sourceTree = "<group>"; };
 		680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceViewController.h; sourceTree = "<group>"; };
-		680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceViewController.m; sourceTree = "<group>"; };
+		680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypWorkspaceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypClientCandidate.h; sourceTree = "<group>"; };
 		680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypClientCandidate.m; sourceTree = "<group>"; };
 		680FC08213E0D00700509CF2 /* swypServerCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypServerCandidate.h; sourceTree = "<group>"; };
@@ -141,13 +144,13 @@
 		68B18E1E13E0B3A900D094A9 /* swypCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCandidate.h; sourceTree = "<group>"; };
 		68B18E1F13E0B3A900D094A9 /* swypCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCandidate.m; sourceTree = "<group>"; };
 		68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionSession.h; sourceTree = "<group>"; };
-		68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionSession.m; sourceTree = "<group>"; };
+		68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypConnectionSession.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		68B18E2613E0B3DE00D094A9 /* swypCryptoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCryptoManager.h; sourceTree = "<group>"; };
 		68B18E2713E0B3DE00D094A9 /* swypCryptoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCryptoManager.m; sourceTree = "<group>"; };
 		68B18E2A13E0B3E900D094A9 /* swypCryptoSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCryptoSession.h; sourceTree = "<group>"; };
 		68B18E2B13E0B3E900D094A9 /* swypCryptoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCryptoSession.m; sourceTree = "<group>"; };
-		68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentInteractionManager.h; sourceTree = "<group>"; };
-		68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypContentInteractionManager.m; sourceTree = "<group>"; };
+		68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypContentInteractionManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypContentInteractionManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConcatenatedInputStream.h; sourceTree = "<group>"; };
 		68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConcatenatedInputStream.m; sourceTree = "<group>"; };
 		68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTransformInputStream.h; sourceTree = "<group>"; };
@@ -166,7 +169,10 @@
 		790A39E813FC6D590053A47D /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputToDataBridge.h; sourceTree = "<group>"; };
 		792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToDataBridge.m; sourceTree = "<group>"; };
-		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; };
+		794181B514152367000E0113 /* swypContentScrollTrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentScrollTrayController.h; sourceTree = "<group>"; };
+		794181B614152367000E0113 /* swypContentScrollTrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypContentScrollTrayController.m; sourceTree = "<group>"; };
+		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
+		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
 		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
 		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
@@ -204,8 +210,8 @@
 			children = (
 				680FCB0413E757B500509CF2 /* libSwyp.h */,
 				680FC1F513E2405C00509CF2 /* Other Logic */,
-				68B18DF613E0B20000D094A9 /* Content */,
 				68B18DED13E0B14500D094A9 /* Communications */,
+				68B18DF613E0B20000D094A9 /* Content */,
 				68B18DEC13E0B11300D094A9 /* View Components */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
@@ -270,6 +276,8 @@
 		680FC61413E30F2300509CF2 /* Content Display */ = {
 			isa = PBXGroup;
 			children = (
+				794181B514152367000E0113 /* swypContentScrollTrayController.h */,
+				794181B614152367000E0113 /* swypContentScrollTrayController.m */,
 			);
 			name = "Content Display";
 			sourceTree = "<group>";
@@ -441,6 +449,7 @@
 				68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */,
 				680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */,
 				680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */,
+				794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */,
 			);
 			name = Content;
 			sourceTree = "<group>";
@@ -519,6 +528,8 @@
 				792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */,
 				790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */,
 				790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */,
+				794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */,
+				794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,6 +623,7 @@
 				792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */,
 				790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */,
 				790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */,
+				794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
