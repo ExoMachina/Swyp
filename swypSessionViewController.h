@@ -18,10 +18,11 @@
 @interface swypSessionViewController : UIViewController {
 	swypConnectionSession *		_connectionSession;
 	
-	BOOL				*		_showActiveTransferIndicator; //UIActivityIndicator..
+	BOOL						_showActiveTransferIndicator; 
+	UIActivityIndicatorView	*	_activityIndicator;
 }
 @property (nonatomic, readonly) swypConnectionSession *		connectionSession;
-@property (nonatomic, assign)	BOOL				*		showActiveTransferIndicator;
+@property (nonatomic, assign)	BOOL						showActiveTransferIndicator;
 
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session;
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView;

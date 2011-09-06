@@ -42,57 +42,77 @@
 	return _contentDisplayControllerDelegate;
 }
 
+-(void)		reloadAllData{
+	
+	NSArray * trayPages = [_cachedPageObjectSetsForTray allValues];
+	for (trayPageObjectSet* objectSet in trayPages){
+		[[objectSet pagePreviewImageView] removeFromSuperview];
+		[objectSet setPagePreviewImageView:nil];
+		[objectSet setPagePreviewImage:nil];
+	}
+	
+	[_cachedPageObjectSetsForTray removeAllObjects];
+	
+	CGRect displayedFrame		=	_trayScrollView.frame;
+	displayedFrame.origin		=	_trayScrollView.contentOffset;
+	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupLayoutForImagesInContentFrame:displayedFrame];	
+	
+}
+
+
 -(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index{
 	[self gigglePageAtIndex:index];
 }
--(void)	returnContentAtIndexToNormalLocation:	(NSUInteger)index	animated:(BOOL)animate{
+-(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate{
 	if (animate){
-		[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionBeginFromCurrentState animations:^{
-			[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];
+		[UIView animateWithDuration:.75 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction animations:^{
+			if (index == -1){
+				for (int i = 0; i < [_contentDisplayControllerDelegate totalContentCountInController:self]; i++){
+					[[[self trayPageObjectSetForIndex:i] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:i]];	
+				}
+				
+			}else{
+				[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];	
+			}
 		}
 						 completion:nil];
 		
 	}else{
-		[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];
+		if (index == -1){
+			for (int i = 0; i < [_contentDisplayControllerDelegate totalContentCountInController:self]; i++){
+				[[[self trayPageObjectSetForIndex:i] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:i]];	
+			}
+		}else{
+			[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];			
+		}
 	}
 }
 
 
 #pragma mark - 
-#pragma mark interactions
+#pragma mark gestures
+-(void)		contentPanOccuredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
 
--(void)		handleLongPressGesture:(UILongPressGestureRecognizer*)	recognizer{
-	
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
+
+	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
+		[[recognizer view] setFrame:CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y))];
+		[recognizer setTranslation:CGPointZero inView:self.view];
 		
-		NSInteger selectedSet	=	[self pageObjectIndexOnTrayAtTapPoint:[recognizer locationInView:self.view]];
-		if (selectedSet < 0)
-			return;
+		NSInteger pannedIndex	= [self indexOfTrayObjectWithAssociatedPreviewImageView:(UIImageView*)recognizer.view];
+		if (pannedIndex != -1){
+			[_contentDisplayControllerDelegate contentAtIndex:pannedIndex wasDraggedToFrame:CGRectApplyAffineTransform([recognizer.view frame],CGAffineTransformMakeTranslation(-1 * _trayScrollView.contentOffset.x, -1 * _trayScrollView.contentOffset.y)) inController:self];
+		}
 		
-		UIMenuController * selectionMenu = [UIMenuController sharedMenuController];
+	}else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
 		
-		//		[self setViewIsSelected:TRUE];
-		[self becomeFirstResponder];
-	
-		UIMenuItem *deleteItem = [[[UIMenuItem alloc] initWithTitle:@"Delete" action:@selector(deletePromptPressed:)] autorelease];
-		UIMenuItem *duplicateItem = [[[UIMenuItem alloc] initWithTitle:@"Duplicate" action:@selector(duplicatePressed:)] autorelease];
-		// memory leak warning, added autorelease
-		
-		//		UIMenuItem *exportItem = [[UIMenuItem alloc] initWithTitle:@"Export" action:@selector(exportPressed:)];
-		//		UIMenuItem *shareItem = [[UIMenuItem alloc] initWithTitle:@"Email" action:@selector(sharePressed:)];
-		
-		
-		[selectionMenu setMenuItems:[NSArray arrayWithObjects:deleteItem,duplicateItem,nil]];
-		[selectionMenu setArrowDirection:UIMenuControllerArrowDown];
-		
-		
-		CGRect targetRect = CGRectMake(10, 15, 25, 15);
-		targetRect.origin = [recognizer locationInView:self.view];
-		[selectionMenu setTargetRect:targetRect inView:self.view];
-		[selectionMenu setMenuVisible:TRUE animated:TRUE];		
+		NSInteger pannedIndex	= [self indexOfTrayObjectWithAssociatedPreviewImageView:(UIImageView*)recognizer.view];
+		if (pannedIndex != -1){
+			[_contentDisplayControllerDelegate contentAtIndex:pannedIndex wasReleasedWithFrame:CGRectApplyAffineTransform([recognizer.view frame],CGAffineTransformMakeTranslation(-1 * _trayScrollView.contentOffset.x, -1 * _trayScrollView.contentOffset.y)) inController:self];
+		}
 	}
 }
-
 
 -(void)		imagePreviewViewPressedWithTapController:(UITapGestureRecognizer*)recognizer{
 	
@@ -268,24 +288,6 @@
 
 #pragma mark page layouts
 
--(void)		reloadAllData{
-	
-	NSArray * trayPages = [_cachedPageObjectSetsForTray allValues];
-	for (trayPageObjectSet* objectSet in trayPages){
-		[[objectSet pagePreviewImageView] removeFromSuperview];
-		[objectSet setPagePreviewImageView:nil];
-		[objectSet setPagePreviewImage:nil];
-	}
-	
-	[_cachedPageObjectSetsForTray removeAllObjects];
-	
-	CGRect displayedFrame		=	_trayScrollView.frame;
-	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
-	[self setupLayoutForImagesInContentFrame:displayedFrame];	
-	
-}
-
 -(void)			refreshPageSelection{
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
@@ -311,7 +313,7 @@
 -(trayPageObjectSet*)	trayPageObjectSetForIndex:(NSInteger)pageIndex{
 	id	key		=	[NSNumber numberWithInt:pageIndex];
 	trayPageObjectSet* objectSet	=	[_cachedPageObjectSetsForTray objectForKey:key];
-	
+
 	if (objectSet == nil){
 		objectSet	=	[[trayPageObjectSet alloc] init];
 		[_cachedPageObjectSetsForTray setObject:objectSet forKey:key];
@@ -343,11 +345,14 @@
 	UIImageView	* imageView = [_unusedUIImageViewSet anyObject];
 	if (imageView == nil){
 		imageView = [[[UIImageView alloc] initWithFrame:CGRectZero] autorelease]; // memory leak warning, added autorelease
-		[imageView setBackgroundColor:[UIColor blackColor]];
+		[imageView setBackgroundColor:[UIColor clearColor]];
 		[imageView setUserInteractionEnabled:TRUE];
-		[imageView.layer setMasksToBounds:TRUE];
-		[imageView.layer setCornerRadius:3];
-		[imageView.layer setBorderWidth:2];	
+//		[imageView.layer setMasksToBounds:TRUE];
+//		[imageView.layer setCornerRadius:3];
+//		[imageView.layer setBorderWidth:2];	
+		UIPanGestureRecognizer * panGesture	=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
+		[imageView addGestureRecognizer:panGesture];
+		SRELS(panGesture);
 	}
 	
 	[pageSet setPagePreviewImageView:imageView];
@@ -371,6 +376,19 @@
 		
 	}
 	
+	if ([pageViewSet pagePreviewImage] == nil){
+		UIImage * pageImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
+		if (CGSizeEqualToSize([pageImagePreview size], _pageImageSize) == NO){
+			_pageImageSize				=	[pageImagePreview size];
+			self.view.size				=	CGSizeMake(self.view.frame.size.width, [pageImagePreview size].height + 60);
+			_trayScrollView.size		=	self.view.size;
+			_trayScrollView.contentSize	=	CGSizeMake(_trayScrollView.contentSize.width, _trayScrollView.frame.size.height);
+			[[pageViewSet pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:idx]];
+
+		}
+		[pageViewSet setPagePreviewImage:pageImagePreview];
+	}		
+	
 	if (![[pageViewSet pagePreviewImageView] isDescendantOfView:_trayScrollView]){
 		[_trayScrollView addSubview:[pageViewSet pagePreviewImageView]];				
 		//only setting frame as necessary
@@ -379,10 +397,6 @@
 	}
 	
 	
-	if ([pageViewSet pagePreviewImage] == nil){
-		UIImage * pageImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
-		[pageViewSet setPagePreviewImage:pageImagePreview];
-	}		
 	[[pageViewSet pagePreviewImageView] setImage:[pageViewSet pagePreviewImage]];
 	
 	return pageViewSet;
@@ -449,6 +463,33 @@
 	
 	return insertLocation;
  }
+
+-(NSInteger)	indexOfTrayObjectWithAssociatedPreviewImageView: (UIImageView*) previewImageView{
+	CGRect displayedFrame			=	_trayScrollView.frame;
+	displayedFrame.origin			=	_trayScrollView.contentOffset;
+	NSRange		primarySearchRange	=	[self rangeOfPagesForContentFrame:displayedFrame];
+	for (int i = primarySearchRange.location; i <= primarySearchRange.location + primarySearchRange.length; i ++){
+		trayPageObjectSet *	testSet	=	[self trayPageObjectSetForIndex:i];
+		if ([testSet pagePreviewImageView] == previewImageView)
+			return i;
+	}
+	
+	//otherwise search the rest
+	NSMutableIndexSet * otherPages	=	[NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self])];
+	[otherPages removeIndexesInRange:primarySearchRange];
+	
+	__block NSInteger blockedSetIndex	=	-1;
+	
+	[otherPages enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
+		trayPageObjectSet *	testSet	=	[self trayPageObjectSetForIndex:idx];
+		if ([testSet pagePreviewImageView] == previewImageView){
+			blockedSetIndex = idx;
+			*stop = TRUE;
+		}
+	}];
+	
+	return blockedSetIndex;
+}
 
 -(NSInteger)		pageObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint{
 	CGRect displayedFrame			=	_trayScrollView.frame;
@@ -545,12 +586,13 @@
     [super viewDidLoad];
 	
 	UIView *mainView = self.view;
-	mainView.frame = CGRectMake(0.0, 0.0, 1024.0, 175.0);
+	float windowWidth	=	[[UIApplication sharedApplication] keyWindow].frame.size.width;
+	mainView.frame = CGRectMake(0.0, 0.0, windowWidth, 175.0);
 	mainView.alpha = 1.000;
 	mainView.autoresizesSubviews = YES;
 	mainView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
 	mainView.backgroundColor = [UIColor colorWithWhite:0.318 alpha:1.000];
-	[mainView setBackgroundColor:[UIColor scrollViewTexturedBackgroundColor]]; 
+	[mainView setBackgroundColor:[UIColor clearColor]];//scrollViewTexturedBackgroundColor 
 	mainView.clearsContextBeforeDrawing = YES;
 	mainView.clipsToBounds = NO;
 	mainView.contentMode = UIViewContentModeScaleToFill;
@@ -564,7 +606,8 @@
 	
 	
 	
-	_trayScrollView.frame = CGRectMake(0.0, 0.0, 1024.0, 175.0);
+	_trayScrollView.frame = CGRectMake(0.0, 0.0, windowWidth, 175.0);
+	[_trayScrollView setContentInset:UIEdgeInsetsMake(0, windowWidth, 0, windowWidth)];
 	_trayScrollView.alpha = 1.000;
 	_trayScrollView.alwaysBounceHorizontal = YES;
 	_trayScrollView.alwaysBounceVertical = NO;
@@ -575,7 +618,7 @@
 	_trayScrollView.bouncesZoom = NO;
 	_trayScrollView.canCancelContentTouches = YES;
 	_trayScrollView.clearsContextBeforeDrawing = YES;
-	_trayScrollView.clipsToBounds = YES;
+	_trayScrollView.clipsToBounds = NO;
 	_trayScrollView.contentMode = UIViewContentModeScaleToFill;
 	_trayScrollView.contentStretch = CGRectFromString(@"{{0, 0}, {1, 1}}");
 	_trayScrollView.delaysContentTouches = YES;
@@ -592,7 +635,7 @@
 	_trayScrollView.showsVerticalScrollIndicator = NO;
 	_trayScrollView.tag = 0;
 	_trayScrollView.userInteractionEnabled = YES;
-	[_trayScrollView setContentSize:CGSizeMake(2048, 175)];
+	[_trayScrollView setContentSize:CGSizeMake(windowWidth*2, 175)];
 	[_trayScrollView setDecelerationRate:UIScrollViewDecelerationRateFast];
 	[_trayScrollView	setShowsHorizontalScrollIndicator:TRUE];
 	[_trayScrollView	setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
@@ -600,25 +643,7 @@
 	
 	[mainView addSubview:_trayScrollView];
     
-	
-	UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
-	[mainView addGestureRecognizer:longPressGesture];
-	SRELS(longPressGesture);
 
-	
-	//handle in subclassing 
-	/*
-	// detects swipe up to activate clipboard
-	UISwipeGestureRecognizer *upGesture = [[ UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(imagePreviewViewSwipedUpController:)];
-	[upGesture setDirection:UISwipeGestureRecognizerDirectionUp];
-	[mainView addGestureRecognizer:upGesture];
-	SRELS(upGesture);
-	
-	UISwipeGestureRecognizer *downGesture = [[ UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(imagePreviewViewSwipedDownController:)];
-	[downGesture setDirection:UISwipeGestureRecognizerDirectionDown];
-	[mainView addGestureRecognizer:downGesture];
-	SRELS(downGesture);
-	*/
 	
 	UITapGestureRecognizer *tapGesture = [[ UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imagePreviewViewPressedWithTapController:)];
 	[mainView addGestureRecognizer:tapGesture];

@@ -43,8 +43,9 @@
 #pragma mark public
 
 -(swypContentInteractionManager*)	contentManager{
-	if (_contentManager == nil)
-		_contentManager = [[swypContentInteractionManager alloc] init];
+	if (_contentManager == nil){
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
+	}
 	
 	return _contentManager;
 }

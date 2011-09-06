@@ -11,7 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation swypContentInteractionManager
-@synthesize contentDataSource, contentDisplayController = _contentDisplayController;
+@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController;
 
 #pragma public
 
@@ -29,6 +29,7 @@
 	swypConnectionSession * session =	[sessionViewController connectionSession];
 	[_sessionViewControllersBySession setObject:sessionViewController forKey:[NSValue valueWithNonretainedObject:session]];
 	[session addDataDelegate:self];
+	[session addDataDelegate:_contentDataSource];
 	[session addConnectionSessionInfoDelegate:self];
 	if ([_sessionViewControllersBySession count] == 1){
 		[self _setupForFirstSessionAdded];
@@ -37,6 +38,7 @@
 
 -(void)		stopMaintainingViewControllerForSwypSession:(swypConnectionSession*)session{
 	[session removeDataDelegate:self];
+	[session removeDataDelegate:_contentDataSource];
 	[session removeConnectionSessionInfoDelegate:self];
 	
 	swypSessionViewController*	sessionView	=	[self maintainedSwypSessionViewControllerForSession:session];
@@ -57,6 +59,19 @@
 		//not modifying enumerator, because enumerator is static nsarray
 		swypConnectionSession * session = [sessionValue nonretainedObjectValue];
 		[self stopMaintainingViewControllerForSwypSession:session];
+	}
+}
+
+-(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
+	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
+		[connectionSession removeDataDelegate:contentDataSource];
+	}
+	[_contentDataSource setDatasourceDelegate:nil];
+	SRELS(_contentDataSource);
+	_contentDataSource	=	[contentDataSource retain];
+	[_contentDataSource setDatasourceDelegate:self];
+	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
+		[connectionSession addDataDelegate:contentDataSource];
 	}
 }
 
@@ -89,18 +104,22 @@
 #pragma mark -
 #pragma mark delegation
 #pragma mark swypConnectionSessionDataDelegate
+-(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
+	[[self maintainedSwypSessionViewControllerForSession:session] setShowActiveTransferIndicator:TRUE];
+
+}
+
+-(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session{
+	[[self maintainedSwypSessionViewControllerForSession:session] setShowActiveTransferIndicator:FALSE];
+}
+
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
 
-	if ([self maintainedSwypSessionViewControllerForSession:session] == nil)
-		return FALSE;
-	
-	if ([[NSSet setWithArray:[swypContentInteractionManager supportedFileTypes]] containsObject:[discernedStream streamType]]){
-		*wantsProvidedAsNSData = TRUE;
-		return TRUE;
-	}else{
-		EXOLog(@"Unsupported filetype: %@", [discernedStream streamType]);
+	if ([self maintainedSwypSessionViewControllerForSession:session] == nil){
 		return FALSE;
 	}
+	
+	return FALSE;//we wont be handling here.. the datasource should
 }
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
@@ -113,6 +132,11 @@
 }
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session{
 	
+	[_contentDisplayController returnContentAtIndexToNormalLocation:-1 animated:TRUE];	
+	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
+		[sessionViewController setShowActiveTransferIndicator:FALSE];
+		sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
+	}
 }
 
 #pragma mark swypConnectionSessionInfoDelegate
@@ -122,23 +146,39 @@
 
 #pragma mark swypContentDisplayViewControllerDelegate
 -(void)	contentAtIndex: (NSUInteger)index wasDraggedToFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController{
-	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:draggedFrame];
+	CGRect newXlatedRect	=	[contentDisplayController.view convertRect:draggedFrame toView:_mainWorkspaceView];
+	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:newXlatedRect];
 	if (overlapSession){
-		[UIView animateWithDuration:.75 animations:^{
+		
+		if (CGColorEqualToColor([[UIColor whiteColor] CGColor], overlapSession.view.layer.borderColor) == NO){
+		
 			overlapSession.view.layer.borderColor	=	[[UIColor whiteColor] CGColor];
-		}completion:^(BOOL completed){
-			[UIView animateWithDuration:.75 delay:1 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-				overlapSession.view.layer.borderColor	=	[[UIColor blackColor] CGColor];
-			 }completion:nil];
+			
 		}
-		 ];
 	}
 }
 -(void)	contentAtIndex: (NSUInteger)index wasReleasedWithFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController{
-	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:draggedFrame];
+	
+	CGRect newXlatedRect	=	[contentDisplayController.view convertRect:draggedFrame toView:_mainWorkspaceView];
+	
+	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:newXlatedRect];
 	if (overlapSession){
-		NSInputStream*	inputStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:[[_contentDataSource supportedFileTypesForContentAtIndex:index] lastObject]];
+		NSUInteger dataLength 		= 0;
+		NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:[[_contentDataSource supportedFileTypesForContentAtIndex:index] lastObject] length:&dataLength];
+		[[overlapSession connectionSession] beginSendingFileStreamWithTag:@"photo" type:[NSString imagePNGFileType] dataStreamForSend:dataSendStream length:dataLength];
+		
+		[overlapSession setShowActiveTransferIndicator:TRUE];
 		EXOLog(@"Queuing content at index: %i", index);
+	}else{
+		if ([_contentDisplayController respondsToSelector:@selector(returnContentAtIndexToNormalLocation:animated:)]){
+			[_contentDisplayController returnContentAtIndexToNormalLocation:index animated:TRUE];	
+		}
+		
+		for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
+			sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
+
+		}
+
 	}
 }
 
@@ -149,9 +189,24 @@
 	return [_contentDataSource countOfContent];
 }
 
+
+#pragma mark swypContentDataSourceDelegate 
+-(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentDisplayController insertContentToDisplayAtIndex:insertIndex animated:TRUE];
+}
+-(void)	datasourceRemovedContentAtIndex:(NSUInteger)removeIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentDisplayController removeContentFromDisplayAtIndex:removeIndex animated:TRUE];
+}
+-(void)	datasourceSignificantlyModifiedContent:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentDisplayController reloadAllData];
+}
+
+
 #pragma mark -
 #pragma mark private
 -(swypSessionViewController*)	_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect{
+	
+	
 	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 		//CGRectApplyAffineTransform(sessionViewController.view.frame, CGAffineTransformMakeTranslation(_contentDisplayController.view.frame.origin.x, _contentDisplayController.view.frame.origin.y))
 		if (CGRectIntersectsRect(sessionViewController.view.frame, testRect)){
@@ -175,9 +230,11 @@
 	if (_contentDisplayController == nil){
 		_contentDisplayController	=	[[swypContentScrollTrayController alloc] init];
 	}
+	[_contentDisplayController.view setOrigin:CGPointMake(0, 200)];
 	[_contentDisplayController setContentDisplayControllerDelegate:self];
 	[_contentDisplayController.view		setAlpha:0];
 	[_mainWorkspaceView	addSubview:_contentDisplayController.view];
+	[_contentDisplayController reloadAllData];
 	[UIView animateWithDuration:.75 animations:^{
 		_contentDisplayController.view.alpha = 1;
 	}completion:nil];

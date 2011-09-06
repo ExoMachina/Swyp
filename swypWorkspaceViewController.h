@@ -11,6 +11,10 @@
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
 
+@protocol swypWorkspaceDelegate <NSObject>
+-(void) didReceive;
+@end
+
 @interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;
 	swypConnectionManager *				_connectionManager;

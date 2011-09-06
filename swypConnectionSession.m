@@ -236,8 +236,23 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	if (willHandleStream == FALSE){
 		EXOLog(@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]);
 //		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
+	}else{
+		for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
+			id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
+			if ([delegate respondsToSelector:@selector(didBeginReceivingDataInConnectionSession:)])
+				[delegate didBeginReceivingDataInConnectionSession:self];
+		}
 	}
 }
+
+-(void)	concludedDiscernedStream: (swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
+	for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
+		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
+		if ([delegate respondsToSelector:@selector(didFinnishReceivingDataInConnectionSession:)])
+			[delegate didFinnishReceivingDataInConnectionSession:self];
+	}
+}
+
 -(void)	inputStreamDiscernerFinishedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner{
 	EXOLog(@"closing; Error occured in inputStreamDiscerner w/ error: %@", [error description]);
 	
@@ -246,10 +261,10 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[self _changeStatus:swypConnectionSessionStatusClosed];
 	
 	NSError *delegateError = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionStreamError userInfo:nil];
-	for (NSValue * delegateValue in _connectionSessionInfoDelegates){
+	for (NSValue * delegateValue in [[_connectionSessionInfoDelegates copy] autorelease]){
 		id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
 		if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
-			[delegate sessionDied:self withError:error];
+			[delegate sessionDied:self withError:delegateError];
 	}
 }
 

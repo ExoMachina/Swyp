@@ -14,9 +14,12 @@
 	UIImage *	_image;
 	
 	UIImage	*	_cachedIconImage;
+	
+	id<swypContentDataSourceDelegate>	_datasourceDelegate;
 }
 + (id) datasourceWithImage: (UIImage*)image;
 
 - (id)initWithImage: (UIImage*) image;
+
 
 @end

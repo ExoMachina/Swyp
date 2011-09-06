@@ -72,8 +72,6 @@
 
 
 //touch rec
--(void)		handleLongPressGesture:(UILongPressGestureRecognizer*)	recognizer;
-
 //optimization
 -(void)releaseImageViewFromUseWithObjectSet:(trayPageObjectSet*)objectSet;
 -(UIImageView*)imageViewForObjectSet:(trayPageObjectSet*)pageSet;
@@ -100,13 +98,15 @@
 -(void)			scrollToRevealPageAtIndex:(NSInteger)pageIndex;
 
 
--(trayPageObjectSet *)			layoutPageImageAtIndex:(NSInteger)idx;
--(NSRange)		rangeOfPagesForContentFrame:(CGRect)	displayRect;
--(void)			setupLayoutForImagesInContentFrame:(CGRect)	displayRect;
--(void)			setupPageSelectionViewWidthWithPageCount:(NSUInteger)pageCount;
--(CGRect)		frameForPageImageAtIndex:(NSUInteger)pageIndex;
--(trayPageObjectSet*)		trayPageObjectSetForIndex:(NSInteger)pageIndex;
--(NSInteger)		pageObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint;
+-(trayPageObjectSet *)	layoutPageImageAtIndex:(NSInteger)idx;
+-(NSRange)				rangeOfPagesForContentFrame:(CGRect)	displayRect;
+-(void)					setupLayoutForImagesInContentFrame:(CGRect)	displayRect;
+-(void)					setupPageSelectionViewWidthWithPageCount:(NSUInteger)pageCount;
+-(CGRect)				frameForPageImageAtIndex:(NSUInteger)pageIndex;
+-(trayPageObjectSet*)	trayPageObjectSetForIndex:(NSInteger)pageIndex;
+-(NSInteger)			pageObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint;
+
+-(NSInteger)	indexOfTrayObjectWithAssociatedPreviewImageView: (UIImageView*) previewImageView;
 
 //-1	= not visible
 //0		= first visible (even partially) notebook

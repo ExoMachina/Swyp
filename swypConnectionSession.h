@@ -64,6 +64,12 @@ typedef enum {
 
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
+
+
+//	These functions should notify you when the data IN stream is receiving or NOT so that UI can be updated accordingly
+-(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session;
+
+-(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
 @end
 
 

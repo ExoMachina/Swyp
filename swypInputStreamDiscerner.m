@@ -88,6 +88,7 @@ static NSUInteger const memoryPageSize	=	4096;
 
 #pragma mark swypInputStreamDiscerner
 -(void) _cleanupForNextDiscernmentCycle{
+	[_delegate concludedDiscernedStream:_lastYieldedStream withDiscerner:self];
 	_bufferedDatasZeroIndexByteLocationInYieldedStream	= 0;
 	_bufferedDataNextReadIndex							= 0;
 	[_lastYieldedStream setDataSource:nil];

@@ -28,25 +28,28 @@
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate;
 -(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate;
 
+-(void)	reloadAllData;
+
 @optional
 -(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index;
--(void)	returnContentAtIndexToNormalLocation:	(NSUInteger)index	animated:(BOOL)animate;
+//-1 means all content
+-(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate;
 @end
 
 
-@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate> {
+@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
 	
-	NSObject<swypContentDataSourceProtocol>*					_contentDataSource;
+	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
 	
 	UIView*													_mainWorkspaceView;
 }
-@property(nonatomic, retain)	id<swypContentDataSourceProtocol>	contentDataSource;
+@property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
 //if not set, the standard will be assigned
-@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*	contentDisplayController;
+@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*		contentDisplayController;
 
 -(id)	initWithMainWorkspaceView: (UIView*)	workspaceView;
 

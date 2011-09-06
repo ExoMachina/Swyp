@@ -51,4 +51,26 @@
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
 }
 
+-(void) setShowActiveTransferIndicator:(BOOL)showActiveTransferIndicator{
+	_showActiveTransferIndicator	= showActiveTransferIndicator;
+	if (_activityIndicator == nil) {
+		_activityIndicator			= [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		[_activityIndicator setFrame:CGRectMake(0, 0, 50, 50)];
+	}
+	
+	if (showActiveTransferIndicator){
+		EXOLog(@"Added");
+//		[self.view.superview addSubview:_activityIndicator];
+//		[_activityIndicator setCenter:[self.view convertPoint:[self.view center] toView:self.view.superview]];
+		[self.view addSubview:_activityIndicator];
+		[_activityIndicator setOrigin:CGPointMake(50, 50)];
+		[_activityIndicator startAnimating];
+	}else{
+		EXOLog(@"Remvoed");
+		[_activityIndicator stopAnimating];
+		[_activityIndicator removeFromSuperview];
+	}
+	
+}
+
 @end

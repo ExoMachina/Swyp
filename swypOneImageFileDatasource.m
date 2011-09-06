@@ -24,8 +24,23 @@
     return self;
 }
 
+-(void) dealloc{
+	_datasourceDelegate	=nil;
+	SRELS(_image);
+	SRELS(_cachedIconImage);
+	[super dealloc];
+}
 
 #pragma mark swypContentDataSource
+-(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate{
+	_datasourceDelegate	=	delegate;
+}
+-(id<swypContentDataSourceDelegate>)	datasourceDelegate{
+	return _datasourceDelegate;
+}
+
+
+
 - (NSUInteger)		countOfContent{
 	return 1;
 }
@@ -44,8 +59,11 @@
 - (NSArray*)		supportedFileTypesForContentAtIndex: (NSUInteger)contentIndex{
 	return [NSArray arrayWithObject:[NSString imagePNGFileType]];
 }
-- (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type{
-	return [NSInputStream inputStreamWithData:UIImagePNGRepresentation(_image)];
+- (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type length: (NSUInteger*)contentLengthDestOrNULL{
+	NSData *	photoData		=	UIImagePNGRepresentation(_image);
+	*contentLengthDestOrNULL	=	[photoData length];
+	
+	return [NSInputStream inputStreamWithData:photoData];
 	
 }
 

@@ -24,6 +24,8 @@
 
 #define euclideanDistance(pointOne, pointTwo) sqrt(pow((pointOne.x - pointTwo.x),2) + pow((pointOne.y - pointTwo.y),2))
 
+#define rectDescriptionString(rect) [NSString stringWithFormat:@"w:%f h:%f x:%f y:%f",rect.size.width,rect.size.height, rect.origin.x,rect.origin.y] 
+
 #if DEBUG_MODE_ENABLED == 1
 #if CONFIGURATION == Debug
 	#define EXOLog NSLog

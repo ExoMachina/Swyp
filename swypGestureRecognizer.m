@@ -48,13 +48,21 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{	
 	[super touchesBegan:touches withEvent:event];
+	NSMutableSet * relevantTouches = [NSMutableSet set];
+	for (UITouch * touch in touches){
+		if ([touch view] != [self view]){
+			[self ignoreTouch:touch forEvent:event];
+		}else{
+			[relevantTouches addObject:touch];
+		}
+	}
 	
 	if ([[NSDate date] timeIntervalSinceDate:[[self swypGestureInfo] startDate]] > 3){
 		SRELS(_trackedTouch); //sometimes touches get caught somewhere (ask Steve)
 	}
 	
 	if (_trackedTouch == nil){
-		_trackedTouch = [[touches anyObject] retain];
+		_trackedTouch = [[relevantTouches anyObject] retain];
 	
 		self.state = UIGestureRecognizerStatePossible;
 		
@@ -65,7 +73,7 @@
 		[_recognizedGestureInfoRef setStartPoint:[self locationInView:self.view]];		
 	}
 	
-	for (UITouch * touch in touches){
+	for (UITouch * touch in relevantTouches){
 		if (touch != _trackedTouch){
 			[self ignoreTouch:touch forEvent:event];
 		}
