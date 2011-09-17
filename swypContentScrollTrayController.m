@@ -553,6 +553,16 @@
 
 #pragma mark -
 #pragma mark NSObject
+
+-(id)initWithTrayDelegate:(id<swypContentScrollTrayControllerDelegate>)trayDelegate{
+	if (self = [self init]){
+		_contentDisplayControllerDelegate = trayDelegate;
+	}
+	
+	return self;
+}
+
+
 -(id)init{
 	if ((self = [super initWithNibName:nil bundle:nil])){
 		

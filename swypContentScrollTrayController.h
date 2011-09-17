@@ -94,9 +94,6 @@
 -(void)		reloadAllData;
 
 
--(void)			scrollToRevealCurrentlySelectedPage;
--(void)			scrollToRevealPageAtIndex:(NSInteger)pageIndex;
-
 
 -(trayPageObjectSet *)	layoutPageImageAtIndex:(NSInteger)idx;
 -(NSRange)				rangeOfPagesForContentFrame:(CGRect)	displayRect;
