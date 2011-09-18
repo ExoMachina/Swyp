@@ -1,3 +1,7 @@
+#pragma mark IMPORTANT USAGE NOTICE
+//	#IMPORTANT
+//	This is a pre-release build that WILL NOT COOPERATE with the final release of SWYP
+//	AS SUCH, you may NOT EVER use this code under the moniker "swyp" nor "swipe;" see the 'LICENSE' file. kthx have fun!
 /*
  *  swyp.h
  *  swyp
@@ -6,6 +10,18 @@
  *	Copyright 2011 ExoMachina. Some rights reserved -- see included 'license' file.
  *
  */
+
+
+/*
+===========================
+ Add swyp to your project with minimal effort
+ 
+	Import the swyp lib '#import "swyp.h"'
+	Create a swypWorkspaceViewController
+	Add a datasource to [workspaceViewController contentManager]
+		[[workspaceViewController contentManager] setContentDataSource:(id<swypContentDataSourceProtocol>)newDataSource]
+	display the swypWorkspaceViewController
+*/
 
 
 #define DEBUG_MODE_ENABLED 2
@@ -39,8 +55,11 @@
 	#define EXOLog(format, ...)
 #endif
 
-
 #pragma mark includes
+#import "swypWorkspaceViewController.h"
+#import "swypContentInteractionManager.h"
+#import "swypFileTypeString.h"
+#import "swypContentDataSourceProtocol.h"
 #import "NSDictionary+BSJSONAdditions.h"
 #import "UIColorAdditions.h"
 #import "UIViewAdditions+swypAdditions.h"
