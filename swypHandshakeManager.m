@@ -405,7 +405,12 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];	
+#pragma mark crypto circumvention during restructuring
+#warning circumventing crypto!
+//	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];
+	[session setSessionHueColor:[UIColor randomSwypHueColor]];
+	[self didCompleteCryptoSetupInSession:session warning:nil cryptoManager:_cryptoManager];
+//end circumvention
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{
