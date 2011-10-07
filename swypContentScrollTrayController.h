@@ -13,43 +13,43 @@
 
 @protocol swypContentScrollTrayControllerDelegate <NSObject>
 
--(UIImage*)		pagePreviewImageForPageIndex:(NSInteger)pageIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
--(NSInteger)	numberOfPagesInPageSelectionScrollTrayWithController:(swypContentScrollTrayController*)trayController;
+-(UIImage*)		contentPreviewImageForContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
+-(NSInteger)	numberOfContentsInContentSelectionScrollTrayWithController:(swypContentScrollTrayController*)trayController;
 
 
 @optional 
--(NSInteger)	currentlySelectedPageForScrollTrayWithController:(swypContentScrollTrayController*)trayController;
+-(NSInteger)	currentlySelectedContentForScrollTrayWithController:(swypContentScrollTrayController*)trayController;
 
--(void)			pageSelectionScrollTrayWantsDeletePageAtPageIndex:(NSInteger)pageIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
+-(void)			contentSelectionScrollTrayWantsDeleteContentAtContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
 
 -(void)			swypContentScrollTrayControllerWantsHide:(swypContentScrollTrayController*)trayController;
 
--(void)			controllerDidSelectPageAtIndex:(NSInteger)selectedPage withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
+-(void)			controllerDidSelectContentAtIndex:(NSInteger)selectedContent withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
 
--(void)			pageSelectionScrollTrayWantsDuplicatePageAtPageIndex:(NSInteger)pageIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
+-(void)			contentSelectionScrollTrayWantsDuplicateContentAtContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
 
 @end
 
 
-@interface trayPageObjectSet : NSObject{
-	UIImage	*		_pagePreviewImage;
-	UIImageView *	_pagePreviewImageView;
+@interface trayContentObjectSet : NSObject{
+	UIImage	*		_contentPreviewImage;
+	UIImageView *	_contentPreviewImageView;
 }
-@property (nonatomic, retain) UIImage	*		pagePreviewImage;
-@property (nonatomic, retain) UIImageView *		pagePreviewImageView;
+@property (nonatomic, retain) UIImage	*		contentPreviewImage;
+@property (nonatomic, retain) UIImageView *		contentPreviewImageView;
 @end
 
 
 
 
 @interface swypContentScrollTrayController : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, swypContentDisplayViewController> {
-	NSMutableDictionary	*	_cachedPageObjectSetsForTray;
+	NSMutableDictionary	*	_cachedContentObjectSetsForTray;
 	
 	NSMutableSet		*	_unusedUIImageViewSet;
 	
 	UIScrollView *			_trayScrollView;
-	CGSize					_pageImageSize;
-	float					_pageSpacingWidth;
+	CGSize					_contentImageSize;
+	float					_contentSpacingWidth;
 	
 	CGPoint					_fadeoutOrigin;
 	CGPoint					_displayOrigin;
@@ -57,9 +57,9 @@
 	
 	id<swypContentDisplayViewControllerDelegate>	_contentDisplayControllerDelegate;	
 }
-@property (nonatomic, assign) CGSize			pageImageSize;
-@property (nonatomic, assign) float				pageSpacingWidth;
-@property (nonatomic, assign)	NSInteger			currentSelectedPageIndex;
+@property (nonatomic, assign) CGSize			contentImageSize;
+@property (nonatomic, assign) float				contentSpacingWidth;
+@property (nonatomic, assign)	NSInteger			currentSelectedContentIndex;
 @property (nonatomic, assign)	CGPoint fadeoutOrigin;
 @property (nonatomic, assign)	CGPoint displayOrigin;
 @property (nonatomic, readonly)	UIScrollView *		trayScrollView;
@@ -71,37 +71,35 @@
 
 
 
-//touch rec
-//optimization
--(void)releaseImageViewFromUseWithObjectSet:(trayPageObjectSet*)objectSet;
--(UIImageView*)imageViewForObjectSet:(trayPageObjectSet*)pageSet;
+-(void)			releaseImageViewFromUseWithObjectSet:(trayContentObjectSet*)objectSet;
+-(UIImageView*)	imageViewForObjectSet:(trayContentObjectSet*)contentSet;
 
 
--(void)	gigglePageAtIndex:(NSInteger)displayedPage;
+-(void)	giggleContentAtIndex:(NSInteger)displayedContent;
 
 //updating displayed data
 //1) delete from datasource 2) call removeNotebookFromDisplay
--(void)	removePageFromDisplayAtIndex:(NSInteger)displayedPage animated:(BOOL)animate;
+-(void)	removeScrollPageContentFromDisplayAtIndex:(NSInteger)displayedContent animated:(BOOL)animate;
 //1) add to datasource 2) call insertNotebookToDisplayAtIndex
--(void)	insertPageToDisplayAtIndex:(NSInteger)insertIndex animated:(BOOL)animate;
+-(void)	insertScrollPageContentToDisplayAtIndex:(NSInteger)insertIndex animated:(BOOL)animate;
 
--(void)			reloadTrayPageImageData;
-//updates page image, refreshes all around it
--(void)			updatePageAtIndex:(NSInteger)pageIndex;
-//refreshes currently selected pages
--(void)			refreshPageSelection;
+-(void)			reloadTrayContentImageData;
+//updates content image, refreshes all around it
+-(void)			updateContentAtIndex:(NSInteger)contentIndex;
+//refreshes currently selected contents
+-(void)			refreshContentSelection;
 //dumps everything and reloads
--(void)		reloadAllData;
+-(void)			reloadAllData;
 
 
 
--(trayPageObjectSet *)	layoutPageImageAtIndex:(NSInteger)idx;
--(NSRange)				rangeOfPagesForContentFrame:(CGRect)	displayRect;
--(void)					setupLayoutForImagesInContentFrame:(CGRect)	displayRect;
--(void)					setupPageSelectionViewWidthWithPageCount:(NSUInteger)pageCount;
--(CGRect)				frameForPageImageAtIndex:(NSUInteger)pageIndex;
--(trayPageObjectSet*)	trayPageObjectSetForIndex:(NSInteger)pageIndex;
--(NSInteger)			pageObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint;
+-(trayContentObjectSet *)	layoutContentImageAtIndex:(NSInteger)idx;
+-(NSRange)					rangeOfContentsForContentFrame:(CGRect)	displayRect;
+-(void)						setupLayoutForImagesInContentFrame:(CGRect)	displayRect;
+-(void)						setupContentSelectionViewWidthWithContentCount:(NSUInteger)contentCount;
+-(CGRect)					frameForContentImageAtIndex:(NSUInteger)contentIndex;
+-(trayContentObjectSet*)	trayContentObjectSetForIndex:(NSInteger)contentIndex;
+-(NSInteger)				contentObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint;
 
 -(NSInteger)	indexOfTrayObjectWithAssociatedPreviewImageView: (UIImageView*) previewImageView;
 
@@ -109,8 +107,8 @@
 //0		= first visible (even partially) notebook
 //n		= the notebook on scroll view
 //locations contain their immediate margins
--(NSInteger)		visiblePageLocationForPageIndex:(NSInteger)pageIndex;	
--(NSInteger)		insertIndexFromVisiblePageLocation:(NSInteger)visiblePageLocation;
+-(NSInteger)		visibleContentLocationForContentIndex:(NSInteger)contentIndex;	
+-(NSInteger)		insertIndexFromVisibleContentLocation:(NSInteger)visibleContentLocation;
 
 -(id)initWithTrayDelegate:(id<swypContentScrollTrayControllerDelegate>)trayDelegate;
 

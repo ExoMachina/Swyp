@@ -50,6 +50,14 @@
 	//if (endStreamOffset < 0){ //you're in the future, just hang out until ready to end
 }
 
+
+-(void)	shouldPullData{
+	[self _handlePullFromDataSource];
+	if ([self hasBytesAvailable]){
+		[_delegate stream:self handleEvent:NSStreamEventHasBytesAvailable];
+	}
+}
+
 #pragma mark NSObject
 - (id)init
 {
@@ -96,10 +104,7 @@
 }
 
 -(void) runloopTimerFired:(id)sender{	
-	[self _handlePullFromDataSource];
-	if ([self hasBytesAvailable]){
-		[_delegate stream:self handleEvent:NSStreamEventHasBytesAvailable];
-	}
+	[self shouldPullData];
 }
 
 - (id)propertyForKey:(NSString *)key {

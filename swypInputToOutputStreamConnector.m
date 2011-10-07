@@ -101,7 +101,7 @@
 		
 		NSUInteger maxWriteLength = MIN(bufferedDataLength, 1024);//don't need to NULL-terminate, because write length is passed
 		
-		uint8_t writeBuffer[maxWriteLength];
+		uint8_t writeBuffer[1024];
 		[_bufferedData getBytes:writeBuffer range:NSMakeRange(0, maxWriteLength)];
 		
 		unsigned int writeLength = 0;

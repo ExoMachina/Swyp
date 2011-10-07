@@ -218,7 +218,7 @@
 - (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode{
 	if (eventCode == NSStreamEventOpenCompleted){
 	}else if (eventCode == NSStreamEventHasBytesAvailable){
-		uint8_t readBuffer[1024];
+		uint8_t readBuffer[1024] = {0};
 		unsigned int readLength = 0;
 		readLength = [stream read:readBuffer maxLength:1024];
 		if(!readLength){ 

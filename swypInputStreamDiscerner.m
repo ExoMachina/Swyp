@@ -82,7 +82,14 @@ static NSUInteger const memoryPageSize	=	4096;
 		//the location on the yielded stream at the zero index of bufferedData will only change when we expire some of the used buffered data
 		_bufferedDatasZeroIndexByteLocationInYieldedStream	+= usedDataOverReserve;
 	}
-		
+	
+	
+	//here's a test to see whether we can startup the transfer again once our buffers are free
+	if ([_bufferedData length] < memoryPageSize * 10 && [_discernmentStream hasBytesAvailable]){ //40k seems to be a good arbitrary max
+		[self _handleInputDataRead];
+	}
+	
+	
 	return returnData;
 }
 
@@ -119,17 +126,19 @@ static NSUInteger const memoryPageSize	=	4096;
 -(void) _handleInputDataRead{
 	//the goal is to not slow down the consumption of on-wire data too much
 	
+	//the swyp discerned stream is slow on the read
 	if ([_bufferedData length] > memoryPageSize * 10){ //40k seems to be a good arbitrary max
+		[_lastYieldedStream shouldPullData];
 		return;
 	}
 
 	static NSUInteger readLength	=	1024;
 	
 	uint8_t readBuffer[readLength];
-	NSUInteger readByteCount = 0;
+	NSInteger readByteCount = 0;
 	readByteCount	= [_discernmentStream read:readBuffer maxLength:readLength];
 	
-	if(!readByteCount){ 
+	if(readByteCount <= 0){ 
 		return;
 	}
 	
@@ -142,32 +151,55 @@ static NSUInteger const memoryPageSize	=	4096;
 -(void)	_handleHeaderPacketFromCurrentBufferLocation:(NSUInteger)	location{
 	NSRange		relevantSearchSpace		=	NSMakeRange(location, [_bufferedData length] - location);
 	NSData*		relevantData			=	[_bufferedData subdataWithRange:relevantSearchSpace];
-	NSString*	headerCandidateString	=	[[[NSString alloc]  initWithBytes:[relevantData bytes] length:[relevantData length] encoding: NSUTF8StringEncoding] autorelease]; //this is MUCH safer against non-null-termed strings
+	
+	//let's do this to find the second semi-colon, with which we can use to parse just what we need into string
+	NSRange		firstSemicolonRange		=	NSMakeRange(NSNotFound, 0);
+	NSRange		secondSemicolonRange	=	NSMakeRange(NSNotFound, 0);
 
-	NSRange		firstSemicolonRange		=	[headerCandidateString rangeOfString:@";" options:0];	
-	if (firstSemicolonRange.location == NSNotFound)
-		return;
+	char *		relevantBytes			=	(char *)[relevantData bytes];
+	for (NSUInteger i = 0; i < [relevantData length]; i ++){
+		firstSemicolonRange		=	NSMakeRange(i, 1);
+		if (relevantBytes[i] == ';'){
+			for (NSUInteger i2 = i +1; i < [relevantData length]; i2++){
+				if (relevantBytes[i2] == ';'){
+					secondSemicolonRange	=	NSMakeRange(i2, 1);
+					break;
+				}
+			}
+			break;
+		}
+	}
 	
-	NSString*	packetLengthString		=	[headerCandidateString substringToIndex:firstSemicolonRange.location];
+	if (secondSemicolonRange.location == NSNotFound){
+		return;
+	}
+	
+	
+	NSString*	packetNHeaderLengthStr		=	[[NSString alloc]	initWithBytes:relevantBytes length:secondSemicolonRange.location + secondSemicolonRange.length encoding:NSUTF8StringEncoding];	
+	if (StringHasText(packetNHeaderLengthStr) == NO){
+		return;
+	}
+		
+	NSString*	packetLengthString		=	[packetNHeaderLengthStr substringToIndex:firstSemicolonRange.location];
 	NSUInteger	packetLength			=	[packetLengthString intValue];
+		
+	NSString * 	lengthStringWOSemi		=	[packetNHeaderLengthStr substringWithRange:NSMakeRange(firstSemicolonRange.location + firstSemicolonRange.length, secondSemicolonRange.location - (firstSemicolonRange.location + firstSemicolonRange.length))]; //after first semicolon to before second
+	NSUInteger	headerLength			=	[lengthStringWOSemi intValue];
 	
-	NSString*	remainingHeaderString	=	[headerCandidateString substringFromIndex:firstSemicolonRange.location + firstSemicolonRange.length];
 	
-	NSRange		secondSemicolonRange	=	[remainingHeaderString rangeOfString:@";" options:0];	
-	if (secondSemicolonRange.location == NSNotFound)
+	if (headerLength > ([relevantData length] - (secondSemicolonRange.location + secondSemicolonRange.length))){
 		return;
+	}
 	
-	NSString * 	headerLengthString		=	[remainingHeaderString substringToIndex:secondSemicolonRange.location];
-	NSUInteger	headerLength			=	[headerLengthString intValue];
+	//now we know that we have a header, and that it's inside our currently avaiable, "relevant," data 
 	
-	if (headerLength > ([remainingHeaderString length] - (secondSemicolonRange.location + secondSemicolonRange.length)))
-		return;
-	
-	NSString *	packetHeaderString		=	[remainingHeaderString substringWithRange:NSMakeRange(secondSemicolonRange.location + secondSemicolonRange.length, headerLength)];	
-	
+	NSData *	headerData				=	[relevantData subdataWithRange:NSMakeRange(secondSemicolonRange.location + secondSemicolonRange.length, headerLength)];
+	NSString*	packetHeaderString	=	[[[NSString alloc]  initWithBytes:(char *)[headerData bytes] length:[headerData length] encoding: NSUTF8StringEncoding] autorelease]; //this is MUCH safer against non-null-termed strings
+		
+		
 	NSDictionary * headerDictionary		=	[NSDictionary dictionaryWithJSONString:packetHeaderString];
 	
-	NSUInteger	prePayloadLength		=	 headerLength + (firstSemicolonRange.location + firstSemicolonRange.length) + (secondSemicolonRange.location + secondSemicolonRange.length);
+	NSUInteger	prePayloadLength		=	 secondSemicolonRange.location + secondSemicolonRange.length + [headerData length];
 
 	
 	//reset data buffer indexes

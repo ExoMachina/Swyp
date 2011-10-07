@@ -67,6 +67,10 @@
 */
 -(void) endIndefiniteStreamAtByteIndex:(NSUInteger)byteIndex;
 
+
+//this method tells the discernedInputStream that there is data available, and that it should pull it!
+-(void)	shouldPullData;
+
 //
 //private
 -(void)	_handlePullFromDataSource;

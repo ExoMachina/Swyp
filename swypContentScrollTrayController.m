@@ -9,19 +9,19 @@
 #import "swypContentScrollTrayController.h"
 #import <QuartzCore/QuartzCore.h>
 
-@implementation trayPageObjectSet
-@synthesize  pagePreviewImage = _pagePreviewImage, pagePreviewImageView= _pagePreviewImageView;
+@implementation trayContentObjectSet
+@synthesize  contentPreviewImage = _contentPreviewImage, contentPreviewImageView= _contentPreviewImageView;
 -(void)	dealloc{
-	SRELS(_pagePreviewImage);
-	SRELS(_pagePreviewImageView);
+	SRELS(_contentPreviewImage);
+	SRELS(_contentPreviewImageView);
 	[super dealloc];
 } 
 @end
 
 
 @implementation swypContentScrollTrayController
-@synthesize currentSelectedPageIndex =_currentSelectedPageIndex;
-@synthesize pageImageSize = _pageImageSize, pageSpacingWidth = _pageSpacingWidth;
+@synthesize currentSelectedContentIndex =_currentSelectedContentIndex;
+@synthesize contentImageSize = _contentImageSize, contentSpacingWidth = _contentSpacingWidth;
 @synthesize fadeoutOrigin = _fadeoutOrigin, displayOrigin = _displayOrigin;
 @synthesize trayScrollView = _trayScrollView;
 
@@ -29,10 +29,10 @@
 #pragma mark -
 #pragma mark contentDisplayViewController
 -(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate{
-	[self removeContentFromDisplayAtIndex:removeIndex animated:animate];
+	[self removeScrollPageContentFromDisplayAtIndex:removeIndex animated:animate];
 }
 -(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate{
-	[self insertPageToDisplayAtIndex:insertIndex animated:animate];
+	[self insertScrollPageContentToDisplayAtIndex:insertIndex animated:animate];
 }
 
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate{
@@ -44,36 +44,36 @@
 
 -(void)		reloadAllData{
 	
-	NSArray * trayPages = [_cachedPageObjectSetsForTray allValues];
-	for (trayPageObjectSet* objectSet in trayPages){
-		[[objectSet pagePreviewImageView] removeFromSuperview];
-		[objectSet setPagePreviewImageView:nil];
-		[objectSet setPagePreviewImage:nil];
+	NSArray * trayContents = [_cachedContentObjectSetsForTray allValues];
+	for (trayContentObjectSet* objectSet in trayContents){
+		[[objectSet contentPreviewImageView] removeFromSuperview];
+		[objectSet setContentPreviewImageView:nil];
+		[objectSet setContentPreviewImage:nil];
 	}
 	
-	[_cachedPageObjectSetsForTray removeAllObjects];
+	[_cachedContentObjectSetsForTray removeAllObjects];
 	
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];	
 	
 }
 
 
 -(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index{
-	[self gigglePageAtIndex:index];
+	[self giggleContentAtIndex:index];
 }
 -(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate{
 	if (animate){
 		[UIView animateWithDuration:.75 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction animations:^{
 			if (index == -1){
 				for (int i = 0; i < [_contentDisplayControllerDelegate totalContentCountInController:self]; i++){
-					[[[self trayPageObjectSetForIndex:i] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:i]];	
+					[[[self trayContentObjectSetForIndex:i] contentPreviewImageView] setFrame:[self frameForContentImageAtIndex:i]];	
 				}
 				
 			}else{
-				[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];	
+				[[[self trayContentObjectSetForIndex:index] contentPreviewImageView] setFrame:[self frameForContentImageAtIndex:index]];	
 			}
 		}
 						 completion:nil];
@@ -81,10 +81,10 @@
 	}else{
 		if (index == -1){
 			for (int i = 0; i < [_contentDisplayControllerDelegate totalContentCountInController:self]; i++){
-				[[[self trayPageObjectSetForIndex:i] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:i]];	
+				[[[self trayContentObjectSetForIndex:i] contentPreviewImageView] setFrame:[self frameForContentImageAtIndex:i]];	
 			}
 		}else{
-			[[[self trayPageObjectSetForIndex:index] pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:index]];			
+			[[[self trayContentObjectSetForIndex:index] contentPreviewImageView] setFrame:[self frameForContentImageAtIndex:index]];			
 		}
 	}
 }
@@ -116,25 +116,25 @@
 
 -(void)		imagePreviewViewPressedWithTapController:(UITapGestureRecognizer*)recognizer{
 	
-	NSInteger selectedSet	=	[self pageObjectIndexOnTrayAtTapPoint:[recognizer locationInView:self.view]];
+	NSInteger selectedSet	=	[self contentObjectIndexOnTrayAtTapPoint:[recognizer locationInView:self.view]];
 	
 	[self temporarilyExagerateContentAtIndex:selectedSet];	
 	
 }
 
 #pragma mark -
-#pragma mark page insertions/deletions
+#pragma mark content insertions/deletions
 
-//1) delete from datasource 2) call removePageFromDisplayAtIndex
--(void)	removePageFromDisplayAtIndex:(NSInteger)displayedPage animated:(BOOL)animate{
-	NSNumber* displayedPageKey = [NSNumber numberWithInt:displayedPage]; 
+//1) delete from datasource 2) call removeContentFromDisplayAtIndex
+-(void)	removeScrollPageContentFromDisplayAtIndex:(NSInteger)displayedContent animated:(BOOL)animate{
+	NSNumber* displayedContentKey = [NSNumber numberWithInt:displayedContent]; 
 	
-	trayPageObjectSet* objectSetToRemove	= [_cachedPageObjectSetsForTray objectForKey:displayedPageKey];
+	trayContentObjectSet* objectSetToRemove	= [_cachedContentObjectSetsForTray objectForKey:displayedContentKey];
 	
-	if ([[objectSetToRemove pagePreviewImageView] superview] == nil)
+	if ([[objectSetToRemove contentPreviewImageView] superview] == nil)
 		return;
 
-	UIView*	removedView			= [objectSetToRemove pagePreviewImageView];
+	UIView*	removedView			= [objectSetToRemove contentPreviewImageView];
 	
 	[UIView animateWithDuration:.3 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
 		[removedView setAlpha:0];
@@ -144,32 +144,32 @@
 		}
 	}];	
 	
-	[_cachedPageObjectSetsForTray removeObjectForKey:displayedPageKey];
+	[_cachedContentObjectSetsForTray removeObjectForKey:displayedContentKey];
 	
 	
- 	NSSet * moveViewKeys = [_cachedPageObjectSetsForTray keysOfEntriesPassingTest:^
+ 	NSSet * moveViewKeys = [_cachedContentObjectSetsForTray keysOfEntriesPassingTest:^
 							  (id key, id obj, BOOL *stop) { 
-								  if ([key intValue] > displayedPage)
+								  if ([key intValue] > displayedContent)
 									  return YES;
 								  return NO;
 							  }];
 	
-	//because otherwise you'll move the same pages multiple times -- there is no ordering guarantee with dictionaries 
-	NSMutableDictionary * newIndexesAndKeys	=	[NSMutableDictionary dictionaryWithDictionary:_cachedPageObjectSetsForTray];
+	//because otherwise you'll move the same contents multiple times -- there is no ordering guarantee with dictionaries 
+	NSMutableDictionary * newIndexesAndKeys	=	[NSMutableDictionary dictionaryWithDictionary:_cachedContentObjectSetsForTray];
 	[newIndexesAndKeys removeObjectsForKeys:[moveViewKeys allObjects]];
 	
 	for (NSNumber *moveViewIndexKey in moveViewKeys){
-		trayPageObjectSet* nextPageObjectSet = [_cachedPageObjectSetsForTray objectForKey:moveViewIndexKey];
+		trayContentObjectSet* nextContentObjectSet = [_cachedContentObjectSetsForTray objectForKey:moveViewIndexKey];
 	
 //		[newIndexesAndKeys removeObjectForKey:moveViewIndexKey];
 		
-		int nextPageIndex = [moveViewIndexKey intValue]; 
-		[newIndexesAndKeys setObject:nextPageObjectSet forKey:[NSNumber numberWithInt:nextPageIndex -1]];
+		int nextContentIndex = [moveViewIndexKey intValue]; 
+		[newIndexesAndKeys setObject:nextContentObjectSet forKey:[NSNumber numberWithInt:nextContentIndex -1]];
 		
-		UIView *moveView	= [nextPageObjectSet pagePreviewImageView];
+		UIView *moveView	= [nextContentObjectSet contentPreviewImageView];
 		if (moveView != nil ){				
 				CGRect	newMoveViewFrame = moveView.frame;
-				newMoveViewFrame.origin.x -= (_pageImageSize.width + _pageSpacingWidth);
+				newMoveViewFrame.origin.x -= (_contentImageSize.width + _contentSpacingWidth);
 				
 				[UIView animateWithDuration:.5 delay:.4 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
 					[moveView setFrame:newMoveViewFrame];
@@ -178,38 +178,38 @@
 		
 	}
 	
-	SRELS(_cachedPageObjectSetsForTray);
-	_cachedPageObjectSetsForTray = [newIndexesAndKeys retain];
+	SRELS(_cachedContentObjectSetsForTray);
+	_cachedContentObjectSetsForTray = [newIndexesAndKeys retain];
 	
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 }
 
-//1) add to datasource 2) call insertPageToDisplayAtIndex
--(void)	insertPageToDisplayAtIndex:(NSInteger)insertIndex animated:(BOOL)animate{
+//1) add to datasource 2) call insertContentToDisplayAtIndex
+-(void)	insertScrollPageContentToDisplayAtIndex:(NSInteger)insertIndex animated:(BOOL)animate{
 	
-	NSSet * moveViewKeys = [_cachedPageObjectSetsForTray keysOfEntriesPassingTest:^
+	NSSet * moveViewKeys = [_cachedContentObjectSetsForTray keysOfEntriesPassingTest:^
 							(id key, id obj, BOOL *stop) { 
 								if ([key intValue] >= insertIndex)
 									return YES;
 								return NO;
 							}];
 	
-	//because otherwise you'll move the same pages multiple times -- there is no ordering guarantee with dictionaries 
-	NSMutableDictionary * newIndexesAndKeys	=	[NSMutableDictionary dictionaryWithDictionary:_cachedPageObjectSetsForTray];
+	//because otherwise you'll move the same contents multiple times -- there is no ordering guarantee with dictionaries 
+	NSMutableDictionary * newIndexesAndKeys	=	[NSMutableDictionary dictionaryWithDictionary:_cachedContentObjectSetsForTray];
 	[newIndexesAndKeys removeObjectsForKeys:[moveViewKeys allObjects]];
 	
 	for (NSNumber *moveViewIndexKey in moveViewKeys){
-		trayPageObjectSet* nextPageObjectSet = [_cachedPageObjectSetsForTray objectForKey:moveViewIndexKey];
+		trayContentObjectSet* nextContentObjectSet = [_cachedContentObjectSetsForTray objectForKey:moveViewIndexKey];
 		
 		//		[newIndexesAndKeys removeObjectForKey:moveViewIndexKey];
 		
-		int nextPageIndex = [moveViewIndexKey intValue]; 
-		[newIndexesAndKeys setObject:nextPageObjectSet forKey:[NSNumber numberWithInt:nextPageIndex +1]];
+		int nextContentIndex = [moveViewIndexKey intValue]; 
+		[newIndexesAndKeys setObject:nextContentObjectSet forKey:[NSNumber numberWithInt:nextContentIndex +1]];
 		
-		UIView *moveView	= [nextPageObjectSet pagePreviewImageView];
+		UIView *moveView	= [nextContentObjectSet contentPreviewImageView];
 		if (moveView != nil ){				
 			CGRect	newMoveViewFrame = moveView.frame;
-			newMoveViewFrame.origin.x += (_pageImageSize.width + _pageSpacingWidth);
+			newMoveViewFrame.origin.x += (_contentImageSize.width + _contentSpacingWidth);
 			
 			[UIView animateWithDuration:.3 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
 				[moveView setFrame:newMoveViewFrame];
@@ -218,29 +218,29 @@
 		
 	}
 	
-	SRELS(_cachedPageObjectSetsForTray);
-	_cachedPageObjectSetsForTray = [newIndexesAndKeys retain];
+	SRELS(_cachedContentObjectSetsForTray);
+	_cachedContentObjectSetsForTray = [newIndexesAndKeys retain];
 	
-	trayPageObjectSet * insertSet  = [self layoutPageImageAtIndex:insertIndex];
+	trayContentObjectSet * insertSet  = [self layoutContentImageAtIndex:insertIndex];
 	
-	[insertSet.pagePreviewImageView setAlpha:0];
+	[insertSet.contentPreviewImageView setAlpha:0];
 	[UIView animateWithDuration:.5 delay:.4 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-		[insertSet.pagePreviewImageView setAlpha:1];
+		[insertSet.contentPreviewImageView setAlpha:1];
 	} completion:^(BOOL finnished){
 		if (finnished){ } }];	
 		
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 }
 
--(void)	gigglePageAtIndex:(NSInteger)displayedPage{
-	NSNumber* displayedPageKey = [NSNumber numberWithInt:displayedPage]; 
+-(void)	giggleContentAtIndex:(NSInteger)displayedContent{
+	NSNumber* displayedContentKey = [NSNumber numberWithInt:displayedContent]; 
 	
-	trayPageObjectSet* objectSetToGiggle	= [_cachedPageObjectSetsForTray objectForKey:displayedPageKey];
+	trayContentObjectSet* objectSetToGiggle	= [_cachedContentObjectSetsForTray objectForKey:displayedContentKey];
 	
-	if ([[objectSetToGiggle pagePreviewImageView] superview] == nil)
+	if ([[objectSetToGiggle contentPreviewImageView] superview] == nil)
 		return;
 	
-	UIView*	giggleView			= [objectSetToGiggle pagePreviewImageView];
+	UIView*	giggleView			= [objectSetToGiggle contentPreviewImageView];
 	
 	BOOL originMode = FALSE;
 	
@@ -286,62 +286,62 @@
 		
 }
 
-#pragma mark page layouts
+#pragma mark content layouts
 
--(void)			refreshPageSelection{
+-(void)			refreshContentSelection{
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
 	[self setupLayoutForImagesInContentFrame:displayedFrame];			
 }
 
--(void)			updatePageAtIndex:(NSInteger)pageIndex{
-	trayPageObjectSet* traySet = [self trayPageObjectSetForIndex:pageIndex];
-	[traySet setPagePreviewImage:nil];
+-(void)			updateContentAtIndex:(NSInteger)contentIndex{
+	trayContentObjectSet* traySet = [self trayContentObjectSetForIndex:contentIndex];
+	[traySet setContentPreviewImage:nil];
 	
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
 	[self setupLayoutForImagesInContentFrame:displayedFrame];		
 }
 
--(void)		reloadTrayPageImageData{
+-(void)		reloadTrayContentImageData{
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];	
 }
 
--(trayPageObjectSet*)	trayPageObjectSetForIndex:(NSInteger)pageIndex{
-	id	key		=	[NSNumber numberWithInt:pageIndex];
-	trayPageObjectSet* objectSet	=	[_cachedPageObjectSetsForTray objectForKey:key];
+-(trayContentObjectSet*)	trayContentObjectSetForIndex:(NSInteger)contentIndex{
+	id	key		=	[NSNumber numberWithInt:contentIndex];
+	trayContentObjectSet* objectSet	=	[_cachedContentObjectSetsForTray objectForKey:key];
 
 	if (objectSet == nil){
-		objectSet	=	[[trayPageObjectSet alloc] init];
-		[_cachedPageObjectSetsForTray setObject:objectSet forKey:key];
+		objectSet	=	[[trayContentObjectSet alloc] init];
+		[_cachedContentObjectSetsForTray setObject:objectSet forKey:key];
 		[objectSet autorelease];
 	}
 	
 	return objectSet;
 }
 
--(void)			scrollToRevealPageAtIndex:(NSInteger)pageIndex{
-	CGRect		selectedRect		=	[self	frameForPageImageAtIndex:pageIndex];
+-(void)			scrollToRevealContentAtIndex:(NSInteger)contentIndex{
+	CGRect		selectedRect		=	[self	frameForContentImageAtIndex:contentIndex];
 	
 	[_trayScrollView	scrollRectToVisible:selectedRect animated:(self.view.superview != nil)];
 	
 }
 
--(void)releaseImageViewFromUseWithObjectSet:(trayPageObjectSet*)objectSet{
-	UIImageView	* imageView = [objectSet pagePreviewImageView];
+-(void)releaseImageViewFromUseWithObjectSet:(trayContentObjectSet*)objectSet{
+	UIImageView	* imageView = [objectSet contentPreviewImageView];
 	
 	if (imageView == nil)
 		return;
 	
 	[_unusedUIImageViewSet addObject:imageView];
 	[imageView removeFromSuperview];
-	[objectSet setPagePreviewImageView:nil];
+	[objectSet setContentPreviewImageView:nil];
 }
 
--(UIImageView*)imageViewForObjectSet:(trayPageObjectSet*)pageSet{
+-(UIImageView*)imageViewForObjectSet:(trayContentObjectSet*)contentSet{
 	UIImageView	* imageView = [_unusedUIImageViewSet anyObject];
 	if (imageView == nil){
 		imageView = [[[UIImageView alloc] initWithFrame:CGRectZero] autorelease]; // memory leak warning, added autorelease
@@ -355,55 +355,55 @@
 		SRELS(panGesture);
 	}
 	
-	[pageSet setPagePreviewImageView:imageView];
+	[contentSet setContentPreviewImageView:imageView];
 
 	[_unusedUIImageViewSet removeObject:imageView];
 	
 	return imageView;
 }
 
--(trayPageObjectSet *)			layoutPageImageAtIndex:(NSInteger)idx{
+-(trayContentObjectSet *)			layoutContentImageAtIndex:(NSInteger)idx{
 	
-	trayPageObjectSet *		pageViewSet	=	[self trayPageObjectSetForIndex:idx];
-	if ([pageViewSet pagePreviewImageView] == nil){		
-		UIImageView *previewImageView =  [self imageViewForObjectSet:pageViewSet];
-		CGRect	nextFrame		=	[self frameForPageImageAtIndex:idx];
+	trayContentObjectSet *		contentViewSet	=	[self trayContentObjectSetForIndex:idx];
+	if ([contentViewSet contentPreviewImageView] == nil){		
+		UIImageView *previewImageView =  [self imageViewForObjectSet:contentViewSet];
+		CGRect	nextFrame		=	[self frameForContentImageAtIndex:idx];
 		[previewImageView setFrame:nextFrame];
 
-		[pageViewSet setPagePreviewImageView:previewImageView]; 
+		[contentViewSet setContentPreviewImageView:previewImageView]; 
 		
-		[_trayScrollView addSubview:[pageViewSet pagePreviewImageView]];				
+		[_trayScrollView addSubview:[contentViewSet contentPreviewImageView]];				
 		
 	}
 	
-	if ([pageViewSet pagePreviewImage] == nil){
-		UIImage * pageImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
-		if (CGSizeEqualToSize([pageImagePreview size], _pageImageSize) == NO){
-			_pageImageSize				=	[pageImagePreview size];
-			self.view.size				=	CGSizeMake(self.view.frame.size.width, [pageImagePreview size].height + 60);
+	if ([contentViewSet contentPreviewImage] == nil){
+		UIImage * contentImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
+		if (CGSizeEqualToSize([contentImagePreview size], _contentImageSize) == NO){
+			_contentImageSize				=	[contentImagePreview size];
+			self.view.size				=	CGSizeMake(self.view.frame.size.width, [contentImagePreview size].height + 60);
 			_trayScrollView.size		=	self.view.size;
 			_trayScrollView.contentSize	=	CGSizeMake(_trayScrollView.contentSize.width, _trayScrollView.frame.size.height);
-			[[pageViewSet pagePreviewImageView] setFrame:[self frameForPageImageAtIndex:idx]];
+			[[contentViewSet contentPreviewImageView] setFrame:[self frameForContentImageAtIndex:idx]];
 
 		}
-		[pageViewSet setPagePreviewImage:pageImagePreview];
+		[contentViewSet setContentPreviewImage:contentImagePreview];
 	}		
 	
-	if (![[pageViewSet pagePreviewImageView] isDescendantOfView:_trayScrollView]){
-		[_trayScrollView addSubview:[pageViewSet pagePreviewImageView]];				
+	if (![[contentViewSet contentPreviewImageView] isDescendantOfView:_trayScrollView]){
+		[_trayScrollView addSubview:[contentViewSet contentPreviewImageView]];				
 		//only setting frame as necessary
-		CGRect	nextFrame		=	[self frameForPageImageAtIndex:idx];
-		[[pageViewSet pagePreviewImageView] setFrame:nextFrame];
+		CGRect	nextFrame		=	[self frameForContentImageAtIndex:idx];
+		[[contentViewSet contentPreviewImageView] setFrame:nextFrame];
 	}
 	
 	
-	[[pageViewSet pagePreviewImageView] setImage:[pageViewSet pagePreviewImage]];
+	[[contentViewSet contentPreviewImageView] setImage:[contentViewSet contentPreviewImage]];
 	
-	return pageViewSet;
+	return contentViewSet;
 }
 
 -(void)			setupLayoutForImagesInContentFrame:(CGRect)	displayRect{
-	NSRange		layoutRange		=	[self rangeOfPagesForContentFrame:displayRect];
+	NSRange		layoutRange		=	[self rangeOfContentsForContentFrame:displayRect];
 	
 	double minLoc = (double)layoutRange.location - 2.0;
 	NSRange preRelevanceRange = NSMakeRange(MAX(0, minLoc), 2);
@@ -418,7 +418,7 @@
 	[viewRemoveKeys removeIndexesInRange:layoutRange];
 	
 	[viewRemoveKeys enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-		trayPageObjectSet *		removeSet	=	[self trayPageObjectSetForIndex:idx];
+		trayContentObjectSet *		removeSet	=	[self trayContentObjectSetForIndex:idx];
 		[self releaseImageViewFromUseWithObjectSet:removeSet];		
 	}];
 	
@@ -426,7 +426,7 @@
 	
 	NSIndexSet *layoutIndexSet	=	[NSIndexSet indexSetWithIndexesInRange:layoutRange];
 	[layoutIndexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-		[self layoutPageImageAtIndex:idx];
+		[self layoutContentImageAtIndex:idx];
 	}];
 	
 	
@@ -436,16 +436,16 @@
 //0		= first visible (even partially) notebook
 //n		= the notebook on scroll view
 //locations contain their immediate margins
--(NSInteger)		visiblePageLocationForPageIndex:(NSInteger)pageIndex{
+-(NSInteger)		visibleContentLocationForContentIndex:(NSInteger)contentIndex{
 	CGRect displayedFrame			=	_trayScrollView.frame;
 	displayedFrame.origin			=	_trayScrollView.contentOffset;
 	
-	CGRect	indexDisplayedRect		=	[self frameForPageImageAtIndex:pageIndex];
+	CGRect	indexDisplayedRect		=	[self frameForContentImageAtIndex:contentIndex];
 
 	double	notebookFrameXInset		=	(indexDisplayedRect.origin.x ) - displayedFrame.origin.x;
 
 	
-	double	containedLocation		=	(notebookFrameXInset )/ (_pageImageSize.width + _pageSpacingWidth); 
+	double	containedLocation		=	(notebookFrameXInset )/ (_contentImageSize.width + _contentSpacingWidth); 
 	
 	int		location				=	(int) ceil( containedLocation);
 	if (location <= -1)
@@ -454,12 +454,12 @@
 	return location;
 }
 
--(NSInteger)		insertIndexFromVisiblePageLocation:(NSInteger)visiblePageLocation{
-	double		xPageOffset		=	_trayScrollView.contentOffset.x + (_pageImageSize.width + _pageSpacingWidth) * visiblePageLocation;
+-(NSInteger)		insertIndexFromVisibleContentLocation:(NSInteger)visibleContentLocation{
+	double		xContentOffset		=	_trayScrollView.contentOffset.x + (_contentImageSize.width + _contentSpacingWidth) * visibleContentLocation;
 	
-	double		pageIndex			=	(xPageOffset - _pageSpacingWidth)/ (_pageImageSize.width + _pageSpacingWidth);
+	double		contentIndex			=	(xContentOffset - _contentSpacingWidth)/ (_contentImageSize.width + _contentSpacingWidth);
 	
-	NSInteger	insertLocation		= MIN((int) ceil( pageIndex), [_contentDisplayControllerDelegate totalContentCountInController:self]);
+	NSInteger	insertLocation		= MIN((int) ceil( contentIndex), [_contentDisplayControllerDelegate totalContentCountInController:self]);
 	
 	return insertLocation;
  }
@@ -467,22 +467,22 @@
 -(NSInteger)	indexOfTrayObjectWithAssociatedPreviewImageView: (UIImageView*) previewImageView{
 	CGRect displayedFrame			=	_trayScrollView.frame;
 	displayedFrame.origin			=	_trayScrollView.contentOffset;
-	NSRange		primarySearchRange	=	[self rangeOfPagesForContentFrame:displayedFrame];
+	NSRange		primarySearchRange	=	[self rangeOfContentsForContentFrame:displayedFrame];
 	for (int i = primarySearchRange.location; i <= primarySearchRange.location + primarySearchRange.length; i ++){
-		trayPageObjectSet *	testSet	=	[self trayPageObjectSetForIndex:i];
-		if ([testSet pagePreviewImageView] == previewImageView)
+		trayContentObjectSet *	testSet	=	[self trayContentObjectSetForIndex:i];
+		if ([testSet contentPreviewImageView] == previewImageView)
 			return i;
 	}
 	
 	//otherwise search the rest
-	NSMutableIndexSet * otherPages	=	[NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self])];
-	[otherPages removeIndexesInRange:primarySearchRange];
+	NSMutableIndexSet * otherContents	=	[NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self])];
+	[otherContents removeIndexesInRange:primarySearchRange];
 	
 	__block NSInteger blockedSetIndex	=	-1;
 	
-	[otherPages enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-		trayPageObjectSet *	testSet	=	[self trayPageObjectSetForIndex:idx];
-		if ([testSet pagePreviewImageView] == previewImageView){
+	[otherContents enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
+		trayContentObjectSet *	testSet	=	[self trayContentObjectSetForIndex:idx];
+		if ([testSet contentPreviewImageView] == previewImageView){
 			blockedSetIndex = idx;
 			*stop = TRUE;
 		}
@@ -491,10 +491,10 @@
 	return blockedSetIndex;
 }
 
--(NSInteger)		pageObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint{
+-(NSInteger)		contentObjectIndexOnTrayAtTapPoint:(CGPoint)tapPoint{
 	CGRect displayedFrame			=	_trayScrollView.frame;
 	displayedFrame.origin			=	_trayScrollView.contentOffset;
-	NSRange		touchSearchRange	=	[self rangeOfPagesForContentFrame:displayedFrame];
+	NSRange		touchSearchRange	=	[self rangeOfContentsForContentFrame:displayedFrame];
 	CGPoint 	testPoint 			= 	tapPoint;
 	testPoint.x += displayedFrame.origin.x;
 	
@@ -502,8 +502,8 @@
 	
 	
 	for (int i = touchSearchRange.location; i <= touchSearchRange.location +touchSearchRange.length; i ++){
-		trayPageObjectSet *			testSet	=	[self trayPageObjectSetForIndex:i];
-		CGRect					testSetFrame= [testSet pagePreviewImageView].frame;
+		trayContentObjectSet *			testSet	=	[self trayContentObjectSetForIndex:i];
+		CGRect					testSetFrame= [testSet contentPreviewImageView].frame;
 		if (CGRectContainsPoint(testSetFrame, testPoint)){
 			returnPIdx	= i; //starts at loc
 			break;	
@@ -513,27 +513,27 @@
 	return returnPIdx;
 }
 
--(CGRect)		frameForPageImageAtIndex:(NSUInteger)pageIndex{
+-(CGRect)		frameForContentImageAtIndex:(NSUInteger)contentIndex{
 	CGRect	returnFrameRect		=	CGRectZero;
-	returnFrameRect.origin.y	=	(_trayScrollView.frame.size.height-_pageImageSize.height)/2;
-	returnFrameRect.origin.x	=	pageIndex * (_pageImageSize.width + _pageSpacingWidth) + _pageSpacingWidth;
-	returnFrameRect.size		=	_pageImageSize;
+	returnFrameRect.origin.y	=	(_trayScrollView.frame.size.height-_contentImageSize.height)/2;
+	returnFrameRect.origin.x	=	contentIndex * (_contentImageSize.width + _contentSpacingWidth) + _contentSpacingWidth;
+	returnFrameRect.size		=	_contentImageSize;
 	
 	return returnFrameRect;
 }
 
--(void)			setupPageSelectionViewWidthWithPageCount:(NSUInteger)pageCount{
+-(void)			setupContentSelectionViewWidthWithContentCount:(NSUInteger)contentCount{
 	
 	CGSize		resizedScrollViewSize					=	_trayScrollView.contentSize;
 	
-	resizedScrollViewSize.width		=	pageCount* (_pageImageSize.width + _pageSpacingWidth) + _pageSpacingWidth;
+	resizedScrollViewSize.width		=	contentCount* (_contentImageSize.width + _contentSpacingWidth) + _contentSpacingWidth;
 	
 	_trayScrollView.contentSize	= resizedScrollViewSize;
 }
 
--(NSRange)		rangeOfPagesForContentFrame:(CGRect)	displayRect{
-	NSInteger startingIndex = MAX(0, floor(displayRect.origin.x / (_pageImageSize.width + _pageSpacingWidth)));
-	NSInteger displayCount = ceil((displayRect.size.width + (_pageImageSize.width + _pageSpacingWidth))/ (_pageImageSize.width + _pageSpacingWidth));
+-(NSRange)		rangeOfContentsForContentFrame:(CGRect)	displayRect{
+	NSInteger startingIndex = MAX(0, floor(displayRect.origin.x / (_contentImageSize.width + _contentSpacingWidth)));
+	NSInteger displayCount = ceil((displayRect.size.width + (_contentImageSize.width + _contentSpacingWidth))/ (_contentImageSize.width + _contentSpacingWidth));
 	
 	if (startingIndex >= [_contentDisplayControllerDelegate totalContentCountInController:self])
 		return NSMakeRange(NSNotFound, 0);
@@ -553,27 +553,17 @@
 
 #pragma mark -
 #pragma mark NSObject
-
--(id)initWithTrayDelegate:(id<swypContentScrollTrayControllerDelegate>)trayDelegate{
-	if (self = [self init]){
-		_contentDisplayControllerDelegate = trayDelegate;
-	}
-	
-	return self;
-}
-
-
 -(id)init{
 	if ((self = [super initWithNibName:nil bundle:nil])){
 		
-		_cachedPageObjectSetsForTray	= [[NSMutableDictionary alloc] init];
+		_cachedContentObjectSetsForTray	= [[NSMutableDictionary alloc] init];
 		_unusedUIImageViewSet			= [[NSMutableSet	alloc]	init];
 		
 		_trayScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1024.0, 175.0)];
 		[_trayScrollView setDelegate:self];
 		
-		_pageImageSize		=	CGSizeMake(212, 137);
-		_pageSpacingWidth	=	35;
+		_contentImageSize		=	CGSizeMake(212, 137);
+		_contentSpacingWidth	=	35;
 		
 		_fadeoutOrigin		=	CGPointMake(0, 728);
 		_displayOrigin		=	CGPointMake(0, _fadeoutOrigin.y - _trayScrollView.size.height);
@@ -587,7 +577,7 @@
 	
 	SRELS(_unusedUIImageViewSet);
 	SRELS(_trayScrollView);
-	SRELS(_cachedPageObjectSetsForTray);
+	SRELS(_cachedContentObjectSetsForTray);
 	
 	[super dealloc];
 }
@@ -663,7 +653,7 @@
 	
 	CGRect displayedFrame		=	_trayScrollView.frame;
 	displayedFrame.origin		=	_trayScrollView.contentOffset;
-	[self setupPageSelectionViewWidthWithPageCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
+	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 	[self setupLayoutForImagesInContentFrame:displayedFrame];
 	
 	

@@ -66,7 +66,7 @@
 		[_activityIndicator setOrigin:CGPointMake(50, 50)];
 		[_activityIndicator startAnimating];
 	}else{
-		EXOLog(@"Remvoed");
+		EXOLog(@"Removed");
 		[_activityIndicator stopAnimating];
 		[_activityIndicator removeFromSuperview];
 	}

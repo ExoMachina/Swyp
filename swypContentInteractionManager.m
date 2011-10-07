@@ -75,21 +75,24 @@
 	}
 }
 
+-(void)		initializeInteractionWorkspace{
+	[self _setupForAllSessionsRemoved];
+}
+
 #pragma mark NSObject
 
 -(id)	initWithMainWorkspaceView: (UIView*)	workspaceView{
 	if (self = [super init]){
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
 	}
 	return self;
 }
 
 -(id) init{
-	if (self = [self initWithMainWorkspaceView:nil]){
-		
-	}
-	return  self;
+	EXOLog(@"Invalid initialization of %@; simple 'init' not supported",@"interactionManager");
+	return nil;
 }
 
 -(void) dealloc{
@@ -98,7 +101,16 @@
 	SRELS(_contentDataSource);
 	SRELS(_mainWorkspaceView);
 	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[super dealloc];
+}
+
+
+- (void)didReceiveMemoryWarning {
+	if ([_swypPromptImageView superview] == nil){
+		SRELS(_swypPromptImageView);
+	}
 }
 
 #pragma mark -
@@ -218,18 +230,56 @@
 }
 
 -(void)		_setupForAllSessionsRemoved{
+	if (_swypPromptImageView == nil){
+		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypIPhonePromptHud.png"]];
+	}
+	
+	
+	UIDeviceOrientation orientation = [[UIDevice currentDevice]orientation];
+	CGAffineTransform affine = CGAffineTransformIdentity;
+    if (orientation == UIDeviceOrientationPortrait) {
+        affine = CGAffineTransformMakeRotation (0.0);
+    }else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
+        affine = CGAffineTransformMakeRotation (M_PI * 180 / 180.0f);
+    }else if (orientation == UIDeviceOrientationLandscapeLeft) {
+        affine = CGAffineTransformMakeRotation (M_PI * 90 / 180.0f);  
+    }else if (orientation == UIDeviceOrientationLandscapeRight) {
+        affine = CGAffineTransformMakeRotation ( M_PI * 270 / 180.0f);
+	}
+	
+	[_swypPromptImageView setAlpha:0];
+	[_swypPromptImageView setFrame:CGRectMake(_mainWorkspaceView.size.width/2 - (250/2), _mainWorkspaceView.size.height/2 - (250/2), 250, 250)];
+	[_swypPromptImageView setTransform:affine];
+	[_mainWorkspaceView addSubview:_swypPromptImageView];
+	
+	[UIView animateWithDuration:.75 animations:^{
+		[_swypPromptImageView setAlpha:1];
+	}completion:nil];
+
 	if (_contentDisplayController != nil){
+
 		[UIView animateWithDuration:.75 animations:^{
 			_contentDisplayController.view.alpha = 0;
 		}completion:^(BOOL completed){
-			[_contentDisplayController.view removeFromSuperview];		
+			[_contentDisplayController.view removeFromSuperview];	
+			
 		}];
 	}
 }
--(void)		_setupForFirstSessionAdded{
+-(void)		_setupForFirstSessionAdded{	
+	if ([_swypPromptImageView superview] != nil){
+		[UIView animateWithDuration:.75 animations:^{
+			[_swypPromptImageView setAlpha:0];
+		}completion:^(BOOL completed){
+			[_swypPromptImageView removeFromSuperview];	
+			
+		}];
+	}
+	
 	if (_contentDisplayController == nil){
 		_contentDisplayController	=	[[swypContentScrollTrayController alloc] init];
 	}
+	
 	[_contentDisplayController.view setOrigin:CGPointMake(0, 200)];
 	[_contentDisplayController setContentDisplayControllerDelegate:self];
 	[_contentDisplayController.view		setAlpha:0];

@@ -117,6 +117,8 @@
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
 	
+	[[self contentManager] initializeInteractionWorkspace];
+	
 }
 -(void)	dealloc{
 	

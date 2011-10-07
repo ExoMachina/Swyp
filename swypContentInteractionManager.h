@@ -44,16 +44,18 @@
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
 	
+	UIImageView *											_swypPromptImageView;
+	
 	UIView*													_mainWorkspaceView;
 }
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
 //if not set, the standard will be assigned
-@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*		contentDisplayController;
+@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
 
 -(id)	initWithMainWorkspaceView: (UIView*)	workspaceView;
 
-//in order of preference where 0=most preferant 
+//in order of preference where index 0=most preferant 
 +(NSArray*)	supportedFileTypes;
 
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;
@@ -63,9 +65,12 @@
 
 -(void)		stopMaintainingAllSessionViewControllers;
 
+//this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
+-(void)		initializeInteractionWorkspace;
+
 //
 //private
--(swypSessionViewController*)	_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
+-(swypSessionViewController*)		_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
 //-(void)							_contentRepresentationViewWasReleased:;
 -(void)		_setupForAllSessionsRemoved;
 -(void)		_setupForFirstSessionAdded;
