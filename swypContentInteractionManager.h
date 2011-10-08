@@ -47,13 +47,19 @@
 	UIImageView *											_swypPromptImageView;
 	
 	UIView*													_mainWorkspaceView;
-}
+	
+	BOOL													_showContentBeforeConnection;
+}	
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
+
+//if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
+//this value is assigned at init by workspace manager
+@property (nonatomic, readonly)	BOOL														showContentBeforeConnection;
 
 //if not set, the standard will be assigned
 @property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
 
--(id)	initWithMainWorkspaceView: (UIView*)	workspaceView;
+-(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent;
 
 //in order of preference where index 0=most preferant 
 +(NSArray*)	supportedFileTypes;
@@ -74,5 +80,7 @@
 //-(void)							_contentRepresentationViewWasReleased:;
 -(void)		_setupForAllSessionsRemoved;
 -(void)		_setupForFirstSessionAdded;
+
+-(void)		_displayContentDisplayController:(BOOL)display;
 
 @end

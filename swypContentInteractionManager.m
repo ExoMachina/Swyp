@@ -11,7 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation swypContentInteractionManager
-@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController;
+@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController, showContentBeforeConnection = _showContentBeforeConnection;
 
 #pragma public
 
@@ -73,16 +73,27 @@
 	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
 		[connectionSession addDataDelegate:contentDataSource];
 	}
+	
+	
+	if (_showContentBeforeConnection || [_sessionViewControllersBySession count] > 0){
+		[[self contentDisplayController] reloadAllData];
+	}
+
 }
 
 -(void)		initializeInteractionWorkspace{
 	[self _setupForAllSessionsRemoved];
+	
+	if (_showContentBeforeConnection){
+		[self _displayContentDisplayController:TRUE];
+	}
 }
 
 #pragma mark NSObject
 
--(id)	initWithMainWorkspaceView: (UIView*)	workspaceView{
+-(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent{
 	if (self = [super init]){
+		_showContentBeforeConnection		=	showContent;
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
@@ -232,9 +243,12 @@
 -(void)		_setupForAllSessionsRemoved{
 	if (_swypPromptImageView == nil){
 		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypIPhonePromptHud.png"]];
+		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 	}
 	
 	
+	/*	
+	 //rotate prompt image with screen orientation
 	UIDeviceOrientation orientation = [[UIDevice currentDevice]orientation];
 	CGAffineTransform affine = CGAffineTransformIdentity;
     if (orientation == UIDeviceOrientationPortrait) {
@@ -246,24 +260,19 @@
     }else if (orientation == UIDeviceOrientationLandscapeRight) {
         affine = CGAffineTransformMakeRotation ( M_PI * 270 / 180.0f);
 	}
-	
+	[_swypPromptImageView setTransform:affine];
+	 */
+	 
 	[_swypPromptImageView setAlpha:0];
 	[_swypPromptImageView setFrame:CGRectMake(_mainWorkspaceView.size.width/2 - (250/2), _mainWorkspaceView.size.height/2 - (250/2), 250, 250)];
-	[_swypPromptImageView setTransform:affine];
 	[_mainWorkspaceView addSubview:_swypPromptImageView];
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
 	}completion:nil];
 
-	if (_contentDisplayController != nil){
-
-		[UIView animateWithDuration:.75 animations:^{
-			_contentDisplayController.view.alpha = 0;
-		}completion:^(BOOL completed){
-			[_contentDisplayController.view removeFromSuperview];	
-			
-		}];
+	if (_contentDisplayController != nil && _showContentBeforeConnection == NO){
+		[self _displayContentDisplayController:FALSE];
 	}
 }
 -(void)		_setupForFirstSessionAdded{	
@@ -276,19 +285,38 @@
 		}];
 	}
 	
-	if (_contentDisplayController == nil){
-		_contentDisplayController	=	[[swypContentScrollTrayController alloc] init];
+	[self _displayContentDisplayController:TRUE];
+
+}
+
+-(void) _displayContentDisplayController:(BOOL)display{
+	if (display){
+		
+		if (_contentDisplayController == nil){
+			_contentDisplayController	=	[[swypContentScrollTrayController alloc] init];
+			[_contentDisplayController setContentDisplayControllerDelegate:self];
+		}
+					
+
+		if (_contentDisplayController.view.superview == nil){
+			[_contentDisplayController.view setOrigin:CGPointMake(0, 200)];
+			[_contentDisplayController.view		setAlpha:0];
+			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
+			[UIView animateWithDuration:.75 animations:^{
+				_contentDisplayController.view.alpha = 1;
+			}completion:nil];
+		}
+		[_contentDisplayController reloadAllData];
+
+	}else{
+		[UIView animateWithDuration:.75 animations:^{
+			_contentDisplayController.view.alpha = 0;
+		}completion:^(BOOL completed){
+			[_contentDisplayController.view removeFromSuperview];	
+			
+		}];
 	}
 	
-	[_contentDisplayController.view setOrigin:CGPointMake(0, 200)];
-	[_contentDisplayController setContentDisplayControllerDelegate:self];
-	[_contentDisplayController.view		setAlpha:0];
-	[_mainWorkspaceView	addSubview:_contentDisplayController.view];
-	[_contentDisplayController reloadAllData];
-	[UIView animateWithDuration:.75 animations:^{
-		_contentDisplayController.view.alpha = 1;
-	}completion:nil];
-
 }
 
 

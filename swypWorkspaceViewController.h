@@ -11,10 +11,6 @@
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
 
-@protocol swypWorkspaceDelegate <NSObject>
--(void) didReceive;
-@end
-
 @interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;
 	swypConnectionManager *				_connectionManager;
@@ -22,7 +18,13 @@
 	//*Dictionary of sessions to their views
 	
 	NSString *							_workspaceID;
+
+	BOOL								_showContentWithoutConnection;
 }
+
+//if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
+@property (nonatomic, assign)	BOOL							showContentWithoutConnection;
+
 @property (nonatomic, readonly)	NSString *						workspaceID;
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;

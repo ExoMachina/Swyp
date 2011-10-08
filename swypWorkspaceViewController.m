@@ -13,7 +13,7 @@
 #import "swypWorkspaceBackgroundView.h"
 
 @implementation swypWorkspaceViewController
-@synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager;
+@synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -41,10 +41,18 @@
 }
 #pragma mark -
 #pragma mark public
-
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view showingContentBeforeConnection:_showContentWithoutConnection];
+		
+		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
+		//	So we just run this at the beginning of the next runLoop
+		NSBlockOperation * initializeWorkspaceOperation = [NSBlockOperation blockOperationWithBlock:^{
+			[[self contentManager] initializeInteractionWorkspace];
+		}];
+		[[NSOperationQueue mainQueue] addOperation:initializeWorkspaceOperation];
+		[[NSOperationQueue mainQueue] setSuspended:FALSE];
+
 	}
 	
 	return _contentManager;
@@ -52,7 +60,13 @@
 
 #pragma mark -
 #pragma mark workspaceInteraction
-
+-(void)setShowContentWithoutConnection:(BOOL)showContentWithoutConnection{
+	_showContentWithoutConnection = showContentWithoutConnection;
+	if ((_contentManager != nil || _showContentWithoutConnection == TRUE) && [[self contentManager] showContentBeforeConnection] != showContentWithoutConnection){
+		SRELS(_contentManager);
+		[self contentManager];
+	}
+}
 
 
 #pragma mark -
@@ -116,9 +130,7 @@
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
-	
-	[[self contentManager] initializeInteractionWorkspace];
-	
+		
 }
 -(void)	dealloc{
 	
