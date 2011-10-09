@@ -50,11 +50,12 @@
 	[super touchesBegan:touches withEvent:event];
 	NSMutableSet * relevantTouches = [NSMutableSet set];
 	for (UITouch * touch in touches){
-		if ([touch view] != [self view]){
-			[self ignoreTouch:touch forEvent:event];
-		}else{
+		//we'll try allowing all touches for the case of supporting content swyps
+//		if ([touch view] != [self view]){
+//			[self ignoreTouch:touch forEvent:event];
+//		}else{
 			[relevantTouches addObject:touch];
-		}
+//		}
 	}
 	
 	if ([[NSDate date] timeIntervalSinceDate:[[self swypGestureInfo] startDate]] > 3){

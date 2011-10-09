@@ -61,6 +61,11 @@
 		[self stopMaintainingViewControllerForSwypSession:session];
 	}
 }
+-(void) setContentDisplayController:(UIViewController<swypContentDisplayViewController> *)contentDisplayController{
+	SRELS(_contentDisplayController);
+	_contentDisplayController = [contentDisplayController retain];
+	[_contentDisplayController setContentDisplayControllerDelegate:self];
+}
 
 -(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
 	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
@@ -199,9 +204,7 @@
 		
 		for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 			sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
-
 		}
-
 	}
 }
 
@@ -211,8 +214,6 @@
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController{
 	return [_contentDataSource countOfContent];
 }
-
-
 #pragma mark swypContentDataSourceDelegate 
 -(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
 	[_contentDisplayController insertContentToDisplayAtIndex:insertIndex animated:TRUE];
@@ -299,7 +300,7 @@
 					
 
 		if (_contentDisplayController.view.superview == nil){
-			[_contentDisplayController.view setOrigin:CGPointMake(0, 200)];
+			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
 			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
 			[UIView animateWithDuration:.75 animations:^{

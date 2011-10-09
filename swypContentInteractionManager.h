@@ -20,7 +20,10 @@
 -(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
 
-//if you wish to support content-swyp-in/out
+//if you wish to support content-swyp-out -- that is, swyping of content before a conneciton is made
+//especially relevant if showContentBeforeConnection is TRUE
+-(void)	contentSwypOutOccuredForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
+//we should either do this, or we should see what view the swipe gesture detected a swypOutOn, and see if that was on our content!  -- DO THIS!
 @end
 
 @protocol swypContentDisplayViewController <NSObject>
@@ -33,7 +36,6 @@
 -(void)	reloadAllData;
 
 @optional
--(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index;
 //-1 means all content
 -(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate;
 @end
@@ -75,6 +77,8 @@
 
 //this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
 -(void)		initializeInteractionWorkspace;
+
+-(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index;
 
 //
 //private
