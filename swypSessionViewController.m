@@ -59,14 +59,12 @@
 	}
 	
 	if (showActiveTransferIndicator){
-		EXOLog(@"Added");
 //		[self.view.superview addSubview:_activityIndicator];
 //		[_activityIndicator setCenter:[self.view convertPoint:[self.view center] toView:self.view.superview]];
 		[self.view addSubview:_activityIndicator];
 		[_activityIndicator setOrigin:CGPointMake(50, 50)];
 		[_activityIndicator startAnimating];
 	}else{
-		EXOLog(@"Removed");
 		[_activityIndicator stopAnimating];
 		[_activityIndicator removeFromSuperview];
 	}

@@ -379,7 +379,7 @@
 	if ([contentViewSet contentPreviewImage] == nil){
 		UIImage * contentImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
 		if (CGSizeEqualToSize([contentImagePreview size], _contentImageSize) == NO){
-			_contentImageSize				=	[contentImagePreview size];
+			_contentImageSize			=	[contentImagePreview size];
 			self.view.size				=	CGSizeMake(self.view.frame.size.width, [contentImagePreview size].height + 60);
 			_trayScrollView.size		=	self.view.size;
 			_trayScrollView.contentSize	=	CGSizeMake(_trayScrollView.contentSize.width, _trayScrollView.frame.size.height);

@@ -19,6 +19,8 @@
 
 -(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
+
+//if you wish to support content-swyp-in/out
 @end
 
 @protocol swypContentDisplayViewController <NSObject>
