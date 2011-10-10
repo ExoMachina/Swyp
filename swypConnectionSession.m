@@ -335,7 +335,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void) didFinishAllQueuedStreamsWithConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
 	if ([self connectionStatus] == swypConnectionSessionStatusWillDie){
 		[self _teardownConnection];
-		for (NSValue * delegateValue in _connectionSessionInfoDelegates){
+		NSArray * delegateArray	=	[_connectionSessionInfoDelegates allObjects];
+		for (NSValue * delegateValue in delegateArray){
 			id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
 			if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
 				[delegate sessionDied:self withError:nil];

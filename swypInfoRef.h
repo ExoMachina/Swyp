@@ -15,11 +15,15 @@
 	CGPoint		endPoint;
 	NSDate*		startDate;
 	NSDate*		endDate;
+	UIView*		swypBeginningContentView;
 }
 @property (nonatomic, assign)	double		velocity;	//in mm/second
 @property (nonatomic, assign)	CGPoint		startPoint;
 @property (nonatomic, assign)	CGPoint		endPoint;
 @property (nonatomic, retain)	NSDate*		startDate;
 @property (nonatomic, retain)	NSDate*		endDate;
+
+//property is filled when swyp out occurs on top of this content, not on workspace
+@property (nonatomic, retain)	UIView*		swypBeginningContentView;
 
 @end

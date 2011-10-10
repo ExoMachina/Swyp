@@ -34,6 +34,16 @@
 	[self.view setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
+	
+	
+	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
+	if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
+		NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
+		if (swypOutContentIndex > -1){
+			[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
+			[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
+		}
+	}
 		
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
@@ -83,7 +93,7 @@
 	}else if (recognizer.state == UIGestureRecognizerStateCancelled){
 		[_connectionManager swypOutFailedWithSwypInfoRef:[recognizer swypGestureInfo]];
 	}else if (recognizer.state == UIGestureRecognizerStateRecognized){
-		[_connectionManager swypOutCompletedWithSwypInfoRef:[recognizer swypGestureInfo]];
+		[_connectionManager swypOutCompletedWithSwypInfoRef:[recognizer swypGestureInfo]];	
 	}
 }
 

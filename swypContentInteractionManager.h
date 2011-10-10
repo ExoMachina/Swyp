@@ -19,11 +19,6 @@
 
 -(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
-
-//if you wish to support content-swyp-out -- that is, swyping of content before a conneciton is made
-//especially relevant if showContentBeforeConnection is TRUE
--(void)	contentSwypOutOccuredForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
-//we should either do this, or we should see what view the swipe gesture detected a swypOutOn, and see if that was on our content!  -- DO THIS!
 @end
 
 @protocol swypContentDisplayViewController <NSObject>
@@ -38,6 +33,11 @@
 @optional
 //-1 means all content
 -(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate;
+
+//If a swyp out begins on a content piece, the recognizer knows what view it started on, and especially if showContentBeforeConnection is TRUE, 
+//	we can use this to check whether we should commence a "content swyp"
+//We'll consider what to do if we already have dropped this thing on to the connection indicator soon	
+-(NSInteger)	contentIndexMatchingSwypOutView:	(UIView*)swypedView;
 @end
 
 
@@ -78,7 +78,11 @@
 //this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
 -(void)		initializeInteractionWorkspace;
 
--(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index;
+//simply attempts to post conent to a session, as used during "contentSwyps"
+-(void)		sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session;
+
+//	sometimes one wants to giggle some content in some manner-- here's how
+-(void)		temporarilyExagerateContentAtIndex:	(NSUInteger)index;
 
 //
 //private

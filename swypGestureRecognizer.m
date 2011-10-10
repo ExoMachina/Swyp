@@ -70,6 +70,7 @@
 		if (_recognizedGestureInfoRef == nil){
 			_recognizedGestureInfoRef = [[swypInfoRef alloc] init];
 		}
+		[_recognizedGestureInfoRef setSwypBeginningContentView:[_trackedTouch view]];
 		[_recognizedGestureInfoRef setStartDate:[NSDate date]];
 		[_recognizedGestureInfoRef setStartPoint:[self locationInView:self.view]];		
 	}

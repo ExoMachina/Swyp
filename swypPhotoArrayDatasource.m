@@ -14,11 +14,13 @@
 -(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex{
 	
 	UIImage * loadTestImage		=	[[UIImage alloc] initWithData:photoPNGData];
+	if (loadTestImage == nil)
+		return;
 	
 	CGSize iconSize = CGSizeMake(150, 150);
 	UIGraphicsBeginImageContext( iconSize );
 	[loadTestImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
-	UIImage* cachedIconImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 	SRELS(loadTestImage);
 	

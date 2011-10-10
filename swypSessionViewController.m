@@ -49,6 +49,11 @@
 	self.view.layer.borderColor		=	[[UIColor blackColor] CGColor];
 	[self.view setBounds:CGRectMake(0, 0, 150, 150)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
+	
+	UITapGestureRecognizer * cancelationRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
+	[cancelationRecognizer setNumberOfTapsRequired:2];
+	[self.view addGestureRecognizer:cancelationRecognizer];
+	SRELS(cancelationRecognizer);
 }
 
 -(void) setShowActiveTransferIndicator:(BOOL)showActiveTransferIndicator{
@@ -59,8 +64,6 @@
 	}
 	
 	if (showActiveTransferIndicator){
-//		[self.view.superview addSubview:_activityIndicator];
-//		[_activityIndicator setCenter:[self.view convertPoint:[self.view center] toView:self.view.superview]];
 		[self.view addSubview:_activityIndicator];
 		[_activityIndicator setOrigin:CGPointMake(50, 50)];
 		[_activityIndicator startAnimating];
@@ -69,6 +72,13 @@
 		[_activityIndicator removeFromSuperview];
 	}
 	
+}
+
+#pragma mark gestures
+-(void) tapGestureRecognized: (UITapGestureRecognizer*) tapGesture{
+	if (tapGesture.state == UIGestureRecognizerStateRecognized){
+		[_connectionSession invalidate];
+	}
 }
 
 @end

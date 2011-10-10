@@ -104,7 +104,7 @@
 		680FC04C13E0C40100509CF2 /* SecKeyWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeyWrapper.h; sourceTree = "<group>"; };
 		680FC04D13E0C40100509CF2 /* SecKeyWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecKeyWrapper.m; sourceTree = "<group>"; };
 		680FC05013E0C63700509CF2 /* swypInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInfoRef.h; sourceTree = "<group>"; };
-		680FC05113E0C63700509CF2 /* swypInfoRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInfoRef.m; sourceTree = "<group>"; };
+		680FC05113E0C63700509CF2 /* swypInfoRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypInfoRef.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceViewController.h; sourceTree = "<group>"; };
 		680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypWorkspaceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypClientCandidate.h; sourceTree = "<group>"; };

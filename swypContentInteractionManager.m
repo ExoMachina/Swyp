@@ -94,6 +94,13 @@
 	}
 }
 
+-(void) sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session{
+	NSUInteger dataLength 		= 0;
+	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:[[_contentDataSource supportedFileTypesForContentAtIndex:index] lastObject] length:&dataLength];
+	[session beginSendingFileStreamWithTag:@"photo" type:[NSString imagePNGFileType] dataStreamForSend:dataSendStream length:dataLength];
+	
+}
+
 #pragma mark NSObject
 
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent{
@@ -191,10 +198,9 @@
 	
 	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:newXlatedRect];
 	if (overlapSession){
-		NSUInteger dataLength 		= 0;
-		NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:[[_contentDataSource supportedFileTypesForContentAtIndex:index] lastObject] length:&dataLength];
-		[[overlapSession connectionSession] beginSendingFileStreamWithTag:@"photo" type:[NSString imagePNGFileType] dataStreamForSend:dataSendStream length:dataLength];
 		
+		[self sendContentAtIndex:index throughConnectionSession:[overlapSession connectionSession]];
+				
 		[overlapSession setShowActiveTransferIndicator:TRUE];
 		EXOLog(@"Queuing content at index: %i", index);
 	}else{
@@ -207,6 +213,7 @@
 		}
 	}
 }
+
 
 -(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController{
 	return [_contentDataSource iconImageForContentAtIndex:index];
