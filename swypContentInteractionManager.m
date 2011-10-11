@@ -320,8 +320,8 @@
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];
+			[_contentDisplayController reloadAllData];
 		}
-		[_contentDisplayController reloadAllData];
 
 	}else{
 		[UIView animateWithDuration:.75 animations:^{

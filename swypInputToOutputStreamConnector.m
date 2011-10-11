@@ -104,9 +104,12 @@
 		uint8_t writeBuffer[1024];
 		[_bufferedData getBytes:writeBuffer range:NSMakeRange(0, maxWriteLength)];
 		
-		unsigned int writeLength = 0;
+		NSInteger writeLength = 0;
 		writeLength = [_outputStream write:writeBuffer maxLength:maxWriteLength];
 		
+		if (writeLength == -1) {
+			return;
+		}
 		[_bufferedData replaceBytesInRange:NSMakeRange(0, writeLength) withBytes:NULL length:0];
 	}
 	

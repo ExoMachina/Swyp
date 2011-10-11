@@ -55,6 +55,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	NSInputStream * headerStream	=	[NSInputStream inputStreamWithData:concatenatedHeaderData];
 	
+	EXOLog(@"Sending tagstream %@",tag);
+	
 	swypConcatenatedInputStream * concatenatedSendPacket	=	[[swypConcatenatedInputStream alloc] initWithInputStreamArray:[NSArray arrayWithObjects:headerStream,payloadStream,nil]];
 	[concatenatedSendPacket setHoldCompletedStreams:TRUE];
 	[_sendDataQueueStream addInputStreamToQueue:concatenatedSendPacket];

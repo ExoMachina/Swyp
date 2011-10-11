@@ -37,13 +37,20 @@
 	
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
-	if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
-		NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
-		if (swypOutContentIndex > -1){
-			[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
-			[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
-		}
-	}
+#pragma mark CLUDGE!
+#warning CLUDGE!
+	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
+		if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
+			NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
+			if (swypOutContentIndex > -1){
+				EXOLog(@"Sending 'contentSwyp' content at index: %i", swypOutContentIndex );
+				[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
+				[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
+			}
+		}		
+	}];
+	
+	[NSTimer scheduledTimerWithTimeInterval:.2 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
 		
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
