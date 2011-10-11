@@ -18,7 +18,9 @@
 		return;
 	
 	CGSize iconSize = CGSizeMake(150, 150);
-	UIGraphicsBeginImageContext( iconSize );
+	
+	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
+	
 	[loadTestImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
 	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
