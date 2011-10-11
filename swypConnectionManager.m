@@ -224,6 +224,9 @@
 
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
 	if ([[discernedStream streamType] isFileType:[NSString swypControlPacketFileType]]){
+		if ([[discernedStream streamTag] isEqualToString:@"goodbye"]){
+			[session invalidate];
+		}
 		wantsProvidedAsNSData = (BOOL*) TRUE;
 		return TRUE;
 	}	

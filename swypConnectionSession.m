@@ -168,6 +168,13 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[_socketOutputStream	setDelegate:nil];
 	SRELS(_socketInputStream);
 	SRELS(_socketOutputStream);	
+	
+	SRELS(_sendDataQueueStream);
+	SRELS(_socketOutputTransformInputStream);
+	SRELS(_outputStreamConnector);
+	
+	SRELS(_socketInputTransformInputStream);
+	SRELS(_inputStreamDiscerner)
 }
 
 -(void) _setupStreamPathways{

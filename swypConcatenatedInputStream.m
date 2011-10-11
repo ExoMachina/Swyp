@@ -237,7 +237,7 @@
 		if( [self _queueNextInputStream] == NO){
 			if ([_infoDelegate respondsToSelector:@selector(didFinishAllQueuedStreamsWithConcatenatedInputStream:)])
 				[_infoDelegate didFinishAllQueuedStreamsWithConcatenatedInputStream:self];
-			if ([self closeStreamAtQueueEnd]){
+			if ([self closeStreamAtQueueEnd] && [self finishedRelayingAllQueuedStreamData]){
 				_streamStatus = NSStreamStatusAtEnd;
 				[[self delegate] stream:self handleEvent:NSStreamEventEndEncountered];
 			}
