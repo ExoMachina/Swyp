@@ -216,8 +216,8 @@
 }
 
 
--(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController{
-	return [_contentDataSource iconImageForContentAtIndex:index];
+-(UIImage*)		imageForContentAtIndex:	(NSUInteger)index ofMaxSize:(CGSize)maxIconSize	inController:(UIViewController*)contentDisplayController{
+	return [_contentDataSource iconImageForContentAtIndex:index ofMaxSize:maxIconSize];
 }
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController{
 	return [_contentDataSource countOfContent];

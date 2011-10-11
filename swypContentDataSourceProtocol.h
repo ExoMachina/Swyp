@@ -24,7 +24,7 @@
 
 @protocol swypContentDataSourceProtocol <NSObject>
 - (NSUInteger)		countOfContent;
-- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex;
+- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex ofMaxSize:(CGSize)maxIconSize;
 - (NSArray*)		supportedFileTypesForContentAtIndex: (NSUInteger)contentIndex;
 - (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL;
 

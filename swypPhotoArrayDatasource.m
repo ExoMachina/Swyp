@@ -13,25 +13,15 @@
 
 
 -(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
-	UIImage * loadTestImage		=	[[UIImage alloc] initWithData:photoPNGData];
-	if (loadTestImage == nil)
+	UIImage * iconImage		=	[self generateIconImageForImageData:photoPNGData maxSize:CGSizeMake(250, 250)];
+	if (iconImage == nil)
 		return;
 	
-	CGSize iconSize = CGSizeMake(150, 150);
-	
-	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
-	
-	[loadTestImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
-	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	SRELS(loadTestImage);
-	
 	[_photoDataArray insertObject:photoPNGData atIndex:insertIndex];
-	[_cachedPhotoUIImages	insertObject:cachedIconImage atIndex:insertIndex];
+	[_cachedPhotoUIImages	insertObject:iconImage atIndex:insertIndex];
 	
 	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self withSession:session];
 }
-
 
 -(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex{
 	[self addPhoto:photoPNGData atIndex:insertIndex fromSession:nil];
@@ -44,8 +34,21 @@
 	[_datasourceDelegate datasourceRemovedContentAtIndex:removeIndex withDatasource:self];
 }
 	 
-	 
+-(UIImage*)	generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize{
+	UIImage * loadImage		=	[[UIImage alloc] initWithData:imageData];
+	if (loadImage == nil)
+		return nil;
+	
+	CGSize iconSize			=	(maxSize.width * maxSize.height < [loadImage size].width *[loadImage size].height)? maxSize : [loadImage size];
 
+	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
+	[loadImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
+	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	SRELS(loadImage);
+	
+	return cachedIconImage;
+}
 
 #pragma mark NSObject
 -(id)	initWithImageDataArray:(NSArray*) arrayOfPhotoData{
@@ -74,8 +77,17 @@
 }
 
 #pragma mark swypContentDataSource
-- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex{
-	return [_cachedPhotoUIImages objectAtIndex:contentIndex];
+- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex ofMaxSize:(CGSize)maxIconSize{
+	UIImage * cachedImage	=	[_cachedPhotoUIImages objectAtIndex:contentIndex]; 
+	if (CGSizeEqualToSize([cachedImage size], maxIconSize) == NO){
+		cachedImage		=	[self generateIconImageForImageData:[_photoDataArray objectAtIndex:contentIndex] maxSize:maxIconSize];
+		if (cachedImage == nil)
+			return nil;
+		[_cachedPhotoUIImages removeObjectAtIndex:contentIndex];
+		[_cachedPhotoUIImages insertObject:cachedImage atIndex:contentIndex];
+	}
+	
+	return cachedImage;
 }
 -(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate{
 	_datasourceDelegate	=	delegate;

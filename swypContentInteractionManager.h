@@ -17,7 +17,8 @@
 -(void)	contentAtIndex: (NSUInteger)index wasDraggedToFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController;
 -(void)	contentAtIndex: (NSUInteger)index wasReleasedWithFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController;
 
--(UIImage*)		imageForContentAtIndex:	(NSUInteger)index	inController:(UIViewController*)contentDisplayController;
+//the returned UIImage will be as close as possible to and no larger than maxIconSize, while in proper-perspective and not distorted
+-(UIImage*)		imageForContentAtIndex:	(NSUInteger)index ofMaxSize:(CGSize)maxIconSize inController:(UIViewController*)contentDisplayController;
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
 @end
 

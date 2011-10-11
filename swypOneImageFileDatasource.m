@@ -45,9 +45,14 @@
 	return 1;
 }
 
-- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex{
+- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex ofMaxSize:(CGSize)maxIconSize{
+	CGSize iconSize =	(maxIconSize.width * maxIconSize.height < [_image size].width *[_image size].height)? maxIconSize : [_image size];
+	
+	if (CGSizeEqualToSize([_cachedIconImage size],iconSize) == NO){
+		SRELS( _cachedIconImage);
+	}
+	
 	if (_cachedIconImage == nil){
-		CGSize iconSize = CGSizeMake(150, 150);
 		UIGraphicsBeginImageContext( iconSize );
 		[_image drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
 		_cachedIconImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
