@@ -167,7 +167,7 @@
 }
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session{
 	
-	[_contentDisplayController returnContentAtIndexToNormalLocation:-1 animated:TRUE];	
+	[_contentDisplayController returnContentAtIndexToNormalLocation:-1 animated:TRUE ];	
 	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 		[sessionViewController setShowActiveTransferIndicator:FALSE];
 		sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
@@ -204,9 +204,10 @@
 		[overlapSession setShowActiveTransferIndicator:TRUE];
 		EXOLog(@"Queuing content at index: %i", index);
 	}else{
-		if ([_contentDisplayController respondsToSelector:@selector(returnContentAtIndexToNormalLocation:animated:)]){
-			[_contentDisplayController returnContentAtIndexToNormalLocation:index animated:TRUE];	
-		}
+		//not all implmentations will wish for this functionality
+//		if ([_contentDisplayController respondsToSelector:@selector(returnContentAtIndexToNormalLocation:animated:)]){
+//			[_contentDisplayController returnContentAtIndexToNormalLocation:index animated:TRUE];	
+//		}
 		
 		for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 			sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
@@ -222,8 +223,13 @@
 	return [_contentDataSource countOfContent];
 }
 #pragma mark swypContentDataSourceDelegate 
--(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
-	[_contentDisplayController insertContentToDisplayAtIndex:insertIndex animated:TRUE];
+-(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:(id<swypContentDataSourceProtocol>)datasource withSession:(swypConnectionSession*)session{
+	
+	CGPoint contentShowLocation	=	CGPointZero;
+	if (session){
+		contentShowLocation		=	[[[session representedCandidate] matchedLocalSwypInfo] endPoint];
+	}
+	[_contentDisplayController insertContentToDisplayAtIndex:insertIndex animated:TRUE fromStartLocation:contentShowLocation];
 }
 -(void)	datasourceRemovedContentAtIndex:(NSUInteger)removeIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
 	[_contentDisplayController removeContentFromDisplayAtIndex:removeIndex animated:TRUE];
@@ -274,6 +280,7 @@
 	[_swypPromptImageView setAlpha:0];
 	[_swypPromptImageView setFrame:CGRectMake(_mainWorkspaceView.size.width/2 - (250/2), _mainWorkspaceView.size.height/2 - (250/2), 250, 250)];
 	[_mainWorkspaceView addSubview:_swypPromptImageView];
+	[_mainWorkspaceView sendSubviewToBack:_swypPromptImageView];
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];

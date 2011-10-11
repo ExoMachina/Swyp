@@ -31,7 +31,7 @@
 -(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate{
 	[self removeScrollPageContentFromDisplayAtIndex:removeIndex animated:animate];
 }
--(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate{
+-(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate  fromStartLocation:(CGPoint)startLocation{ 
 	[self insertScrollPageContentToDisplayAtIndex:insertIndex animated:animate];
 }
 

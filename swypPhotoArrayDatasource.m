@@ -11,8 +11,8 @@
 
 @implementation swypPhotoArrayDatasource
 
--(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex{
-	
+
+-(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
 	UIImage * loadTestImage		=	[[UIImage alloc] initWithData:photoPNGData];
 	if (loadTestImage == nil)
 		return;
@@ -27,7 +27,12 @@
 	[_photoDataArray insertObject:photoPNGData atIndex:insertIndex];
 	[_cachedPhotoUIImages	insertObject:cachedIconImage atIndex:insertIndex];
 	
-	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self];
+	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self withSession:session];
+}
+
+
+-(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex{
+	[self addPhoto:photoPNGData atIndex:insertIndex fromSession:nil];
 }
 
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex{
@@ -107,7 +112,7 @@
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
 	if (streamData != nil){
-		[self addPhoto:streamData atIndex:0];
+		[self addPhoto:streamData atIndex:0 fromSession:session];
 	}
 }
 

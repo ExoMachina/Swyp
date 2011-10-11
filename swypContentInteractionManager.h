@@ -23,7 +23,7 @@
 
 @protocol swypContentDisplayViewController <NSObject>
 -(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate;
--(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate;
+-(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation;
 
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate;
 -(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate;

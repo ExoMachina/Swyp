@@ -11,9 +11,11 @@
 #import "swypFileTypeString.h"
 
 @protocol swypContentDataSourceProtocol;
+@class swypConnectionSession;
 
 @protocol swypContentDataSourceDelegate <NSObject>
--(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource;
+//	session here can be nil, but if it's not, it'll be used to animate the content in from the session indicator
+-(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource withSession:(swypConnectionSession*)session;
 -(void)	datasourceRemovedContentAtIndex:(NSUInteger)removeIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource;
 
 -(void)	datasourceSignificantlyModifiedContent:	(id<swypContentDataSourceProtocol>)datasource;

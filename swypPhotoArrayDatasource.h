@@ -19,6 +19,7 @@
 
 -(id)	initWithImageDataArray:(NSArray*) arrayOfPhotoData;
 
+-(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
 -(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex;
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex;
 @end
