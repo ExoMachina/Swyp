@@ -131,7 +131,7 @@
 	[_swypOuts addObject:outInfo];
 }
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo{
-	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:8 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
+	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:4 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
 	[[NSRunLoop mainRunLoop] addTimer:swypOutTimeout forMode:NSRunLoopCommonModes];
 	[_swypOutTimeouts addObject:swypOutTimeout];
 	[_swypOuts addObject:outInfo];
