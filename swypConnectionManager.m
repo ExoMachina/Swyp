@@ -89,6 +89,18 @@
 	
 	return oldest;
 }
+
+-(swypInfoRef*)	newestSwypInSet:(NSSet*)swypSet{
+	swypInfoRef * newest = nil;
+	for (swypInfoRef * next in swypSet){
+		if ([[next startDate] timeIntervalSinceReferenceDate] > [[newest startDate] timeIntervalSinceReferenceDate] || newest == nil)
+			newest = next;
+	}
+	
+	return newest;
+}
+
+
 #pragma mark IN
 -(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo{
 	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:7 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
@@ -176,7 +188,7 @@
 #pragma mark swypHandshakeManagerDelegate
 -(NSArray*)	relevantSwypsForCandidate:	(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager{
 	if ([candidate isKindOfClass:[swypServerCandidate class]]){
-		NSArray * swypArray	=	(SetHasItems(_swypIns))? [NSArray arrayWithObject:[self oldestSwypInSet:_swypIns]] : nil;
+		NSArray * swypArray	=	(SetHasItems(_swypIns))? [NSArray arrayWithObject:[self newestSwypInSet:_swypIns]] : nil;
 		
 		return swypArray;
 	}else if ([candidate isKindOfClass:[swypClientCandidate class]]){

@@ -13,6 +13,8 @@
 #import  <arpa/inet.h>
 #include <CFNetwork/CFSocketStream.h>
 
+#import <Security/SecureTransport.h>
+
 
 static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourServiceAdvertiserErrorDomain";
 
@@ -264,6 +266,7 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 			}			
 		}
 		
+
 		CFStreamCreatePairWithSocket(kCFAllocatorDefault, nativeSocketHandle, &readStream, &writeStream);
 				
         if (readStream && writeStream) {

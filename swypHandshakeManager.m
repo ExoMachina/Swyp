@@ -362,14 +362,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 -(BOOL)	_clientCandidate:	(swypClientCandidate*)clientCandidate	isMatchForSwypInfo:	(swypInfoRef*)swypInfo{
 	
 	NSInteger milisecondDifference =	 abs([[[clientCandidate swypInfo] startDate] timeIntervalSinceDate:[swypInfo endDate]] * 1000);
-
-	EXOLog(@"Swyp match: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 	
 	//mostly under 700ms when not debugging
 	//when debugging, make sure no breakpoints delay absorbtion of remote intervalInPast into NSDate
 	if (milisecondDifference < 1500){
+		EXOLog(@"Swyp match: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 		return TRUE;		
 	}else {
+		EXOLog(@"Swyp mismatch: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 		return FALSE;
 	}
 

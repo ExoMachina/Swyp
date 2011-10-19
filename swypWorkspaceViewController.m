@@ -13,7 +13,7 @@
 #import "swypWorkspaceBackgroundView.h"
 
 @implementation swypWorkspaceViewController
-@synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection;
+@synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -113,12 +113,20 @@
 	return FALSE;
 }
 
+-(void)	leaveWorkspaceRecognizerChanged: (UITapGestureRecognizer*)recognizer{
+	if (recognizer.state == UIGestureRecognizerStateRecognized){
+		[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
+	}
+}
+
 
 #pragma mark UIViewController
--(id)	initWithContentWorkspaceID:(NSString*)workspaceID{
+-(id)	initWithContentWorkspaceID:(NSString*)workspaceID workspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
 	if (self = [super initWithNibName:nil bundle:nil]){
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCrossDissolve];
+		
+		_worspaceDelegate	=	worspaceDelegate;
 	}
 	return self;
 }
@@ -132,7 +140,7 @@
 	
 	[[self connectionManager] startServices];
 	
-	swypInGestureRecognizer*	swypInRecognizer =	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
+	swypInGestureRecognizer*	swypInRecognizer	=	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
 	[swypInRecognizer setDelegate:self];
 	[swypInRecognizer setDelaysTouchesBegan:FALSE];
 	[swypInRecognizer setDelaysTouchesEnded:FALSE];
@@ -140,14 +148,19 @@
 	[self.view addGestureRecognizer:swypInRecognizer];
 	SRELS(swypInRecognizer);
 
-	swypOutGestureRecognizer*	swypOutRecognizer =	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
+	swypOutGestureRecognizer*	swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
 	[swypOutRecognizer setDelegate:self];
 	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
-		
+
+	UITapGestureRecognizer * leaveWorkspaceRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceRecognizerChanged:)];
+	[leaveWorkspaceRecognizer setNumberOfTapsRequired:2];
+	[self.view addGestureRecognizer:leaveWorkspaceRecognizer];
+	SRELS(leaveWorkspaceRecognizer);
+	
 }
 -(void)	dealloc{
 	
