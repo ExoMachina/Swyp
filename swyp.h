@@ -24,7 +24,7 @@
 */
 
 
-#define DEBUG_MODE_ENABLED 1
+#define DEBUG_MODE_ENABLED 2
 
 //	Developer conviniences
 #define SRELS RELEASE_SAFELY
