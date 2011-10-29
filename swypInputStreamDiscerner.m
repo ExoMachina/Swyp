@@ -153,64 +153,60 @@ static NSUInteger const memoryPageSize	=	4096;
 	NSData*		relevantData			=	[_bufferedData subdataWithRange:relevantSearchSpace];
 	
 	//let's do this to find the second semi-colon, with which we can use to parse just what we need into string
-	NSRange		firstSemicolonRange		=	NSMakeRange(NSNotFound, 0);
-	NSRange		secondSemicolonRange	=	NSMakeRange(NSNotFound, 0);
+	NSRange		semicolonRange	=	NSMakeRange(NSNotFound, 0);
 
 	char *		relevantBytes			=	(char *)[relevantData bytes];
 	for (NSUInteger i = 0; i < [relevantData length]; i ++){
-		firstSemicolonRange		=	NSMakeRange(i, 1);
 		if (relevantBytes[i] == ';'){
-			for (NSUInteger i2 = i +1; i < [relevantData length]; i2++){
-				if (relevantBytes[i2] == ';'){
-					secondSemicolonRange	=	NSMakeRange(i2, 1);
-					break;
-				}
-			}
+			semicolonRange		=	NSMakeRange(i, 1);
 			break;
 		}
 	}
 	
-	if (secondSemicolonRange.location == NSNotFound){
+	if (semicolonRange.location == NSNotFound){
 		return;
 	}
 	
 	
-	NSString*	packetNHeaderLengthStr		=	[[NSString alloc]	initWithBytes:relevantBytes length:secondSemicolonRange.location + secondSemicolonRange.length encoding:NSUTF8StringEncoding];	
-	if (StringHasText(packetNHeaderLengthStr) == NO){
+	NSString*	headerLengthStr		=	[[NSString alloc]	initWithBytes:relevantBytes length:semicolonRange.location + semicolonRange.length encoding:NSUTF8StringEncoding];	
+	if (StringHasText(headerLengthStr) == NO){
 		return;
 	}
 		
-	NSString*	packetLengthString		=	[packetNHeaderLengthStr substringToIndex:firstSemicolonRange.location];
-	NSUInteger	packetLength			=	[packetLengthString intValue];
-		
-	NSString * 	lengthStringWOSemi		=	[packetNHeaderLengthStr substringWithRange:NSMakeRange(firstSemicolonRange.location + firstSemicolonRange.length, secondSemicolonRange.location - (firstSemicolonRange.location + firstSemicolonRange.length))]; //after first semicolon to before second
-	NSUInteger	headerLength			=	[lengthStringWOSemi intValue];
+	NSString * 	headerLengthStringWOSemi=	[headerLengthStr substringWithRange:NSMakeRange(0, semicolonRange.location)]; //to before second semicolon
+	NSUInteger	headerLength			=	[headerLengthStringWOSemi intValue];
 	
 	
-	if (headerLength > ([relevantData length] - (secondSemicolonRange.location + secondSemicolonRange.length))){
+	if (headerLength > ([relevantData length] - (semicolonRange.location + semicolonRange.length))){
+		//if there's a bigger header than we have currently cached data; we can't do anything yet
 		return;
-	}
-	
+	}//otherwise....
 	//now we know that we have a header, and that it's inside our currently avaiable, "relevant," data 
 	
-	NSData *	headerData				=	[relevantData subdataWithRange:NSMakeRange(secondSemicolonRange.location + secondSemicolonRange.length, headerLength)];
+	NSData *	headerData				=	[relevantData subdataWithRange:NSMakeRange(semicolonRange.location + semicolonRange.length, headerLength)];
 	NSString*	packetHeaderString	=	[[[NSString alloc]  initWithBytes:(char *)[headerData bytes] length:[headerData length] encoding: NSUTF8StringEncoding] autorelease]; //this is MUCH safer against non-null-termed strings
 		
 		
 	NSDictionary * headerDictionary		=	[NSDictionary dictionaryWithJSONString:packetHeaderString];
-	
-	NSUInteger	prePayloadLength		=	 secondSemicolonRange.location + secondSemicolonRange.length + [headerData length];
+	if (headerDictionary == nil){
+		return;
+	}
 
+	NSUInteger	packetPayloadLength		=	0;
+	NSNumber *	packetLengthNumber		=	[headerDictionary valueForKey:@"length"];
+	if ([packetLengthNumber isKindOfClass:[NSNumber class]]) {
+		packetPayloadLength	=	[packetLengthNumber unsignedIntValue];
+	}else{
+		return;
+	}
+	
+	NSUInteger	prePayloadLength		=	 semicolonRange.location + semicolonRange.length + [headerData length];
 	
 	//reset data buffer indexes
 	[_bufferedData replaceBytesInRange:NSMakeRange(0, location + prePayloadLength) withBytes:NULL length:0];
 	_bufferedDataNextReadIndex = 0;
 	
-	NSUInteger payloadLength	=	0;
-	if (packetLength > 0){
-		payloadLength	=	(packetLength + [packetLengthString length] +1)  - prePayloadLength; //payload length begins after first semicolon
-	}
-	[self _generateDiscernedStreamWithHeaderDictionary:headerDictionary payloadLength:payloadLength];
+	[self _generateDiscernedStreamWithHeaderDictionary:headerDictionary payloadLength:packetPayloadLength];
 }
 
 -(void)	_generateDiscernedStreamWithHeaderDictionary:(NSDictionary*)	headerDictionary payloadLength: (NSUInteger)length{
@@ -221,6 +217,7 @@ static NSUInteger const memoryPageSize	=	4096;
 	
 	if (lengthNumber != nil && [lengthNumber intValue] != length){
 		EXOLog(@"Payload mismatch with header %i and packet %i",[lengthNumber intValue],length);
+		return;
 	}
 	
 	if (StringHasText(typeString) && StringHasText(tagString)){
