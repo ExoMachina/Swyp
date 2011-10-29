@@ -137,7 +137,7 @@
 -(void) _setupLastTransformStreamForRead:(NSInputStream*)readStream{
 	if (_lastTransformStream != nil)
 		[self _teardownInputStream:_lastTransformStream];
-	_lastTransformStream  = [readStream retain];
+	_lastTransformStream  = (swypTransformInputStream*) [readStream retain];
 	[_lastTransformStream setDelegate:self];
 	[_lastTransformStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 	[_lastTransformStream open]; 

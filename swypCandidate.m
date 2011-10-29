@@ -10,6 +10,6 @@
 
 
 @implementation swypCandidate
-@synthesize swypInfo,persistentPeerID,nametag,supportedFiletypes,role,matchedLocalSwypInfo,appearanceDate;
+@synthesize swypInfo,nametag,supportedFiletypes,role,matchedLocalSwypInfo,appearanceDate;
 @end
 

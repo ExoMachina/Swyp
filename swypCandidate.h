@@ -19,7 +19,6 @@ typedef enum {
 @interface swypCandidate : NSObject {	
 	NSDate *			appearanceDate;
 	swypInfoRef*		swypInfo;
-	NSString*			persistentPeerID;
 	NSString*			nametag;
 	NSArray*			supportedFiletypes;
 	swypCandidateRole	role;
@@ -27,7 +26,6 @@ typedef enum {
 }
 @property (nonatomic, retain) swypInfoRef*		swypInfo;
 @property (nonatomic, retain) NSDate *			appearanceDate;
-@property (nonatomic, retain) NSString*			persistentPeerID;
 @property (nonatomic, retain) NSString*			nametag;
 @property (nonatomic, retain) NSArray*			supportedFiletypes;
 @property (nonatomic, assign) swypCandidateRole	role;

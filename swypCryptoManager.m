@@ -20,11 +20,6 @@ static swypCryptoManager *	sharedCryptoManager;
 
 #pragma mark -
 #pragma mark public
-+(NSString*)			localpersistentPeerID{
-	NSString * toHash	= [[NSString localAppName] stringByAppendingString:[[UIDevice currentDevice] name]];
-	return	[toHash SHA1AlphanumericHash];
-}
-
 +(swypCryptoManager*)	sharedCryptoManager{
 	if (sharedCryptoManager == nil){
 		sharedCryptoManager = [[swypCryptoManager alloc] init];

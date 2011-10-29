@@ -42,7 +42,6 @@ typedef enum{
 +(swypCryptoManager*)	sharedCryptoManager;
 
 -(SecIdentityRef)		localSecIdentity;
-+(NSString*)			localpersistentPeerID;
 
 
 //

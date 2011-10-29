@@ -10,7 +10,8 @@
 
 @implementation UIColor (SwypAdditions)
 +(UIColor*)		colorWithSwypEncodedColorString:(NSString*)encodedColor{
-    NSArray *encodedComponents = [encodedColor componentsSeparatedByString:@","];
+	NSString *cleanedString		= [[encodedColor componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789,"] invertedSet]] componentsJoinedByString:@""];
+    NSArray *encodedComponents	= [cleanedString componentsSeparatedByString:@","];
 	if ([encodedComponents count] != 4)
 		return nil;
     CGFloat r = [[encodedComponents objectAtIndex:0] floatValue];

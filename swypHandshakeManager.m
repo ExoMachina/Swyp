@@ -198,7 +198,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	if (matchedSwyp != nil){
 		[helloDictionary setValue:@"accepted" forKey:@"status"];
-		[helloDictionary setValue:[swypCryptoManager localpersistentPeerID] forKey:@"persistentPeerID"];
+		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
 		[helloDictionary setValue:[NSNumber numberWithDouble:[matchedSwyp velocity]] forKey:@"swypOutVelocity"];
 	}else {
 		[helloDictionary setValue:@"rejected" forKey:@"status"];
@@ -218,9 +218,12 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	
 	if (querySwyp != nil){
-		[helloDictionary setValue:[swypCryptoManager localpersistentPeerID] forKey:@"persistentPeerID"];
+		[session setSessionHueColor:[UIColor randomSwypHueColor]];
+		
+		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
 		double intervalSinceSwyp	=	[[querySwyp startDate] timeIntervalSinceNow] * -1;
 		[helloDictionary setValue:[NSNumber numberWithDouble:intervalSinceSwyp] forKey:@"intervalSinceSwypIn"];
+		[helloDictionary setValue:[[session sessionHueColor] swypEncodedColorStringValue] forKey:@"sessionHue"];
 	}else {
 		EXOLog(@"No swypIns found... this is odd!, check expiration times for swypIns");
 		return;
@@ -236,9 +239,26 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 -(void)	_handleClientHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
 	swypClientCandidate	*	candidate		=	(swypClientCandidate*)[session representedCandidate];
-	swypInfoRef *	swypRefFromClientInfo	=	[[swypInfoRef alloc] init];	
-	NSString * persistentPeerID				= [helloPacket valueForKey:@"persistentPeerID"];
-	NSNumber* intervalSinceSwypNumber		= [helloPacket valueForKey:@"intervalSinceSwypIn"];
+	swypInfoRef *	swypRefFromClientInfo	=	[[[swypInfoRef alloc] init] autorelease];
+
+	
+	NSArray	*	supportedFileTypes			= [helloPacket valueForKey:@"supportedFileTypes"];
+	NSString *	sessionHue					= [helloPacket valueForKey:@"sessionHue"];
+	NSNumber*	intervalSinceSwypNumber		= [helloPacket valueForKey:@"intervalSinceSwypIn"];
+	
+	
+	if (ArrayHasItems(supportedFileTypes)){
+		NSMutableArray *cleanedTypesArray	=	[NSMutableArray array];
+		for (NSString * fileType in supportedFileTypes){
+			if (StringHasText(fileType) && [fileType isKindOfClass:[NSString class]]){
+				[cleanedTypesArray addObject:fileType];
+			}
+		}
+		[candidate setSupportedFiletypes:cleanedTypesArray];
+	}else {
+		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
+		return;
+	}
 	
 	if ([intervalSinceSwypNumber isKindOfClass:[NSNumber class]]){
 		double doubleIntervalSinceSwyp	=	[intervalSinceSwypNumber doubleValue];
@@ -246,10 +266,13 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 			double secondsInPast		= doubleIntervalSinceSwyp * -1;
 			[swypRefFromClientInfo	setStartDate:[NSDate dateWithTimeIntervalSinceNow:secondsInPast]];
 		}
+	}else {
+		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
+		return;
 	}
 	
-	if ([persistentPeerID isKindOfClass:[NSString class]] && StringHasText(persistentPeerID)){
-		[candidate setPersistentPeerID:persistentPeerID];
+	if ([sessionHue isKindOfClass:[NSString class]] && StringHasText(sessionHue)){
+		[session setSessionHueColor:[UIColor colorWithSwypEncodedColorString:sessionHue]];
 	}else {
 		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
 		return;
@@ -292,9 +315,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 -(void)	_handleServerHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
 	swypServerCandidate	*	candidate		=	(swypServerCandidate*)[session representedCandidate];
-	swypInfoRef *	swypRefFromServerInfo	=	[[swypInfoRef alloc] init];	
+	swypInfoRef *	swypRefFromServerInfo	=	[[[swypInfoRef alloc] init] autorelease];
 	NSString *		statusString			=	[helloPacket valueForKey:@"status"];
-	NSString *		persistentPeerID		=	[helloPacket valueForKey:@"persistentPeerID"];
+	NSArray	*		supportedFileTypes		=	[helloPacket valueForKey:@"supportedFileTypes"];
 	NSNumber *		swypOutVelocityNumber	=	[helloPacket valueForKey:@"swypOutVelocity"];
 	
 	
@@ -310,6 +333,20 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		[self _removeAndInvalidateSession:session];
 		return;
 	}
+	
+	
+	if (ArrayHasItems(supportedFileTypes)){
+		NSMutableArray *cleanedTypesArray	=	[NSMutableArray array];
+		for (NSString * fileType in supportedFileTypes){
+			if (StringHasText(fileType) && [fileType isKindOfClass:[NSString class]]){
+				[cleanedTypesArray addObject:fileType];
+			}
+		}
+		[candidate setSupportedFiletypes:cleanedTypesArray];
+	}else {
+		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
+		return;
+	}
 
 	
 	if ([swypOutVelocityNumber isKindOfClass:[NSNumber class]]){
@@ -317,18 +354,15 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		if (swypOutVelocityDouble > 0){
 			[swypRefFromServerInfo	setVelocity:swypOutVelocityDouble];
 		}
-	}
-	
-	if ([persistentPeerID isKindOfClass:[NSString class]] && StringHasText(persistentPeerID)){
-		[candidate setPersistentPeerID:persistentPeerID];
 	}else {
 		[self _removeAndInvalidateSession:session];
 		return;
 	}
-
-	
 	[candidate setSwypInfo:swypRefFromServerInfo];
 	
+	
+	
+
 	
 	swypInfoRef * firstMatchingSwyp	=	nil;
 	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
@@ -405,12 +439,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-#pragma mark crypto circumvention during restructuring
-#warning circumventing crypto!
-//	[_cryptoManager		beginNegotiatingCryptoSessionWithSwypConnectionSession:session];
-	[session setSessionHueColor:[UIColor randomSwypHueColor]];
-	[self didCompleteCryptoSetupInSession:session warning:nil cryptoManager:_cryptoManager];
-//end circumvention
+	[_delegate connectionSessionWasCreatedSuccessfully:session withHandshakeManager:self];
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{
@@ -446,7 +475,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 
 -(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError cryptoManager:(swypCryptoManager*)cryptoManager{
-	EXOLog(@"Failed crypto for session with persistentPeerID %@ for reason %@", [[session representedCandidate] persistentPeerID], [cryptoError description]);
+	EXOLog(@"Failed crypto for session with peer for reason %@", [cryptoError description]);
 	[_delegate connectionSessionCreationFailedForCandidate:[session representedCandidate] withHandshakeManager:self error:cryptoError];
 }
 
