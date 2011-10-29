@@ -377,7 +377,7 @@
 	}
 	
 	if ([contentViewSet contentPreviewImage] == nil){
-		UIImage * contentImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx inController:self];
+		UIImage * contentImagePreview	=	[_contentDisplayControllerDelegate imageForContentAtIndex:idx ofMaxSize:_contentImageSize inController:self];
 		if (CGSizeEqualToSize([contentImagePreview size], _contentImageSize) == NO){
 			_contentImageSize			=	[contentImagePreview size];
 			self.view.size				=	CGSizeMake(self.view.frame.size.width, [contentImagePreview size].height + 60);

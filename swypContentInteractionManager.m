@@ -101,6 +101,10 @@
 	
 }
 
+-(void)		temporarilyExagerateContentAtIndex:	(NSUInteger)index{
+	
+}
+
 #pragma mark NSObject
 
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent{

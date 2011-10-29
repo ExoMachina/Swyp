@@ -8,11 +8,12 @@
 
 
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 #import "swypCryptoSession.h"
 #import "swypConnectionSession.h"
 
 @class swypCryptoManager;
-@protocol swypCryptoManagerDelegate <NSObject, swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate>
+@protocol swypCryptoManagerDelegate <NSObject>
 -(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning cryptoManager:(swypCryptoManager*)cryptoManager;
 -(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError cryptoManager:(swypCryptoManager*)cryptoManager;
 @end
@@ -29,9 +30,8 @@ typedef enum{
 } swypCryptoManagerErrorCode;
 
 
-@interface swypCryptoManager : NSObject <swypConnectionSessionDataDelegate,swypConnectionSessionInfoDelegate>  {
-	NSMutableSet*					_sessionsPendingCryptoSetup;
-	
+@interface swypCryptoManager : NSObject  {	
+	SecIdentityRef					_localCryptoIdentity;
 	
 	id<swypCryptoManagerDelegate>	_delegate;
 	
@@ -39,33 +39,17 @@ typedef enum{
 @property (nonatomic, assign)	id<swypCryptoManagerDelegate>	delegate;
 @property (nonatomic, readonly)	NSSet*							sessionsPendingCryptoSetup;
 
-+(NSData*)				localPrivateKey;
-+(NSData*)				localPublicKey;
++(swypCryptoManager*)	sharedCryptoManager;
+
+-(SecIdentityRef)		localSecIdentity;
 +(NSString*)			localpersistentPeerID;
 
--(void) beginNegotiatingCryptoSessionWithSwypConnectionSession:	(swypConnectionSession*)session;
 
 //
 //private
--(void)	_handleNextCryptoHandshakeStageWithSession:(swypConnectionSession*)session anyReceivedData:(NSData*)relevantHandshakeData; 
-
--(void)	_happilyConcludeNegotiatingCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
--(void)	_abortNegotiatingCryptoSessionForConnectionSession:	(swypConnectionSession*)session;
--(void)	_failWithCryptoManagerErrorCode:(swypCryptoManagerErrorCode)errorCode forConnectionSession:(swypConnectionSession*)session;
--(BOOL)	_removeConnectionSession:	(swypConnectionSession*)session;
-
--(void)	_beginMandatingCryptoInConnectionSession:		(swypConnectionSession*)session;
-
-//client handlers
--(void)	_clientShareStageSharedPublicKeyWithSession:(swypConnectionSession*)session;
--(BOOL)	_clientHandleStageSharedPublicKeyWithSession:(swypConnectionSession*)session data:(NSData*)	data;
--(void)	_clientShareStageConfirmedSymetricKeyWithSession:(swypConnectionSession*)session;
--(BOOL) _clientHandleStageConfirmedSymetricKeyWithSession:(swypConnectionSession*)session data:(NSData*)	data;
-
-//server handlers
--(BOOL)	_serverHandleStagePreKeyShareWithSession:(swypConnectionSession*)session data:(NSData*) data;
--(void)	_serverShareStageSharedSymetricKeyWithSession:(swypConnectionSession*)session;
--(BOOL)	_serverHandleStageSharedSymetricKeyWithSession:(swypConnectionSession*)session data:(NSData*) data;
--(void)	_serverShareStageReadyWithSession:(swypConnectionSession*)session;
+//secure key generation
+-(SecIdentityRef)		_generateNewLocalCryptoIdentity;
+-(SecIdentityRef)		_retrieveLocalCryptoIdentity;
+-(void)					_deleteLocalCryptoIdentity;
 
 @end

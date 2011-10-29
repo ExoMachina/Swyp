@@ -7,6 +7,7 @@
 //
 
 #import "swypConnectionSession.h"
+#import <Security/Security.h>
 
 
 static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
@@ -109,15 +110,55 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 #pragma mark NSObject
 
 -(id)initWithSwypCandidate:(swypCandidate *)candidate inputStream:(NSInputStream *)inputStream outputStream:(NSOutputStream *)outputStream{
+
 	if (self = [super init]){
 		_representedCandidate	=	[candidate retain];
 		
+		SecIdentityRef localCryptoIdentity	=	[[swypCryptoManager sharedCryptoManager] localSecIdentity];
+		if (localCryptoIdentity == NULL){
+			EXOLog(@"No crypto identity available, aborting connection session!");
+			return self;
+		}
+		
+		NSDictionary *sslProperties = nil;
+		if ([candidate role] == swypCandidateRoleServer){
+			sslProperties = [NSDictionary dictionaryWithObjectsAndKeys: 
+							 (NSString *)kCFStreamSocketSecurityLevelTLSv1, kCFStreamSSLLevel, 
+							 kCFBooleanTrue, kCFStreamSSLAllowsAnyRoot, 
+							 kCFBooleanTrue, kCFStreamSSLValidatesCertificateChain, 
+							 kCFNull, kCFStreamSSLPeerName, 			//kCFStreamSSLPeerName kCFNull prevents verification of name
+							 [NSArray arrayWithObject:(id)localCryptoIdentity] , kCFStreamSSLCertificates, 
+							 kCFBooleanTrue, kCFStreamSSLIsServer, nil];
+		}else{
+			sslProperties = [NSDictionary dictionaryWithObjectsAndKeys: 
+							 (NSString *)kCFStreamSocketSecurityLevelTLSv1, kCFStreamSSLLevel, 
+							 kCFBooleanTrue, kCFStreamSSLAllowsAnyRoot, 
+							 kCFBooleanTrue, kCFStreamSSLValidatesCertificateChain, 
+							 kCFNull, kCFStreamSSLPeerName, 			//kCFStreamSSLPeerName kCFNull prevents verification of name
+							 [NSArray arrayWithObject:(id)localCryptoIdentity], kCFStreamSSLCertificates, 
+							 kCFBooleanFalse, kCFStreamSSLIsServer, nil];
+		}
+
+		
 		if ([inputStream streamStatus] < NSStreamStatusOpen){
+			CFReadStreamRef inputReadStream	=	(CFReadStreamRef)inputStream;
+			CFReadStreamSetProperty(inputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
+
+			CFReadStreamSetProperty(inputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
+			
+			
 			[inputStream	setDelegate:self];
 			[inputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 			[inputStream	open];
 		}
 		if ([outputStream streamStatus] < NSStreamStatusOpen){
+			CFReadStreamRef outputReadStream	=	(CFReadStreamRef)outputStream;
+			CFReadStreamSetProperty(outputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
+			
+			CFReadStreamSetProperty(outputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
+
+			
+			
 			[outputStream	setDelegate:self];
 			[outputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 			[outputStream	open];

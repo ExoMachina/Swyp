@@ -110,7 +110,5 @@
 -(NSInteger)		visibleContentLocationForContentIndex:(NSInteger)contentIndex;	
 -(NSInteger)		insertIndexFromVisibleContentLocation:(NSInteger)visibleContentLocation;
 
--(id)initWithTrayDelegate:(id<swypContentScrollTrayControllerDelegate>)trayDelegate;
-
 
 @end
