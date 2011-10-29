@@ -78,9 +78,9 @@ static swypCryptoManager *	sharedCryptoManager;
 
 	NSString *certPath		= nil; 
 	if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){
-		certPath = [[NSBundle mainBundle] pathForResource:@"Alexander H. List" ofType:@"p12"];		
+		certPath = [[NSBundle mainBundle] pathForResource:@"TempCertA" ofType:@"p12"];		
 	}else{
-		certPath = [[NSBundle mainBundle] pathForResource:@"AList Pad" ofType:@"p12"];		
+		certPath = [[NSBundle mainBundle] pathForResource:@"TempCertB" ofType:@"p12"];		
 	}
 	
 	NSData *certData		= [[NSData alloc] initWithContentsOfFile:certPath];

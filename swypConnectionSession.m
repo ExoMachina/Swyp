@@ -120,6 +120,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 			return self;
 		}
 		
+//		Disabling certs on ssl for v1
+/*
 		NSDictionary *sslProperties = nil;
 		if ([candidate role] == swypCandidateRoleServer){
 			sslProperties = [NSDictionary dictionaryWithObjectsAndKeys: 
@@ -138,13 +140,15 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 							 [NSArray arrayWithObject:(id)localCryptoIdentity], kCFStreamSSLCertificates, 
 							 kCFBooleanFalse, kCFStreamSSLIsServer, nil];
 		}
+ */
 
 		
 		if ([inputStream streamStatus] < NSStreamStatusOpen){
-			CFReadStreamRef inputReadStream	=	(CFReadStreamRef)inputStream;
-			CFReadStreamSetProperty(inputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
-
-			CFReadStreamSetProperty(inputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
+//	disabling tls for rapid-development purposes
+//			CFReadStreamRef inputReadStream	=	(CFReadStreamRef)inputStream;
+//			CFReadStreamSetProperty(inputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
+//
+//			CFReadStreamSetProperty(inputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
 			
 			
 			[inputStream	setDelegate:self];
@@ -152,10 +156,11 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 			[inputStream	open];
 		}
 		if ([outputStream streamStatus] < NSStreamStatusOpen){
-			CFReadStreamRef outputReadStream	=	(CFReadStreamRef)outputStream;
-			CFReadStreamSetProperty(outputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
-			
-			CFReadStreamSetProperty(outputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
+//	disabling tls for rapid-development purposes
+//			CFReadStreamRef outputReadStream	=	(CFReadStreamRef)outputStream;
+//			CFReadStreamSetProperty(outputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
+//			
+//			CFReadStreamSetProperty(outputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
 
 			
 			
