@@ -49,7 +49,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	swypConcatenatedInputStream * concatenatedSendPacket	=	[[swypConcatenatedInputStream alloc] initWithInputStreamArray:[NSArray arrayWithObjects:headerStream,payloadStream,nil]];
 	[concatenatedSendPacket setHoldCompletedStreams:TRUE];
 	[_sendDataQueueStream addInputStreamToQueue:concatenatedSendPacket];
-	return [concatenatedSendPacket autorelease];
+	return [concatenatedSendPacket autorelease]; 
 }
 
 -(swypConcatenatedInputStream*)	beginSendingDataWithTag:(NSString*)tag type:(NSString*)type dataForSend:(NSData*)sendData{
