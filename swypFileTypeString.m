@@ -22,6 +22,12 @@
 	return type;		
 }
 
++(id) imageJPEGFileType{
+	static NSString * type = @"image/jpeg";
+	return type;		
+}
+
+
 +(id) videoMPEGFileType{
 	static NSString * type = @"video/mpeg";
 	return type;	

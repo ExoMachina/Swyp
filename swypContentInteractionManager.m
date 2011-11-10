@@ -96,8 +96,16 @@
 
 -(void) sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session{
 	NSUInteger dataLength 		= 0;
-	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:[[_contentDataSource supportedFileTypesForContentAtIndex:index] lastObject] length:&dataLength];
-	[session beginSendingFileStreamWithTag:@"photo" type:[NSString imagePNGFileType] dataStreamForSend:dataSendStream length:dataLength];
+	
+	NSString * fileTypeToUse	= [[_contentDataSource supportedFileTypesForContentAtIndex:index] firstObjectCommonWithArray:[[session representedCandidate] supportedFiletypes]];
+	
+	if (fileTypeToUse == nil){
+		[[[[UIAlertView alloc] initWithTitle:@"No Support" message:@"The recipient app doesn't want any form of this file... This is a bug on one of your apps' part" delegate:nil cancelButtonTitle:@"okay" otherButtonTitles:nil] autorelease] show];
+		return;
+	}
+	
+	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:fileTypeToUse length:&dataLength];
+	[session beginSendingFileStreamWithTag:@"photo" type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
 	
 }
 

@@ -19,8 +19,8 @@
 
 -(id)	initWithImageDataArray:(NSArray*) arrayOfPhotoData;
 
--(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
--(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex;
+-(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
+-(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex;
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex;
 
 -(UIImage*)	generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize;

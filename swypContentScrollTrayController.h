@@ -9,26 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "swypContentInteractionManager.h"
 
-@class swypContentScrollTrayController;
 
-@protocol swypContentScrollTrayControllerDelegate <NSObject>
-
--(UIImage*)		contentPreviewImageForContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
--(NSInteger)	numberOfContentsInContentSelectionScrollTrayWithController:(swypContentScrollTrayController*)trayController;
-
-
-@optional 
--(NSInteger)	currentlySelectedContentForScrollTrayWithController:(swypContentScrollTrayController*)trayController;
-
--(void)			contentSelectionScrollTrayWantsDeleteContentAtContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
-
--(void)			swypContentScrollTrayControllerWantsHide:(swypContentScrollTrayController*)trayController;
-
--(void)			controllerDidSelectContentAtIndex:(NSInteger)selectedContent withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController;
-
--(void)			contentSelectionScrollTrayWantsDuplicateContentAtContentIndex:(NSInteger)contentIndex withswypContentScrollTrayController:(swypContentScrollTrayController*)trayController; 
-
-@end
 
 
 @interface trayContentObjectSet : NSObject{

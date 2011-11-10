@@ -40,6 +40,15 @@ static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourS
 
 }
 
+-(void)	suspendNetworkActivity{
+	[self setAdvertising:FALSE];
+	[self _teardownServerSockets];
+}
+-(void)	resumeNetworkActivity{
+	[self _setupServerSockets];
+	[self setAdvertising:FALSE];
+}
+
 
 #pragma mark NSObject
 -(void)	dealloc{

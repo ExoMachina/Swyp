@@ -48,11 +48,17 @@
 		_handshakeManager	= [[swypHandshakeManager alloc] init];
 		[_handshakeManager	setDelegate:self];
 		
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+
+		
 	}
 	return self;
 }
 
 -(void)	dealloc{
+
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	SRELS(_bonjourListener);
 	SRELS(_bonjourAdvertiser);
@@ -160,6 +166,15 @@
 
 #pragma mark -
 #pragma mark private
+#pragma mark - System Notifcations
+- (void)_applicationWillResignActive:(NSNotification *)note{
+	[_bonjourAdvertiser suspendNetworkActivity];
+}
+
+- (void)_applicationDidBecomeActive:(NSNotification *)note{
+	[_bonjourAdvertiser resumeNetworkActivity];
+}
+
 #pragma mark -
 #pragma mark bonjourAdvertiser 
 -(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
@@ -189,11 +204,17 @@
 -(NSArray*)	relevantSwypsForCandidate:	(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager{
 	if ([candidate isKindOfClass:[swypServerCandidate class]]){
 		NSArray * swypArray	=	(SetHasItems(_swypIns))? [NSArray arrayWithObject:[self newestSwypInSet:_swypIns]] : nil;
-		
 		return swypArray;
 	}else if ([candidate isKindOfClass:[swypClientCandidate class]]){
 		
-		return [_swypOuts allObjects];
+		NSMutableArray * swypArray	=	[NSMutableArray array];
+		for (swypInfoRef * outRef in _swypOuts){
+			if ([outRef endDate] != nil){
+				[swypArray addObject:outRef];
+			}
+		}
+		
+		return swypArray;
 	}
 	
 	return nil;
@@ -262,6 +283,7 @@
 	}
 	
 }
+
 
 
 @end

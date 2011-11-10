@@ -168,6 +168,7 @@
 		79E328D61454B70C0028CD42 /* x509v3.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E323BA1454B7080028CD42 /* x509v3.h */; };
 		79E328D71454B70C0028CD42 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E323BD1454B7080028CD42 /* libcrypto.a */; };
 		79E328D81454B70C0028CD42 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79E323BE1454B7080028CD42 /* libssl.a */; };
+		79EBFBF11469EAA0006BF5BD /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -349,6 +350,7 @@
 		79E3288B1454B70B0028CD42 /* CA.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = CA.sh; sourceTree = "<group>"; };
 		79E3288C1454B70B0028CD42 /* tsget */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = tsget; sourceTree = "<group>"; };
 		79E3288D1454B70B0028CD42 /* openssl.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = openssl.cnf; sourceTree = "<group>"; };
+		79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -366,6 +368,7 @@
 				680FC5B713E251DA00509CF2 /* CoreFoundation.framework in Frameworks */,
 				79E328D71454B70C0028CD42 /* libcrypto.a in Frameworks */,
 				79E328D81454B70C0028CD42 /* libssl.a in Frameworks */,
+				79EBFBF11469EAA0006BF5BD /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +401,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */,
 				680FC5B613E251DA00509CF2 /* CoreFoundation.framework */,
 				680FC4EF13E2473E00509CF2 /* UIKit.framework */,
 				680FC03613E0C3CD00509CF2 /* CFNetwork.framework */,
@@ -1079,6 +1083,10 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/swyp.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -1101,6 +1109,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DSTROOT = /tmp/swyp.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = swyp_Prefix.pch;

@@ -28,6 +28,13 @@
 
 
 /*
+	jpeg is a way smaller smaller file than PNG; perhaps it's a good thing to support too
+	
+	MIME: "image/jpeg"
+ */
++(id) imageJPEGFileType;
+
+/*
 		MIME: "video/mpeg"
 */
 +(id) videoMPEGFileType;

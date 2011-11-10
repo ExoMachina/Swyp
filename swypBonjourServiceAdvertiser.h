@@ -47,6 +47,12 @@ typedef enum {
 -(BOOL)	isAdvertising;
 -(void)	setAdvertising:(BOOL)advertisingEnabled;
 
+//	stops advertising and disables sockets
+//		for when device is going to sleep
+-(void)	suspendNetworkActivity;
+
+//	re-enables sockets for resuming active
+-(void)	resumeNetworkActivity;
 
 //
 //private

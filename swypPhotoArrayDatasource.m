@@ -12,19 +12,19 @@
 @implementation swypPhotoArrayDatasource
 
 
--(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
-	UIImage * iconImage		=	[self generateIconImageForImageData:photoPNGData maxSize:CGSizeMake(250, 250)];
+-(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
+	UIImage * iconImage		=	[self generateIconImageForImageData:photoData maxSize:CGSizeMake(250, 250)];
 	if (iconImage == nil)
 		return;
 	
-	[_photoDataArray insertObject:photoPNGData atIndex:insertIndex];
+	[_photoDataArray insertObject:photoData atIndex:insertIndex];
 	[_cachedPhotoUIImages	insertObject:iconImage atIndex:insertIndex];
 	
 	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self withSession:session];
 }
 
--(void)	addPhoto:(NSData*)photoPNGData atIndex:(NSUInteger)	insertIndex{
-	[self addPhoto:photoPNGData atIndex:insertIndex fromSession:nil];
+-(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex{
+	[self addPhoto:photoData atIndex:insertIndex fromSession:nil];
 }
 
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex{
@@ -101,13 +101,25 @@
 }
 
 - (NSArray*)		supportedFileTypesForContentAtIndex: (NSUInteger)contentIndex{
-	return [NSArray arrayWithObject:[NSString imagePNGFileType]];
+	return [NSArray arrayWithObjects:[NSString imagePNGFileType],[NSString imageJPEGFileType],nil];
 }
 - (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type length: (NSUInteger*)contentLengthDestOrNULL{
-	NSData *	photoData		=	[_photoDataArray objectAtIndex:contentIndex];
-	*contentLengthDestOrNULL	=	[photoData length];
+	NSData *	photoJPEGData		=	[_photoDataArray objectAtIndex:contentIndex];
+
+	NSData *	sendPhotoData	=	nil;
+	if ([type isEqualToString:[swypFileTypeString imagePNGFileType]]){
+		sendPhotoData	=  UIImagePNGRepresentation([UIImage imageWithData:photoJPEGData]);
+	}else if ([type isEqualToString:[swypFileTypeString imageJPEGFileType]]){
+		sendPhotoData	=	photoJPEGData;
+	}
 	
-	return [NSInputStream inputStreamWithData:photoData];
+	if (sendPhotoData == nil){
+		EXOLog(@"No supported export types in datasource");
+	}
+	
+	*contentLengthDestOrNULL	=	[sendPhotoData length];
+	
+	return [NSInputStream inputStreamWithData:sendPhotoData];
 	
 }
 
