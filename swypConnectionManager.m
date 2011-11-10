@@ -169,10 +169,12 @@
 #pragma mark - System Notifcations
 - (void)_applicationWillResignActive:(NSNotification *)note{
 	[_bonjourAdvertiser suspendNetworkActivity];
+	[_bonjourListener setServiceIsListening:NO];
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification *)note{
 	[_bonjourAdvertiser resumeNetworkActivity];
+	[_bonjourListener setServiceIsListening:YES];
 }
 
 #pragma mark -
