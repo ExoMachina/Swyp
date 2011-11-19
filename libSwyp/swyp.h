@@ -57,7 +57,6 @@
 
 #pragma mark includes
 #import "swypWorkspaceViewController.h"
-#import "swypContentInteractionManager.h"
 #import "swypFileTypeString.h"
 #import "swypContentDataSourceProtocol.h"
 #import "NSDictionary+BSJSONAdditions.h"
