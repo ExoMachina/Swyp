@@ -14,12 +14,7 @@ Here is the provisional swyp protocol specification; rows that mention cryptoV2 
       to each server listed in its set of potential servers
     - [ ] Resolving for the ip/host first
               Helpful url: http://lists.apple.com/archives/apple-cdsa/2005/Oct/msg00035.html
-    * [ ]  then making a tcp connection with TLS-- using Common TLS       cryptoV2
-          Parameters on CFRead/write streams
-    * [ ] Next streams are opened, and CFReadStreamReadProperty(          cryptoV2
-          kCFStreamPropertySSLPeerTrust) is polled for CATrust object
-    * [ ] Visual indicators are displayed on-screen based on the first    cryptoV2
-          75 bits of the crypto key
+    * [ ]  then making a tcp connection
 - [ ] 5 After connecting, the client sends a hello packet
     - [ ] (headerDescriptorLength);{type="swyp/controlpacket",
           tag:"clientHello", length:(payloadlength)}
@@ -44,12 +39,6 @@ Here is the provisional swyp protocol specification; rows that mention cryptoV2 
         - [ ] (headerDescriptorLength<StringInt>);{type="swyp/controlpac
               ket", tag:"serverHello", length:(payloadlength)}
             - [ ] {status:"rejected"}  
-- [ ] 7 Use visual cues for connection security based on remote partner's
-      certificate
-    - [ ] If certificate is unsigned, unverified, then show an open
-          lock with remote device name in gray
-    - [ ] If signed show closed lock on indicator with device name in
-          metallic-cool green
 - [ ] 8 Now with the same message spec, we can send photos just by either
       party sending
     - [ ] (descriptorLength);{tag:"tagForStuff", type:"image/png",
