@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "swypCandidate.h"
-#import "swypCryptoSession.h"
 #import "swypInfoRef.h"
 #import "swypFileTypeString.h"
 #import "swypConcatenatedInputStream.h"
@@ -79,7 +78,6 @@ typedef enum {
 	
 	UIColor *		_sessionHueColor;
 	
-	swypCryptoSession *		_cryptoSession;
 	swypCandidate *			_representedCandidate;
 	
 	swypConnectionSessionStatus			_connectionStatus;
@@ -102,7 +100,6 @@ typedef enum {
 @property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
 @property (nonatomic, retain)	UIColor*					sessionHueColor;
 @property (nonatomic, readonly)	swypCandidate *				representedCandidate;
-@property (nonatomic, retain)	swypCryptoSession *			cryptoSession;
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 

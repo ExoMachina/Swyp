@@ -47,8 +47,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	SRELS(_resolvingServerCandidates);
 	
 	
-	SRELS(_cryptoManager);
-	
 	[super dealloc];
 }
 
@@ -297,7 +295,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 			connection established as far as we know!
 			Handing off to the crypto manager!
 		*/
-		[self		_handSessionOffForCryptoNegotiation:session];
+		[self		_postNegotiationSessionHandOff:session];
 		
 	}else {
 		EXOLog(@"NO matching swyp for client candidate");
@@ -378,7 +376,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		/*
 			The server has returned a matching swyp so we're happy to begin crypto!
 		*/
-		[self		_handSessionOffForCryptoNegotiation:session];
+		[self		_postNegotiationSessionHandOff:session];
 		
 	}else {
 		EXOLog(@"Server accepted Hello: No matching swyp-in found");
@@ -430,12 +428,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 #pragma mark -
 #pragma mark finalization
--(void)	_handSessionOffForCryptoNegotiation:	(swypConnectionSession*)session{
+-(void)	_postNegotiationSessionHandOff:	(swypConnectionSession*)session{
 	
-	if (_cryptoManager == nil){
-		_cryptoManager =	[[swypCryptoManager alloc] init];
-		[_cryptoManager		setDelegate:self];
-	}
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
@@ -449,36 +443,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session	invalidate];
 	[_pendingConnectionSessions	removeObject:session];			
 }
-
-
-#pragma mark swypCryptoManagerDelegate
--(void) didCompleteCryptoSetupInSession:	(swypConnectionSession*)session warning:	(NSString*)cryptoWarning cryptoManager:(swypCryptoManager*)cryptoManager{
-
-	/*
-		crypto warnings are important, they represent that something is wrong  --give the user a chance to invalidate the connection
-		could be as simple as new certifcate for an old persistentID, could be as malicious as a man-in-the-middle attack
-	*/
-	if (StringHasText(cryptoWarning)){
-		exoBlockOperationAlertView * warningView	=	[[exoBlockOperationAlertView alloc] initWithoutDelegateWithTitle:[[NSBundle mainBundle]localizedStringForKey:@"ConnectionUserWarning" value:@"Connection Warning!" table:nil] message:[[NSBundle mainBundle]localizedStringForKey:cryptoWarning value:cryptoWarning table:nil]  cancelButtonTitle:[[NSBundle mainBundle]localizedStringForKey:@"proceedResponseButtonTitle" value:@"Proceed" table:nil] otherButtonTitles:[NSArray arrayWithObject:[[NSBundle mainBundle]localizedStringForKey:@"closeResponseButtonTitle" value:@"Close" table:nil]] blockOperations:nil];
-		
-		[warningView	setBlockOperation:[NSBlockOperation blockOperationWithBlock:^{
-			[session invalidate];
-		}] forButtonIndex:1];
-		
-		[warningView show];
-		
-		SRELS(warningView)
-	}
-	
-	[_delegate connectionSessionWasCreatedSuccessfully:session withHandshakeManager:self];
-}
-
-
--(void) didFailCryptoSetupInSession:		(swypConnectionSession*)session error:		(NSError*)cryptoError cryptoManager:(swypCryptoManager*)cryptoManager{
-	EXOLog(@"Failed crypto for session with peer for reason %@", [cryptoError description]);
-	[_delegate connectionSessionCreationFailedForCandidate:[session representedCandidate] withHandshakeManager:self error:cryptoError];
-}
-
 
 
 @end

@@ -165,6 +165,11 @@
 	}
 }
 
+#pragma mark connectivity 
+-(void)updateNetworkAvailability{
+	
+}
+
 #pragma mark -
 #pragma mark private
 -(void)_updateBluetoothAvailability{

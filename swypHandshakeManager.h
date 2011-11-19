@@ -10,7 +10,6 @@
 
 #import <Foundation/Foundation.h>
 #import "swypInfoRef.h"
-#import "swypCryptoManager.h"
 #import "swypClientCandidate.h"
 #import "swypServerCandidate.h"
 #import "swypConnectionSession.h"
@@ -35,12 +34,10 @@ typedef enum {
 @end
 
 
-@interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypCryptoManagerDelegate> {
+@interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate> {
 	NSMutableDictionary *	_resolvingServerCandidates;
 	NSMutableSet *			_pendingConnectionSessions;
-	
-	swypCryptoManager*		_cryptoManager;
-	
+		
 	
 	id<swypHandshakeManagerDelegate>	_delegate;
 }
@@ -74,7 +71,7 @@ typedef enum {
 -(BOOL)	_clientCandidate:	(swypClientCandidate*)clientCandidate	isMatchForSwypInfo:	(swypInfoRef*)swypInfo;
 -(BOOL)	_serverCandidate:	(swypServerCandidate*)serverCandidate	isMatchForSwypInfo:	(swypInfoRef*)swypInfo;
 
--(void)	_handSessionOffForCryptoNegotiation:	(swypConnectionSession*)session;
+-(void)	_postNegotiationSessionHandOff:	(swypConnectionSession*)session;
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session;
 

@@ -11,12 +11,6 @@
 
 @implementation NSString (swypFileTypeNSStringAdditions)
 
-
--(BOOL) isFileType:	(NSString*)fileType{
-	return [self isEqualToString:fileType];
-}
-
-
 +(id) imagePNGFileType{
 	static NSString * type = @"image/png";
 	return type;		
@@ -41,6 +35,11 @@
 +(id) swypCryptoNegotiationFileType{
 	static NSString * type = @"swyp/CryptoNegotiation";
 	return type;
+}
+
+
+-(BOOL) isFileType:	(NSString*)fileType{
+	return [self isEqualToString:fileType];
 }
 
 @end

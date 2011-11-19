@@ -6,11 +6,10 @@
 //  Copyright 2011 ExoMachina. All rights reserved.
 //
 
-
-static NSUInteger const memoryPageSize	=	4096;
-
 #import "swypInputStreamDiscerner.h"
 #import "swypFileTypeString.h"
+
+static unsigned int const memoryPageSize	=	4096;
 
 @implementation swypInputStreamDiscerner
 @synthesize discernmentStream = _discernmentStream, delegate = _delegate;

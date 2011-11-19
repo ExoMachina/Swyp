@@ -24,12 +24,10 @@ Implementation
 	* Swyp supports Wifi and Bluetooth pan (in supporting devices like iOS devices) -pending @ iOS 5
 	* Swyp visually presents the user with all enabled Swyp pathways (so that users know to connect to the same WiFi, for example, or turn on bluetooth)
 	* Swyp could eventually be extended to support connections over cellular connections, providing a service (like Bump's) was created by some future party
-* Swyp uses tls with user-generated certs to ensure transmitted data is opaque
-	* To help mitigate man-in-the-middle attacks, Swyp remembers certificates it has seen previously by device ID
-	* Presents visual queues when a certificate and peer is either new or familiar, and warnings when certificates are changed for peers
-	* Massive cryptographic updates are pending for cryptoV2 
-	* As of Oct29/2011 build, tls is disabled
-
+* Swyp currently is as secure as the host network
+	* If the feature is widely requested, we can implement a tls certificate system as an extension
+	* Insecure networks will have insecure file transfer, making Swyp about average in security 
+	
 Authorship
 -------------
 This project was created by Alexander List of ExoMachina, alist exomachina com with any questions or with interest in helping out.
@@ -45,4 +43,4 @@ Provisions
 	* You are free to use pieces of this software, however these pieces may not be called "Swyp or Swipe" and must not claim Swyp compatability
 * You may not claim to be endorsed by Swyp or ExoMachina
 * You may not use ExoMachina's "Swyp" trademark as the first word in a published application without ExoMachina's permission
-	* Our intent is to reserve the trademark for developers of super-high quality apps, so if you're one, email "hello@exomachina.com"
+	* Our intent is to reserve the trademark for developers of super-legit quality apps, so if you're one, email "hello@exomachina.com"

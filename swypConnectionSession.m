@@ -13,7 +13,7 @@
 static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessionErrorDomain";
 
 @implementation swypConnectionSession
-@synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor, cryptoSession = _cryptoSession;
+@synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
 @synthesize socketOutputTransformStream = _socketOutputTransformStream, socketInputTransformStream = _socketInputTransformStream;
 
 #pragma mark -
@@ -102,55 +102,13 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	if (self = [super init]){
 		_representedCandidate	=	[candidate retain];
 		
-		SecIdentityRef localCryptoIdentity	=	[[swypCryptoManager sharedCryptoManager] localSecIdentity];
-		if (localCryptoIdentity == NULL){
-			EXOLog(@"No crypto identity available, aborting connection session!");
-			return self;
-		}
-		
-//		Disabling certs on ssl for v1
-/*
-		NSDictionary *sslProperties = nil;
-		if ([candidate role] == swypCandidateRoleServer){
-			sslProperties = [NSDictionary dictionaryWithObjectsAndKeys: 
-							 (NSString *)kCFStreamSocketSecurityLevelTLSv1, kCFStreamSSLLevel, 
-							 kCFBooleanTrue, kCFStreamSSLAllowsAnyRoot, 
-							 kCFBooleanTrue, kCFStreamSSLValidatesCertificateChain, 
-							 kCFNull, kCFStreamSSLPeerName, 			//kCFStreamSSLPeerName kCFNull prevents verification of name
-							 [NSArray arrayWithObject:(id)localCryptoIdentity] , kCFStreamSSLCertificates, 
-							 kCFBooleanTrue, kCFStreamSSLIsServer, nil];
-		}else{
-			sslProperties = [NSDictionary dictionaryWithObjectsAndKeys: 
-							 (NSString *)kCFStreamSocketSecurityLevelTLSv1, kCFStreamSSLLevel, 
-							 kCFBooleanTrue, kCFStreamSSLAllowsAnyRoot, 
-							 kCFBooleanTrue, kCFStreamSSLValidatesCertificateChain, 
-							 kCFNull, kCFStreamSSLPeerName, 			//kCFStreamSSLPeerName kCFNull prevents verification of name
-							 [NSArray arrayWithObject:(id)localCryptoIdentity], kCFStreamSSLCertificates, 
-							 kCFBooleanFalse, kCFStreamSSLIsServer, nil];
-		}
- */
-
-		
-		if ([inputStream streamStatus] < NSStreamStatusOpen){
-//	disabling tls for rapid-development purposes
-//			CFReadStreamRef inputReadStream	=	(CFReadStreamRef)inputStream;
-//			CFReadStreamSetProperty(inputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
-//
-//			CFReadStreamSetProperty(inputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
-			
+		if ([inputStream streamStatus] < NSStreamStatusOpen){			
 			
 			[inputStream	setDelegate:self];
 			[inputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 			[inputStream	open];
 		}
 		if ([outputStream streamStatus] < NSStreamStatusOpen){
-//	disabling tls for rapid-development purposes
-//			CFReadStreamRef outputReadStream	=	(CFReadStreamRef)outputStream;
-//			CFReadStreamSetProperty(outputReadStream, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
-//			
-//			CFReadStreamSetProperty(outputReadStream, kCFStreamPropertySSLSettings, (CFDictionaryRef*)sslProperties);
-
-			
 			
 			[outputStream	setDelegate:self];
 			[outputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
@@ -217,9 +175,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	_socketInputTransformInputStream	= [[swypTransformPathwayInputStream alloc] initWithDataInputStream:_socketInputStream transformStreamArray:nil];
 	_inputStreamDiscerner				=	[[swypInputStreamDiscerner alloc] initWithInputStream:_socketInputTransformInputStream discernerDelegate:self];
-	
-	//data send queue holds all outgoing streams, transform pathway does encryption (after crypto negotiation) on everything, and connector slaps it to the output
-	
+		
 	_sendDataQueueStream = [[swypConcatenatedInputStream alloc] init];
 	[_sendDataQueueStream setInfoDelegate:self];
 	[_sendDataQueueStream setCloseStreamAtQueueEnd:FALSE];
