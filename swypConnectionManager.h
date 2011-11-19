@@ -21,6 +21,13 @@
 @end
 
 
+typedef enum {
+	swypAvailableConnectionMethodNone = 0,
+	swypAvailableConnectionMethodWifi = 1 << 1,
+	swypAvailableConnectionMethodBluetooth = 1 <<2 
+} swypAvailableConnectionMethod;
+
+
 @interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
@@ -28,6 +35,8 @@
 	swypBonjourServiceAdvertiser *	_bonjourAdvertiser;
 	
 	swypHandshakeManager *			_handshakeManager;
+	
+	swypAvailableConnectionMethod	_availableConnectionMethods;
 	
 	//swypInfoRefs
 	NSMutableSet *			_swypIns;
@@ -58,4 +67,9 @@
 -(void)	swypOutStartedWithSwypInfoRef:	(swypInfoRef*)outInfo;
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo; 
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo;
+
+
+-(void)updateNetworkAvailability;
+//private 
+-(void)_updateBluetoothAvailability;
 @end

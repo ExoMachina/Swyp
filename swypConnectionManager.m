@@ -8,6 +8,7 @@
 
 #import "swypConnectionManager.h"
 #import "swypDiscernedInputStream.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 
 @implementation swypConnectionManager
 @synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions;
@@ -166,6 +167,18 @@
 
 #pragma mark -
 #pragma mark private
+-(void)_updateBluetoothAvailability{
+	if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 5.0){
+		CBCentralManager * blueManager	=	[[CBCentralManager alloc] initWithDelegate:nil queue:nil];
+		CBCentralManagerState blueState	=	[blueManager state];
+		if (blueState < CBCentralManagerStatePoweredOn){
+			_availableConnectionMethods ^= swypAvailableConnectionMethodBluetooth;
+		}
+		SRELS(blueManager);
+	}
+	//otherwise don't show that bluetooth is available
+}
+
 #pragma mark - System Notifcations
 - (void)_applicationWillResignActive:(NSNotification *)note{
 	[_bonjourAdvertiser suspendNetworkActivity];
