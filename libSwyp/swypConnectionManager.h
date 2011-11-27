@@ -15,18 +15,18 @@
 
 @class swypConnectionManager;
 
-@protocol swypConnectionManagerDelegate <NSObject>
--(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
--(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error;
-@end
-
-
 typedef enum {
 	swypAvailableConnectionMethodNone = 0,
 	swypAvailableConnectionMethodWifi = 1 << 1,
 	swypAvailableConnectionMethodBluetooth = 1 <<2 
 } swypAvailableConnectionMethod;
 
+@protocol swypConnectionManagerDelegate <NSObject>
+-(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
+-(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error;
+
+-(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
+@end
 
 @interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
@@ -48,6 +48,9 @@ typedef enum {
 }
 @property (nonatomic, readonly) NSSet *								activeConnectionSessions;
 @property (nonatomic, assign)	id<swypConnectionManagerDelegate>	delegate;
+
+@property (nonatomic, readonly)	swypAvailableConnectionMethod	availableConnectionMethods;
+
 
 
 /*

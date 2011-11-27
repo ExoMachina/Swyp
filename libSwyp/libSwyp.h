@@ -7,9 +7,33 @@
  *
  */
 
-#import "swypContentInteractionManager.h"
-#import "swypFileTypeString.h"
-#import "swypConnectionSession.h"
+/*
+ ===========================
+ Add swyp to your project with minimal effort
+ 
+ Import the swyp lib '#import <libSwyp/libSwyp.h>'
+ Create a swypWorkspaceViewController
+ Add a datasource to [workspaceViewController contentManager]
+ [[workspaceViewController contentManager] setContentDataSource:(id<swypContentDataSourceProtocol>)newDataSource]
+ display the swypWorkspaceViewController
+ */
+
+
+//the main workspace view controller to show the "Swÿp interface"
 #import "swypWorkspaceViewController.h"
+
+//the following are how you determine what files are available to share on swyp
+#import "swypContentDataSourceProtocol.h"
+//here is an example of a photo datasource
 #import "swypPhotoArrayDatasource.h"
+//supported filetypes are generally specified as constants somehow, like in the following file
+#import "swypFileTypeString.h"
+
+//photo playground is a viewController class that is set as the "contentDisplayController" in the interaction manager
+//the photo playground makes a nice interface for browsing images on a background
+#import "swypPhotoPlayground.h"
+#import "swypContentInteractionManager.h"
+
+#import "swypConnectionSession.h"
+
 #import "swyp.h"

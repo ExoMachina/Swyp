@@ -11,7 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation swypContentInteractionManager
-@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController, showContentBeforeConnection = _showContentBeforeConnection;
+@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController, showContentBeforeConnection = _showContentBeforeConnection, interactionManagerDelegate = _interactionManagerDelegate;
 
 #pragma public
 
@@ -143,9 +143,7 @@
 
 
 - (void)didReceiveMemoryWarning {
-	if ([_swypPromptImageView superview] == nil){
-		SRELS(_swypPromptImageView);
-	}
+	
 }
 
 #pragma mark -
@@ -267,49 +265,19 @@
 }
 
 -(void)		_setupForAllSessionsRemoved{
-	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypIPhonePromptHud.png"]];
-		[_swypPromptImageView setUserInteractionEnabled:FALSE];
+	
+	
+	if (_interactionManagerDelegate != nil){
+		[_interactionManagerDelegate setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:self];
 	}
 	
-	
-	/*	
-	 //rotate prompt image with screen orientation
-	UIDeviceOrientation orientation = [[UIDevice currentDevice]orientation];
-	CGAffineTransform affine = CGAffineTransformIdentity;
-    if (orientation == UIDeviceOrientationPortrait) {
-        affine = CGAffineTransformMakeRotation (0.0);
-    }else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
-        affine = CGAffineTransformMakeRotation (M_PI * 180 / 180.0f);
-    }else if (orientation == UIDeviceOrientationLandscapeLeft) {
-        affine = CGAffineTransformMakeRotation (M_PI * 90 / 180.0f);  
-    }else if (orientation == UIDeviceOrientationLandscapeRight) {
-        affine = CGAffineTransformMakeRotation ( M_PI * 270 / 180.0f);
-	}
-	[_swypPromptImageView setTransform:affine];
-	 */
-	 
-	[_swypPromptImageView setAlpha:0];
-	[_swypPromptImageView setFrame:CGRectMake(_mainWorkspaceView.size.width/2 - (250/2), _mainWorkspaceView.size.height/2 - (250/2), 250, 250)];
-	[_mainWorkspaceView addSubview:_swypPromptImageView];
-	[_mainWorkspaceView sendSubviewToBack:_swypPromptImageView];
-	
-	[UIView animateWithDuration:.75 animations:^{
-		[_swypPromptImageView setAlpha:1];
-	}completion:nil];
-
 	if (_contentDisplayController != nil && _showContentBeforeConnection == NO){
 		[self _displayContentDisplayController:FALSE];
 	}
 }
 -(void)		_setupForFirstSessionAdded{	
-	if ([_swypPromptImageView superview] != nil){
-		[UIView animateWithDuration:.75 animations:^{
-			[_swypPromptImageView setAlpha:0];
-		}completion:^(BOOL completed){
-			[_swypPromptImageView removeFromSuperview];	
-			
-		}];
+	if (_interactionManagerDelegate != nil){
+		[_interactionManagerDelegate setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:self];
 	}
 	
 	[self _displayContentDisplayController:TRUE];
@@ -329,6 +297,7 @@
 			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
 			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
+			[_mainWorkspaceView sendSubviewToBack:_contentDisplayController.view];
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];

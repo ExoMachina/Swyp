@@ -11,7 +11,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 
 @implementation swypConnectionManager
-@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions;
+@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods;
 
 #pragma mark -
 #pragma mark public 
@@ -174,12 +174,12 @@
 #pragma mark private
 -(void)_updateBluetoothAvailability{
 	if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 5.0){
-		CBCentralManager * blueManager	=	[[CBCentralManager alloc] initWithDelegate:nil queue:nil];
-		CBCentralManagerState blueState	=	[blueManager state];
-		if (blueState < CBCentralManagerStatePoweredOn){
-			_availableConnectionMethods ^= swypAvailableConnectionMethodBluetooth;
-		}
-		SRELS(blueManager);
+//		CBCentralManager * blueManager	=	[[CBCentralManager alloc] initWithDelegate:nil queue:nil];
+//		CBCentralManagerState blueState	=	[blueManager state];
+//		if (blueState < CBCentralManagerStatePoweredOn){
+//			_availableConnectionMethods ^= swypAvailableConnectionMethodBluetooth;
+//		}
+//		SRELS(blueManager);
 	}
 	//otherwise don't show that bluetooth is available
 }

@@ -32,11 +32,6 @@
 	return type;
 }
 
-+(id) swypCryptoNegotiationFileType{
-	static NSString * type = @"swyp/CryptoNegotiation";
-	return type;
-}
-
 
 -(BOOL) isFileType:	(NSString*)fileType{
 	return [self isEqualToString:fileType];

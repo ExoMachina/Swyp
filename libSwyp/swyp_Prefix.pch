@@ -6,5 +6,5 @@
 	#import <CoreFoundation/CoreFoundation.h>
     #import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
-	#import "swyp.h"
+	#import "libSwyp.h"
 #endif

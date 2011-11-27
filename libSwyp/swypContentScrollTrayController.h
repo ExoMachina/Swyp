@@ -1,10 +1,17 @@
 //
 //  swypContentScrollTrayController.h
-//  exoNotes
+//  originally from exoNotes
 //
 //  Created by Alexander List on 4/16/11.
 //  Copyright 2011 exoMachina. All rights reserved.
-//
+//	Rights released to swyp framework under relevant license 
+
+//this is an example of a content display view under the 
+// swypContentDisplayViewController protocol used to display content for swyping accross devices...
+//this view controller is given a swypContentDisplayViewControllerDelegate which it can use to pull data from and alert about events
+
+
+//this is much more messy than the tiledViewController
 
 #import <Foundation/Foundation.h>
 #import "swypContentInteractionManager.h"

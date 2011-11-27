@@ -72,10 +72,10 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-	
-    
+	[super touchesBegan:touches withEvent:event];
     
 	for (UITouch * touch in touches){
+		
 		swypPrettyPath *newInstantiatedPath =	[self _newPrettyPath];
 		
 		[_touchToPathCoordinationDictionary setObject:newInstantiatedPath forKey:[NSValue valueWithNonretainedObject:touch]];
@@ -97,12 +97,16 @@
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesCancelled:touches withEvent:event];
+	
 	for (UITouch * touch in touches){
 		[self endPathTouchTrackingWithTouch:touch];
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesEnded:touches withEvent:event];
+	
 	for (UITouch * touch in touches){
 		[self endPathTouchTrackingWithTouch:touch];
 	}

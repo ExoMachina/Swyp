@@ -11,33 +11,36 @@
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
 
+
 @class swypWorkspaceViewController;
 @protocol swypWorkspaceDelegate <NSObject>
 -(void)	delegateShouldDismissSwypWorkspace: (swypWorkspaceViewController*)workspace;
 @end
 
-@interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
+@interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, swypContentInteractionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;
 	swypConnectionManager *				_connectionManager;
-	
-	//*Dictionary of sessions to their views
-	
+		
 	NSString *							_workspaceID;
 
 	BOOL								_showContentWithoutConnection;
-	
 	id<swypWorkspaceDelegate>			_worspaceDelegate;
+	
+	
+	//workspace UI Items	
+	UIImageView *						_swypPromptImageView;
+	UIButton *							_swypWifiAvailableButton;
+	UIButton *							_swypBluetoothAvailableButton;
 }
 
 //if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
 @property (nonatomic, assign)	BOOL							showContentWithoutConnection;
 
-@property (nonatomic, readonly)	NSString *						workspaceID;
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
 
 @property (nonatomic, assign)	id<swypWorkspaceDelegate>		worspaceDelegate;
 
--(id)	initWithContentWorkspaceID:(NSString*)workspaceID workspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
+-(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
 
 @end

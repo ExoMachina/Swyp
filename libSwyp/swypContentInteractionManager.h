@@ -41,6 +41,11 @@
 -(NSInteger)	contentIndexMatchingSwypOutView:	(UIView*)swypedView;
 @end
 
+@protocol swypContentInteractionManagerDelegate <NSObject>
+-(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager;
+-(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager;
+@end
+
 
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
@@ -49,11 +54,11 @@
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
 	
-	UIImageView *											_swypPromptImageView;
-	
 	UIView*													_mainWorkspaceView;
 	
 	BOOL													_showContentBeforeConnection;
+	
+	id<swypContentInteractionManagerDelegate>				_interactionManagerDelegate;
 }	
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
@@ -63,6 +68,10 @@
 
 //if not set, the standard will be assigned
 @property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
+
+
+@property(nonatomic, assign)	id<swypContentInteractionManagerDelegate>					interactionManagerDelegate;
+
 
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent;
 

@@ -13,7 +13,7 @@
 #import "swypWorkspaceBackgroundView.h"
 
 @implementation swypWorkspaceViewController
-@synthesize workspaceID = _workspaceID, connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
+@synthesize connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -56,12 +56,103 @@
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
 	
 }
+
+//update UI
+-(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
+	
+}
+
+
+
+#pragma mark - 
+#pragma mark swypContentInteractionManagerDelegate
+-(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager{
+	if (_swypPromptImageView == nil){
+		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypIPhonePromptHud.png"]];
+		[_swypPromptImageView setUserInteractionEnabled:FALSE];
+	}
+	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
+	
+	if (_swypWifiAvailableButton == nil){
+		_swypWifiAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 74, 50)];
+		[_swypWifiAvailableButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypWifiAvailableButton addTarget:self action:@selector(wifiAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];		
+	}
+	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
+	
+	if (([_connectionManager availableConnectionMethods] & swypAvailableConnectionMethodWifi) == swypAvailableConnectionMethodWifi){
+		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+	
+	
+	if (_swypBluetoothAvailableButton == nil){
+		_swypBluetoothAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 86)];
+		[_swypBluetoothAvailableButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypBluetoothAvailableButton addTarget:self action:@selector(bluetoothAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+	}
+	[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+	
+	if (([_connectionManager availableConnectionMethods] & swypAvailableConnectionMethodWifi) == swypAvailableConnectionMethodWifi){
+		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+
+	/*	
+	 //rotate prompt image with screen orientation
+	 UIDeviceOrientation orientation = [[UIDevice currentDevice]orientation];
+	 CGAffineTransform affine = CGAffineTransformIdentity;
+	 if (orientation == UIDeviceOrientationPortrait) {
+	 affine = CGAffineTransformMakeRotation (0.0);
+	 }else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
+	 affine = CGAffineTransformMakeRotation (M_PI * 180 / 180.0f);
+	 }else if (orientation == UIDeviceOrientationLandscapeLeft) {
+	 affine = CGAffineTransformMakeRotation (M_PI * 90 / 180.0f);  
+	 }else if (orientation == UIDeviceOrientationLandscapeRight) {
+	 affine = CGAffineTransformMakeRotation ( M_PI * 270 / 180.0f);
+	 }
+	 [_swypPromptImageView setTransform:affine];
+	 */
+	[_swypWifiAvailableButton setAlpha:0];
+	[_swypBluetoothAvailableButton setAlpha:0];
+	[_swypPromptImageView setAlpha:0];
+	[self.view addSubview:_swypPromptImageView];
+	[self.view sendSubviewToBack:_swypPromptImageView];
+	[self.view addSubview:_swypWifiAvailableButton];
+	[self.view addSubview:_swypBluetoothAvailableButton];
+	
+	[UIView animateWithDuration:.75 animations:^{
+		[_swypPromptImageView setAlpha:1];
+		[_swypWifiAvailableButton setAlpha:1];
+		[_swypBluetoothAvailableButton setAlpha:1];
+	}completion:nil];
+}
+-(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
+
+	if ([_swypPromptImageView superview] != nil){
+		[UIView animateWithDuration:.75 animations:^{
+			[_swypPromptImageView setAlpha:0];
+			[_swypWifiAvailableButton setAlpha:0];
+			[_swypBluetoothAvailableButton setAlpha:0];
+		}completion:^(BOOL completed){
+			[_swypPromptImageView removeFromSuperview];	
+			[_swypWifiAvailableButton removeFromSuperview];	
+			[_swypBluetoothAvailableButton removeFromSuperview];	
+		}];
+	}
+}
+
 #pragma mark -
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
 		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view showingContentBeforeConnection:_showContentWithoutConnection];
+		[_contentManager setInteractionManagerDelegate:self];
 		
+		#pragma mark CLUDGE!
+		#warning CLUDGE!
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
 		//	So we just run this at the beginning of the next runLoop
 		NSBlockOperation * initializeWorkspaceOperation = [NSBlockOperation blockOperationWithBlock:^{
@@ -85,6 +176,13 @@
 	}
 }
 
+
+-(void)bluetoothAvailableButtonPressed:(id)sender{
+	
+}
+-(void)wifiAvailableButtonPressed:(id)sender{
+	
+}
 
 #pragma mark -
 #pragma mark UIGestureRecognizerDelegate
@@ -121,7 +219,7 @@
 
 
 #pragma mark UIViewController
--(id)	initWithContentWorkspaceID:(NSString*)workspaceID workspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
+-(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
 	if (self = [super initWithNibName:nil bundle:nil]){
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCrossDissolve];
@@ -158,12 +256,44 @@
 
 	UITapGestureRecognizer * leaveWorkspaceRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceRecognizerChanged:)];
 	[leaveWorkspaceRecognizer setNumberOfTapsRequired:2];
+	[leaveWorkspaceRecognizer setDelaysTouchesBegan:FALSE];
+	[leaveWorkspaceRecognizer setDelaysTouchesEnded:FALSE];
+	[leaveWorkspaceRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:leaveWorkspaceRecognizer];
 	SRELS(leaveWorkspaceRecognizer);
 	
+	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
+		
 }
 -(void)	dealloc{
 	
+	SRELS( _swypPromptImageView);
+	SRELS(_swypWifiAvailableButton);
+	SRELS(_swypBluetoothAvailableButton);
+	
 	[super dealloc];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{	
+	[super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+    return TRUE;
+}
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+	
+	[UIView animateWithDuration:.5 animations:^{
+		[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
+		[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
+		[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+	}];
+}
+
+- (void)didReceiveMemoryWarning {
+	if ([_swypPromptImageView superview] == nil){
+		SRELS(_swypPromptImageView);
+		SRELS(_swypWifiAvailableButton);
+		SRELS(_swypBluetoothAvailableButton);
+	}
 }
 @end

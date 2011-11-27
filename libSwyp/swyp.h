@@ -12,16 +12,7 @@
  */
 
 
-/*
-===========================
- Add swyp to your project with minimal effort
- 
-	Import the swyp lib '#import "swyp.h"'
-	Create a swypWorkspaceViewController
-	Add a datasource to [workspaceViewController contentManager]
-		[[workspaceViewController contentManager] setContentDataSource:(id<swypContentDataSourceProtocol>)newDataSource]
-	display the swypWorkspaceViewController
-*/
+//see libSwyp.h for how-to
 
 
 #define DEBUG_MODE_ENABLED 1
@@ -57,6 +48,7 @@
 
 #pragma mark includes
 #import "swypWorkspaceViewController.h"
+#import "swypTiledContentViewController.h"
 #import "swypFileTypeString.h"
 #import "swypContentDataSourceProtocol.h"
 #import "NSDictionary+BSJSONAdditions.h"
