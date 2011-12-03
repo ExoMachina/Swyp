@@ -297,7 +297,6 @@
 			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
 			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
-			[_mainWorkspaceView sendSubviewToBack:_contentDisplayController.view];
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];
