@@ -19,8 +19,13 @@
 
 -(id)	initWithImageDataArray:(NSArray*) arrayOfPhotoData;
 
--(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
--(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex;
+-(void) addUIImageArray:(NSArray*)imageArray;
+-(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex;
+-(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
+//native data-type is png
+-(void) addPhotoDataArray:(NSArray*) arrayOfPhotoData;
+-(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
+-(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex;
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex;
 
 -(UIImage*)	generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize;

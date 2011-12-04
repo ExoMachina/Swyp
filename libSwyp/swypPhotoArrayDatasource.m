@@ -12,7 +12,7 @@
 @implementation swypPhotoArrayDatasource
 
 
--(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
+-(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
 	UIImage * iconImage		=	[self generateIconImageForImageData:photoData maxSize:CGSizeMake(250, 250)];
 	if (iconImage == nil)
 		return;
@@ -23,8 +23,28 @@
 	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self withSession:session];
 }
 
--(void)	addPhoto:(NSData*)photoData atIndex:(NSUInteger)	insertIndex{
-	[self addPhoto:photoData atIndex:insertIndex fromSession:nil];
+-(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex{
+	[self addUIImage:addImage atIndex:insertIndex fromSession:nil];
+}
+
+-(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
+	[self addPhotoData:UIImagePNGRepresentation(addImage) atIndex:insertIndex fromSession:session];
+}
+
+-(void) addUIImageArray:(NSArray*)imageArray{
+	for (UIImage * image in imageArray){
+		[self addUIImage:image atIndex:0];
+	}
+}
+
+-(void) addPhotoDataArray:(NSArray*) arrayOfPhotoData{
+	for (NSData * photoData in arrayOfPhotoData){
+		[self addPhotoData:photoData atIndex:0];
+	}
+}
+
+-(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex{
+	[self addPhotoData:photoData atIndex:insertIndex fromSession:nil];
 }
 
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex{
@@ -104,13 +124,14 @@
 	return [NSArray arrayWithObjects:[NSString imagePNGFileType],[NSString imageJPEGFileType],nil];
 }
 - (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type length: (NSUInteger*)contentLengthDestOrNULL{
-	NSData *	photoJPEGData		=	[_photoDataArray objectAtIndex:contentIndex];
+	
+	NSData *	photoPNGData		=	[_photoDataArray objectAtIndex:contentIndex];
 
 	NSData *	sendPhotoData	=	nil;
 	if ([type isEqualToString:[swypFileTypeString imagePNGFileType]]){
-		sendPhotoData	=  UIImagePNGRepresentation([UIImage imageWithData:photoJPEGData]);
+		sendPhotoData	=  photoPNGData;
 	}else if ([type isEqualToString:[swypFileTypeString imageJPEGFileType]]){
-		sendPhotoData	=	photoJPEGData;
+		sendPhotoData	=	UIImageJPEGRepresentation([UIImage imageWithData:photoPNGData],.8);
 	}
 	
 	if (sendPhotoData == nil){
@@ -138,7 +159,11 @@
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
 	if (streamData != nil){
-		[self addPhoto:streamData atIndex:0 fromSession:session];
+		if ([[discernedStream streamType] isEqualToString:[swypFileTypeString imagePNGFileType]]){
+			[self addPhotoData:streamData atIndex:0 fromSession:session];
+		}else{
+			[self addUIImage:[UIImage imageWithData:streamData] atIndex:0 fromSession:session];
+		}
 	}
 }
 

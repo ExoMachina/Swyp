@@ -215,10 +215,20 @@
 	}
 	return self;
 }
+
+-(void) viewWillAppear:(BOOL)animated{
+	[super viewWillAppear:animated];
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];	
+}
+
+-(void) viewWillDisappear:(BOOL)animated{
+	[super viewWillDisappear:animated];
+	[[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:YES];	
+}
+
 -(void)	viewDidLoad{
 	[super viewDidLoad];
 
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];	
 	
 	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
 	self.view	= backgroundView;

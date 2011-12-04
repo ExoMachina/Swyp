@@ -26,6 +26,8 @@
 #import "swypContentDataSourceProtocol.h"
 //here is an example of a photo datasource
 #import "swypPhotoArrayDatasource.h"
+//and one that tells when you receive a photo
+#import "swypBackedPhotoDataSource.h"
 //supported filetypes are generally specified as constants somehow, like in the following file
 #import "swypFileTypeString.h"
 

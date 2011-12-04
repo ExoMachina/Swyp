@@ -82,8 +82,6 @@
 		794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B514152367000E0113 /* swypContentScrollTrayController.h */; };
 		794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181B614152367000E0113 /* swypContentScrollTrayController.m */; };
 		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
-		794181BE14153865000E0113 /* swypOneImageFileDatasource.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181BC14153865000E0113 /* swypOneImageFileDatasource.h */; };
-		794181BF14153865000E0113 /* swypOneImageFileDatasource.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181BD14153865000E0113 /* swypOneImageFileDatasource.m */; };
 		794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */; };
 		794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */; };
 		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
@@ -94,6 +92,8 @@
 		79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080731481A9B700306F67 /* swypTiledContentViewController.m */; };
 		79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080771481B00C00306F67 /* swypPhotoPlayground.h */; };
 		79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080781481B00C00306F67 /* swypPhotoPlayground.m */; };
+		79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */; };
+		79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */; };
 		79EBFBF11469EAA0006BF5BD /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
@@ -175,8 +175,6 @@
 		794181B514152367000E0113 /* swypContentScrollTrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypContentScrollTrayController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		794181B614152367000E0113 /* swypContentScrollTrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypContentScrollTrayController.m; sourceTree = "<group>"; };
 		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
-		794181BC14153865000E0113 /* swypOneImageFileDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypOneImageFileDatasource.h; sourceTree = "<group>"; };
-		794181BD14153865000E0113 /* swypOneImageFileDatasource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypOneImageFileDatasource.m; sourceTree = "<group>"; };
 		794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewAdditions+swypAdditions.h"; sourceTree = "<group>"; };
 		794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewAdditions+swypAdditions.m"; sourceTree = "<group>"; };
 		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -185,8 +183,10 @@
 		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
 		79C080721481A9B700306F67 /* swypTiledContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTiledContentViewController.h; sourceTree = "<group>"; };
 		79C080731481A9B700306F67 /* swypTiledContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTiledContentViewController.m; sourceTree = "<group>"; };
-		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypPhotoPlayground.h; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/swyp/libSwyp/swypPhotoPlayground.h; sourceTree = "<absolute>"; };
-		79C080781481B00C00306F67 /* swypPhotoPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypPhotoPlayground.m; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/swyp/libSwyp/swypPhotoPlayground.m; sourceTree = "<absolute>"; };
+		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypPhotoPlayground.h; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/lib/swyp/libSwyp/swypPhotoPlayground.h; sourceTree = "<absolute>"; };
+		79C080781481B00C00306F67 /* swypPhotoPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypPhotoPlayground.m; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/lib/swyp/libSwyp/swypPhotoPlayground.m; sourceTree = "<absolute>"; };
+		79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBackedPhotoDataSource.h; sourceTree = "<group>"; };
+		79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBackedPhotoDataSource.m; sourceTree = "<group>"; };
 		79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -472,8 +472,8 @@
 			isa = PBXGroup;
 			children = (
 				794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */,
-				794181BC14153865000E0113 /* swypOneImageFileDatasource.h */,
-				794181BD14153865000E0113 /* swypOneImageFileDatasource.m */,
+				79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */,
+				79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */,
 				792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */,
 				792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */,
 			);
@@ -546,11 +546,11 @@
 				790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */,
 				794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */,
 				794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */,
-				794181BE14153865000E0113 /* swypOneImageFileDatasource.h in Headers */,
 				794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */,
 				792D5C311416B98D0050DF57 /* swypPhotoArrayDatasource.h in Headers */,
 				79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */,
 				79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */,
+				79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -643,11 +643,11 @@
 				790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */,
 				790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */,
 				794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */,
-				794181BF14153865000E0113 /* swypOneImageFileDatasource.m in Sources */,
 				794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */,
 				792D5C321416B98D0050DF57 /* swypPhotoArrayDatasource.m in Sources */,
 				79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */,
 				79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */,
+				79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
