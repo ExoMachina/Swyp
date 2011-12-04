@@ -19,4 +19,6 @@
 }
 @property (nonatomic, assign) 	id<swypBackedPhotoDataSourceDelegate>	backingDelegate;
 
+-(id) initWithBackingDelegate: (id<swypBackedPhotoDataSourceDelegate>)	backingDelegate;
+
 @end

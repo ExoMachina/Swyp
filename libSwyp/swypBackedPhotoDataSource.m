@@ -16,4 +16,12 @@
 		[_backingDelegate swypBackedPhotoDataSourceRecievedPhoto:[UIImage imageWithData:photoData] withDataSource:self];
 	}
 }
+
+
+-(id) initWithBackingDelegate: (id<swypBackedPhotoDataSourceDelegate>)	backingDelegate{
+	if (self = [super init]){
+		[self setBackingDelegate:backingDelegate];
+	}
+	return self;
+}
 @end

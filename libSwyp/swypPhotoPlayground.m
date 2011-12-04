@@ -24,7 +24,7 @@
 	[super viewDidLoad];
 	[self.view setClipsToBounds:FALSE];
 	
-	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(94, 10)];
+	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(120, 10)];
 	[_tiledContentViewController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 	[_tiledContentViewController.view setClipsToBounds:FALSE];
 	[self.view addSubview:_tiledContentViewController.view];

@@ -59,7 +59,21 @@
 	if (loadImage == nil)
 		return nil;
 	
-	CGSize iconSize			=	(maxSize.width * maxSize.height < [loadImage size].width *[loadImage size].height)? maxSize : [loadImage size];
+	CGSize oversize = CGSizeMake([loadImage size].width - maxSize.width, [loadImage size].height - maxSize.height);
+
+	CGSize iconSize			=	CGSizeZero;
+	
+	if (oversize.width > 0 || oversize.height > 0){
+		if (oversize.height > oversize.width){
+			double scaleQuantity	=	maxSize.height/ loadImage.size.height;
+			iconSize		=	CGSizeMake(scaleQuantity * loadImage.size.width, maxSize.height);
+		}else{
+			double scaleQuantity	=	maxSize.width/ loadImage.size.width;	
+			iconSize		=	CGSizeMake(maxSize.width, scaleQuantity * loadImage.size.height);		
+		}
+	}else{
+		iconSize			= [loadImage size];
+	}
 
 	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
 	[loadImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
@@ -77,7 +91,7 @@
 		_cachedPhotoUIImages	=	[[NSMutableArray alloc] init];
 
 		for (NSData * photoData in arrayOfPhotoData){
-			[self addPhoto:photoData atIndex:0];
+			[self addPhotoData:photoData atIndex:0];
 		}
 	}
 	return self;

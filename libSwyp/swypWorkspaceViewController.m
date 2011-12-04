@@ -198,10 +198,8 @@
 	return FALSE;
 }
 
--(void)	leaveWorkspaceRecognizerChanged: (UITapGestureRecognizer*)recognizer{
-	if (recognizer.state == UIGestureRecognizerStateRecognized){
-		[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
-	}
+-(void)	leaveWorkspaceButtonPressed: (id)leaveButton{
+	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
 
 
@@ -251,14 +249,11 @@
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
 
-	UITapGestureRecognizer * leaveWorkspaceRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceRecognizerChanged:)];
-	[leaveWorkspaceRecognizer setNumberOfTapsRequired:2];
-	[leaveWorkspaceRecognizer setDelaysTouchesBegan:FALSE];
-	[leaveWorkspaceRecognizer setDelaysTouchesEnded:FALSE];
-	[leaveWorkspaceRecognizer setCancelsTouchesInView:FALSE];
-	[self.view addGestureRecognizer:leaveWorkspaceRecognizer];
-	SRELS(leaveWorkspaceRecognizer);
-	
+	UIButton * leaveButton	=	[UIButton buttonWithType:UIButtonTypeContactAdd];
+	[leaveButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+	[leaveButton setFrame:CGRectMake(5, 5, 35, 35)];
+	[self.view addSubview:leaveButton];
+
 	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
 		
 }

@@ -60,6 +60,9 @@
 	*backwardPaginationNeeded	= NO;
 	
 	if (pageNumber > [self tilePageCount]){
+		if (pageNumber > 1){
+			return NSMakeRange(NSNotFound, 0);
+		}
 		[NSException raise:@"NSYou'reTooExcitedException" format:@"your requested tile page %i is past the max page # %i",pageNumber,[self tilePageCount]];
 	}
 	
@@ -125,12 +128,17 @@
 }
 
 -(void)		layoutTilePageNumber:(NSInteger)startTilePage{
-	//determine pages to display
+	//determine tiles to display
 	
 	BOOL needsReversePaging =	NO;
 	BOOL needsForwardPaging =	NO;
 	NSRange pageTileRange	=	[self tileRangeForPage:startTilePage needsForwardPagination:&needsForwardPaging needsBackwardPagination:&needsReversePaging];
 	
+	if (pageTileRange.location == NSNotFound){
+		if (startTilePage > 1)
+			[self setCurrentPage:1];
+		return;
+	}
 	
 	//begin layout
 	
@@ -143,7 +151,7 @@
 		UIView *previousTilePageButtonContainerView = [[UIView alloc] initWithFrame:[self frameForTileNumber:tileLayoutIndex]];
 		tileLayoutIndex++;
 		
-		UIImageView *reversePagingImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypTiledPreviousPageImage.png"]];
+		UIImageView *reversePagingImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypTiledContentPreviousPageImage.png"]];
 		float leftForwardMargin = (previousTilePageButtonContainerView.frame.size.width - reversePagingImage.frame.size.width)/2;
 		float upperForwardMargin = (previousTilePageButtonContainerView.frame.size.height - reversePagingImage.frame.size.height)/2;
 		reversePagingImage.frame = CGRectMake(leftForwardMargin, upperForwardMargin, reversePagingImage.frame.size.width,reversePagingImage.frame.size.height);
@@ -179,7 +187,11 @@
 			nextTile.alpha	= 0;
 			[UIView animateWithDuration:.4 animations:^{nextTile.alpha = preAlpha;} completion:nil];
 			
-			[nextTile setFrame:[self frameForTileNumber:tileLayoutIndex]];
+			CGRect tileFrame	= [self frameForTileNumber:tileLayoutIndex];
+			if (CGSizeEqualToSize(tileFrame.size, nextTile.size) == NO){
+				tileFrame.size	= nextTile.size;
+			}
+			[nextTile setFrame:tileFrame];
 
 			[_displayedTileViews addObject:nextTile];
 			[tilesToRemove removeObject:nextTile];
@@ -421,17 +433,17 @@
 	
 	[self.view setFrame:_tileDisplayFrame];
 		
-	UISwipeGestureRecognizer *swipeLeftGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(flipTilePageForward:)];
-	[swipeLeftGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
-	[swipeLeftGesture setNumberOfTouchesRequired:2];
-	[self.view addGestureRecognizer:swipeLeftGesture];
-	SRELS(swipeLeftGesture);
-	
-	UISwipeGestureRecognizer *swipeRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(flipTilePageBack:)];
-	[swipeRightGesture setDirection:UISwipeGestureRecognizerDirectionRight];
-	[swipeRightGesture setNumberOfTouchesRequired:2];
-	[self.view addGestureRecognizer:swipeRightGesture];
-	SRELS(swipeRightGesture);
+//	UISwipeGestureRecognizer *swipeLeftGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(flipTilePageForward:)];
+//	[swipeLeftGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+//	[swipeLeftGesture setNumberOfTouchesRequired:2];
+//	[self.view addGestureRecognizer:swipeLeftGesture];
+//	SRELS(swipeLeftGesture);
+//	
+//	UISwipeGestureRecognizer *swipeRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(flipTilePageBack:)];
+//	[swipeRightGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+//	[swipeRightGesture setNumberOfTouchesRequired:2];
+//	[self.view addGestureRecognizer:swipeRightGesture];
+//	SRELS(swipeRightGesture);
 	
 	[self setCurrentPage:1];
 }
