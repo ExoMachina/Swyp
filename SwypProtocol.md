@@ -1,24 +1,27 @@
 Here is the provisional swyp protocol specification; rows that mention cryptoV2 are not yet implemented
 
-- [ ] 1 All devices listen for "swyp" services on bonjour local
-          [_serverBrowser searchForServicesOfType:@"_swyp._tcp." inDomain:@""];
+- [ ] 1 All devices listen for "swyp" services on bonjour/multicast dns locally
+        a multicast dns browser searches for "swyp" services on "tcp" in the local network
+	On ios, it might be:  [_serverBrowser searchForServicesOfType:@"_swyp._tcp." inDomain:@""];
 - [ ] 2 As a finger touches down on a device, it preemptively posts
-      itself as a tcp server and registers with bonjour as "swyp"
-    - [ ] If the gesture recognizer fails the gesture, the server
-          removes itself
-    - [ ] Otherwise, If the gesture recognizer recognizes, it waits
-          around for a client connection for some generous time interval
-- [ ] 3 All clients see a new server, keeps it in a set of potential
-      servers (as dns-references)
-- [ ] 4 If a client recognizes a swyp gesture, then it tries to connect
+      itself as a tcp server and registers with bonjour on the local network as a "swyp" service
+      under the expectation that a complete swyp might be made to another device
+    - [ ] If the full swipe-off the screen gesture recognizer fails, the server
+          removes itself as a bonjour service
+    - [ ] Otherwise, If the gesture recognizer recognizes/completes, it waits
+          around for a client connection for some generous time interval like 5 seconds
+- [ ] 3 All clients that see a new server store it in a set of potential
+      servers (as references to their dns records)
+- [ ] 4 If a client recognizes/receives a swyp gesture onto the screen, it tries to connect
       to each server listed in its set of potential servers
-    - [ ] Resolving for the ip/host first
+    - [ ] Resolving for the ip/host first through DNS 
               Helpful url: http://lists.apple.com/archives/apple-cdsa/2005/Oct/msg00035.html
-    * [ ]  then making a tcp connection
-- [ ] 5 After connecting, the client sends a hello packet
-    - [ ] (headerDescriptorLength);{type="swyp/controlpacket",
-          tag:"clientHello", length:(payloadlength)}
-        - [ ] { intervalSinceSwypIn:(miliseconds<StrInt>),
+    * [ ]  then making a tcp connection 
+- [ ] 5 After connecting, the client sends a hello packet - in the following () are comments
+    - [ ] All headers are UTF8 strings, the following outline should be understood as a json object
+    - [ ] (headerDescriptorLength)1234;{type="swyp/controlpacket",
+          tag:"clientHello", length:(payloadlength)1234}
+        - [ ] { intervalSinceSwypIn:(miliseconds)23123,
         - [ ] supportedFileTypes:{
                   In order of preference
             - [ ] "video/mpeg","image/png"},
@@ -43,3 +46,5 @@ Here is the provisional swyp protocol specification; rows that mention cryptoV2 
       party sending
     - [ ] (descriptorLength);{tag:"tagForStuff", type:"image/png",
           payloadLength:(NSUInteger)}(PayloadData)
+
+See https://github.com/alist/swyp-python/blob/master/swypConnectionSession.py for an example of a client header specified with escapes in python
