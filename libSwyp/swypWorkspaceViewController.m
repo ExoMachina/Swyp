@@ -76,7 +76,8 @@
 	if (_swypWifiAvailableButton == nil){
 		_swypWifiAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 74, 50)];
 		[_swypWifiAvailableButton setShowsTouchWhenHighlighted:TRUE];
-		[_swypWifiAvailableButton addTarget:self action:@selector(wifiAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];		
+		[_swypWifiAvailableButton addTarget:self action:@selector(wifiAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];	
+		[_swypWifiAvailableButton setEnabled:FALSE];
 	}
 	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
 	
@@ -91,6 +92,7 @@
 		_swypBluetoothAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 86)];
 		[_swypBluetoothAvailableButton setShowsTouchWhenHighlighted:TRUE];
 		[_swypBluetoothAvailableButton addTarget:self action:@selector(bluetoothAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+		[_swypBluetoothAvailableButton setEnabled:FALSE];
 	}
 	[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
 	
@@ -100,21 +102,6 @@
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
 	}
 
-	/*	
-	 //rotate prompt image with screen orientation
-	 UIDeviceOrientation orientation = [[UIDevice currentDevice]orientation];
-	 CGAffineTransform affine = CGAffineTransformIdentity;
-	 if (orientation == UIDeviceOrientationPortrait) {
-	 affine = CGAffineTransformMakeRotation (0.0);
-	 }else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
-	 affine = CGAffineTransformMakeRotation (M_PI * 180 / 180.0f);
-	 }else if (orientation == UIDeviceOrientationLandscapeLeft) {
-	 affine = CGAffineTransformMakeRotation (M_PI * 90 / 180.0f);  
-	 }else if (orientation == UIDeviceOrientationLandscapeRight) {
-	 affine = CGAffineTransformMakeRotation ( M_PI * 270 / 180.0f);
-	 }
-	 [_swypPromptImageView setTransform:affine];
-	 */
 	[_swypWifiAvailableButton setAlpha:0];
 	[_swypBluetoothAvailableButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
@@ -277,7 +264,8 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {	
 	[super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-    return TRUE;
+	
+	return UIInterfaceOrientationIsPortrait(interfaceOrientation);
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
