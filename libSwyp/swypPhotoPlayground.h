@@ -22,4 +22,7 @@
 
 -(UIView*)	viewForTileIndex:(NSUInteger)tileIndex;
 -(void)		setViewTile:(UIView*)view forTileIndex: (NSUInteger)tileIndex;
+
+//this just keeps the photo in bounds
+-(CGRect)	rectToKeepInPlaygroundWithIntendedRect:	(CGRect)intendedRect;
 @end

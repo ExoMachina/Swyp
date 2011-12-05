@@ -62,6 +62,11 @@
 	}
 }
 -(void) setContentDisplayController:(UIViewController<swypContentDisplayViewController> *)contentDisplayController{
+	//we make it nicely sized for you!
+	CGRect contentRect	=	CGRectMake(0,0, [_mainWorkspaceView bounds].size.width,[_mainWorkspaceView bounds].size.height);
+	[contentDisplayController.view setFrame:contentRect];
+	[contentDisplayController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
+	
 	SRELS(_contentDisplayController);
 	_contentDisplayController = [contentDisplayController retain];
 	[_contentDisplayController setContentDisplayControllerDelegate:self];

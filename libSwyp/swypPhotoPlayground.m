@@ -53,6 +53,32 @@
 	return 	[_viewTilesByIndex objectForKey:[NSNumber numberWithInt:tileIndex]];
 }
 
+-(CGRect)	rectToKeepInPlaygroundWithIntendedRect:	(CGRect)intendedRect{
+	
+	CGRect revisedRect		= intendedRect;
+	
+	CGSize negativeOverflow = CGSizeMake((intendedRect.origin.x < -1 * intendedRect.size.width/2)?intendedRect.origin.x - (-1 * intendedRect.size.width/2):0, 
+										 (intendedRect.origin.y < -1 * intendedRect.size.height/2)?intendedRect.origin.y - (-1 * intendedRect.size.height/2):0);
+	
+	CGSize positiveOverflow = CGSizeMake(
+										 (intendedRect.origin.x + intendedRect.size.width > self.view.size.width + intendedRect.size.width/2)?
+										 (self.view.size.width + intendedRect.size.width/2)-(intendedRect.origin.x + intendedRect.size.width):0, 
+										 (intendedRect.origin.y + intendedRect.size.height > self.view.size.height + intendedRect.size.height/2 )?
+										 (self.view.size.height + intendedRect.size.height/2)-(intendedRect.origin.y + intendedRect.size.height):0);
+	
+	if (CGSizeEqualToSize(CGSizeZero, positiveOverflow) == NO){
+		revisedRect.origin.x	+= positiveOverflow.width;
+		revisedRect.origin.y	+= positiveOverflow.height;
+	}
+	
+	if (CGSizeEqualToSize(CGSizeZero, negativeOverflow) == NO){
+		revisedRect.origin.x	-= negativeOverflow.width;
+		revisedRect.origin.y	-= negativeOverflow.height;
+	}
+	
+	return revisedRect;
+}
+
 #pragma mark delegation
 #pragma mark gestures
 -(void)		contentPanOccuredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
@@ -60,7 +86,11 @@
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
 		
 	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
-		[[recognizer view] setFrame:CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y))];
+		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y));
+		newTranslationFrame	=	[self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
+		
+		
+		[[recognizer view] setFrame:newTranslationFrame];
 		[recognizer setTranslation:CGPointZero inView:self.view];
 		
 		NSInteger pannedIndex	= [self contentIndexMatchingSwypOutView:(UIImageView*)recognizer.view];
@@ -70,10 +100,10 @@
 
 		
 	}else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
-		CGPoint currentLocation		=	[[recognizer view] origin];
-		CGPoint glideLocation	 	= CGPointApplyAffineTransform(currentLocation, CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
+		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
+		newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
 		[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
-			[[recognizer view] setOrigin:glideLocation];
+			[[recognizer view] setFrame:newTranslationFrame];
 		}completion:nil];
 		
 		
@@ -157,12 +187,12 @@
 	if (animate){
 		[UIView animateWithDuration:.5 animations:^{
 			[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-				[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setFrame:[_tiledContentViewController frameForTileNumber:idx]];
+				[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
 			}];
 		}];
 	}else{
 		[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-			[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setFrame:[_tiledContentViewController frameForTileNumber:idx]];
+			[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
 		}];
 	}		
 }
