@@ -1,6 +1,19 @@
 Swÿp
 ===========
 
+
+Quickstart
+---------------
+1. Checkout Swyp Photos https://alist@github.com/ExoMachina/Swyp-Photos.git
+2. get submodules: git submodule update -R --init
+3. compile and try out code
+4. fork and checkout https://github.com/exomachina/Swyp
+5. Add path to swyp/libswyp to project build header search paths
+6. Add swyp as target dependency in project settings->targetName->Build Phases
+7. Link Binary With Library "libswyp.a" in Build Phases
+8. Import <libswyp/libswyp.h> wherever needed
+9. Checkout Swyp Photos project for intro to implementation!
+
 About Swÿp
 ----------------
 Pronounced 'Swipe.' The goal of Swyp is to allow any two apps to communicate with each other with a simple gesture bridging two touch screens.
