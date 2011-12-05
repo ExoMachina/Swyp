@@ -1,4 +1,4 @@
-Here is the provisional swyp protocol specification; rows that mention cryptoV2 are not yet implemented
+Here is the v1 swyp protocol specification; all future versions of swyp should cooperate well with it
 
 - [ ] 1 All devices listen for "swyp" services on bonjour/multicast dns locally
         a multicast dns browser searches for "swyp" services on "tcp" in the local network
@@ -16,17 +16,18 @@ Here is the provisional swyp protocol specification; rows that mention cryptoV2 
       to each server listed in its set of potential servers
     - [ ] Resolving for the ip/host first through DNS 
               Helpful url: http://lists.apple.com/archives/apple-cdsa/2005/Oct/msg00035.html
-    * [ ]  then making a tcp connection 
+    * [ ]  then making a tcp connection
 - [ ] 5 After connecting, the client sends a hello packet - in the following () are comments
     - [ ] All headers are UTF8 strings, the following outline should be understood as a json object
+    - [ ] See below for an example client hello
     - [ ] (headerDescriptorLength)1234;{type="swyp/controlpacket",
           tag:"clientHello", length:(payloadlength)1234}
         - [ ] { intervalSinceSwypIn:(miliseconds)23123,
         - [ ] supportedFileTypes:{
                   In order of preference
             - [ ] "video/mpeg","image/png"},
-            - [ ] sessionHue:"color:#0000ff" 
-                      Color set to background, color set to connection indicator
+            - [ ] sessionHue:"0.99,0.44,0.69,0.72" (rgba) 
+                      background set to this color, color set to connection indicator
         - [ ] }
 - [ ] 6 The server sends its hello packet
     - [ ] Accepting
@@ -46,5 +47,10 @@ Here is the provisional swyp protocol specification; rows that mention cryptoV2 
       party sending
     - [ ] (descriptorLength);{tag:"tagForStuff", type:"image/png",
           payloadLength:(NSUInteger)}(PayloadData)
+
+example, (')s are references to data "actually on wire"-- rediculous decimal precsion is not required:
+	clientHelloHeader	=	'74;{n "tag" : "clientHello",n "type" : "swyp/ControlPacket",n "length" : 140}'	
+	clientHelloPayload	=	'{n "supportedFileTypes" : ["image/jpeg"],n "sessionHue" : "0.990000,0.440000,0.690000,0.720000",n "intervalSinceSwypIn" : 1.308031022548676}'
+
 
 See https://github.com/alist/swyp-python/blob/master/swypConnectionSession.py for an example of a client header specified with escapes in python
