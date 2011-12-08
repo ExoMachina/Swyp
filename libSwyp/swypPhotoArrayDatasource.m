@@ -47,6 +47,13 @@
 	[self addPhotoData:photoData atIndex:insertIndex fromSession:nil];
 }
 
+-(void) removeAllPhotos{
+	[_cachedPhotoUIImages removeAllObjects];
+	[_photoDataArray removeAllObjects];
+	
+	[_datasourceDelegate datasourceSignificantlyModifiedContent:self];
+}
+
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex{
 	[_cachedPhotoUIImages removeObjectAtIndex:removeIndex];
 	[_photoDataArray removeObjectAtIndex:removeIndex];

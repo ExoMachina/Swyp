@@ -27,6 +27,7 @@
 -(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session;
 -(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex;
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex;
+-(void) removeAllPhotos;
 
 -(UIImage*)	generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize;
 @end
