@@ -7,6 +7,7 @@
  *
  */
 
+
 /*
  ===========================
  Add swyp to your project with minimal effort
@@ -18,6 +19,10 @@
  display the swypWorkspaceViewController
  */
 
+// Uncomment the following if you wish to support bluetooth; only support iOS5+ 
+// be sure to include CoreBluetooth Framework; this still needs some work, as I'm getting weird issues with
+//		core bluetooth telling me that CBCentralManagerState is always 2 (low-power unsupported)
+//#define BLUETOOTH_ENABLED
 
 //the main workspace view controller to show the "Swÿp interface"
 #import "swypWorkspaceViewController.h"

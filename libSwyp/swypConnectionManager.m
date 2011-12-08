@@ -8,7 +8,6 @@
 
 #import "swypConnectionManager.h"
 #import "swypDiscernedInputStream.h"
-#import <CoreBluetooth/CoreBluetooth.h>
 
 @implementation swypConnectionManager
 @synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods;
@@ -51,7 +50,10 @@
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
-
+		
+		[[exoNetworkReachabilityMonitor sharedReachabilityMonitor] addDelegate:self];
+		//we check bluetooth only once when loading, otherwise it displays shit-loads of UIAlertViews
+		[self _updateBluetoothAvailability];
 		
 	}
 	return self;
@@ -59,7 +61,10 @@
 
 -(void)	dealloc{
 
+	[[exoNetworkReachabilityMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	SRELS(_bluetoothManager);
 	
 	SRELS(_bonjourListener);
 	SRELS(_bonjourAdvertiser);
@@ -165,24 +170,63 @@
 	}
 }
 
-#pragma mark connectivity 
+#pragma mark - connectivity
 -(void)updateNetworkAvailability{
+	swypAvailableConnectionMethod preUpdateAvailability	=	_availableConnectionMethods;
 	
+	networkReachability reachability = [[exoNetworkReachabilityMonitor sharedReachabilityMonitor] lastReachability];
+	if ((reachability & networkReachabilityReachableViaWiFi) == networkReachabilityReachableViaWiFi){
+		_availableConnectionMethods	= (_availableConnectionMethods | swypAvailableConnectionMethodWifi);
+	}else{
+		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodWifi));
+	}
+	
+	//check bluetooth only when it's already started, because it displays pop-ups and starts-up the module
+	if ((_availableConnectionMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
+		[self _updateBluetoothAvailability];	
+	}
+	
+	if (preUpdateAvailability != _availableConnectionMethods){
+		_availableConnectionMethods = _availableConnectionMethods;
+		[_delegate swypAvailableConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
+	}
 }
+
+#pragma mark exoNetworkReachabilityMonitorDelegate 
+-(void)networkReachablityMonitor:(exoNetworkReachabilityMonitor*)monitor changedReachabilityToStatus:(networkReachability)reachability{
+	[self updateNetworkAvailability];
+}
+
+#pragma mark CBCentralManagerDelegate
+- (void)centralManagerDidUpdateState:(id)central{
+	[self _updateBluetoothAvailability];
+}
+
 
 #pragma mark -
 #pragma mark private
 -(void)_updateBluetoothAvailability{
+#ifdef BLUETOOTH_ENABLED
 	if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 5.0){
-//		CBCentralManager * blueManager	=	[[CBCentralManager alloc] initWithDelegate:nil queue:nil];
-//		CBCentralManagerState blueState	=	[blueManager state];
-//		if (blueState < CBCentralManagerStatePoweredOn){
-//			_availableConnectionMethods ^= swypAvailableConnectionMethodBluetooth;
-//		}
-//		SRELS(blueManager);
+	
+		if (_bluetoothManager == nil){
+			_bluetoothManager					=	[[CBCentralManager alloc] initWithDelegate:(id<CBCentralManagerDelegate>)self queue:nil];
+		}
+		
+		CBCentralManagerState blueState		=	[_bluetoothManager state];
+		
+		if (blueState == CBCentralManagerStatePoweredOn){
+			_availableConnectionMethods |= swypAvailableConnectionMethodBluetooth;
+		}else{
+			_availableConnectionMethods = (_availableConnectionMethods & (!swypAvailableConnectionMethodBluetooth));
+		}
+		
 	}
 	//otherwise don't show that bluetooth is available
+#endif
+
 }
+
 
 #pragma mark - System Notifcations
 - (void)_applicationWillResignActive:(NSNotification *)note{
@@ -193,6 +237,10 @@
 - (void)_applicationDidBecomeActive:(NSNotification *)note{
 	[_bonjourAdvertiser resumeNetworkActivity];
 	[_bonjourListener setServiceIsListening:YES];
+	
+	//check network 
+	[self updateNetworkAvailability];
+	
 }
 
 #pragma mark -

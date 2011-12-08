@@ -84,6 +84,9 @@
 		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
 		794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */; };
 		794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */; };
+		79635A7414904DAF0098C265 /* exoNetworkReachabilityMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */; };
+		79635A7514904DAF0098C265 /* exoNetworkReachabilityMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */; };
+		79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79635A7614904DE90098C265 /* SystemConfiguration.framework */; };
 		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
 		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
 		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
@@ -177,6 +180,9 @@
 		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
 		794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewAdditions+swypAdditions.h"; sourceTree = "<group>"; };
 		794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewAdditions+swypAdditions.m"; sourceTree = "<group>"; };
+		79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoNetworkReachabilityMonitor.h; sourceTree = "<group>"; };
+		79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoNetworkReachabilityMonitor.m; sourceTree = "<group>"; };
+		79635A7614904DE90098C265 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
 		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
@@ -198,6 +204,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */,
 				680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */,
@@ -236,6 +243,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79635A7614904DE90098C265 /* SystemConfiguration.framework */,
 				79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */,
 				680FC5B613E251DA00509CF2 /* CoreFoundation.framework */,
 				680FC4EF13E2473E00509CF2 /* UIKit.framework */,
@@ -393,6 +401,7 @@
 		68B18DED13E0B14500D094A9 /* Communications */ = {
 			isa = PBXGroup;
 			children = (
+				79635A7014904D8A0098C265 /* Connectivity */,
 				68B18DE913E0B08F00D094A9 /* Streams */,
 				68B18DF713E0B23200D094A9 /* swypConnectionManager.h */,
 				68B18DF813E0B23200D094A9 /* swypConnectionManager.m */,
@@ -480,6 +489,15 @@
 			name = DataSources;
 			sourceTree = "<group>";
 		};
+		79635A7014904D8A0098C265 /* Connectivity */ = {
+			isa = PBXGroup;
+			children = (
+				79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */,
+				79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */,
+			);
+			name = Connectivity;
+			sourceTree = "<group>";
+		};
 		7977201F13F1730800CF4F60 /* Handling Outside Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -551,6 +569,7 @@
 				79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */,
 				79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */,
 				79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */,
+				79635A7414904DAF0098C265 /* exoNetworkReachabilityMonitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -648,6 +667,7 @@
 				79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */,
 				79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */,
 				79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */,
+				79635A7514904DAF0098C265 /* exoNetworkReachabilityMonitor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

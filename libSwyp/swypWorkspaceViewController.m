@@ -59,7 +59,18 @@
 
 //update UI
 -(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
-	
+	if ((availableMethods & swypAvailableConnectionMethodWifi) == swypAvailableConnectionMethodWifi){
+		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+
+	if ((availableMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
+		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+
 }
 
 
@@ -79,15 +90,10 @@
 		[_swypWifiAvailableButton addTarget:self action:@selector(wifiAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];	
 		[_swypWifiAvailableButton setEnabled:FALSE];
 	}
+	
+#ifdef BLUETOOTH_ENABLED
 	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
-	
-	if (([_connectionManager availableConnectionMethods] & swypAvailableConnectionMethodWifi) == swypAvailableConnectionMethodWifi){
-		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-enabled.png"] forState:UIControlStateNormal];
-	}else{
-		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-disabled.png"] forState:UIControlStateNormal];
-	}
-	
-	
+
 	if (_swypBluetoothAvailableButton == nil){
 		_swypBluetoothAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 50, 86)];
 		[_swypBluetoothAvailableButton setShowsTouchWhenHighlighted:TRUE];
@@ -95,13 +101,14 @@
 		[_swypBluetoothAvailableButton setEnabled:FALSE];
 	}
 	[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+#else
+	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - _swypWifiAvailableButton.size.width/2, self.view.size.height/2 + 30+ (250/2))];
 	
-	if (([_connectionManager availableConnectionMethods] & swypAvailableConnectionMethodWifi) == swypAvailableConnectionMethodWifi){
-		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-enabled.png"] forState:UIControlStateNormal];
-	}else{
-		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
-	}
-
+#endif
+	
+	//set background images
+	[self swypAvailableConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
+	
 	[_swypWifiAvailableButton setAlpha:0];
 	[_swypBluetoothAvailableButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
