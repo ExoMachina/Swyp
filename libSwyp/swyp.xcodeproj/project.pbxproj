@@ -28,8 +28,8 @@
 		680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */; };
 		680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */; };
 		680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */; };
-		680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */; };
-		680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */; };
+		680FC90613E4D62B00509CF2 /* swypBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */; };
+		680FC90713E4D62B00509CF2 /* swypBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */; };
 		680FCB0513E757B500509CF2 /* libSwyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FCB0413E757B500509CF2 /* libSwyp.h */; };
 		680FD27D13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */; };
 		680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */; };
@@ -124,8 +124,8 @@
 		680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BSJSONAdditions.m"; sourceTree = "<group>"; };
 		680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+BSJSONAdditions.h"; sourceTree = "<group>"; };
 		680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+BSJSONAdditions.m"; sourceTree = "<group>"; };
-		680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoBlockOperationAlertView.h; sourceTree = "<group>"; };
-		680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoBlockOperationAlertView.m; sourceTree = "<group>"; };
+		680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBlockOperationAlertView.h; sourceTree = "<group>"; };
+		680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBlockOperationAlertView.m; sourceTree = "<group>"; };
 		680FCB0413E757B500509CF2 /* libSwyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libSwyp.h; sourceTree = "<group>"; };
 		680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceBackgroundView.h; sourceTree = "<group>"; };
 		680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceBackgroundView.m; sourceTree = "<group>"; };
@@ -343,8 +343,8 @@
 		680FC8EE13E4D5FB00509CF2 /* UIKit Subclasses */ = {
 			isa = PBXGroup;
 			children = (
-				680FC90413E4D62B00509CF2 /* exoBlockOperationAlertView.h */,
-				680FC90513E4D62B00509CF2 /* exoBlockOperationAlertView.m */,
+				680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */,
+				680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */,
 			);
 			name = "UIKit Subclasses";
 			sourceTree = "<group>";
@@ -551,7 +551,7 @@
 				680FC62A13E3109500509CF2 /* swypSessionViewController.h in Headers */,
 				680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */,
 				680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */,
-				680FC90613E4D62B00509CF2 /* exoBlockOperationAlertView.h in Headers */,
+				680FC90613E4D62B00509CF2 /* swypBlockOperationAlertView.h in Headers */,
 				680FCB0513E757B500509CF2 /* libSwyp.h in Headers */,
 				680FD27D13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h in Headers */,
 				680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */,
@@ -651,7 +651,7 @@
 				680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */,
 				680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */,
 				680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */,
-				680FC90713E4D62B00509CF2 /* exoBlockOperationAlertView.m in Sources */,
+				680FC90713E4D62B00509CF2 /* swypBlockOperationAlertView.m in Sources */,
 				680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */,
 				680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */,
 				686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */,

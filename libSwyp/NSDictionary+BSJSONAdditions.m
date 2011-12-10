@@ -24,10 +24,10 @@
 #import "NSDictionary+BSJSONAdditions.h"
 #import "NSScanner+BSJSONAdditions.h"
 
-NSString *jsonIndentString = @"\t"; // Modify this string to change how the output formats.
-const int jsonDoNotIndent = -1;
+NSString *jsonIndentTabString = @"\t"; // Modify this string to change how the output formats.
+const int jsonDoNotIndentInt = -1;
 
-@implementation NSDictionary (BSJSONAdditions)
+@implementation NSDictionary (BSJSONSwypAdditions)
 
 + (NSDictionary *)dictionaryWithJSONString:(NSString *)jsonString
 {
@@ -45,35 +45,35 @@ const int jsonDoNotIndent = -1;
 
 @end
 
-@implementation NSDictionary (PrivateBSJSONAdditions)
+@implementation NSDictionary (PrivateBSJSONSwypAdditions)
 
 - (NSString *)jsonStringValueWithIndentLevel:(int)level
 {
 	NSMutableString *jsonString = [[NSMutableString alloc] init];
-    [jsonString appendString:jsonObjectStartString];
+    [jsonString appendString:jsonConstObjectStartString];
 	
 	NSEnumerator *keyEnum = [self keyEnumerator];
 	NSString *keyString = [keyEnum nextObject];
 	NSString *valueString;
 	if (keyString != nil) {
 		valueString = [self jsonStringForValue:[self objectForKey:keyString] withIndentLevel:level];
-        if (level != jsonDoNotIndent) { // indent before each key
-            [jsonString appendString:[self jsonIndentStringForLevel:level]];
+        if (level != jsonDoNotIndentInt) { // indent before each key
+            [jsonString appendString:[self jsonIndentTabStringForLevel:level]];
         }            
-		[jsonString appendFormat:@" %@ %@ %@", [self jsonStringForString:keyString], jsonKeyValueSeparatorString, valueString];
+		[jsonString appendFormat:@" %@ %@ %@", [self jsonStringForString:keyString], jsonConstKeyValueSeparatorString, valueString];
 	}
 	
 	while (keyString = [keyEnum nextObject]) {
 		valueString = [self jsonStringForValue:[self objectForKey:keyString] withIndentLevel:level]; // TODO bail if valueString is nil? How to bail successfully from here?
-        [jsonString appendString:jsonValueSeparatorString];
-        if (level != jsonDoNotIndent) { // indent before each key
-            [jsonString appendFormat:@"%@", [self jsonIndentStringForLevel:level]];
+        [jsonString appendString:jsonConstValueSeparatorString];
+        if (level != jsonDoNotIndentInt) { // indent before each key
+            [jsonString appendFormat:@"%@", [self jsonIndentTabStringForLevel:level]];
         }
-		[jsonString appendFormat:@" %@ %@ %@", [self jsonStringForString:keyString], jsonKeyValueSeparatorString, valueString];
+		[jsonString appendFormat:@" %@ %@ %@", [self jsonStringForString:keyString], jsonConstKeyValueSeparatorString, valueString];
 	}
 	
 	//[jsonString appendString:@"\n"];
-	[jsonString appendString:jsonObjectEndString];
+	[jsonString appendString:jsonConstObjectEndString];
 	
 	return [jsonString autorelease];
 }
@@ -88,13 +88,13 @@ const int jsonDoNotIndent = -1;
 	else if ([value respondsToSelector:@selector(objectAtIndex:)]) // Array
 		jsonString = [self jsonStringForArray:(NSArray *)value withIndentLevel:level];
 	else if (value == [NSNull null]) // null
-		jsonString = jsonNullString;
+		jsonString = jsonConstNullString;
 	else if ([value respondsToSelector:@selector(objCType)]) { // NSNumber - representing true, false, and any form of numeric
 		NSNumber *number = (NSNumber *)value;
 		if (((*[number objCType]) == 'c') && ([number boolValue] == YES)) // true
-			jsonString = jsonTrueString;
+			jsonString = jsonConstTrueString;
 		else if (((*[number objCType]) == 'c') && ([number boolValue] == NO)) // false
-			jsonString = jsonFalseString;
+			jsonString = jsonConstFalseString;
 		else // attempt to handle as a decimal number - int, fractional, exponential
 			// TODO: values converted from exponential json to dict and back to json do not format as exponential again
 			jsonString = [[NSDecimalNumber decimalNumberWithDecimal:[number decimalValue]] stringValue];
@@ -109,7 +109,7 @@ const int jsonDoNotIndent = -1;
 - (NSString *)jsonStringForArray:(NSArray *)array withIndentLevel:(int)level
 {
 	NSMutableString *jsonString = [[NSMutableString alloc] init];
-	[jsonString appendString:jsonArrayStartString];
+	[jsonString appendString:jsonConstArrayStartString];
 	
 	if ([array count] > 0) {
 		[jsonString appendString:[self jsonStringForValue:[array objectAtIndex:0] withIndentLevel:level]];
@@ -117,17 +117,17 @@ const int jsonDoNotIndent = -1;
 	
 	int i;
 	for (i = 1; i < [array count]; i++) {
-		[jsonString appendFormat:@"%@ %@", jsonValueSeparatorString, [self jsonStringForValue:[array objectAtIndex:i] withIndentLevel:level]];
+		[jsonString appendFormat:@"%@ %@", jsonConstValueSeparatorString, [self jsonStringForValue:[array objectAtIndex:i] withIndentLevel:level]];
 	}
 	
-	[jsonString appendString:jsonArrayEndString];
+	[jsonString appendString:jsonConstArrayEndString];
 	return [jsonString autorelease];
 }
 
 - (NSString *)jsonStringForString:(NSString *)string
 {
 	NSMutableString *jsonString = [[NSMutableString alloc] init];
-	[jsonString appendString:jsonStringDelimiterString];
+	[jsonString appendString:jsonConstStringDelimiterString];
 	
 	// Build the result one character at a time, inserting escaped characters as necessary
 	int i;
@@ -171,18 +171,18 @@ const int jsonDoNotIndent = -1;
 				break;
 		}
 	}
-	[jsonString appendString:jsonStringDelimiterString];
+	[jsonString appendString:jsonConstStringDelimiterString];
 	return [jsonString autorelease];
 }
 
-- (NSString *)jsonIndentStringForLevel:(int)level
+- (NSString *)jsonIndentTabStringForLevel:(int)level
 {
     NSMutableString *indentString = [[NSMutableString alloc] init];
-    if (level != jsonDoNotIndent) {
+    if (level != jsonDoNotIndentInt) {
         [indentString appendString:@"\n"];
         int i;
         for (i = 0; i < level; i++) {
-            [indentString appendString:jsonIndentString];
+            [indentString appendString:jsonIndentTabString];
         }
     }
     

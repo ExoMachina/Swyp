@@ -13,7 +13,7 @@
 #import  <arpa/inet.h>
 #include <CFNetwork/CFSocketStream.h>
 
-#import <Security/SecureTransport.h>
+//#import <Security/SecureTransport.h>
 
 
 static NSString * const swypBonjourServiceAdvertiserErrorDomain = @"swypBonjourServiceAdvertiserErrorDomain";

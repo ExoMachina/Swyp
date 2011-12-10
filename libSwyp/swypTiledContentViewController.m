@@ -300,7 +300,7 @@
 	[UIView performPageSwitchAnimationWithExistingView:self.view viewUpdateBlock:^(void){
 		[self setCurrentPage:_currentPage -1 ];
 	}
-									 nextViewGrabBlock:nil direction:UIViewAnimationDirectionRight];
+									 nextViewGrabBlock:nil direction:UIViewPageAnimationDirectionRight];
 	
 }
 
@@ -315,7 +315,7 @@
 				[self setCurrentPage:_currentPage +1 ];
 		
 	}
-						nextViewGrabBlock:nil direction:UIViewAnimationDirectionLeft];	
+						nextViewGrabBlock:nil direction:UIViewPageAnimationDirectionLeft];	
 }
 
 

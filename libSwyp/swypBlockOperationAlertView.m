@@ -1,15 +1,15 @@
 //
-//  exoBlockOperationAlertView.m
+//  swypBlockOperationAlertView.m
 //  Fibromyalgia
 //
 //  Created by Alexander List on 7/29/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "exoBlockOperationAlertView.h"
+#import "swypBlockOperationAlertView.h"
 
 
-@implementation exoBlockOperationAlertView
+@implementation swypBlockOperationAlertView
 
 -(id) initWithoutDelegateWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSArray *)otherButtonTitles blockOperations:(NSArray*)operationsForIndexes{
 	if (self = [super init]){

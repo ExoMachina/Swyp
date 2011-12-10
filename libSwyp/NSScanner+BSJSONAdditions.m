@@ -28,18 +28,18 @@
 
 #import "NSScanner+BSJSONAdditions.h"
 
-NSString *jsonObjectStartString = @"{";
-NSString *jsonObjectEndString = @"}";
-NSString *jsonArrayStartString = @"[";
-NSString *jsonArrayEndString = @"]";
-NSString *jsonKeyValueSeparatorString = @":";
-NSString *jsonValueSeparatorString = @",";
-NSString *jsonStringDelimiterString = @"\"";
-NSString *jsonStringEscapedDoubleQuoteString = @"\\\"";
-NSString *jsonStringEscapedSlashString = @"\\\\";
-NSString *jsonTrueString = @"true";
-NSString *jsonFalseString = @"false";
-NSString *jsonNullString = @"null";
+NSString *jsonConstObjectStartString = @"{";
+NSString *jsonConstObjectEndString = @"}";
+NSString *jsonConstArrayStartString = @"[";
+NSString *jsonConstArrayEndString = @"]";
+NSString *jsonConstKeyValueSeparatorString = @":";
+NSString *jsonConstValueSeparatorString = @",";
+NSString *jsonConstStringDelimiterString = @"\"";
+NSString *jsonConstStringEscapedDoubleQuoteString = @"\\\"";
+NSString *jsonConstStringEscapedSlashString = @"\\\\";
+NSString *jsonConstTrueString = @"true";
+NSString *jsonConstFalseString = @"false";
+NSString *jsonConstNullString = @"null";
 
 @implementation NSScanner (PrivateBSJSONAdditions)
 
@@ -51,28 +51,28 @@ NSString *jsonNullString = @"null";
 	
     /* START - April 21, 2006 - Updated to bypass irrelevant characters at the beginning of a JSON string */
     NSString *ignoredString;
-    [self scanUpToString:jsonObjectStartString intoString:&ignoredString];
+    [self scanUpToString:jsonConstObjectStartString intoString:&ignoredString];
     /* END - April 21, 2006 */
 	
 	if (![self scanJSONObjectStartString]) {
 		// TODO: Error condition. For now, return false result, do nothing with the dictionary handle
 	} else {
-		NSMutableDictionary *jsonKeyValues = [[[NSMutableDictionary alloc] init] autorelease];
+		NSMutableDictionary *jsonConstKeyValues = [[[NSMutableDictionary alloc] init] autorelease];
 		NSString *key = nil;
 		id value;
 		[self scanJSONWhiteSpace];
 		while (([self scanJSONString:&key]) && ([self scanJSONKeyValueSeparator]) && ([self scanJSONValue:&value])) {
-			[jsonKeyValues setObject:value forKey:key];
+			[jsonConstKeyValues setObject:value forKey:key];
 			[self scanJSONWhiteSpace];
 			// check to see if the character at scan location is a value separator. If it is, do nothing.
-			if ([[[self string] substringWithRange:NSMakeRange([self scanLocation], 1)] isEqualToString:jsonValueSeparatorString]) {
+			if ([[[self string] substringWithRange:NSMakeRange([self scanLocation], 1)] isEqualToString:jsonConstValueSeparatorString]) {
 				[self scanJSONValueSeparator];
 			}
 		}
 		if ([self scanJSONObjectEndString]) {
 			// whether or not we found a key-val pair, we found open and close brackets - completing an object
 			result = YES;
-			*dictionary = jsonKeyValues;
+			*dictionary = jsonConstKeyValues;
 		}
 	}
 	return result;
@@ -88,7 +88,7 @@ NSString *jsonNullString = @"null";
 	while ([self scanJSONValue:&value]) {
 		[values addObject:value];
 		[self scanJSONWhiteSpace];
-		if ([[[self string] substringWithRange:NSMakeRange([self scanLocation], 1)] isEqualToString:jsonValueSeparatorString]) {
+		if ([[[self string] substringWithRange:NSMakeRange([self scanLocation], 1)] isEqualToString:jsonConstValueSeparatorString]) {
 			[self scanJSONValueSeparator];
 		}
 	}
@@ -219,28 +219,28 @@ NSString *jsonNullString = @"null";
 	
 	[self scanJSONWhiteSpace];
 	NSString *substring = [[self string] substringWithRange:NSMakeRange([self scanLocation], 1)];
-	unsigned int trueLocation = [[self string] rangeOfString:jsonTrueString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
-	unsigned int falseLocation = [[self string] rangeOfString:jsonFalseString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
-	unsigned int nullLocation = [[self string] rangeOfString:jsonNullString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
+	unsigned int trueLocation = [[self string] rangeOfString:jsonConstTrueString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
+	unsigned int falseLocation = [[self string] rangeOfString:jsonConstFalseString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
+	unsigned int nullLocation = [[self string] rangeOfString:jsonConstNullString options:0 range:NSMakeRange([self scanLocation], ([[self string] length] - [self scanLocation]))].location;
 	
-	if ([substring isEqualToString:jsonStringDelimiterString]) {
+	if ([substring isEqualToString:jsonConstStringDelimiterString]) {
 		result = [self scanJSONString:value];
-	} else if ([substring isEqualToString:jsonObjectStartString]) {
+	} else if ([substring isEqualToString:jsonConstObjectStartString]) {
 		result = [self scanJSONObject:value];
-	} else if ([substring isEqualToString:jsonArrayStartString]) {
+	} else if ([substring isEqualToString:jsonConstArrayStartString]) {
 		result = [self scanJSONArray:value];
 	} else if ([self scanLocation] == trueLocation) {
 		result = YES;
 		*value = [NSNumber numberWithBool:YES];
-		[self setScanLocation:([self scanLocation] + [jsonTrueString length])];
+		[self setScanLocation:([self scanLocation] + [jsonConstTrueString length])];
 	} else if ([self scanLocation] == falseLocation) {
 		result = YES;
 		*value = [NSNumber numberWithBool:NO];
-		[self setScanLocation:([self scanLocation] + [jsonFalseString length])];
+		[self setScanLocation:([self scanLocation] + [jsonConstFalseString length])];
 	} else if ([self scanLocation] == nullLocation) {
 		result = YES;
 		*value = [NSNull null];
-		[self setScanLocation:([self scanLocation] + [jsonNullString length])];
+		[self setScanLocation:([self scanLocation] + [jsonConstNullString length])];
 	} else if (([[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[[self string] characterAtIndex:[self scanLocation]]]) ||
 			   ([[self string] characterAtIndex:[self scanLocation]] == '-')){ // check to make sure it's a digit or -
 		result =  [self scanJSONNumber:value];
@@ -271,37 +271,37 @@ NSString *jsonNullString = @"null";
 
 - (BOOL)scanJSONKeyValueSeparator
 {
-	return [self scanString:jsonKeyValueSeparatorString intoString:nil];
+	return [self scanString:jsonConstKeyValueSeparatorString intoString:nil];
 }
 
 - (BOOL)scanJSONValueSeparator
 {
-	return [self scanString:jsonValueSeparatorString intoString:nil];
+	return [self scanString:jsonConstValueSeparatorString intoString:nil];
 }
 
 - (BOOL)scanJSONObjectStartString
 {
-	return [self scanString:jsonObjectStartString intoString:nil];
+	return [self scanString:jsonConstObjectStartString intoString:nil];
 }
 
 - (BOOL)scanJSONObjectEndString
 {
-	return [self scanString:jsonObjectEndString intoString:nil];
+	return [self scanString:jsonConstObjectEndString intoString:nil];
 }
 
 - (BOOL)scanJSONArrayStartString
 {
-	return [self scanString:jsonArrayStartString intoString:nil];
+	return [self scanString:jsonConstArrayStartString intoString:nil];
 }
 
 - (BOOL)scanJSONArrayEndString
 {
-	return [self scanString:jsonArrayEndString intoString:nil];
+	return [self scanString:jsonConstArrayEndString intoString:nil];
 }
 
 - (BOOL)scanJSONStringDelimiterString;
 {
-	return [self scanString:jsonStringDelimiterString intoString:nil];
+	return [self scanString:jsonConstStringDelimiterString intoString:nil];
 }
 
 @end

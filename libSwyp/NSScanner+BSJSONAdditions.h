@@ -24,18 +24,18 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *jsonObjectStartString;
-extern NSString *jsonObjectEndString;
-extern NSString *jsonArrayStartString;
-extern NSString *jsonArrayEndString;
-extern NSString *jsonKeyValueSeparatorString;
-extern NSString *jsonValueSeparatorString;
-extern NSString *jsonStringDelimiterString;
-extern NSString *jsonStringEscapedDoubleQuoteString;
-extern NSString *jsonStringEscapedSlashString;
-extern NSString *jsonTrueString;
-extern NSString *jsonFalseString;
-extern NSString *jsonNullString;
+extern NSString *jsonConstObjectStartString;
+extern NSString *jsonConstObjectEndString;
+extern NSString *jsonConstArrayStartString;
+extern NSString *jsonConstArrayEndString;
+extern NSString *jsonConstKeyValueSeparatorString;
+extern NSString *jsonConstValueSeparatorString;
+extern NSString *jsonConstStringDelimiterString;
+extern NSString *jsonConstStringEscapedDoubleQuoteString;
+extern NSString *jsonConstStringEscapedSlashString;
+extern NSString *jsonConstTrueString;
+extern NSString *jsonConstFalseString;
+extern NSString *jsonConstNullString;
 
 
 @interface NSScanner (PrivateBSJSONAdditions)

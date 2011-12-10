@@ -7,7 +7,6 @@
 //
 
 #import "swypHandshakeManager.h"
-#import "exoBlockOperationAlertView.h"
 
 static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManagerErrorDomain";
 

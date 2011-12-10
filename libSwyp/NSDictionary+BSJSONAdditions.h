@@ -23,10 +23,10 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *jsonIndentString;
+extern NSString *jsonConstIndentString;
 extern const int jsonDoNotIndent;
 
-@interface NSDictionary (BSJSONAdditions)
+@interface NSDictionary (BSJSONSwypAdditions)
 
 + (NSDictionary *)dictionaryWithJSONString:(NSString *)jsonString;
 - (NSString *)jsonStringValue;
@@ -34,12 +34,12 @@ extern const int jsonDoNotIndent;
 @end
 
 
-@interface NSDictionary (PrivateBSJSONAdditions)
+@interface NSDictionary (PrivateBSJSONSwypAdditions)
 
 - (NSString *)jsonStringValueWithIndentLevel:(int)level;
 - (NSString *)jsonStringForValue:(id)value withIndentLevel:(int)level;
 - (NSString *)jsonStringForArray:(NSArray *)array withIndentLevel:(int)level;
 - (NSString *)jsonStringForString:(NSString *)string;
-- (NSString *)jsonIndentStringForLevel:(int)level;
+- (NSString *)jsonIndentTabStringForLevel:(int)level;
 
 @end

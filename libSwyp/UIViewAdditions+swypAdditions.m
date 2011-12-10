@@ -53,7 +53,7 @@
 }
 
 
-+(void)performPageSwitchAnimationWithExistingView:(UIView*)existingView viewUpdateBlock:(void (^)(void))updateBlock nextViewGrabBlock:(UIView* (^)(void))nextViewGrabBlockOrNil direction:(UIViewAnimationDirection)animationDirection{
++(void)performPageSwitchAnimationWithExistingView:(UIView*)existingView viewUpdateBlock:(void (^)(void))updateBlock nextViewGrabBlock:(UIView* (^)(void))nextViewGrabBlockOrNil direction:(UIViewPageAnimationDirection)animationDirection{
 	
 	CGPoint previousOrigin = existingView.frame.origin;
 	
@@ -90,16 +90,16 @@
 	
 	[nextView.superview insertSubview:animationImageView aboveSubview:nextView];
 	
-	if (animationDirection == UIViewAnimationDirectionRight){
+	if (animationDirection == UIViewPageAnimationDirectionRight){
 		[nextView setOrigin:CGPointMake(-1*existingView.size.width, existingView.frame.origin.y)];
 		
-	}else if (animationDirection == UIViewAnimationDirectionLeft){
+	}else if (animationDirection == UIViewPageAnimationDirectionLeft){
 		[nextView setOrigin:CGPointMake(existingView.size.width, existingView.frame.origin.y)];
 		
-	}else if (animationDirection == UIViewAnimationDirectionDown){
+	}else if (animationDirection == UIViewPageAnimationDirectionDown){
 		[nextView setOrigin:CGPointMake(existingView.frame.origin.x, -1* existingView.frame.size.height)];
 		
-	}else if (animationDirection == UIViewAnimationDirectionUp){
+	}else if (animationDirection == UIViewPageAnimationDirectionUp){
 		[nextView setOrigin:CGPointMake(existingView.frame.origin.x, existingView.frame.size.height)];
 		
 	}
@@ -108,16 +108,16 @@
 	[UIView animateWithDuration:.4 delay:0 options:UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction animations:^{ 
 		[nextView setOrigin:previousOrigin];
 		
-		if (animationDirection == UIViewAnimationDirectionRight){
+		if (animationDirection == UIViewPageAnimationDirectionRight){
 			[animationImageView setOrigin:CGPointMake(animationImageView.width, animationImageView.frame.origin.y)];	
 			
-		}else if (animationDirection == UIViewAnimationDirectionLeft){
+		}else if (animationDirection == UIViewPageAnimationDirectionLeft){
 			[animationImageView setOrigin:CGPointMake(-1*animationImageView.width, animationImageView.frame.origin.y)];	
 			
-		}else if (animationDirection == UIViewAnimationDirectionDown){
+		}else if (animationDirection == UIViewPageAnimationDirectionDown){
 			[animationImageView setOrigin:CGPointMake(animationImageView.frame.origin.x, animationImageView.frame.size.height)];	
 			
-		}else if (animationDirection == UIViewAnimationDirectionUp){
+		}else if (animationDirection == UIViewPageAnimationDirectionUp){
 			[animationImageView setOrigin:CGPointMake(animationImageView.frame.origin.x, -1* animationImageView.frame.size.height)];	
 			
 		}
