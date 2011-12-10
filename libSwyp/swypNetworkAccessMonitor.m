@@ -1,17 +1,17 @@
 //
-//  exoNetworkReachabilityMonitor.m
+//  swypNetworkAccessMonitor.m
 //  exoLib
 //
 //  Created by Alexander List on 7/27/10.
 //  Copyright (c) 2010 List Consulting. All rights reserved.
 //
 
-#import "exoNetworkReachabilityMonitor.h"
+#import "swypNetworkAccessMonitor.h"
 
 
 
-static exoNetworkReachabilityMonitor *reachabilityMonitor;
-@implementation exoNetworkReachabilityMonitor
+static swypNetworkAccessMonitor *reachabilityMonitor;
+@implementation swypNetworkAccessMonitor
 
 static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
 {
@@ -19,7 +19,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     
     if (info != NULL){
         NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
-        NSCAssert([(NSObject*) info isKindOfClass: [exoNetworkReachabilityMonitor class]], @"info was wrong class in ReachabilityCallback");
+        NSCAssert([(NSObject*) info isKindOfClass: [swypNetworkAccessMonitor class]], @"info was wrong class in ReachabilityCallback");
     }
         
     //We're on the main RunLoop, so an NSAutoreleasePool is not necessary, but is added defensively
@@ -33,36 +33,36 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     [myPool release];
 }
 
--(networkReachability)lastReachability{
+-(swypNetworkAccess)lastReachability{
     return recentReachability;
 }
 
 -(void)reachabilityFlagsFound:(SCNetworkReachabilityFlags)flags{
     
-    recentReachability = [self networkReachabilityForFlags:flags];
+    recentReachability = [self swypNetworkAccessForFlags:flags];
     
     for (NSValue * unretValue in _delegates){
-		id<exoNetworkReachabilityMonitorDelegate> delegate = [unretValue nonretainedObjectValue];
+		id<swypNetworkAccessMonitorDelegate> delegate = [unretValue nonretainedObjectValue];
         [delegate networkReachablityMonitor:self changedReachabilityToStatus:recentReachability];
     }    
 }
 
-- (networkReachability) networkReachabilityForFlags: (SCNetworkReachabilityFlags) flags
+- (swypNetworkAccess) swypNetworkAccessForFlags: (SCNetworkReachabilityFlags) flags
 {
 
     if ((flags & kSCNetworkReachabilityFlagsReachable) == 0)
     {
         // if target host is not reachable
-        return networkReachabilityNotReachable;
+        return swypNetworkAccessNotReachable;
     }
     
-    networkReachability retVal = networkReachabilityNotReachable;
+    swypNetworkAccess retVal = swypNetworkAccessNotReachable;
 	
     if ((flags & kSCNetworkReachabilityFlagsIsWWAN) == kSCNetworkReachabilityFlagsIsWWAN)
     {
         // ... but WWAN connections are OK if the calling application
         //     is using the CFNetwork (CFSocketStream?) APIs.
-        retVal = networkReachabilityReachableViaWWAN;
+        retVal = swypNetworkAccessReachableViaWWAN;
     }
 
     
@@ -70,7 +70,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     {
         // if target host is reachable and no connection is required
         //  then we'll assume (for now) that your on Wi-Fi
-        retVal = networkReachabilityReachableViaWiFi;
+        retVal = swypNetworkAccessReachableViaWiFi;
     }
     
     
@@ -83,7 +83,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
         if ((flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0)
         {
             // ... and no [user] intervention is needed
-            retVal = networkReachabilityReachableViaWiFi;
+            retVal = swypNetworkAccessReachableViaWiFi;
         }
     }
     return retVal;
@@ -162,7 +162,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     if (self = [super init]){
         
         _delegates = [[NSMutableSet alloc] init];
-        recentReachability = networkReachabilityNotChecked;
+        recentReachability = swypNetworkAccessNotChecked;
 
     }
     
@@ -171,16 +171,16 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 
 
--(void)addDelegate:(id<exoNetworkReachabilityMonitorDelegate>)delegate{
+-(void)addDelegate:(id<swypNetworkAccessMonitorDelegate>)delegate{
     [_delegates addObject:[NSValue valueWithNonretainedObject:delegate]];
 }
--(void)removeDelegate:(id<exoNetworkReachabilityMonitorDelegate>)delegate{
+-(void)removeDelegate:(id<swypNetworkAccessMonitorDelegate>)delegate{
     [_delegates removeObject:[NSValue valueWithNonretainedObject:delegate]];
 }
 
-+(exoNetworkReachabilityMonitor*)sharedReachabilityMonitor{
++(swypNetworkAccessMonitor*)sharedReachabilityMonitor{
     if (reachabilityMonitor == nil){
-        reachabilityMonitor = [[exoNetworkReachabilityMonitor alloc] init];
+        reachabilityMonitor = [[swypNetworkAccessMonitor alloc] init];
 		[reachabilityMonitor beginCheckingForReachability];
     }
     return reachabilityMonitor;

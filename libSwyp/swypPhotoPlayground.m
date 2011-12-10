@@ -7,6 +7,7 @@
 //
 
 #import "swypPhotoPlayground.h"
+#import "swypTiledContentViewController.h"
 #import <QuartzCore/QuartzCore.h>
 @implementation swypPhotoPlayground
 
@@ -24,10 +25,10 @@
 	[super viewDidLoad];
 	[self.view setClipsToBounds:FALSE];
 	
-	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(120, 10)];
-	[_tiledContentViewController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
-	[_tiledContentViewController.view setClipsToBounds:FALSE];
-	[self.view addSubview:_tiledContentViewController.view];
+	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(120, 10)];
+	[[_tiledContentViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
+	[[_tiledContentViewController view] setClipsToBounds:FALSE];
+	[[self view] addSubview:[_tiledContentViewController view]];
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

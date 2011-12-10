@@ -12,7 +12,7 @@
 #import "swypBonjourServiceAdvertiser.h"
 #import "swypHandshakeManager.h"
 #import "swypInputToDataBridge.h"
-#import "exoNetworkReachabilityMonitor.h"
+#import "swypNetworkAccessMonitor.h"
 
 #ifdef BLUETOOTH_ENABLED
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -34,7 +34,7 @@ typedef enum {
 -(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
 @end
 
-@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate, swypInputToDataBridgeDelegate,exoNetworkReachabilityMonitorDelegate> {
+@interface swypConnectionManager : NSObject <swypBonjourServiceListenerDelegate,swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypBonjourServiceAdvertiserDelegate, swypHandshakeManagerDelegate, swypInputToDataBridgeDelegate,swypNetworkAccessMonitorDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
 	swypBonjourServiceListener *	_bonjourListener;

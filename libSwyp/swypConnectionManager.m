@@ -51,7 +51,7 @@
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
 		
-		[[exoNetworkReachabilityMonitor sharedReachabilityMonitor] addDelegate:self];
+		[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];
 		//we check bluetooth only once when loading, otherwise it displays shit-loads of UIAlertViews
 		[self _updateBluetoothAvailability];
 		
@@ -61,7 +61,7 @@
 
 -(void)	dealloc{
 
-	[[exoNetworkReachabilityMonitor sharedReachabilityMonitor] removeDelegate:self];
+	[[swypNetworkAccessMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	SRELS(_bluetoothManager);
@@ -174,8 +174,8 @@
 -(void)updateNetworkAvailability{
 	swypAvailableConnectionMethod preUpdateAvailability	=	_availableConnectionMethods;
 	
-	networkReachability reachability = [[exoNetworkReachabilityMonitor sharedReachabilityMonitor] lastReachability];
-	if ((reachability & networkReachabilityReachableViaWiFi) == networkReachabilityReachableViaWiFi){
+	swypNetworkAccess reachability = [[swypNetworkAccessMonitor sharedReachabilityMonitor] lastReachability];
+	if ((reachability & swypNetworkAccessReachableViaWiFi) == swypNetworkAccessReachableViaWiFi){
 		_availableConnectionMethods	= (_availableConnectionMethods | swypAvailableConnectionMethodWifi);
 	}else{
 		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodWifi));
@@ -192,8 +192,8 @@
 	}
 }
 
-#pragma mark exoNetworkReachabilityMonitorDelegate 
--(void)networkReachablityMonitor:(exoNetworkReachabilityMonitor*)monitor changedReachabilityToStatus:(networkReachability)reachability{
+#pragma mark swypNetworkAccessMonitorDelegate 
+-(void)networkReachablityMonitor:(swypNetworkAccessMonitor*)monitor changedReachabilityToStatus:(swypNetworkAccess)reachability{
 	[self updateNetworkAvailability];
 }
 

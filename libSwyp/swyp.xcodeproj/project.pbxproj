@@ -84,8 +84,8 @@
 		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
 		794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */; };
 		794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */; };
-		79635A7414904DAF0098C265 /* exoNetworkReachabilityMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */; };
-		79635A7514904DAF0098C265 /* exoNetworkReachabilityMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */; };
+		79635A7414904DAF0098C265 /* swypNetworkAccessMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */; };
+		79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */; };
 		79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79635A7614904DE90098C265 /* SystemConfiguration.framework */; };
 		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
 		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
@@ -180,8 +180,8 @@
 		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
 		794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewAdditions+swypAdditions.h"; sourceTree = "<group>"; };
 		794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewAdditions+swypAdditions.m"; sourceTree = "<group>"; };
-		79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoNetworkReachabilityMonitor.h; sourceTree = "<group>"; };
-		79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoNetworkReachabilityMonitor.m; sourceTree = "<group>"; };
+		79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypNetworkAccessMonitor.h; sourceTree = "<group>"; };
+		79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypNetworkAccessMonitor.m; sourceTree = "<group>"; };
 		79635A7614904DE90098C265 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
@@ -189,8 +189,8 @@
 		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
 		79C080721481A9B700306F67 /* swypTiledContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTiledContentViewController.h; sourceTree = "<group>"; };
 		79C080731481A9B700306F67 /* swypTiledContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTiledContentViewController.m; sourceTree = "<group>"; };
-		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypPhotoPlayground.h; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/lib/swyp/libSwyp/swypPhotoPlayground.h; sourceTree = "<absolute>"; };
-		79C080781481B00C00306F67 /* swypPhotoPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypPhotoPlayground.m; path = /Users/alist/Documents/ExoMachina/dev/swypPhotos/lib/swyp/libSwyp/swypPhotoPlayground.m; sourceTree = "<absolute>"; };
+		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoPlayground.h; sourceTree = "<group>"; };
+		79C080781481B00C00306F67 /* swypPhotoPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPhotoPlayground.m; sourceTree = "<group>"; };
 		79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBackedPhotoDataSource.h; sourceTree = "<group>"; };
 		79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBackedPhotoDataSource.m; sourceTree = "<group>"; };
 		79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -492,8 +492,8 @@
 		79635A7014904D8A0098C265 /* Connectivity */ = {
 			isa = PBXGroup;
 			children = (
-				79635A7214904DAF0098C265 /* exoNetworkReachabilityMonitor.h */,
-				79635A7314904DAF0098C265 /* exoNetworkReachabilityMonitor.m */,
+				79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */,
+				79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */,
 			);
 			name = Connectivity;
 			sourceTree = "<group>";
@@ -569,7 +569,7 @@
 				79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */,
 				79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */,
 				79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */,
-				79635A7414904DAF0098C265 /* exoNetworkReachabilityMonitor.h in Headers */,
+				79635A7414904DAF0098C265 /* swypNetworkAccessMonitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -667,7 +667,7 @@
 				79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */,
 				79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */,
 				79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */,
-				79635A7514904DAF0098C265 /* exoNetworkReachabilityMonitor.m in Sources */,
+				79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

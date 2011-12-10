@@ -1,5 +1,5 @@
 //
-//  exoNetworkReachabilityMonitor.h
+//  swypNetworkAccessMonitor.h
 //  exoLib
 //
 //  Created by Alexander List on 7/27/10.
@@ -18,32 +18,32 @@
 #import <netdb.h>
 
 
-typedef enum networkReachability {
-    networkReachabilityNotChecked = -1,
-   networkReachabilityNotReachable = 0,
-    networkReachabilityReachableViaWiFi,
-    networkReachabilityReachableViaWWAN
-} networkReachability;
+typedef enum swypNetworkAccess {
+    swypNetworkAccessNotChecked = -1,
+   swypNetworkAccessNotReachable = 0,
+    swypNetworkAccessReachableViaWiFi,
+    swypNetworkAccessReachableViaWWAN
+} swypNetworkAccess;
 
-@protocol exoNetworkReachabilityMonitorDelegate;
+@protocol swypNetworkAccessMonitorDelegate;
 
-@interface exoNetworkReachabilityMonitor : NSObject {
+@interface swypNetworkAccessMonitor : NSObject {
     BOOL localWiFiRef;
     SCNetworkReachabilityRef reachabilityRef;
     
-    networkReachability recentReachability;
+    swypNetworkAccess recentReachability;
     
     NSMutableSet *_delegates;
 }
 
 //most relevant methods
--(networkReachability)lastReachability;
+-(swypNetworkAccess)lastReachability;
 
--(void)addDelegate:(id<exoNetworkReachabilityMonitorDelegate>)delegate;
--(void)removeDelegate:(id<exoNetworkReachabilityMonitorDelegate>)delegate;
+-(void)addDelegate:(id<swypNetworkAccessMonitorDelegate>)delegate;
+-(void)removeDelegate:(id<swypNetworkAccessMonitorDelegate>)delegate;
 
 //intializes and begins checking
-+(exoNetworkReachabilityMonitor*)sharedReachabilityMonitor;
++(swypNetworkAccessMonitor*)sharedReachabilityMonitor;
 
 ///****** LESS RELEVANT:
 -(void)beginCheckingForReachability;
@@ -58,10 +58,10 @@ typedef enum networkReachability {
 -(void) examineReachabilityWithAddress: (const struct sockaddr_in*) hostAddress;
 -(void)examineReachabilityForInternetConnection;
 -(void) examineReachabilityForLocalWiFi;
-- (networkReachability)networkReachabilityForFlags: (SCNetworkReachabilityFlags) flags;
+- (swypNetworkAccess)swypNetworkAccessForFlags: (SCNetworkReachabilityFlags) flags;
 
 @end
 
-@protocol exoNetworkReachabilityMonitorDelegate <NSObject>
--(void)networkReachablityMonitor:(exoNetworkReachabilityMonitor*)monitor changedReachabilityToStatus:(networkReachability)reachability;
+@protocol swypNetworkAccessMonitorDelegate <NSObject>
+-(void)networkReachablityMonitor:(swypNetworkAccessMonitor*)monitor changedReachabilityToStatus:(swypNetworkAccess)reachability;
 @end
