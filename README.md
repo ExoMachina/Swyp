@@ -4,8 +4,8 @@ Swÿp
 
 Quickstart
 ---------------
-1. Checkout Swyp Photos https://github.com/ExoMachina/Swyp-Photos
-2. get submodules: git submodule update -R --init
+1. Checkout Swyp Photos https://github.com/ExoMachina/Swyp-Photos.git
+2. get submodules: git submodule update -r --init
 3. compile and try out code
 4. fork and checkout https://github.com/exomachina/Swyp
 5. Add path to swyp/libswyp to project settings -> build settings -> header search paths
