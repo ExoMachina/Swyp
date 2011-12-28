@@ -26,7 +26,7 @@
 - (NSUInteger)		countOfContent;
 - (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex ofMaxSize:(CGSize)maxIconSize;
 - (NSArray*)		supportedFileTypesForContentAtIndex: (NSUInteger)contentIndex;
-- (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL;
+- (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL; //A pointer **EXPLAIN PLEASE
 
 -(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate;
 -(id<swypContentDataSourceDelegate>)	datasourceDelegate;
