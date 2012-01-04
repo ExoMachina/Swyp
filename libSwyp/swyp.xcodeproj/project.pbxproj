@@ -101,8 +101,8 @@
 		79E379F714B508A800C09690 /* cloudSwypOutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379F514B508A800C09690 /* cloudSwypOutManager.m */; };
 		79E379FA14B508BB00C09690 /* cloudSwypInManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379F814B508BB00C09690 /* cloudSwypInManager.h */; };
 		79E379FB14B508BB00C09690 /* cloudSwypInManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379F914B508BB00C09690 /* cloudSwypInManager.m */; };
-		79E379FE14B50AC700C09690 /* cloudSwypNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379FC14B50AC700C09690 /* cloudSwypNetService.h */; };
-		79E379FF14B50AC700C09690 /* cloudSwypNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379FD14B50AC700C09690 /* cloudSwypNetService.m */; };
+		79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379FC14B50AC700C09690 /* swypCloudNetService.h */; };
+		79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379FD14B50AC700C09690 /* swypCloudNetService.m */; };
 		79EBFBF11469EAA0006BF5BD /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
@@ -203,8 +203,8 @@
 		79E379F514B508A800C09690 /* cloudSwypOutManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cloudSwypOutManager.m; sourceTree = "<group>"; };
 		79E379F814B508BB00C09690 /* cloudSwypInManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cloudSwypInManager.h; sourceTree = "<group>"; };
 		79E379F914B508BB00C09690 /* cloudSwypInManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cloudSwypInManager.m; sourceTree = "<group>"; };
-		79E379FC14B50AC700C09690 /* cloudSwypNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cloudSwypNetService.h; sourceTree = "<group>"; };
-		79E379FD14B50AC700C09690 /* cloudSwypNetService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cloudSwypNetService.m; sourceTree = "<group>"; };
+		79E379FC14B50AC700C09690 /* swypCloudNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudNetService.h; sourceTree = "<group>"; };
+		79E379FD14B50AC700C09690 /* swypCloudNetService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudNetService.m; sourceTree = "<group>"; };
 		79EBFBF01469EAA0006BF5BD /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -538,8 +538,8 @@
 				79E379F514B508A800C09690 /* cloudSwypOutManager.m */,
 				79E379F814B508BB00C09690 /* cloudSwypInManager.h */,
 				79E379F914B508BB00C09690 /* cloudSwypInManager.m */,
-				79E379FC14B50AC700C09690 /* cloudSwypNetService.h */,
-				79E379FD14B50AC700C09690 /* cloudSwypNetService.m */,
+				79E379FC14B50AC700C09690 /* swypCloudNetService.h */,
+				79E379FD14B50AC700C09690 /* swypCloudNetService.m */,
 			);
 			name = Cloud;
 			sourceTree = "<group>";
@@ -598,7 +598,7 @@
 				79635A7414904DAF0098C265 /* swypNetworkAccessMonitor.h in Headers */,
 				79E379F614B508A800C09690 /* cloudSwypOutManager.h in Headers */,
 				79E379FA14B508BB00C09690 /* cloudSwypInManager.h in Headers */,
-				79E379FE14B50AC700C09690 /* cloudSwypNetService.h in Headers */,
+				79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,7 +699,7 @@
 				79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */,
 				79E379F714B508A800C09690 /* cloudSwypOutManager.m in Sources */,
 				79E379FB14B508BB00C09690 /* cloudSwypInManager.m in Sources */,
-				79E379FF14B50AC700C09690 /* cloudSwypNetService.m in Sources */,
+				79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
