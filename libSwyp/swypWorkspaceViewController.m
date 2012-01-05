@@ -38,7 +38,7 @@
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
 #pragma mark CLUDGE!
-#warning CLUDGE!
+#pragma mark TODO: make some runloop excuse for this not being a cludge
 	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
 		if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
 			NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];

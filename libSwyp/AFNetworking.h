@@ -26,14 +26,14 @@
 #ifndef _AFNETWORKING_
 #define _AFNETWORKING_
 
-#import <AFNetworking/AFURLConnectionOperation.h>
+#import "AFURLConnectionOperation.h"
 
-#import <AFNetworking/AFHTTPRequestOperation.h>
-#import <AFNetworking/AFHTTPClient.h>
+#import "AFHTTPRequestOperation.h"
+#import "AFHTTPClient.h"
 
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
-#import <AFNetworking/AFNetworkActivityIndicatorManager.h>
+#import "AFNetworkActivityIndicatorManager.h"
 #endif
 
 #endif /* _AFNETWORKING_ */

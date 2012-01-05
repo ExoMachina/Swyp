@@ -9,5 +9,5 @@
 #import "swypCloudNetService.h"
 
 @implementation swypCloudNetService
-
+@synthesize delegate = _delegate;
 @end

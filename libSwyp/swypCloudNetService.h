@@ -6,13 +6,16 @@
 //  Copyright (c) 2012 ExoMachina. All rights reserved.
 //
 
+//this class handles the connecting to and serving of connections for cloud-based peers
+//it makes abstracts away the addresses and ports, and just takes an endpoint, and returns a stream pair
+
 #import <Foundation/Foundation.h>
 
 @class swypCloudNetService;
 @protocol swypCloudNetServiceDelegate <NSObject>
--(void)cloudNetService:(swypCloudNetService*)service didCreateInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerAtAddress:(NSString*)address socket:(NSUInteger)portNumber;
--(void)cloudNetService:(swypCloudNetService*)service didReceiveInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerAtAddress:(NSString*)address socket:(NSUInteger)portNumber;
--(void)cloudNetService:(swypCloudNetService*)service didFailToCreateConnectionWithPeerAtAddress:(NSString*)address socket:(NSUInteger)portNumber;
+-(void)cloudNetService:(swypCloudNetService*)service didCreateInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerFromInfo:(NSDictionary*)peerInfo;
+-(void)cloudNetService:(swypCloudNetService*)service didReceiveInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerFromInfo:(NSDictionary*)peerInfo;
+-(void)cloudNetService:(swypCloudNetService*)service didFailToCreateConnectionWithPeerFromInfo:(NSDictionary*)peerInfo;
 @end
 
 @interface swypCloudNetService : NSObject{
@@ -20,13 +23,20 @@
 	
 	id<swypCloudNetServiceDelegate>		_delegate;
 }
+@property (nonatomic, assign)	id<swypCloudNetServiceDelegate>	delegate; 
+@property (nonatomic, readonly)	NSInteger portNumber;
+
 -(id)initWithDelegate:(id<swypCloudNetServiceDelegate>)delegate;
 
--(void)beginConnectionToPeerAtAddress:(NSString*)address socket:(NSUInteger)portNumber;
-
-/* //To Jingle
- 
--(void)beginConnectionToSmppPeer:(NSString*)peer;
+/*
+//peer info includes the following
+ "port"		: remote listening port
+ "address"	: remote ip address
+ "publicKey": peer's public key
+//To Jingle
+ "smppPeer"	: peer's username
 */
+-(void)beginConnectionToPeerWithInfo:(NSDictionary*)peerInfo;
+
 
 @end
