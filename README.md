@@ -43,7 +43,7 @@ Implementation
 	
 Authorship
 -------------
-This project was created by Alexander List of ExoMachina, alist exomachina com with any questions or with interest in helping out.
+This project was started by Alexander List of ExoMachina, then brought to the MIT Media Lab Fluid Group in 2011.
 
 License 
 --------------
@@ -54,6 +54,6 @@ Provisions
 * You are not permitted to distort the Swyp protocol in a way that breaks or alters interoperability between Swyp apps (see 'Interoperability' above)
 	* You must test your software application's interoperability if you wish to publish it
 	* You are free to use pieces of this software, however these pieces may not be called "Swyp or Swipe" and must not claim Swyp compatability
-* You may not claim to be endorsed by Swyp or ExoMachina
+* You may not claim to be endorsed by Swyp, ExoMachina, the MIT Media Lab or it's subsidiaries (without permission)
 * You may not use ExoMachina's "Swyp" trademark as the first word in a published application without ExoMachina's permission
 	* Our intent is to reserve the trademark for developers of super-legit quality apps, so if you're one, email "hello@exomachina.com"
