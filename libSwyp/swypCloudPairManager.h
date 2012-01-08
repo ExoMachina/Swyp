@@ -42,6 +42,9 @@
 
 -(void)swypInCompleted:	(swypInfoRef*)swyp;
 
+-(void)	suspendNetworkActivity;
+-(void)	resumeNetworkActivity;
+
 //private
 -(NSDictionary*)_userInfoDictionary;
 

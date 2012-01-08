@@ -16,10 +16,12 @@
 #pragma mark public 
 
 -(void)	startServices{
+	[_cloudPairManager resumeNetworkActivity];
 	[_bonjourListener	setServiceIsListening:TRUE];
 }
 
 -(void)	stopServices{
+	[_cloudPairManager suspendNetworkActivity];
 	[_bonjourListener	setServiceIsListening:FALSE];
 	[_bonjourAdvertiser setAdvertising:FALSE];
 
@@ -45,6 +47,8 @@
 		_bonjourAdvertiser	= [[swypBonjourServiceAdvertiser alloc] init];
 		[_bonjourAdvertiser setDelegate:self];
 		
+		_cloudPairManager	= [[swypCloudPairManager alloc] initWithSwypCloudPairManagerDelegate:self];
+		
 		_handshakeManager	= [[swypHandshakeManager alloc] init];
 		[_handshakeManager	setDelegate:self];
 		
@@ -69,6 +73,8 @@
 	SRELS(_bonjourListener);
 	SRELS(_bonjourAdvertiser);
 	SRELS(_handshakeManager);
+	
+	SRELS(_cloudPairManager);
 	
 	for (NSTimer * timer in _swypOutTimeouts){
 		[timer invalidate];
@@ -121,8 +127,8 @@
 	[_swypIns addObject:inInfo];
 	SRELS(swypInTimeout);
 
-	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];
-
+	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];	
+	[_cloudPairManager swypInCompleted:inInfo];
 }
 -(void) swypInResponseTimeoutOccuredWithTimer:	(NSTimer*)timeoutTimer{
 	[_swypInTimeouts removeObject:timeoutTimer];
@@ -141,6 +147,8 @@
 -(void)	swypOutStartedWithSwypInfoRef:	(swypInfoRef*)outInfo{
 	[_bonjourAdvertiser setAdvertising:TRUE];
 	[_swypOuts addObject:outInfo];
+	
+	[_cloudPairManager swypOutBegan:outInfo];
 }
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo{
 	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:4 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
@@ -148,6 +156,8 @@
 	[_swypOutTimeouts addObject:swypOutTimeout];
 	[_swypOuts addObject:outInfo];
 	SRELS(swypOutTimeout);
+	
+	[_cloudPairManager swypOutCompleted:outInfo];
 }
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo{
 	[_swypOuts removeObject:outInfo];
@@ -155,6 +165,8 @@
 	if (SetHasItems(_swypOuts) == NO){
 		[_bonjourAdvertiser setAdvertising:FALSE];		
 	}
+	
+	[_cloudPairManager swypOutFailed:outInfo];
 }
 
 -(void) swypOutResponseTimeoutOccuredWithTimer:	(NSTimer*)timeoutTimer{
@@ -180,7 +192,14 @@
 	}else{
 		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodWifi));
 	}
-	
+
+	if ((reachability & swypNetworkAccessReachableViaWWAN) == swypNetworkAccessReachableViaWWAN || (reachability & swypNetworkAccessReachableViaWiFi) == swypNetworkAccessReachableViaWiFi){
+		//this means the net is accessable, so we can do cloud connect
+		_availableConnectionMethods	= (_availableConnectionMethods | swypAvailableConnectionMethodCloud);
+	}else{
+		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodCloud));
+	}
+
 	//check bluetooth only when it's already started, because it displays pop-ups and starts-up the module
 	if ((_availableConnectionMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
 		[self _updateBluetoothAvailability];	
@@ -210,7 +229,7 @@
 	if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 5.0){
 	
 		if (_bluetoothManager == nil){
-			_bluetoothManager					=	[[CBCentralManager alloc] initWithDelegate:(id<CBCentralManagerDelegate>)self queue:nil];
+			_bluetoothManager				=	[[CBCentralManager alloc] initWithDelegate:(id<CBCentralManagerDelegate>)self queue:nil];
 		}
 		
 		CBCentralManagerState blueState		=	[_bluetoothManager state];
@@ -230,11 +249,13 @@
 
 #pragma mark - System Notifcations
 - (void)_applicationWillResignActive:(NSNotification *)note{
+	[_cloudPairManager suspendNetworkActivity];
 	[_bonjourAdvertiser suspendNetworkActivity];
 	[_bonjourListener setServiceIsListening:NO];
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification *)note{
+	[_cloudPairManager resumeNetworkActivity];
 	[_bonjourAdvertiser resumeNetworkActivity];
 	[_bonjourListener setServiceIsListening:YES];
 	

@@ -22,9 +22,6 @@
 
 -(swypPairServerInteractionManger*)pairServerManager{
 	if (_pairServerManager == nil){
-
-		if (_swypTokenBySwypRef == nil)	_swypTokenBySwypRef		= [NSMutableDictionary new];
-		if (_swypRefByPeerInfo == nil)	_swypRefByPeerInfo		= [NSMutableDictionary new];
 		
 		_pairServerManager	=	[[swypPairServerInteractionManger alloc] initWithDelegate:self];
 	}
@@ -38,8 +35,6 @@
 }
 -(void)swypOutCompleted:(swypInfoRef*)swyp{
 	[[self pairServerManager] putSwypUpdateToPairServer:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]] withUserInfo:[self _userInfoDictionary]];
-
-	[NSTimer scheduledTimerWithTimeInterval:1 target:[NSBlockOperation blockOperationWithBlock:^{[[self pairServerManager] updateSwypPairStatus:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]]];}] selector:@selector(start) userInfo:nil repeats:NO];
 }
 -(void)swypOutFailed:(swypInfoRef*)swyp{
 	[[self pairServerManager] deleteSwypFromPairServer:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]]];
@@ -49,10 +44,20 @@
 	[[self pairServerManager] postSwypToPairServer:swyp withUserInfo:[self _userInfoDictionary]];
 }
 
+-(void)	suspendNetworkActivity{
+	[[self cloudService] suspendNetworkActivity];
+}
+-(void)	resumeNetworkActivity{
+	[[self cloudService] resumeNetworkActivity];	
+}
+
 #pragma mark NSObject
 -(id)initWithSwypCloudPairManagerDelegate:(id<swypCloudPairManagerDelegate>) delegate{
 	if (self = [super init]){
 		_delegate	=	delegate;
+		_swypTokenBySwypRef		= [NSMutableDictionary new];
+		_swypRefByPeerInfo		= [NSMutableDictionary new];
+
 	}
 	return self;
 }
@@ -82,13 +87,39 @@
 #pragma mark - delegation
 #pragma mark swypCloudNetServiceDelegate
 -(void)cloudNetService:(swypCloudNetService*)service didCreateInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerFromInfo:(NSDictionary*)peerInfo{
+	swypServerCandidate * candidate = [[swypServerCandidate alloc] init];
+	// if xmpp 	[candidate setNametag:[peerInfo valueForKey:@"smppPeer"]];
+
+	swypInfoRef *swypRef			= 	[_swypRefByPeerInfo objectForKey:[NSValue valueWithNonretainedObject:peerInfo]];
 	
+	if (swypRef == nil){
+		return;
+	}else{
+		//cleanup time
+		[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swypRef]];
+		[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; //autoreleasing here
+	}
+	
+	[candidate setMatchedLocalSwypInfo:swypRef];
+
+	[_delegate swypCloudPairManager:self didCreateSwypConnectionToServer:candidate withStreamIn:inputStream streamOut:outputStream];
+
+	SRELS(candidate);
 }
 -(void)cloudNetService:(swypCloudNetService*)service didReceiveInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerFromInfo:(NSDictionary*)peerInfo{
+	swypClientCandidate * candidate =	[[swypClientCandidate alloc] init];
+	// if xmpp 	[candidate setNametag:[peerInfo valueForKey:@"smppPeer"]];
+	
+	[_delegate swypCloudPairManager:self didReceiveSwypConnectionFromClient:candidate withStreamIn:inputStream streamOut:outputStream];
+	
+	SRELS(candidate);
 	
 }
 -(void)cloudNetService:(swypCloudNetService*)service didFailToCreateConnectionWithPeerFromInfo:(NSDictionary*)peerInfo{
-	
+
+	swypInfoRef *swypRef	= 	[_swypRefByPeerInfo objectForKey:[NSValue valueWithNonretainedObject:peerInfo]];
+	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swypRef]];
+	[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; 
 }
 
 #pragma mark swypPairServerInteractionMangerDelegate
@@ -97,15 +128,25 @@
 	
 	if (peerInfo){
 		[_swypRefByPeerInfo setObject:swyp forKey:[NSValue valueWithNonretainedObject:peerInfo]];
-		[_cloudService beginConnectionToPeerWithInfo:peerInfo];
+		
+		if ([swyp swypType] == swypInfoRefTypeSwypIn){
+			[[self cloudService] beginConnectionToPeerWithInfo:peerInfo];
+			EXOLog(@"%@", @"attempting WAN conneciton after swypIn pairing");
+		}else{
+			EXOLog(@"%@", @"got swypOut peerInfo after pairing");
+		}
+	}else if ([swyp swypType] == swypInfoRefTypeSwypOut){
+		[NSTimer scheduledTimerWithTimeInterval:.5 target:[NSBlockOperation blockOperationWithBlock:^{[[self pairServerManager] updateSwypPairStatus:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]]];}] selector:@selector(start) userInfo:nil repeats:NO];
+		
+		EXOLog(@"%@",@"Automatically scheduling swypOut swypPair update after pending-peer response");
+	}else{
+		EXOLog(@"%@",@"Weird no-peer no-fail response from swyp-in");
 	}
-
-#pragma mark TODO: remove old swyps
-	//we could go on an infitite loop until we hit "failed" or the server actually stops responding, or we've expired locally; at that point we can drop the pair attempt -- but for now we're good
 }
 
 -(void)swypPairServerInteractionManger:(swypPairServerInteractionManger*)manager didFailToGetSwypInfoForSwypRef:(swypInfoRef*)swyp orSwypToken:(NSString*)token{
-	//if peer exists, remove it
+	
+	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swyp]];
 }
 
 @end

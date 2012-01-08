@@ -65,11 +65,18 @@
 		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-disabled.png"] forState:UIControlStateNormal];
 	}
 
+	if ((availableMethods & swypAvailableConnectionMethodCloud) == swypAvailableConnectionMethodCloud){
+		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"cloud-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"cloud-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+	
 	if ((availableMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-enabled.png"] forState:UIControlStateNormal];
 	}else{
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
 	}
+	
 
 }
 
@@ -91,6 +98,14 @@
 		[_swypWifiAvailableButton setEnabled:FALSE];
 	}
 	
+	if (_swypCloudAvailableButton == nil){
+		_swypCloudAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 74)];
+		[_swypCloudAvailableButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypCloudAvailableButton addTarget:self action:@selector(cloudAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];	
+		[_swypCloudAvailableButton setEnabled:FALSE];
+	}
+
+	
 #ifdef BLUETOOTH_ENABLED
 	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
 
@@ -101,8 +116,12 @@
 		[_swypBluetoothAvailableButton setEnabled:FALSE];
 	}
 	[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+
+	[_swypCloudAvailableButton setOrigin:CGPointMake(self.view.size.width + 50, self.view.size.height/2 + 10+ (250/2))];
 #else
-	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - _swypWifiAvailableButton.size.width/2, self.view.size.height/2 + 30+ (250/2))];
+	
+	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
+	[_swypCloudAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
 	
 #endif
 	

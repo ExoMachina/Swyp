@@ -22,8 +22,8 @@
 
 #import "AFURLConnectionOperation.h"
 
-static NSUInteger const kAFHTTPMinimumInitialDataCapacity = 1024;
-static NSUInteger const kAFHTTPMaximumInitialDataCapacity = 1024 * 1024 * 8;
+static unsigned int const kAFHTTPMinimumInitialDataCapacity = 1024;
+static unsigned int const kAFHTTPMaximumInitialDataCapacity = 1024 * 1024 * 8;
 
 typedef enum {
     AFHTTPOperationReadyState       = 1,
