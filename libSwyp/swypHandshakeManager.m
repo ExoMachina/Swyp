@@ -23,6 +23,10 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[self _initializeConnectionSessionObjectForCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
 }
 
+-(void) beginHandshakeProcessWithPrePairedCandidate: (swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
+	[self _initializeConnectionSessionObjectForCandidate:candidate streamIn:inputStream streamOut:outputStream];
+}
+
 #pragma mark -
 #pragma mark NSObject
 

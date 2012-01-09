@@ -320,6 +320,15 @@
 }
 
 #pragma mark -
+#pragma mark swypCloudPairManagerDelegate
+-(void)swypCloudPairManager:(swypCloudPairManager*)manager didReceiveSwypConnectionFromClient:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream{
+	[_handshakeManager beginHandshakeProcessWithPrePairedCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
+}
+-(void)swypCloudPairManager:(swypCloudPairManager*)manager didCreateSwypConnectionToServer:(swypServerCandidate*)serverCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream{
+	[_handshakeManager beginHandshakeProcessWithPrePairedCandidate:serverCandidate streamIn:inputStream streamOut:outputStream];
+}
+
+#pragma mark -
 #pragma mark swypInputToDataBridgeDelegate
 -(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge{
 	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){

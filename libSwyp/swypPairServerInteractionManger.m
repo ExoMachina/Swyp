@@ -37,7 +37,7 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 #pragma mark server coms
 -(void)postSwypToPairServer:(swypInfoRef*)swyp withUserInfo:(NSDictionary*)contextInfo{
 	NSMutableDictionary * swypPairParameters	= [NSMutableDictionary dictionary];
-	[swypPairParameters setValue:@"80" forKey:@"port"];
+	[swypPairParameters setValue:[contextInfo valueForKey:@"port"] forKey:@"port"];
 	[swypPairParameters setValue:[[NSNumber numberWithDouble:[swyp velocity]] stringValue] forKey:@"velocity"];
 	[swypPairParameters setValue:@"some publicKey" forKey:@"publicKey"];
 	[swypPairParameters setValue:@"some where (longlat)" forKey:@"where"];
@@ -52,6 +52,8 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	}];
 	
 	[[self httpRequestManager] enqueueHTTPRequestOperation:pairOperation];
+	
+	EXOLog(@"Enqued postSwypToPairServer w/ port %@",[[contextInfo valueForKey:@"port"] stringValue]);
 }
 -(void)putSwypUpdateToPairServer:(swypInfoRef*)swyp swypToken:(NSString*)token withUserInfo:(NSDictionary*)contextInfo{
 	
@@ -60,6 +62,10 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	
 }
 -(void)updateSwypPairStatus:(swypInfoRef*)swyp swypToken:(NSString*)token{
+	if (StringHasText(token) == NO){
+		[self _processSwypPairConnectionFailureWithResponse:nil error:nil swypRef:swyp];
+		return;
+	}
 	NSString * pairPath					=	([swyp swypType] == swypInfoRefTypeSwypOut)? @"swyp_outs/": @"swyp_ins/";
 	NSString * statusRequestPath		=	[pairPath stringByAppendingString:token];
 	NSMutableURLRequest * pairRequest	=	[[self httpRequestManager] requestWithMethod:@"GET" path:statusRequestPath parameters:nil];
@@ -71,6 +77,8 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	}];
 	
 	[[self httpRequestManager] enqueueHTTPRequestOperation:pairOperation];	
+	
+	EXOLog(@"Enqued updateSwypPairStatus w/ token %@",token);
 }
 
 #pragma mark - Private
@@ -95,8 +103,8 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	
 	NSDictionary * peerResponse	=	[responseDict valueForKey:@"peer"];
 	NSMutableDictionary	* peerInfo	=	nil;
-	if (peerResponse != nil){
-		//we'll essentially trust the server not give us shitty responses
+	if (peerResponse != nil && [peerResponse isKindOfClass:[NSNull class]] == NO){
+		//we'll essentially trust the server not give us shitty responses, but still observe my conservative approach
 		peerInfo		= [NSMutableDictionary dictionary];
 		
 		NSNumber * port	=  [peerResponse valueForKey:@"port"];

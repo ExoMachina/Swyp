@@ -15,6 +15,8 @@
 #pragma mark - public
 -(void)beginConnectionToPeerWithInfo:(NSDictionary*)peerInfo{
 	
+	//xmpp to come
+	[self _connectToServerWithIP:[peerInfo valueForKey:@"address"] port:[[peerInfo valueForKey:@"port"] intValue] info:peerInfo];
 }
 
 -(NSUInteger)portNumber{

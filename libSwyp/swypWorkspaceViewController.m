@@ -131,15 +131,19 @@
 	[_swypWifiAvailableButton setAlpha:0];
 	[_swypBluetoothAvailableButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
+	[_swypCloudAvailableButton setAlpha:0];
 	[self.view addSubview:_swypPromptImageView];
 	[self.view sendSubviewToBack:_swypPromptImageView];
 	[self.view addSubview:_swypWifiAvailableButton];
 	[self.view addSubview:_swypBluetoothAvailableButton];
+	[self.view addSubview:_swypCloudAvailableButton];
+	
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
 		[_swypWifiAvailableButton setAlpha:1];
 		[_swypBluetoothAvailableButton setAlpha:1];
+		[_swypCloudAvailableButton setAlpha:1];
 	}completion:nil];
 }
 -(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
@@ -149,10 +153,12 @@
 			[_swypPromptImageView setAlpha:0];
 			[_swypWifiAvailableButton setAlpha:0];
 			[_swypBluetoothAvailableButton setAlpha:0];
+			[_swypCloudAvailableButton setAlpha:0];
 		}completion:^(BOOL completed){
 			[_swypPromptImageView removeFromSuperview];	
 			[_swypWifiAvailableButton removeFromSuperview];	
 			[_swypBluetoothAvailableButton removeFromSuperview];	
+			[_swypCloudAvailableButton removeFromSuperview];
 		}];
 	}
 }

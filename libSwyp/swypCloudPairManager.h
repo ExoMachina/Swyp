@@ -28,6 +28,8 @@
 	
 	NSMutableDictionary	*			_swypTokenBySwypRef;	//stored when swypToken given for swyp
 	NSMutableDictionary *			_swypRefByPeerInfo;		//stored when peer retreived from cloud
+	
+	NSMutableSet *					_cloudPairPendingSwypRefs; //stored before cloud access, removed afterwards
 }
 @property (nonatomic, readonly)	swypCloudNetService*			cloudService;
 @property (nonatomic, readonly)	swypPairServerInteractionManger*pairServerManager;
@@ -47,5 +49,6 @@
 
 //private
 -(NSDictionary*)_userInfoDictionary;
+-(void)	_invalidateSwypRef:(swypInfoRef*)swyp;
 
 @end
