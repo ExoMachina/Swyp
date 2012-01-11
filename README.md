@@ -5,7 +5,7 @@ main branch at github.com/swyp/swyp
 Quickstart
 ---------------
 1. Checkout Swyp Photos git@github.com:Swyp/Swyp-Photos.git // https://github.com/Swyp/Swyp-Photos
-2. get submodules: git submodule update -r --init
+2. pull submodules: git submodule update -r --init
 3. compile and try out code
 4. to get into new app: fork and checkout https://github.com/Swyp/Swyp
 5. Add path to swyp/libswyp to project settings -> build settings -> header search paths
