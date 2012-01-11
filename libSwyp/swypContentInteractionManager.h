@@ -22,6 +22,8 @@
 -(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
 @end
 
+#pragma mark TODO
+//bring me into seperate .h!
 @protocol swypContentDisplayViewController <NSObject>
 -(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate;
 -(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation;

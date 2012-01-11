@@ -44,8 +44,9 @@ typedef enum {
 @property (nonatomic, assign)	id<swypHandshakeManagerDelegate>	delegate;
 /*
 	LEARN: We accept a set of Server candidates, why not a set of Client candidates?
-		Client candidates connect one by one, and need immediate servicing with 'hello' packets
 		Server candidates are found through NSNetServices and are batched for connections when needed
+		Client candidates connect to servers one by one, and need immediate servicing with 'hello' packets
+		Servers don't know of the existence of clients until they connect
 */
 
 -(void)	beginHandshakeProcessWithServerCandidates:	(NSSet*)candidates;

@@ -23,8 +23,9 @@
 
 typedef enum {
 	swypAvailableConnectionMethodNone = 0,
-	swypAvailableConnectionMethodWifi = 1 << 1,
-	swypAvailableConnectionMethodBluetooth = 1 <<2 
+	swypAvailableConnectionMethodCloudWAN = 1 << 1,
+	swypAvailableConnectionMethodWifi = 1 << 2,
+	swypAvailableConnectionMethodBluetooth = 1 <<3
 } swypAvailableConnectionMethod;
 
 @protocol swypConnectionManagerDelegate <NSObject>

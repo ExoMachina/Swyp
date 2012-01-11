@@ -1,16 +1,20 @@
-Copyright (c) 2011 ExoMachina, Inc
+The name "Swÿp" is Trademark 2011-2012 ExoMachina, Inc. You are granted some usage rights to this name, as specified below.
+ExoMachina holds the copyright to all code, but provides nearly no restrictions for your usage.
+
+the master branch of this framework is 'swyp/swyp'
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-You are not permitted to distort the Swyp protocol in a way that breaks or alters interoperability between this Software, and new or existing Swyp apps.  
+You are not permitted to distort the Swyp protocol in a way that breaks or alters interoperability between this Software, and new or existing Swyp apps. That is, you cannot claim to have a "swyp" compatible app after breaking compatibility with the master branch swyp lib.
++Swyp Interoperability/Compatibility is defined by allowing cross-app cross-device communication by any of the protocols supported by the official swyp master branch.
 You are free to use sub-pieces of this software, however these pieces may not be called "Swyp or Swipe" and must not claim Swyp compatability.
-You may not claim to be endorsed by Swyp or ExoMachina.
-You may not use ExoMachina's "Swyp" trademark as the first word of any published application's name without ExoMachina's permission. 
-You must obey minimal visual conventions in implementing Swyp if you wish to publish a "Swyp" (Swyp compatable) app. Minimum visual conventions will be set with the first release of 'Swyp' for iOS, and will be listed in the README file subsequently. 
+You may not claim to be endorsed by Swyp, ExoMachina, or MIT & its subsidiaries (without express permssion).
+You may not use ExoMachina's "Swyp" trademark as the first word of any published application's name without ExoMachina's express permission. 
 
-Permission is not given until January 2012 to use the "Swyp" name or to use this code in "Swyp Apps." 
-A future notice will likely specify an earlier date-- this is because the protocol is not yet finalized.
+Permission is not given until February 2012 to use the "Swyp" name or to use this code in "Swyp Apps." 
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software, as referenced in private or public source. Eg, if you copy a file verbatim, leave the notice.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software, as referenced in private or public source. 
+Eg, If you fork and change a bit, leave the notice. Please don't change the notice.
 
+Most importantly,
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
