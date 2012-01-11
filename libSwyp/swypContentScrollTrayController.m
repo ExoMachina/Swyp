@@ -62,7 +62,7 @@
 
 
 -(void)	temporarilyExagerateContentAtIndex:	(NSUInteger)index{
-	[self giggleContentAtIndex:index];
+	[self jiggleContentAtIndex:index];
 }
 -(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate{
 	if (animate){
@@ -232,53 +232,54 @@
 	[self setupContentSelectionViewWidthWithContentCount:[_contentDisplayControllerDelegate totalContentCountInController:self]];
 }
 
--(void)	giggleContentAtIndex:(NSInteger)displayedContent{
+// did you mean jiggle?
+-(void)	jiggleContentAtIndex:(NSInteger)displayedContent{
 	NSNumber* displayedContentKey = [NSNumber numberWithInt:displayedContent]; 
 	
-	trayContentObjectSet* objectSetToGiggle	= [_cachedContentObjectSetsForTray objectForKey:displayedContentKey];
+	trayContentObjectSet* objectSetTojiggle	= [_cachedContentObjectSetsForTray objectForKey:displayedContentKey];
 	
-	if ([[objectSetToGiggle contentPreviewImageView] superview] == nil)
+	if ([[objectSetTojiggle contentPreviewImageView] superview] == nil)
 		return;
 	
-	UIView*	giggleView			= [objectSetToGiggle contentPreviewImageView];
+	UIView*	jiggleView			= [objectSetTojiggle contentPreviewImageView];
 	
 	BOOL originMode = FALSE;
 	
 	if (originMode){
-		CGPoint preGiggleOrigin					= [giggleView origin];
+		CGPoint prejiggleOrigin					= [jiggleView origin];
 		[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-			CGPoint giggleRightPoint		=	preGiggleOrigin;
-			giggleRightPoint.x  += 20;
-			[giggleView setOrigin:giggleRightPoint];
+			CGPoint jiggleRightPoint		=	prejiggleOrigin;
+			jiggleRightPoint.x  += 20;
+			[jiggleView setOrigin:jiggleRightPoint];
 						
 		} completion:^(BOOL finnished){
 			[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-				CGPoint giggleLeftPoint		=	preGiggleOrigin;
-				giggleLeftPoint.x  -= 20;
-				[giggleView setOrigin:giggleLeftPoint];
+				CGPoint jiggleLeftPoint		=	prejiggleOrigin;
+				jiggleLeftPoint.x  -= 20;
+				[jiggleView setOrigin:jiggleLeftPoint];
 				
 			} completion:^(BOOL finnished){
 				[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-					[giggleView setOrigin:preGiggleOrigin];
+					[jiggleView setOrigin:prejiggleOrigin];
 				} completion:^(BOOL finnished){}];				
 			}];	
 		}];	
 		
 	}else {
-		CGAffineTransform preGiggleTransform	= [giggleView.layer affineTransform];
+		CGAffineTransform prejiggleTransform	= [jiggleView.layer affineTransform];
 		[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
 			
-			CGAffineTransform giggleRightTransform	= CGAffineTransformRotate(preGiggleTransform, 3.1415/16);
-			[giggleView.layer setAffineTransform:giggleRightTransform];
+			CGAffineTransform jiggleRightTransform	= CGAffineTransformRotate(prejiggleTransform, 3.1415/16);
+			[jiggleView.layer setAffineTransform:jiggleRightTransform];
 			
 		} completion:^(BOOL finnished){
 			[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-				CGAffineTransform giggleLeftTransform	= CGAffineTransformRotate(preGiggleTransform, -3.1415/16);
-				[giggleView.layer setAffineTransform:giggleLeftTransform];
+				CGAffineTransform jiggleLeftTransform	= CGAffineTransformRotate(prejiggleTransform, -3.1415/16);
+				[jiggleView.layer setAffineTransform:jiggleLeftTransform];
 				
 			} completion:^(BOOL finnished){
 				[UIView animateWithDuration:.1 delay:0 options:UIViewAnimationCurveEaseInOut|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionBeginFromCurrentState animations:^{
-					[giggleView.layer setAffineTransform:preGiggleTransform];
+					[jiggleView.layer setAffineTransform:prejiggleTransform];
 				} completion:^(BOOL finnished){}];				
 			}];	
 		}];			

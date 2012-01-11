@@ -63,7 +63,7 @@
 -(UIImageView*)	imageViewForObjectSet:(trayContentObjectSet*)contentSet;
 
 
--(void)	giggleContentAtIndex:(NSInteger)displayedContent;
+-(void)	jiggleContentAtIndex:(NSInteger)displayedContent;
 
 //updating displayed data
 //1) delete from datasource 2) call removeNotebookFromDisplay

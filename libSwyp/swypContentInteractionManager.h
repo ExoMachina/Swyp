@@ -93,7 +93,7 @@
 //simply attempts to post conent to a session, as used during "contentSwyps"
 -(void)		sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session;
 
-//	sometimes one wants to giggle some content in some manner-- here's how
+//	sometimes one wants to jiggle some content in some manner-- here's how
 -(void)		temporarilyExagerateContentAtIndex:	(NSUInteger)index;
 
 //
