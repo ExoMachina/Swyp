@@ -15,10 +15,6 @@
 #import "swypNetworkAccessMonitor.h"
 #import "swypCloudPairManager.h"
 
-#ifdef BLUETOOTH_ENABLED
-#import <CoreBluetooth/CoreBluetooth.h>
-#endif
-
 
 @class swypConnectionManager;
 
@@ -28,6 +24,7 @@ typedef enum {
 	swypAvailableConnectionMethodWifi = 1 << 2,
 	swypAvailableConnectionMethodBluetooth = 1 <<3
 } swypAvailableConnectionMethod;
+
 
 @protocol swypConnectionManagerDelegate <NSObject>
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
@@ -50,12 +47,6 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 	swypHandshakeManager *			_handshakeManager;
 	
 	swypAvailableConnectionMethod	_availableConnectionMethods;
-
-#ifdef BLUETOOTH_ENABLED
-	CBCentralManager *				_bluetoothManager;
-#else
-	id<NSObject>					_bluetoothManager;
-#endif
 	
 	//swypInfoRefs
 	NSMutableSet *			_swypIns;
