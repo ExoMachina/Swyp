@@ -9,11 +9,14 @@
 #import "swypTiledContentViewController.h"
 
 @implementation swypTiledContentViewController
-@synthesize tileSize = _tileSize, tileMarginSize = _tileMarginSize ,maxTileRows = _maxTileRows, maxTileColumns=_maxTileColumns, layoutStartPoint = _layoutStartPoint, tileDisplayFrame = _tileDisplayFrame, displayedTiles = _displayedTiles, currentPage = _currentPage, delegate = _delegate, loadingStatusView = _loadingStatusView;
+@synthesize tileSize = _tileSize, tileMarginSize = _tileMarginSize ,maxTileRows = _maxTileRows, maxTileColumns=_maxTileColumns, pagingDisabled = _pagingDisabled, layoutStartPoint = _layoutStartPoint, tileDisplayFrame = _tileDisplayFrame, displayedTiles = _displayedTiles, currentPage = _currentPage, delegate = _delegate, loadingStatusView = _loadingStatusView;
 
 #pragma mark layout 
 
 -(NSInteger)	tilePageCount{
+	if (_pagingDisabled == TRUE)
+		return 1;
+	
 	NSInteger totalTiles	= [_delegate tileCountForTiledContentController:self];
 	NSInteger maxPageTiles	= _maxTileRows * _maxTileColumns;
 	
@@ -56,6 +59,10 @@
 	NSInteger totalTiles	= [_delegate tileCountForTiledContentController:self];
 	NSInteger maxPageTiles	= _maxTileRows * _maxTileColumns;
 
+	if (_pagingDisabled == YES){
+		return NSMakeRange(0, (maxPageTiles > totalTiles)?totalTiles:maxPageTiles);
+	}
+	
 	*forwardPaginationNeeded	= NO;
 	*backwardPaginationNeeded	= NO;
 	

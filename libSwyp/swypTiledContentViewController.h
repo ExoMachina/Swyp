@@ -30,6 +30,7 @@
 	double	_maxTileColumns;
 	CGPoint	_layoutStartPoint;
 	CGRect	_tileDisplayFrame; 
+	BOOL	_pagingDisabled;
 	
 	NSRange		_displayedTiles;
 	NSInteger	_currentPage;
@@ -37,6 +38,7 @@
 	UIView*		_loadingStatusView;
 	
 	NSMutableSet*	_displayedTileViews;
+	
 }
 @property (nonatomic, assign) id<swypTiledContentViewControllerContentDelegate>	delegate;
 
@@ -52,6 +54,7 @@
 @property (nonatomic, assign) NSRange	displayedTiles;
 @property (nonatomic, assign) NSInteger currentPage;
 
+@property (nonatomic, assign) BOOL		pagingDisabled;
 
 //set hidden as needed, and will create nice spinny loading indicator
 //the default is hidden

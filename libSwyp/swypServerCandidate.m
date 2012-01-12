@@ -17,4 +17,8 @@
 	}
 	return self;
 }
+-(void)dealloc{
+	SRELS(netService);
+	[super dealloc];
+}
 @end
