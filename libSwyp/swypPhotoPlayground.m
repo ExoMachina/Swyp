@@ -86,6 +86,7 @@
 	
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
         // change z index to top here
+        [self.view bringSubviewToFront:[recognizer view].superview];
 		
 	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
 		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y));
@@ -135,7 +136,7 @@
 		[layer setShadowOffset: CGSizeMake(1, 3)];
 		[layer setShadowRadius:4.0];
 		CGMutablePathRef shadowPath		=	CGPathCreateMutable();
-		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.width));
+		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.height));
 		[layer setShadowPath:shadowPath];
 		[photoTileView setClipsToBounds:NO];
 		

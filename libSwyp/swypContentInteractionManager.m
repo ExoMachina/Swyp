@@ -7,7 +7,7 @@
 //
 
 #import "swypContentInteractionManager.h"
-#import "swypContentScrollTrayController.h"
+#import "swypPhotoPlayground.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation swypContentInteractionManager
@@ -293,7 +293,7 @@
 	if (display){
 		
 		if (_contentDisplayController == nil){
-			_contentDisplayController	=	[[swypContentScrollTrayController alloc] init];
+			_contentDisplayController	=	[[swypPhotoPlayground alloc] init];
 			[_contentDisplayController setContentDisplayControllerDelegate:self];
 		}
 					

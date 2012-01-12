@@ -95,7 +95,7 @@
 -(void)		contentPanOccuredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
 
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
-
+        
 	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
 		[[recognizer view] setFrame:CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y))];
 		[recognizer setTranslation:CGPointZero inView:self.view];
