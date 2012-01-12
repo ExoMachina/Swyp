@@ -79,8 +79,6 @@
 		792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */; };
 		792D5C311416B98D0050DF57 /* swypPhotoArrayDatasource.h in Headers */ = {isa = PBXBuildFile; fileRef = 792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */; };
 		792D5C321416B98D0050DF57 /* swypPhotoArrayDatasource.m in Sources */ = {isa = PBXBuildFile; fileRef = 792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */; };
-		794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B514152367000E0113 /* swypContentScrollTrayController.h */; };
-		794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181B614152367000E0113 /* swypContentScrollTrayController.m */; };
 		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
 		794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */; };
 		794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */; };
@@ -181,8 +179,6 @@
 		792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToDataBridge.m; sourceTree = "<group>"; };
 		792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoArrayDatasource.h; sourceTree = "<group>"; };
 		792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPhotoArrayDatasource.m; sourceTree = "<group>"; };
-		794181B514152367000E0113 /* swypContentScrollTrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypContentScrollTrayController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		794181B614152367000E0113 /* swypContentScrollTrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypContentScrollTrayController.m; sourceTree = "<group>"; };
 		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
 		794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewAdditions+swypAdditions.h"; sourceTree = "<group>"; };
 		794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewAdditions+swypAdditions.m"; sourceTree = "<group>"; };
@@ -306,8 +302,6 @@
 				79C080781481B00C00306F67 /* swypPhotoPlayground.m */,
 				79C080721481A9B700306F67 /* swypTiledContentViewController.h */,
 				79C080731481A9B700306F67 /* swypTiledContentViewController.m */,
-				794181B514152367000E0113 /* swypContentScrollTrayController.h */,
-				794181B614152367000E0113 /* swypContentScrollTrayController.m */,
 			);
 			name = "Content Display";
 			sourceTree = "<group>";
@@ -588,7 +582,6 @@
 				792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */,
 				790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */,
 				790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */,
-				794181B714152367000E0113 /* swypContentScrollTrayController.h in Headers */,
 				794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */,
 				794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */,
 				792D5C311416B98D0050DF57 /* swypPhotoArrayDatasource.h in Headers */,
@@ -690,7 +683,6 @@
 				792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */,
 				790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */,
 				790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */,
-				794181B814152367000E0113 /* swypContentScrollTrayController.m in Sources */,
 				794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */,
 				792D5C321416B98D0050DF57 /* swypPhotoArrayDatasource.m in Sources */,
 				79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */,
