@@ -30,6 +30,7 @@
 	//workspace UI Items	
 	UIImageView *						_swypPromptImageView;
 	UIButton *							_swypWifiAvailableButton;
+	UIButton *							_swypCloudAvailableButton;
 	UIButton *							_swypBluetoothAvailableButton;
 }
 

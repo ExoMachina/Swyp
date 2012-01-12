@@ -51,6 +51,8 @@ typedef enum {
 
 -(void)	beginHandshakeProcessWithServerCandidates:	(NSSet*)candidates;
 -(void)	beginHandshakeProcessWithClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
+//from swyp cloud, for example
+-(void) beginHandshakeProcessWithPrePairedCandidate: (swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
 
 //
 //private

@@ -10,7 +10,7 @@
 
 
 @implementation swypInfoRef
-@synthesize velocity,startPoint,endPoint,startDate,endDate,swypBeginningContentView;
+@synthesize velocity,startPoint,endPoint,startDate,endDate,swypBeginningContentView,swypType;
 -(void) setSwypBeginningContentView:(UIView *)swypOutView{
 	SRELS(swypBeginningContentView);
 	swypBeginningContentView = [swypOutView retain];

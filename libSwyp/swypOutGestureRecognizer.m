@@ -11,6 +11,12 @@
 
 @implementation swypOutGestureRecognizer
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesBegan:touches withEvent:event];
+	
+	[[self swypGestureInfo] setSwypType:swypInfoRefTypeSwypOut];
+}
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
 	[super touchesMoved:touches withEvent:event];
 	

@@ -38,7 +38,7 @@
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
 #pragma mark CLUDGE!
-#warning CLUDGE!
+#pragma mark TODO: make some runloop excuse for this not being a cludge
 	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
 		if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
 			NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
@@ -65,11 +65,18 @@
 		[_swypWifiAvailableButton setImage:[UIImage imageNamed:@"wifi-logo-disabled.png"] forState:UIControlStateNormal];
 	}
 
+	if ((availableMethods & swypAvailableConnectionMethodCloud) == swypAvailableConnectionMethodCloud){
+		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"cloud-logo-enabled.png"] forState:UIControlStateNormal];
+	}else{
+		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"cloud-logo-disabled.png"] forState:UIControlStateNormal];
+	}
+	
 	if ((availableMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-enabled.png"] forState:UIControlStateNormal];
 	}else{
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"bluetooth-logo-disabled.png"] forState:UIControlStateNormal];
 	}
+	
 
 }
 
@@ -91,6 +98,14 @@
 		[_swypWifiAvailableButton setEnabled:FALSE];
 	}
 	
+	if (_swypCloudAvailableButton == nil){
+		_swypCloudAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 74)];
+		[_swypCloudAvailableButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypCloudAvailableButton addTarget:self action:@selector(cloudAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];	
+		[_swypCloudAvailableButton setEnabled:FALSE];
+	}
+
+	
 #ifdef BLUETOOTH_ENABLED
 	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
 
@@ -101,8 +116,12 @@
 		[_swypBluetoothAvailableButton setEnabled:FALSE];
 	}
 	[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+
+	[_swypCloudAvailableButton setOrigin:CGPointMake(self.view.size.width + 50, self.view.size.height/2 + 10+ (250/2))];
 #else
-	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - _swypWifiAvailableButton.size.width/2, self.view.size.height/2 + 30+ (250/2))];
+	
+	[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
+	[_swypCloudAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
 	
 #endif
 	
@@ -112,15 +131,19 @@
 	[_swypWifiAvailableButton setAlpha:0];
 	[_swypBluetoothAvailableButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
+	[_swypCloudAvailableButton setAlpha:0];
 	[self.view addSubview:_swypPromptImageView];
 	[self.view sendSubviewToBack:_swypPromptImageView];
 	[self.view addSubview:_swypWifiAvailableButton];
 	[self.view addSubview:_swypBluetoothAvailableButton];
+	[self.view addSubview:_swypCloudAvailableButton];
+	
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
 		[_swypWifiAvailableButton setAlpha:1];
 		[_swypBluetoothAvailableButton setAlpha:1];
+		[_swypCloudAvailableButton setAlpha:1];
 	}completion:nil];
 }
 -(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
@@ -130,8 +153,8 @@
 			[_swypPromptImageView setAlpha:0];
 			[_swypWifiAvailableButton setAlpha:0];
 			[_swypBluetoothAvailableButton setAlpha:0];
-		}completion:^(BOOL completed){
-		}];
+			[_swypCloudAvailableButton setAlpha:0];
+		}completion:nil];
 	}
 }
 
