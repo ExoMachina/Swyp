@@ -47,7 +47,7 @@
 				[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
 				[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
 			}
-		}		
+		}
 	}];
 	
 	[NSTimer scheduledTimerWithTimeInterval:.2 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
@@ -154,12 +154,7 @@
 			[_swypWifiAvailableButton setAlpha:0];
 			[_swypBluetoothAvailableButton setAlpha:0];
 			[_swypCloudAvailableButton setAlpha:0];
-		}completion:^(BOOL completed){
-			[_swypPromptImageView removeFromSuperview];	
-			[_swypWifiAvailableButton removeFromSuperview];	
-			[_swypBluetoothAvailableButton removeFromSuperview];	
-			[_swypCloudAvailableButton removeFromSuperview];
-		}];
+		}completion:nil];
 	}
 }
 
