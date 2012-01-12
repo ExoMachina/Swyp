@@ -48,14 +48,14 @@
 -(void) viewDidLoad{
 	[super viewDidLoad];
 	
-	self.view.layer.cornerRadius	=	75;
+	self.view.layer.cornerRadius	=	20;
 	self.view.layer.borderWidth		=	5;
 	self.view.layer.borderColor		=	[[UIColor blackColor] CGColor];
-	[self.view setBounds:CGRectMake(0, 0, 150, 150)];
+	[self.view setBounds:CGRectMake(0, 0, 50, 50)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
 	
 	UITapGestureRecognizer * cancelationRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
-	[cancelationRecognizer setNumberOfTapsRequired:2];
+	[cancelationRecognizer setNumberOfTapsRequired:1];
 	[self.view addGestureRecognizer:cancelationRecognizer];
 	SRELS(cancelationRecognizer);
 }

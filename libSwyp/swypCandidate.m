@@ -13,7 +13,7 @@
 @synthesize swypInfo,nametag,supportedFiletypes,role,matchedLocalSwypInfo,appearanceDate;
 -(id)init{
 	if (self = [super init]){
-		appearanceDate	= [NSDate date];
+		appearanceDate	= [[NSDate alloc] init];
 	}
 	return self;
 }

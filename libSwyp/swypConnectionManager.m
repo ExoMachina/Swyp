@@ -67,9 +67,7 @@
 
 	[[swypNetworkAccessMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	SRELS(_bluetoothManager);
-	
+		
 	SRELS(_bonjourListener);
 	SRELS(_bonjourAdvertiser);
 	SRELS(_handshakeManager);
@@ -225,25 +223,11 @@
 #pragma mark -
 #pragma mark private
 -(void)_updateBluetoothAvailability{
-#ifdef BLUETOOTH_ENABLED
-	if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 5.0){
-	
-		if (_bluetoothManager == nil){
-			_bluetoothManager				=	[[CBCentralManager alloc] initWithDelegate:(id<CBCentralManagerDelegate>)self queue:nil];
-		}
-		
-		CBCentralManagerState blueState		=	[_bluetoothManager state];
-		
-		if (blueState == CBCentralManagerStatePoweredOn){
+		if (1 == 1) { //bluetooth works!
 			_availableConnectionMethods |= swypAvailableConnectionMethodBluetooth;
 		}else{
 			_availableConnectionMethods = (_availableConnectionMethods & (!swypAvailableConnectionMethodBluetooth));
 		}
-		
-	}
-	//otherwise don't show that bluetooth is available
-#endif
-
 }
 
 
