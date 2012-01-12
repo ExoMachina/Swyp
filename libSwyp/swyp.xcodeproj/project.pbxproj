@@ -423,22 +423,22 @@
 			children = (
 				68B18DF713E0B23200D094A9 /* swypConnectionManager.h */,
 				68B18DF813E0B23200D094A9 /* swypConnectionManager.m */,
-				79635A7014904D8A0098C265 /* Connectivity */,
+				79635A7014904D8A0098C265 /* Networking */,
 				68B18DE913E0B08F00D094A9 /* Streams */,
-				68B18DF413E0B1A400D094A9 /* Connecting */,
-				68B18DEE13E0B16200D094A9 /* Connections */,
+				68B18DF413E0B1A400D094A9 /* Connecting & Handshake */,
+				680FC08613E0D03C00509CF2 /* Candidates */,
+				68B18DEE13E0B16200D094A9 /* Active Connections */,
 			);
 			name = Communications;
 			sourceTree = "<group>";
 		};
-		68B18DEE13E0B16200D094A9 /* Connections */ = {
+		68B18DEE13E0B16200D094A9 /* Active Connections */ = {
 			isa = PBXGroup;
 			children = (
 				68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */,
 				68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */,
-				680FC08613E0D03C00509CF2 /* Candidates */,
 			);
-			name = Connections;
+			name = "Active Connections";
 			sourceTree = "<group>";
 		};
 		68B18DEF13E0B16900D094A9 /* Bonjour */ = {
@@ -452,14 +452,14 @@
 			name = Bonjour;
 			sourceTree = "<group>";
 		};
-		68B18DF413E0B1A400D094A9 /* Connecting */ = {
+		68B18DF413E0B1A400D094A9 /* Connecting & Handshake */ = {
 			isa = PBXGroup;
 			children = (
 				68B18DF513E0B1B000D094A9 /* Handshake */,
 				79E379F314B3732F00C09690 /* Cloud */,
 				68B18DEF13E0B16900D094A9 /* Bonjour */,
 			);
-			name = Connecting;
+			name = "Connecting & Handshake";
 			sourceTree = "<group>";
 		};
 		68B18DF513E0B1B000D094A9 /* Handshake */ = {
@@ -510,14 +510,14 @@
 			name = DataSources;
 			sourceTree = "<group>";
 		};
-		79635A7014904D8A0098C265 /* Connectivity */ = {
+		79635A7014904D8A0098C265 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
 				79E37A0C14B5FF0900C09690 /* HTTP Request lib */,
 				79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */,
 				79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */,
 			);
-			name = Connectivity;
+			name = Networking;
 			sourceTree = "<group>";
 		};
 		7977201F13F1730800CF4F60 /* Handling Outside Data */ = {
