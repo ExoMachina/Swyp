@@ -91,12 +91,12 @@
 		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
 		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
 		7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */; };
-		79A1D15714BE7B2200106379 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D15114BE7B2200106379 /* swypCloudNetService.h */; };
-		79A1D15814BE7B2200106379 /* swypCloudNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D15214BE7B2200106379 /* swypCloudNetService.m */; };
-		79A1D15914BE7B2200106379 /* swypCloudPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D15314BE7B2200106379 /* swypCloudPairManager.h */; };
-		79A1D15A14BE7B2200106379 /* swypCloudPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D15414BE7B2200106379 /* swypCloudPairManager.m */; };
-		79A1D15B14BE7B2200106379 /* swypPairServerInteractionManger.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D15514BE7B2200106379 /* swypPairServerInteractionManger.h */; };
-		79A1D15C14BE7B2200106379 /* swypPairServerInteractionManger.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D15614BE7B2200106379 /* swypPairServerInteractionManger.m */; };
+		79A1D16314BE7BD500106379 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D15D14BE7BD500106379 /* swypCloudNetService.h */; };
+		79A1D16414BE7BD500106379 /* swypCloudNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D15E14BE7BD500106379 /* swypCloudNetService.m */; };
+		79A1D16514BE7BD500106379 /* swypCloudPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D15F14BE7BD500106379 /* swypCloudPairManager.h */; };
+		79A1D16614BE7BD500106379 /* swypCloudPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D16014BE7BD500106379 /* swypCloudPairManager.m */; };
+		79A1D16714BE7BD500106379 /* swypPairServerInteractionManger.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A1D16114BE7BD500106379 /* swypPairServerInteractionManger.h */; };
+		79A1D16814BE7BD500106379 /* swypPairServerInteractionManger.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A1D16214BE7BD500106379 /* swypPairServerInteractionManger.m */; };
 		79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080721481A9B700306F67 /* swypTiledContentViewController.h */; };
 		79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080731481A9B700306F67 /* swypTiledContentViewController.m */; };
 		79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080771481B00C00306F67 /* swypPhotoPlayground.h */; };
@@ -202,12 +202,12 @@
 		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
 		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
 		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
-		79A1D15114BE7B2200106379 /* swypCloudNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypCloudNetService.h; path = ../../../../swyp/libSwyp/swypCloudNetService.h; sourceTree = "<group>"; };
-		79A1D15214BE7B2200106379 /* swypCloudNetService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypCloudNetService.m; path = ../../../../swyp/libSwyp/swypCloudNetService.m; sourceTree = "<group>"; };
-		79A1D15314BE7B2200106379 /* swypCloudPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypCloudPairManager.h; path = ../../../../swyp/libSwyp/swypCloudPairManager.h; sourceTree = SOURCE_ROOT; };
-		79A1D15414BE7B2200106379 /* swypCloudPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypCloudPairManager.m; path = ../../../../swyp/libSwyp/swypCloudPairManager.m; sourceTree = "<group>"; };
-		79A1D15514BE7B2200106379 /* swypPairServerInteractionManger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = swypPairServerInteractionManger.h; path = ../../../../swyp/libSwyp/swypPairServerInteractionManger.h; sourceTree = "<group>"; };
-		79A1D15614BE7B2200106379 /* swypPairServerInteractionManger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = swypPairServerInteractionManger.m; path = ../../../../swyp/libSwyp/swypPairServerInteractionManger.m; sourceTree = "<group>"; };
+		79A1D15D14BE7BD500106379 /* swypCloudNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudNetService.h; sourceTree = "<group>"; };
+		79A1D15E14BE7BD500106379 /* swypCloudNetService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudNetService.m; sourceTree = "<group>"; };
+		79A1D15F14BE7BD500106379 /* swypCloudPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudPairManager.h; sourceTree = "<group>"; };
+		79A1D16014BE7BD500106379 /* swypCloudPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudPairManager.m; sourceTree = "<group>"; };
+		79A1D16114BE7BD500106379 /* swypPairServerInteractionManger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPairServerInteractionManger.h; sourceTree = "<group>"; };
+		79A1D16214BE7BD500106379 /* swypPairServerInteractionManger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPairServerInteractionManger.m; sourceTree = "<group>"; };
 		79C080721481A9B700306F67 /* swypTiledContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTiledContentViewController.h; sourceTree = "<group>"; };
 		79C080731481A9B700306F67 /* swypTiledContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTiledContentViewController.m; sourceTree = "<group>"; };
 		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoPlayground.h; sourceTree = "<group>"; };
@@ -553,12 +553,12 @@
 		79E379F314B3732F00C09690 /* Cloud */ = {
 			isa = PBXGroup;
 			children = (
-				79A1D15114BE7B2200106379 /* swypCloudNetService.h */,
-				79A1D15214BE7B2200106379 /* swypCloudNetService.m */,
-				79A1D15314BE7B2200106379 /* swypCloudPairManager.h */,
-				79A1D15414BE7B2200106379 /* swypCloudPairManager.m */,
-				79A1D15514BE7B2200106379 /* swypPairServerInteractionManger.h */,
-				79A1D15614BE7B2200106379 /* swypPairServerInteractionManger.m */,
+				79A1D15D14BE7BD500106379 /* swypCloudNetService.h */,
+				79A1D15E14BE7BD500106379 /* swypCloudNetService.m */,
+				79A1D15F14BE7BD500106379 /* swypCloudPairManager.h */,
+				79A1D16014BE7BD500106379 /* swypCloudPairManager.m */,
+				79A1D16114BE7BD500106379 /* swypPairServerInteractionManger.h */,
+				79A1D16214BE7BD500106379 /* swypPairServerInteractionManger.m */,
 			);
 			name = Cloud;
 			sourceTree = "<group>";
@@ -636,9 +636,9 @@
 				79E37A1E14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h in Headers */,
 				79E37A2014B5FF3A00C09690 /* AFNetworking.h in Headers */,
 				79E37A2114B5FF3A00C09690 /* AFURLConnectionOperation.h in Headers */,
-				79A1D15714BE7B2200106379 /* swypCloudNetService.h in Headers */,
-				79A1D15914BE7B2200106379 /* swypCloudPairManager.h in Headers */,
-				79A1D15B14BE7B2200106379 /* swypPairServerInteractionManger.h in Headers */,
+				79A1D16314BE7BD500106379 /* swypCloudNetService.h in Headers */,
+				79A1D16514BE7BD500106379 /* swypCloudPairManager.h in Headers */,
+				79A1D16714BE7BD500106379 /* swypPairServerInteractionManger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,9 +741,9 @@
 				79E37A1B14B5FF3A00C09690 /* AFHTTPRequestOperation.m in Sources */,
 				79E37A1F14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				79E37A2214B5FF3A00C09690 /* AFURLConnectionOperation.m in Sources */,
-				79A1D15814BE7B2200106379 /* swypCloudNetService.m in Sources */,
-				79A1D15A14BE7B2200106379 /* swypCloudPairManager.m in Sources */,
-				79A1D15C14BE7B2200106379 /* swypPairServerInteractionManger.m in Sources */,
+				79A1D16414BE7BD500106379 /* swypCloudNetService.m in Sources */,
+				79A1D16614BE7BD500106379 /* swypCloudPairManager.m in Sources */,
+				79A1D16814BE7BD500106379 /* swypPairServerInteractionManger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
