@@ -233,8 +233,8 @@
 #pragma mark UIViewController
 -(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
 	if (self = [super initWithNibName:nil bundle:nil]){
-		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
-		[self setModalTransitionStyle:		UIModalTransitionStyleCrossDissolve];
+		[self setModalPresentationStyle:	UIModalPresentationFormSheet];
+		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];
 		
 		_worspaceDelegate	=	worspaceDelegate;
 	}
