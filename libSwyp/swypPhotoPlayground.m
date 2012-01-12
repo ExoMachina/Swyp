@@ -87,7 +87,7 @@
 	
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
         // change z index to top here
-        [self.view bringSubviewToFront:[recognizer view].superview];
+        [_tiledContentViewController.view bringSubviewToFront:[recognizer view]];
 		
 	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
 		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y));
