@@ -18,10 +18,7 @@
 */
 -(void)	swypPendingConnectionManagerHasAvailableHandshakeableConnectionSessionsForSwyp:(swypInfoRef*)ref;
 
-/**
- called anytime ref is no longer needed; including clearAllPendingConnectionsForSwypRef
-
-*/
+/** Called anytime ref is no longer needed; including clearAllPendingConnectionsForSwypRef */
 -(void)	swypPendingConnectionManagerFinishedForSwyp:(swypInfoRef*)ref;
 @end
 
@@ -34,9 +31,7 @@
 @interface swypPendingConnectionManager : NSObject{	
 }
 
-/**
- After swypConnnectionManager posts swypInfoRef to an interface, it sets it as pending here
- */
+/** After swypConnnectionManager posts swypInfoRef to an interface, it sets it as pending here */
 -(void) setSwypOutPending:(swypInfoRef*)swypRef forConnectionMethods:(swypConnectionMethod)methods;
 
 /**
@@ -45,9 +40,7 @@
  */
 -(void) connectionMethodTimedOut:(swypConnectionMethod)method forSwypRef:(swypInfoRef*)swypRef;
 
-/**
- After swypConnnectionManager has found its match for a swypCandidate, it acts responsibly by calling this method
- */
+/** After swypConnnectionManager has found its match for a swypCandidate, it acts responsibly by calling this method */
 -(void) clearAllPendingConnectionsForSwypRef:(swypInfoRef*)ref;
 
 /**
