@@ -32,6 +32,7 @@
 	UIButton *							_swypWifiAvailableButton;
 	UIButton *							_swypCloudAvailableButton;
 	UIButton *							_swypBluetoothAvailableButton;
+    UIView *                            _downArrowView;
 }
 
 //if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made

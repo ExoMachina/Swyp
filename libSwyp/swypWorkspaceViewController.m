@@ -213,11 +213,19 @@
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
 
+- (void)animateArrows {
+    [UIView animateWithDuration:0.5 delay:0 options:(UIViewAnimationOptionAutoreverse|UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionRepeat) animations:^(void){
+        _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 10);
+    } completion:nil];
+}
+- (void)stopArrows {
+    _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 0);
+}
 
 #pragma mark UIViewController
 -(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
 	if (self = [super initWithNibName:nil bundle:nil]){
-		[self setModalPresentationStyle:	UIModalPresentationFormSheet];
+		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];
 		
 		_worspaceDelegate	=	worspaceDelegate;
@@ -237,10 +245,22 @@
 
 -(void)	viewDidLoad{
 	[super viewDidLoad];
-
-	
+    	
 	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
 	self.view	= backgroundView;
+    
+    _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
+    _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
+    [self.view addSubview:_downArrowView];
+    
+    UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    curlButton.adjustsImageWhenHighlighted = YES;
+    curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 40);
+    curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
+    [self.view addSubview:curlButton];
+    [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
+    [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside)];
 	
 	[[self connectionManager] startServices];
 	
@@ -259,11 +279,6 @@
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);	
-
-	UIButton * leaveButton	=	[UIButton buttonWithType:UIButtonTypeContactAdd];
-	[leaveButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-	[leaveButton setFrame:CGRectMake(5, 5, 35, 35)];
-	[self.view addSubview:leaveButton];
 
 	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
 		
