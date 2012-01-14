@@ -12,14 +12,21 @@
 @class swypInputToOutputStreamConnector;
 
 @protocol swypInputToOutputStreamConnectorDelegate <NSObject>
+///error in the input
 -(void) encounteredErrorInInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
+///error in the output
 -(void) encounteredErrorInOutputStream: (NSOutputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
 
+///we're done
 -(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector;
 
 @end
 
-
+/** This class was written to address the need of sending NSInputStream data over socket NSOutputStreams. 
+ 
+ 
+ Eg, NSInputStream's init with data methods need to be sent over sockets, or written to disk sometimes. 
+ */
 @interface swypInputToOutputStreamConnector : NSObject <NSStreamDelegate>  {
 	NSOutputStream *	_outputStream;
 	NSInputStream*		_inputStream;
@@ -32,8 +39,12 @@
 }
 @property (nonatomic, readonly)	NSOutputStream *	outputStream;
 @property (nonatomic, retain)	NSInputStream*		inputStream;
-@property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate;
+@property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate; ///this protocol will let you know about encountered errors
 
+/** the main init function which sets up streams as open, and begins sending any available inStream data over any available space in outputStream.
+ 
+ @warning neither stream should be open yet.
+ */
 -(id)	initWithOutputStream:(NSOutputStream*)outputStream readStream:(NSInputStream*)inStream; 
 
 //
