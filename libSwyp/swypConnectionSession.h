@@ -45,7 +45,8 @@ typedef enum {
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
 @optional
-/*
+/** See whether delegate will handle data stream.
+ 
 	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
 		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
 		If no one handles, an exception is thrown
@@ -71,7 +72,9 @@ typedef enum {
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
 @end
 
-
+/** This class represents and manages the connection between this and one other device. 
+ 
+ Use this class to send data, and set data delegates for recieved data. */
 @interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;

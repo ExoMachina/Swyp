@@ -120,6 +120,13 @@
 
 #pragma mark NSObject
 
+-(id)	initWithMainWorkspaceView: (UIView*)workspaceView{
+	if (self = [self initWithMainWorkspaceView:workspaceView showingContentBeforeConnection:TRUE]){
+		
+	}
+	return self;
+}
+
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent{
 	if (self = [super init]){
 		_showContentBeforeConnection		=	showContent;

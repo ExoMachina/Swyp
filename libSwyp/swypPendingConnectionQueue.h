@@ -10,7 +10,7 @@
 
 /** This class further encapsulates pending connections for the swypPendingConnectionManager.
  
-	This class is initialized with NSMutableDictionaries for each interface identified by interfacePriorityOrder.
+	It stands for a particular swyp in the swypPendingConnectionManager, and organizes all potential swypServerCandidates by  interfacePriorityOrder.
 */
 @interface swypPendingConnectionQueue : NSObject{
 	NSMutableDictionary *	_pendingConnectionSessionsByInterfaceMethod;

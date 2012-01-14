@@ -146,7 +146,7 @@
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view showingContentBeforeConnection:_showContentWithoutConnection];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
 		[_contentManager setInteractionManagerDelegate:self];
 		
 		#pragma mark CLUDGE!
