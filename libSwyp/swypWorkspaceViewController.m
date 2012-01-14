@@ -246,12 +246,13 @@
 -(void)	viewDidLoad{
 	[super viewDidLoad];
     	
-	swypWorkspaceBackgroundView * backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
+	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
 	self.view	= backgroundView;
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
     [self.view addSubview:_downArrowView];
+    
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
@@ -285,10 +286,11 @@
 }
 -(void)	dealloc{
 	
+    SRELS( _downArrowView);
 	SRELS( _swypPromptImageView);
 	SRELS(_swypWifiAvailableButton);
 	SRELS(_swypBluetoothAvailableButton);
-	
+    
 	[super dealloc];
 }
 

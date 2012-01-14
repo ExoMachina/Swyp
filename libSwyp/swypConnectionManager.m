@@ -204,6 +204,7 @@
 	}
 	
 	if (preUpdateAvailability != _availableConnectionMethods){
+        // Why are you setting something equal to itself?
 		_availableConnectionMethods = _availableConnectionMethods;
 		[_delegate swypConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
 	}
