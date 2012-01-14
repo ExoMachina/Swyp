@@ -112,6 +112,8 @@
 		79E37A2214B5FF3A00C09690 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A1714B5FF3A00C09690 /* AFURLConnectionOperation.m */; };
 		79E37A2A14B60C6000C09690 /* swypPairServerInteractionManger.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */; };
 		79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */; };
+		79F1466814C0B9A100107170 /* swypPendingConnectionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */; };
+		79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -222,6 +224,8 @@
 		79E37A1714B5FF3A00C09690 /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
 		79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPairServerInteractionManger.h; sourceTree = "<group>"; };
 		79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPairServerInteractionManger.m; sourceTree = "<group>"; };
+		79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPendingConnectionQueue.h; sourceTree = "<group>"; };
+		79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPendingConnectionQueue.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -473,6 +477,8 @@
 				68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */,
 				796B8E1C14BF7AA8004FEBE3 /* swypPendingConnectionManager.h */,
 				796B8E1D14BF7AA8004FEBE3 /* swypPendingConnectionManager.m */,
+				79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */,
+				79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */,
 			);
 			name = Handshake;
 			sourceTree = "<group>";
@@ -635,6 +641,7 @@
 				79E37A2114B5FF3A00C09690 /* AFURLConnectionOperation.h in Headers */,
 				79E37A2A14B60C6000C09690 /* swypPairServerInteractionManger.h in Headers */,
 				796B8E1E14BF7AA8004FEBE3 /* swypPendingConnectionManager.h in Headers */,
+				79F1466814C0B9A100107170 /* swypPendingConnectionQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -740,6 +747,7 @@
 				79E37A2214B5FF3A00C09690 /* AFURLConnectionOperation.m in Sources */,
 				79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */,
 				796B8E1F14BF7AA8004FEBE3 /* swypPendingConnectionManager.m in Sources */,
+				79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

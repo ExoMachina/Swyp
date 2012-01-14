@@ -40,6 +40,9 @@ typedef enum {
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
 @end
 
+/**
+ This guy does orchistrates the whole gig to get connections between devices established. 
+ */
 @interface swypConnectionManager : NSObject 
 <swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate, swypCloudPairManagerDelegate,
 swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypHandshakeManagerDelegate,
@@ -79,14 +82,16 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 
 
 
-/*
+/**
 	Begin listening, allow new connections, etc. 
-	The swyp window has been opened.
+
+	EG: called when swyp workspace has been opened.
 */
 -(void)	startServices;
-/*
+
+/**
 	Stop listening, disallow new connections, terminate existing swypConnectionSessions, etc. 
-	The swyp window has probably been closed.
+	Probably the swyp workspace, or the app has been closed.
 */
 -(void)	stopServices;
 
