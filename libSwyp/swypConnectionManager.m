@@ -10,7 +10,7 @@
 #import "swypDiscernedInputStream.h"
 
 @implementation swypConnectionManager
-@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods;
+@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods, userPreferedConnectionClass = _userPreferedConnectionClass, activeConnectionClass = _activeConnectionClass, enabledConnectionMethods, activeConnectionMethods;
 
 #pragma mark -
 #pragma mark public 
@@ -31,7 +31,19 @@
 		[session invalidate];
 	}	
 }
+-(swypConnectionMethod)	enabledConnectionMethods{
+	if (_activeConnectionClass == swypConnectionClassWifiAndCloud){
+		return (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud);
+	}else if (_activeConnectionClass == swypConnectionMethodBluetooth){
+		return swypConnectionMethodBluetooth;
+	}else return 0;
+}
 
+-(swypConnectionMethod)	activeConnectionMethods{
+	return ([self enabledConnectionMethods] & [self availableConnectionMethods]);
+}
+
+#pragma mark NSOBject 
 -(id) init{
 	if (self = [super init]){
 		_activeConnectionSessions	=	[[NSMutableSet alloc] init];
@@ -41,24 +53,12 @@
 		_swypOutTimeouts	= [[NSMutableSet alloc] init];
 		_swypInTimeouts		= [[NSMutableSet alloc] init];
 		
-		_bonjourListener	= [[swypBonjourServiceListener alloc] init];
-		[_bonjourListener	setDelegate:self];
 		
-		_bonjourAdvertiser	= [[swypBonjourServiceAdvertiser alloc] init];
-		[_bonjourAdvertiser setDelegate:self];
-		
-		_cloudPairManager	= [[swypCloudPairManager alloc] initWithSwypCloudPairManagerDelegate:self];
-		
-		_handshakeManager	= [[swypHandshakeManager alloc] init];
-		[_handshakeManager	setDelegate:self];
+		[self _setupNetworking];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
-		
-		[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];
-		//we check bluetooth only once when loading, otherwise it displays shit-loads of UIAlertViews
-		[self _updateBluetoothAvailability];
-		
+						
 	}
 	return self;
 }
@@ -182,30 +182,30 @@
 
 #pragma mark - connectivity
 -(void)updateNetworkAvailability{
-	swypAvailableConnectionMethod preUpdateAvailability	=	_availableConnectionMethods;
+	swypConnectionMethod preUpdateAvailability	=	_availableConnectionMethods;
 	
 	swypNetworkAccess reachability = [[swypNetworkAccessMonitor sharedReachabilityMonitor] lastReachability];
 	if ((reachability & swypNetworkAccessReachableViaWiFi) == swypNetworkAccessReachableViaWiFi){
-		_availableConnectionMethods	= (_availableConnectionMethods | swypAvailableConnectionMethodWifi);
+		_availableConnectionMethods	= (_availableConnectionMethods | swypConnectionMethodWifiLoc);
 	}else{
-		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodWifi));
+		_availableConnectionMethods	= (_availableConnectionMethods & (~swypConnectionMethodWifiLoc));
 	}
 
 	if ((reachability & swypNetworkAccessReachableViaWWAN) == swypNetworkAccessReachableViaWWAN || (reachability & swypNetworkAccessReachableViaWiFi) == swypNetworkAccessReachableViaWiFi){
 		//this means the net is accessable, so we can do cloud connect
-		_availableConnectionMethods	= (_availableConnectionMethods | swypAvailableConnectionMethodCloud);
+		_availableConnectionMethods	= (_availableConnectionMethods | swypConnectionMethodWifiCloud);
 	}else{
-		_availableConnectionMethods	= (_availableConnectionMethods & (~swypAvailableConnectionMethodCloud));
+		_availableConnectionMethods	= (_availableConnectionMethods & (~swypConnectionMethodWifiCloud));
 	}
 
 	//check bluetooth only when it's already started, because it displays pop-ups and starts-up the module
-	if ((_availableConnectionMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
+	if ((_availableConnectionMethods & swypConnectionMethodBluetooth) == swypConnectionMethodBluetooth){
 		[self _updateBluetoothAvailability];	
 	}
 	
 	if (preUpdateAvailability != _availableConnectionMethods){
 		_availableConnectionMethods = _availableConnectionMethods;
-		[_delegate swypAvailableConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
+		[_delegate swypConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
 	}
 }
 
@@ -222,11 +222,43 @@
 
 #pragma mark -
 #pragma mark private
+-(void)_setupNetworking{
+
+	//
+	//set defaults 
+	_supportedConnectionMethods	|= swypConnectionMethodWifiLoc;
+	_supportedConnectionMethods	|= swypConnectionMethodWifiCloud;
+	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
+	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
+	
+	_userPreferedConnectionClass	= swypConnectionClassNone;
+	_activeConnectionClass			= swypConnectionClassWifiAndCloud;
+	
+	//
+	//find out what works
+	[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];
+	[self _updateBluetoothAvailability];
+	
+	//
+	//setup services
+	
+	_bonjourListener	= [[swypBonjourServiceListener alloc] init];
+	[_bonjourListener	setDelegate:self];
+	
+	_bonjourAdvertiser	= [[swypBonjourServiceAdvertiser alloc] init];
+	[_bonjourAdvertiser setDelegate:self];
+	
+	_cloudPairManager	= [[swypCloudPairManager alloc] initWithSwypCloudPairManagerDelegate:self];
+	
+	_handshakeManager	= [[swypHandshakeManager alloc] init];
+	[_handshakeManager	setDelegate:self];
+}
+
 -(void)_updateBluetoothAvailability{
 		if (1 == 1) { //bluetooth works!
-			_availableConnectionMethods |= swypAvailableConnectionMethodBluetooth;
+			_availableConnectionMethods |= swypConnectionMethodBluetooth;
 		}else{
-			_availableConnectionMethods = (_availableConnectionMethods & (!swypAvailableConnectionMethodBluetooth));
+			_availableConnectionMethods = (_availableConnectionMethods & (!swypConnectionMethodBluetooth));
 		}
 }
 

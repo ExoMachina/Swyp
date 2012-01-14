@@ -65,7 +65,7 @@
 }
 
 -(void)dealloc{
-	
+	_dataSource	=	nil;
 	[self removeFromRunLoop:nil forMode:nil];
 	SRELS(_pulledDataBuffer);
 	SRELS(_streamType);

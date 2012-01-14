@@ -19,20 +19,30 @@
 @class swypConnectionManager;
 
 typedef enum {
-	swypAvailableConnectionMethodNone = 0,
-	swypAvailableConnectionMethodCloud = 1 << 1,
-	swypAvailableConnectionMethodWifi = 1 << 2,
-	swypAvailableConnectionMethodBluetooth = 1 <<3
-} swypAvailableConnectionMethod;
+	swypConnectionMethodNone = 0,
+	swypConnectionMethodWifiLoc		= 1 << 1,
+	swypConnectionMethodWifiCloud	= 1 << 2,
+	swypConnectionMethodWWANCloud	= 1 << 3,
+	swypConnectionMethodBluetooth	= 1 << 4
+} swypConnectionMethod;
+
+typedef enum {
+	swypConnectionClassNone,			//no preferrence; automatically selected through availability 
+	swypConnectionClassWifiAndCloud,
+	swypConnectionClassBluetooth
+} swypConnectionClass;
 
 
 @protocol swypConnectionManagerDelegate <NSObject>
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error;
 
--(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
+-(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
 @end
 
+/**
+ This guy does orchistrates the whole gig to get connections between devices established. 
+ */
 @interface swypConnectionManager : NSObject 
 <swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate, swypCloudPairManagerDelegate,
 swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypHandshakeManagerDelegate,
@@ -43,10 +53,14 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 	swypBonjourServiceAdvertiser *	_bonjourAdvertiser;
 	
 	swypCloudPairManager *			_cloudPairManager;
-	
 	swypHandshakeManager *			_handshakeManager;
 	
-	swypAvailableConnectionMethod	_availableConnectionMethods;
+
+	swypConnectionMethod			_supportedConnectionMethods;	//device supported
+	swypConnectionMethod			_availableConnectionMethods;	//currently usable per reachability
+	
+	swypConnectionClass				_userPreferedConnectionClass;	//NONE by default
+	swypConnectionClass				_activeConnectionClass;			//wifi&cloud by default
 	
 	//swypInfoRefs
 	NSMutableSet *			_swypIns;
@@ -59,18 +73,25 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 @property (nonatomic, readonly) NSSet *								activeConnectionSessions;
 @property (nonatomic, assign)	id<swypConnectionManagerDelegate>	delegate;
 
-@property (nonatomic, readonly)	swypAvailableConnectionMethod	availableConnectionMethods;
+@property (nonatomic, readonly)	swypConnectionMethod	availableConnectionMethods;
+@property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	//user/implicitly authorized
+@property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	//intersect of enabled and available
+
+@property (nonatomic, readonly) swypConnectionClass		userPreferedConnectionClass;
+@property (nonatomic, readonly) swypConnectionClass		activeConnectionClass;
 
 
 
-/*
+/**
 	Begin listening, allow new connections, etc. 
-	The swyp window has been opened.
+
+	EG: called when swyp workspace has been opened.
 */
 -(void)	startServices;
-/*
+
+/**
 	Stop listening, disallow new connections, terminate existing swypConnectionSessions, etc. 
-	The swyp window has probably been closed.
+	Probably the swyp workspace, or the app has been closed.
 */
 -(void)	stopServices;
 
@@ -85,4 +106,5 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 -(void)updateNetworkAvailability;
 //private 
 -(void)_updateBluetoothAvailability;
+-(void)_setupNetworking;
 @end

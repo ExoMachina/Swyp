@@ -58,15 +58,15 @@
 }
 
 //update UI
--(void) swypAvailableConnectionMethodsUpdated:(swypAvailableConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
+-(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
 	
-	if ((availableMethods & swypAvailableConnectionMethodCloud) == swypAvailableConnectionMethodCloud){
+	if ((availableMethods & swypConnectionMethodWifiCloud) == swypConnectionMethodWifiCloud){
 		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
 	}else{
 		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-disabled.png"] forState:UIControlStateNormal];
 	}
 	
-	if ((availableMethods & swypAvailableConnectionMethodBluetooth) == swypAvailableConnectionMethodBluetooth){
+	if ((availableMethods & swypConnectionMethodBluetooth) == swypConnectionMethodBluetooth){
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-enabled.png"] forState:UIControlStateNormal];
 	}else{
 		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-disabled.png"] forState:UIControlStateNormal];
@@ -110,7 +110,7 @@
 
 	
 	//set background images
-	[self swypAvailableConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
+	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
 	
 	[_swypWifiAvailableButton setAlpha:0];
 	[_swypBluetoothAvailableButton setAlpha:0];

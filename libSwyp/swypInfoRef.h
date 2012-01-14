@@ -13,6 +13,9 @@ typedef enum{
 	swypInfoRefTypeSwypOut
 }swypInfoRefType;
 
+/** This class encapsulates the logical components of the gestures found in swypGestureRecognizer.
+	The swypInfoRef is the tracking method for all connections based on gestures. 
+ */
 @interface swypInfoRef : NSObject {
 	double		velocity;
 	CGPoint		startPoint;
