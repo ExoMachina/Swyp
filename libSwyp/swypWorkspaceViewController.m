@@ -260,7 +260,7 @@
     [self.view addSubview:curlButton];
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
-    [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside)];
+    [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
 	
 	[[self connectionManager] startServices];
 	
