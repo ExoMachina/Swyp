@@ -34,6 +34,7 @@ static unsigned int const memoryPageSize	=	4096;
 }
 
 -(void)	dealloc{
+	[self _cleanupForNextDiscernmentCycle];
 	[self _teardownInputStream];
 	SRELS(_discernmentStream);
 	[super dealloc];
