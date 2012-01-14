@@ -11,6 +11,14 @@
 
 #import <Foundation/Foundation.h>
 
+/** Error domain for cloud service */
+static NSString * const swypCloudServiceErrorDomain = @"swypCloudServiceErrorDomain";
+
+typedef enum {
+	swypCloudServiceErrorNoSockets,
+	swypCloudServiceErrorCouldNotBind
+}swypCloudServiceError;
+
 @class swypCloudNetService;
 @protocol swypCloudNetServiceDelegate <NSObject>
 
@@ -33,6 +41,7 @@
 -(void)cloudNetService:(swypCloudNetService*)service didFailToCreateConnectionWithPeerFromInfo:(NSDictionary*)peerInfo;
 @end
 
+/** this class basically receives and creates connections to peers matched by cloudmanager */
 @interface swypCloudNetService : NSObject{
 	CFSocketRef _ipv4socket;
 	CFSocketRef _ipv6socket;

@@ -12,7 +12,7 @@
 
 #pragma mark - public
 #pragma mark swyps
--(void) setSwypOutPending:(swypInfoRef*)swypRef forConnectionMethods:(NSArray*)methods{
+-(void) setSwypInPending:(swypInfoRef*)swypRef forConnectionMethods:(NSArray*)methods{
 	if ((swypRef && [methods count] > 0) == NO) return;
 
 	[_allPendingSwypConnectionQueuesBySwypInfoRef setObject:[[[swypPendingConnectionQueue alloc] initWithInterfaceMethods:methods] autorelease] forKey:[NSValue valueWithNonretainedObject:swypRef]];
@@ -39,10 +39,10 @@
 	if (existingQueue == nil) return;
 	
 	[_allPendingSwypConnectionQueuesBySwypInfoRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]]; 
-	[_delegate swypPendingConnectioManager:self finishedForSwyp:ref];
+	[_delegate swypPendingConnectionManager:self finishedForSwyp:ref];
 }
 
--(void)	addSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forSwypRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
+-(void)	addSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forSwypRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
 	swypPendingConnectionQueue	* existingQueue	=	[_allPendingSwypConnectionQueuesBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
 	
 	if (existingQueue == nil) return;

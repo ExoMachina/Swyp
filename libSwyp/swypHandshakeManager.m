@@ -29,6 +29,36 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	return ([[_swypRefByPendingConnectionSessions allValues] containsObject:ref]);
 }
 
+
+-(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
+	if (swypInfoRef == nil) {
+		return;
+	}
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
+	
+	NSInteger referenceCount =	[[_swypRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	referenceCount ++;
+	assert(referenceCount > 0);
+	[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
+}
+
+-(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
+	if (swypInfoRef == nil) {
+		return;
+	}
+
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
+	
+	NSInteger referenceCount =	[[_swypRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	referenceCount --;
+	assert(referenceCount >= 0);
+	if (referenceCount == 0){
+		[_swypRefReferenceCountBySwypRef removeObjectForKey:swypValue];
+	}else{
+		[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
+	}
+}
+
 #pragma mark -
 #pragma mark NSObject
 

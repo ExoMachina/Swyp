@@ -12,40 +12,26 @@
 #import "swypInfoRef.h"
 #import "swypCloudNetService.h"
 #import "swypPairServerInteractionManger.h"
+#import "swypInterfaceManager.h"
 
-
-@class swypCloudPairManager;
-@protocol swypCloudPairManagerDelegate <NSObject>
--(void)swypCloudPairManager:(swypCloudPairManager*)manager didReceiveSwypConnectionFromClient:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream;
--(void)swypCloudPairManager:(swypCloudPairManager*)manager didCreateSwypConnectionToServer:(swypServerCandidate*)serverCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream;
-@end
-
-@interface swypCloudPairManager : NSObject <swypCloudNetServiceDelegate, swypPairServerInteractionMangerDelegate>{
+/** swypCloudPairManager is a swypInterfaceManager protocol conforming class that handles the swyp cloud interaction. */
+@interface swypCloudPairManager : NSObject <swypInterfaceManager, 
+	swypCloudNetServiceDelegate, swypPairServerInteractionMangerDelegate>{
+		
 	swypCloudNetService*			_cloudService;
 	swypPairServerInteractionManger*_pairServerManager;
 	
-	id<swypCloudPairManagerDelegate> _delegate;
+	id<swypInterfaceManagerDelegate> _delegate;
 	
 	NSMutableDictionary	*			_swypTokenBySwypRef;	//stored when swypToken given for swyp
 	NSMutableDictionary *			_swypRefByPeerInfo;		//stored when peer retreived from cloud
 	
 	NSMutableSet *					_cloudPairPendingSwypRefs; //stored before cloud access, removed afterwards
 }
-@property (nonatomic, readonly)	swypCloudNetService*			cloudService;
+@property (nonatomic, readonly)	swypCloudNetService*				cloudService;
 @property (nonatomic, readonly)	swypPairServerInteractionManger*pairServerManager;
-@property (nonatomic, assign)	id<swypCloudPairManagerDelegate> delegate;
+@property (nonatomic, assign)	id<swypInterfaceManagerDelegate> delegate;
 
-
--(id)initWithSwypCloudPairManagerDelegate:(id<swypCloudPairManagerDelegate>) delegate;
-
--(void)swypOutBegan:	(swypInfoRef*)swyp;
--(void)swypOutCompleted:(swypInfoRef*)swyp;
--(void)swypOutFailed:	(swypInfoRef*)swyp;
-
--(void)swypInCompleted:	(swypInfoRef*)swyp;
-
--(void)	suspendNetworkActivity;
--(void)	resumeNetworkActivity;
 
 //private
 -(NSDictionary*)_userInfoDictionary;

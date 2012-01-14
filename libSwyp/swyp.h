@@ -47,7 +47,6 @@
 #endif
 
 #pragma mark includes
-#import "swypBidirectionalMutableDictionary.h"
 #import "swypWorkspaceViewController.h"
 #import "swypTiledContentViewController.h"
 #import "swypFileTypeString.h"
@@ -55,3 +54,4 @@
 #import "NSDictionary+BSJSONAdditions.h"
 #import "UIColorAdditions.h"
 #import "UIViewAdditions+swypAdditions.h"
+#import "swypInterfaceManager.h"

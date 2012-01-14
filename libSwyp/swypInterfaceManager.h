@@ -7,8 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "libSwyp.h"
+#import "swypInfoRef.h"
+#import "swypConnectionSession.h"
 
+/** Defines connection interface methods and their priority */
+typedef enum {
+	swypConnectionMethodNone = 0,
+	swypConnectionMethodWifiLoc		= 1 << 1,
+	swypConnectionMethodWifiCloud	= 1 << 2,
+	swypConnectionMethodWWANCloud	= 1 << 3,
+	swypConnectionMethodBluetooth	= 1 << 4
+} swypConnectionMethod;
+
+
+@protocol swypInterfaceManagerDelegate;
 
 /** Defines how network interfaces should behave */
 @protocol swypInterfaceManager <NSObject>
@@ -16,7 +28,7 @@
 ///@name network
 /** Pause network activity on this interface. Ususally app is going background. 
  
- Stop advertising, stop finding, but call delegate callbacks about that.*/
+ Stop advertising, stop finding, but call delegate callbacks to notify about the stop of each swyp. */
 -(void)	suspendNetworkActivity;
 
 /** Allow network activity to resume on this interface. Ususally app is going foreground, or workspace is opening for first time.
@@ -38,9 +50,15 @@
 
 /** No longer advertise a swyp out; remove from reference queue. No longer accept a connection for it (if an interface is able to tell this). 
  
- 	Do not send further delegate messages with this ref. */
+ 	Do not send further delegate messages with this ref. Perhaps the swyp failed.
+ */
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref;
 
+/** Tells whether actually being advertised */
+-(BOOL) isAdvertisingSwypOut:(swypInfoRef*)ref;
+
+/** Standardized init function for interfaces */
+-(id) initWithInterfaceManagerDelegate:(id<swypInterfaceManagerDelegate>)delegate;
 
 ///@name swypIn
 
@@ -68,13 +86,16 @@
 
 /** This method triggers when the interface has found a server candidate and made a connection session out of it.
  
-	These sessions will go to the swypPendingConnectionQueue to be pulled one-by-one by the swypConnectionManager. 
+	These sessions will go to the swypPendingConnectionManager to be pulled one-by-one by the swypConnectionManager. 
  */
 -(void)interfaceManager:(id<swypInterfaceManager>)manager madeUninitializedSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method;
 
 /** This method triggers when the interface has received a client candidate connection and has made session out of it w/ out intitializing it.
  
- These sessions will go to the swypHandshakeManager to begin connecting to their respective servers. */
+ These sessions will go to the swypHandshakeManager to begin connecting to their respective servers. 
+ 
+ @param connectionSession the candidate within the session should contain any matchable swyp.
+ */
 -(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method;
 
 @end

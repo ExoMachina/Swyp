@@ -15,7 +15,7 @@
 
 /**	
 	Callback is called to indicate swypConnectionSession(s) are available for use by connection manager. 
-	Callback is called only after a connectionMethodTimedOut: or addSwypClientCandidate:forSwypRef:forConnectionMethod:.
+	Callback is called only after a connectionMethodTimedOut: or addSwypServerCandidate:forSwypRef:forConnectionMethod:.
 	
 	@warning this method is not called after a nextConnectionSessionToAttemptHandshakeForSwypRef:, nor is there a runloop managing this method. Instead, you should call nextConnectionSessionToAttemptHandshakeForSwypRef: until == nil.
  
@@ -27,7 +27,7 @@
  
  @param ref a swypInfoRef that's no longer needed
  */
--(void)	swypPendingConnectioManager:(swypPendingConnectionManager*)manager finishedForSwyp:(swypInfoRef*)ref;
+-(void)	swypPendingConnectionManager:(swypPendingConnectionManager*)manager finishedForSwyp:(swypInfoRef*)ref;
 @end
 
 /**
@@ -51,10 +51,10 @@
 /** swypPendingConnectionManager is initialized with probably swypConnectionManager as delegate */
 -(id) initWithDelegate:(id<swypPendingConnectionManagerDelegate>)delegate;
 
-/** After swypConnnectionManager posts swypInfoRef to an interface, it sets it as pending here 
+/** After swypConnnectionManager posts swypInfoRef to listen on interfaces, it sets it as pending here 
 	@param methods NSArray of swypConnectionMethod in NSNumber objects as ints
  */
--(void) setSwypOutPending:(swypInfoRef*)swypRef forConnectionMethods:(NSArray*)methods;
+-(void) setSwypInPending:(swypInfoRef*)swypRef forConnectionMethods:(NSArray*)methods;
 
 /**
  This tells the manager that an interface method will no longer send new candidates
@@ -68,10 +68,12 @@
 /**
  After a swypConnectionMethod has returned a swypCandidate to swypConnnectionManager, swypConnnectionManager calls this method to add it to the queue for a specific swypInfoRef.
  */
--(void)	addSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forSwypRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method;
+-(void)	addSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forSwypRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method;
 
 /**
  This method is called by swypConnnectionManager after the delegate protocol swypPendingConnectionManagerHasAvailableHandshakeableConnectionSessionsForSwyp: is called
+ 
+ @return swypConnectionSession object which is the next available connection session that's avilable to dequeue
  */
 -(swypConnectionSession*)	nextConnectionSessionToAttemptHandshakeForSwypRef:(swypInfoRef*)ref;
 

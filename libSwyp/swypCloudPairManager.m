@@ -29,42 +29,57 @@
 }
 
 #pragma mark swyp updates
-//out
--(void)swypOutBegan:(swypInfoRef*)swyp{
-	[_cloudPairPendingSwypRefs addObject:swyp];
-	
-	[[self pairServerManager] postSwypToPairServer:swyp withUserInfo:[self _userInfoDictionary]];
-}
--(void)swypOutCompleted:(swypInfoRef*)swyp{
-	[[self pairServerManager] putSwypUpdateToPairServer:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]] withUserInfo:[self _userInfoDictionary]];
-}
--(void)swypOutFailed:(swypInfoRef*)swyp{
-	[[self pairServerManager] deleteSwypFromPairServer:swyp swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:swyp]]];
-	
-	[self _invalidateSwypRef:swyp];
-}
-//in
 -(void)swypInCompleted:	(swypInfoRef*)swyp{
 	[_cloudPairPendingSwypRefs addObject:swyp];
 
 	[[self pairServerManager] postSwypToPairServer:swyp withUserInfo:[self _userInfoDictionary]];
 }
 
--(void)	suspendNetworkActivity{
-	[[self cloudService] suspendNetworkActivity];
+
+#pragma mark - swypInterfaceManager
+-(void) advertiseSwypOutAsPending:(swypInfoRef*)ref{
+	[_cloudPairPendingSwypRefs addObject:ref];
+	
+	[[self pairServerManager] postSwypToPairServer:ref withUserInfo:[self _userInfoDictionary]];	
 }
+-(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
+	[[self pairServerManager] putSwypUpdateToPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] withUserInfo:[self _userInfoDictionary]];
+}
+-(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
+	[[self pairServerManager] deleteSwypFromPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]]];
+	
+	[self _invalidateSwypRef:ref];
+}
+
+-(BOOL) isAdvertisingSwypOut:(swypInfoRef*)ref{
+	return [_cloudPairPendingSwypRefs containsObject:ref];
+}
+
+-(void)	startFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
+	[_cloudPairPendingSwypRefs addObject:ref];
+	
+	[[self pairServerManager] postSwypToPairServer:ref withUserInfo:[self _userInfoDictionary]];
+}
+-(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
+	[_cloudPairPendingSwypRefs removeObject:ref];
+}
+
 -(void)	resumeNetworkActivity{
 	[[self cloudService] resumeNetworkActivity];	
 }
+-(void)	suspendNetworkActivity{
+	[[self cloudService] suspendNetworkActivity];
+}
+
 
 #pragma mark NSObject
--(id)initWithSwypCloudPairManagerDelegate:(id<swypCloudPairManagerDelegate>) delegate{
+-(id) initWithInterfaceManagerDelegate:(id<swypInterfaceManagerDelegate>)delegate{
 	if (self = [super init]){
-		_delegate	=	delegate;
+		_delegate				=  delegate;
 		_swypTokenBySwypRef		= [NSMutableDictionary new];
 		_swypRefByPeerInfo		= [NSMutableDictionary new];
 		_cloudPairPendingSwypRefs	= [NSMutableSet new];
-
+		
 	}
 	return self;
 }
@@ -93,6 +108,12 @@
 -(void)	_invalidateSwypRef:(swypInfoRef*)swyp{
 	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swyp]];
 	[_cloudPairPendingSwypRefs removeObject:swyp];
+	
+	if ([swyp swypType] == swypInfoRefTypeSwypIn){
+		[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+	}else if ([swyp swypType] == swypInfoRefTypeSwypOut){
+		[_delegate interfaceManager:self isDoneSearchForSwypOutServerCandidatesForRef:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+	}
 }
 
 #pragma mark - delegation
@@ -105,25 +126,40 @@
 	
 	if (swypRef == nil){
 		return;
-	}else{
-		//cleanup time
-		[self _invalidateSwypRef:swypRef];
-		[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; //autoreleasing here
 	}
 	
 	[candidate setMatchedLocalSwypInfo:swypRef];
+	
+	swypConnectionSession * pendingServerSession	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
 
-	[_delegate swypCloudPairManager:self didCreateSwypConnectionToServer:candidate withStreamIn:inputStream streamOut:outputStream];
+	[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:pendingServerSession forRef:swypRef withConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 
 	SRELS(candidate);
+	SRELS(pendingServerSession);
+	
+	//cleanup time
+	[self _invalidateSwypRef:swypRef];
+	[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; //autoreleasing here
+
 }
+
 -(void)cloudNetService:(swypCloudNetService*)service didReceiveInputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream withPeerFromInfo:(NSDictionary*)peerInfo{
 	swypClientCandidate * candidate =	[[swypClientCandidate alloc] init];
 	// if xmpp 	[candidate setNametag:[peerInfo valueForKey:@"smppPeer"]];
 	
-	[_delegate swypCloudPairManager:self didReceiveSwypConnectionFromClient:candidate withStreamIn:inputStream streamOut:outputStream];
-	swypInfoRef *swypRef	= 	[_swypRefByPeerInfo objectForKey:[NSValue valueWithNonretainedObject:peerInfo]];
-	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swypRef]];
+	swypInfoRef *swypRef			= 	[_swypRefByPeerInfo objectForKey:[NSValue valueWithNonretainedObject:peerInfo]];
+	
+	if (swypRef != nil){
+		//probably once XMPP is enabled
+		[candidate setMatchedLocalSwypInfo:swypRef];
+	}
+#pragma mark TODO: post this as an excepetion in the future.
+	
+	swypConnectionSession * pendingClient	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
+		
+	[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:pendingClient forRef:swypRef withConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+	
+	[self _invalidateSwypRef:swypRef];
 	[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; 
 	
 	SRELS(candidate);
@@ -160,7 +196,7 @@
 		
 		EXOLog(@"%@",@"Automatically scheduling swypOut swypPair update after pending-peer response");
 	}else{
-		EXOLog(@"%@",@"Weird no-peer no-fail response from swyp-in");
+		EXOLog(@"%@",@"Weird no-peer no-fail response from swyp-in; maybe we've modified heroku for pending swyp-ins?");
 	}
 }
 

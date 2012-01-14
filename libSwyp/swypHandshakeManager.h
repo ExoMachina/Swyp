@@ -40,15 +40,23 @@ typedef enum {
 	NSMutableDictionary	*	_swypRefByPendingConnectionSessions;
 	NSMutableDictionary	*	_swypTimeoutsBySwypRef;
 	
+	NSMutableDictionary *	_swypRefReferenceCountBySwypRef;
+	
 	id<swypHandshakeManagerDelegate>	_delegate;
 }
 @property (nonatomic, assign)	id<swypHandshakeManagerDelegate>	delegate;
 
-/** Increment reference count for a particular swyp out.
+/** Increment reference count for a particular swyp out. 
  
+ Swyp outs that have reference count are used for matching client candidates in handshake process.
  */
 -(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
 
+/** Decrement reference count for a particular swyp out. 
+ 
+ This probably means that an interface is no longer advertising for a swyp-out.
+ Swyp outs that have reference count are used for matching client candidates in handshake process.
+ */
 -(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
 
 /** Returns whether connection is pending for swypInfoRef; */
