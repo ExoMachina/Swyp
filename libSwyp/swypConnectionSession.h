@@ -105,6 +105,9 @@ typedef enum {
 
 -(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
 
+/** Start connection; schedule in runloop */
+-(void) initiate;
+/** Destroy connection; remove from runloop */
 -(void)	invalidate;
 
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
@@ -113,9 +116,9 @@ typedef enum {
 -(void)	addConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 -(void)	removeConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 
-//sending data
-/*
-	length: the length of the 'stream' property
+/** @name sending data */
+/**
+	@param length the length of the 'stream' property
 		if length is specified as 0, the stream will be written without a length specifier, to allow devs to do fun stuff
 		be aware, some malicious endpoints will try to overload the length of a stream to cause buffer overruns 
 			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!

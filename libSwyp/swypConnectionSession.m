@@ -61,6 +61,23 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	return [self beginSendingFileStreamWithTag:tag type:type dataStreamForSend:payloadStream length:dataLength];
 }
 
+-(void) initiate{
+	if ([_socketInputStream streamStatus] < NSStreamStatusOpen){			
+		
+		[_socketInputStream	setDelegate:self];
+		[_socketInputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		[_socketInputStream	open];
+	}
+	if ([_socketOutputStream streamStatus] < NSStreamStatusOpen){
+		
+		[_socketOutputStream	setDelegate:self];
+		[_socketOutputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		[_socketOutputStream	open];
+	}
+	
+	[self _changeStatus:swypConnectionSessionStatusPreparing];
+}
+
 -(void)	invalidate{
 	// 1) tell delegates everything will die 2) change status to closing 3) add goodbye packet to queue
 	// 4) reason only is only for debugging purposes
@@ -101,20 +118,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 	if (self = [super init]){
 		_representedCandidate	=	[candidate retain];
-		
-		if ([inputStream streamStatus] < NSStreamStatusOpen){			
-			
-			[inputStream	setDelegate:self];
-			[inputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-			[inputStream	open];
-		}
-		if ([outputStream streamStatus] < NSStreamStatusOpen){
-			
-			[outputStream	setDelegate:self];
-			[outputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-			[outputStream	open];
-		}
-		
+				
 		_socketInputStream	= [inputStream retain];
 		_socketOutputStream	= [outputStream retain];
 		
@@ -122,8 +126,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		
 		_dataDelegates						=	[[NSMutableSet alloc] init];
 		_connectionSessionInfoDelegates		=	[[NSMutableSet alloc] init];
-		[self _changeStatus:swypConnectionSessionStatusPreparing];
-		
+
 	}
 	
 	return self;

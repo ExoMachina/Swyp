@@ -7,4 +7,5 @@
     #import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
 	#import "libSwyp.h"
+	#import "swyp.h"
 #endif

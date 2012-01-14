@@ -19,6 +19,10 @@
  display the swypWorkspaceViewController
  */
 
+
+//The file that contains technicals for the swyp project
+#import "swyp.h"
+
 //the main workspace view controller to show the "Swÿp interface"
 #import "swypWorkspaceViewController.h"
 
@@ -36,6 +40,6 @@
 #import "swypPhotoPlayground.h"
 #import "swypContentInteractionManager.h"
 
+//the following are for conneciton creation
+#import "swypHandshakeManager.h"
 #import "swypConnectionSession.h"
-
-#import "swyp.h"

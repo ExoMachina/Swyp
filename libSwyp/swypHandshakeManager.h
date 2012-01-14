@@ -9,6 +9,7 @@
 //	Handshake manager is passed client and server candidates and handles everything about their setup until its completion
 
 #import <Foundation/Foundation.h>
+#import "swyp.h"
 #import "swypInfoRef.h"
 #import "swypClientCandidate.h"
 #import "swypServerCandidate.h"
@@ -26,41 +27,44 @@ typedef enum {
 @class swypHandshakeManager;
 
 @protocol swypHandshakeManagerDelegate <NSObject>
--(NSArray*)	relevantSwypsForCandidate:				(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager;
 
--(void)	connectionSessionCreationFailedForCandidate:(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error;
--(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session	withHandshakeManager:	(swypHandshakeManager*)manager;
+-(void)	connectionSessionCreationFailedForConnectionSession:(swypConnectionSession*)session	forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error;
+
+-(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager;
 
 @end
 
 
 @interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate> {
-	NSMutableDictionary *	_resolvingServerCandidates;
-	NSMutableSet *			_pendingConnectionSessions;
-		
+
+	NSMutableDictionary	*	_swypRefByPendingConnectionSessions;
+	NSMutableDictionary	*	_swypTimeoutsBySwypRef;
 	
 	id<swypHandshakeManagerDelegate>	_delegate;
 }
 @property (nonatomic, assign)	id<swypHandshakeManagerDelegate>	delegate;
-/*
-	LEARN: We accept a set of Server candidates, why not a set of Client candidates?
-		Server candidates are found through NSNetServices and are batched for connections when needed
-		Client candidates connect to servers one by one, and need immediate servicing with 'hello' packets
-		Servers don't know of the existence of clients until they connect
-*/
 
--(void)	beginHandshakeProcessWithServerCandidates:	(NSSet*)candidates;
--(void)	beginHandshakeProcessWithClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
-//from swyp cloud, for example
--(void) beginHandshakeProcessWithPrePairedCandidate: (swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
+/** Increment reference count for a particular swyp out.
+ 
+ */
+-(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
+
+-(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
+
+/** Returns whether connection is pending for swypInfoRef; */
+-(BOOL)	connectionIsPendingForSwypRef:(swypInfoRef*)ref;
+
+/** 
+ The method for attaching swypConnectionSessions which have already been paired through NSInputStreams and NSOutputStreams, and supposedly work.
+ 
+ This depreicates beginHandshakeProcessWithServerCandidates:.
+ 
+ @warning the connectionSession should be uninitiated. The initiate function causes the socket connections to open and forces the handshake process. 
+ */
+-(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref;
 
 //
 //private
--(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate;
--(void)	_startConnectionToServerCandidate:			(swypServerCandidate*)serverCandidate;
-
--(void)	_initializeConnectionSessionObjectForCandidate:	(swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream;
-
 -(void)	_sendServerHelloPacketToClientForSwypConnectionSession:	(swypConnectionSession*)session;
 -(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session;
 
@@ -78,4 +82,5 @@ typedef enum {
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session;
 
+-(void)	_removeSessionFromLocalStorage: (swypConnectionSession*)session;
 @end

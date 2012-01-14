@@ -14,17 +14,19 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 @synthesize delegate = _delegate;
 #pragma mark -
 #pragma mark public
--(void)	beginHandshakeProcessWithServerCandidates:	(NSSet*)candidates{
-	for (swypServerCandidate * serverCandidate in candidates){
-		[self _startResolvingConnectionToServerCandidate:serverCandidate];
-	}
-}
--(void)	beginHandshakeProcessWithClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
-	[self _initializeConnectionSessionObjectForCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
+-(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref{
+	
+	[session initiate];
+	[session addConnectionSessionInfoDelegate:self];
+	
+	[_swypRefByPendingConnectionSessions setObject:ref forKey:[NSValue valueWithNonretainedObject:session]];
+	
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	[_swypTimeoutsBySwypRef setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:ref]];
 }
 
--(void) beginHandshakeProcessWithPrePairedCandidate: (swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
-	[self _initializeConnectionSessionObjectForCandidate:candidate streamIn:inputStream streamOut:outputStream];
+-(BOOL)	connectionIsPendingForSwypRef:(swypInfoRef*)ref{
+	return ([[_swypRefByPendingConnectionSessions allValues] containsObject:ref]);
 }
 
 #pragma mark -
@@ -32,89 +34,26 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 -(id)	init{
 	if (self = [super init]){
-		_resolvingServerCandidates			=	[[NSMutableDictionary alloc] init];
-		_pendingConnectionSessions			=	[[NSMutableSet alloc] init];
+		
+		_swypRefByPendingConnectionSessions	=	[[NSMutableDictionary alloc] init];
+		_swypTimeoutsBySwypRef				= [NSMutableDictionary new];
 	}
 	
 	return self;
 }
 
 -(void)	dealloc{
-	for (swypServerCandidate * candidate in _resolvingServerCandidates){
-		NSNetService * resolvingService	=	[candidate netService];
-		[resolvingService setDelegate:nil];
-		[resolvingService stop];
+	
+	for (NSTimer * timer in [_swypTimeoutsBySwypRef allValues]){
+		[timer invalidate];
 	}
+	SRELS(_swypTimeoutsBySwypRef);
 	
-	SRELS(_pendingConnectionSessions);
-	SRELS(_resolvingServerCandidates);
-	
+	SRELS(_swypRefByPendingConnectionSessions);
 	
 	[super dealloc];
 }
 
-
-#pragma mark -
-#pragma mark resolution and connection
--(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate{
-	NSNetService * resolveService	=	[serverCandidate netService]; 
-	
-	if ([_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:resolveService]] != nil){
-		return;
-	}
-	
-	EXOLog(@"Began resolving server candidate: %@", [[serverCandidate netService] name]);
-	[resolveService				setDelegate:self];
-	[resolveService				resolveWithTimeout:3];
-	[_resolvingServerCandidates setObject:serverCandidate forKey:[NSValue valueWithNonretainedObject:resolveService]];
-}
-
--(void)	_startConnectionToServerCandidate:			(swypServerCandidate*)serverCandidate{
-	NSNetService *		connectService	=	[serverCandidate netService];
-	
-	NSInputStream *		inputStream		=	nil;
-	NSOutputStream *	outputSteam		=	nil;
-	
-	//neither are open
-	BOOL success	=	[connectService getInputStream:&inputStream outputStream:&outputSteam];
-	if (success && inputStream != nil && outputSteam != nil){
-		[self _initializeConnectionSessionObjectForCandidate:serverCandidate streamIn:inputStream streamOut:outputSteam];
-	}else {
-		[_delegate	connectionSessionCreationFailedForCandidate:serverCandidate withHandshakeManager:self error:[NSError errorWithDomain:swypHandshakeManagerErrorDomain code:swypHandshakeManagerSocketSetupError userInfo:nil]];
-	}
-
-}
-#pragma mark NSNetServiceDelegate
-- (void)netServiceDidResolveAddress:(NSNetService *)sender{
-	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
-
-	
-	EXOLog(@"Resolved candidate: %@", [sender name]);
-	
-	if (candidate != nil){
-		[self _startConnectionToServerCandidate:candidate];
-		[sender setDelegate:nil];
-		[_resolvingServerCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:sender]];
-	}
-}
-- (void)netService:(NSNetService *)sender didNotResolve:(NSDictionary *)errorDict{
-	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
-	
-	EXOLog(@"Did not resolve candidate: %@", [sender name]);
-	if (candidate != nil){
-		[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:[NSError errorWithDomain:[errorDict valueForKey:NSNetServicesErrorDomain] code:[[errorDict valueForKey:NSNetServicesErrorCode] intValue] userInfo:nil]];
-		[sender setDelegate:nil];
-		[sender stop];
-		[_resolvingServerCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:sender]];
-	}
-}
-
-#pragma mark socket connection
--(void)	_initializeConnectionSessionObjectForCandidate:	(swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
-	swypConnectionSession * newSession	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
-	[newSession addConnectionSessionInfoDelegate:self];
-	[_pendingConnectionSessions addObject:newSession];
-}
 
 #pragma mark -
 #pragma mark connectionSession Delegates 
@@ -132,11 +71,15 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 }
 -(void) sessionDied:	(swypConnectionSession*)session withError:(NSError*)error{
-	swypCandidate	*	candidate	=	[session representedCandidate];
 	EXOLog(@"Session connection died for candidate: %@",[error description]);
-	[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:error];
+
+	swypInfoRef * ref	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
+	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:ref withHandshakeManager:self error:error];
+		
 	[session removeConnectionSessionInfoDelegate:self];
-	[_pendingConnectionSessions	removeObject:session];
+	
+	[self _removeSessionFromLocalStorage:session];
+	
 }
 
 #pragma mark connectionSession data delegates
@@ -191,7 +134,13 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 }
 
-#pragma mark -
+#pragma mark - private
+-(void)_timedOutHandshakeForConnectionSession:(NSTimer*)sender{
+	swypConnectionSession * timedOutSession	=	[sender userInfo];
+
+	[self _removeAndInvalidateSession:timedOutSession];
+}
+
 #pragma mark helloPacket
 -(void)	_sendServerHelloPacketToClientForSwypConnectionSession:	(swypConnectionSession*)session{
 	NSMutableDictionary *	helloDictionary	=	[NSMutableDictionary dictionary];
@@ -214,9 +163,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 -(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session{
 	NSMutableDictionary *	helloDictionary	=	[NSMutableDictionary dictionary];
-	NSArray *				relevantSwyps	=	[_delegate relevantSwypsForCandidate:[session representedCandidate] withHandshakeManager:self];
-	swypInfoRef *			querySwyp		=	(ArrayHasItems(relevantSwyps))?[relevantSwyps objectAtIndex:0]: nil;
 	
+	swypInfoRef *			querySwyp		=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];	
 	
 	if (querySwyp != nil){
 		[session setSessionHueColor:[UIColor randomSwypHueColor]];
@@ -364,18 +312,16 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	
 
+
+	swypInfoRef * localMatchSwyp	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
 	
-	swypInfoRef * firstMatchingSwyp	=	nil;
-	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
-		if([self _serverCandidate:candidate isMatchForSwypInfo:localSwyp]){
-			firstMatchingSwyp	=	localSwyp;
-			break;
-		}
+	if([self _serverCandidate:candidate isMatchForSwypInfo:localMatchSwyp] ==  NO){
+		localMatchSwyp = nil;
 	}
 	
-	if (firstMatchingSwyp != nil){
+	if (localMatchSwyp != nil){
 		EXOLog(@"Server accepted hello:, Matching swyp-in found");
-		[candidate setMatchedLocalSwypInfo:firstMatchingSwyp];
+		[candidate setMatchedLocalSwypInfo:localMatchSwyp];
 		/*
 			The server has returned a matching swyp so we're happy to begin crypto!
 		*/
@@ -384,9 +330,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}else {
 		EXOLog(@"Server accepted Hello: No matching swyp-in found");
 		/*
-			No match from any of our swypInfoRefs -- which is sorta odd if we got this far, 
-				so set a breakpoint here if things are off..
-		*/
+			No match from any of our swypInfoRefs; 
+		 */
 
 		[self _removeAndInvalidateSession:session];
 	}
@@ -436,16 +381,24 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-	[_delegate connectionSessionWasCreatedSuccessfully:session withHandshakeManager:self];
+	[_delegate connectionSessionWasCreatedSuccessfully:session forSwypRef:[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]] withHandshakeManager:self];
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{
-	[_delegate	connectionSessionCreationFailedForCandidate:[session representedCandidate] withHandshakeManager:self error:nil];
+
+	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]] withHandshakeManager:self error:nil];
+
 	[session	removeConnectionSessionInfoDelegate:self];
 	[session	removeDataDelegate:self];
 	[session	invalidate];
-	[_pendingConnectionSessions	removeObject:session];			
+
+	[self _removeSessionFromLocalStorage:session];
 }
 
-
+-(void)	_removeSessionFromLocalStorage: (swypConnectionSession*)session{
+	swypInfoRef * ref	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
+	[_swypRefByPendingConnectionSessions removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
+	[[_swypTimeoutsBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] invalidate];
+	[_swypTimeoutsBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]];
+}
 @end
