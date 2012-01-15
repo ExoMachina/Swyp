@@ -70,7 +70,7 @@ typedef enum {
 
 /** No longer search for additional swypIn servers for this ref; remove from reference queue. 
 	
-	Do not send further delegate messages with this ref. */
+	Do not send further delegate messages with this ref after notifying of the stoppage. */
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref;
 
 @end

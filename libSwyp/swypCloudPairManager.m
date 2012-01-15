@@ -112,7 +112,7 @@
 	if ([swyp swypType] == swypInfoRefTypeSwypIn){
 		[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 	}else if ([swyp swypType] == swypInfoRefTypeSwypOut){
-		[_delegate interfaceManager:self isDoneSearchForSwypOutServerCandidatesForRef:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+		[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 	}
 }
 

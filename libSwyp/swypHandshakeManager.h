@@ -41,6 +41,7 @@ typedef enum {
 	NSMutableDictionary	*	_swypTimeoutsBySwypRef;
 	
 	NSMutableDictionary *	_swypRefReferenceCountBySwypRef;
+	NSMutableSet		*	_swypRefRetention; //because no retention happens for swypInfoRefs as a key
 	
 	id<swypHandshakeManagerDelegate>	_delegate;
 }

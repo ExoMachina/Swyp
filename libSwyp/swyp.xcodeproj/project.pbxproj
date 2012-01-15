@@ -119,6 +119,9 @@
 		79F1467114C1B50C00107170 /* swypBonjourPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466F14C1B50C00107170 /* swypBonjourPairManager.h */; };
 		79F1467214C1B50C00107170 /* swypBonjourPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467014C1B50C00107170 /* swypBonjourPairManager.m */; };
 		79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467514C1CA6C00107170 /* swypInterfaceManager.h */; };
+		79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467714C244E300107170 /* swypBluetoothPairManager.h */; };
+		79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467814C244E300107170 /* swypBluetoothPairManager.m */; };
+		79F1467D14C2489000107170 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F1467B14C2487900107170 /* GameKit.framework */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -236,6 +239,9 @@
 		79F1466F14C1B50C00107170 /* swypBonjourPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourPairManager.h; sourceTree = "<group>"; };
 		79F1467014C1B50C00107170 /* swypBonjourPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourPairManager.m; sourceTree = "<group>"; };
 		79F1467514C1CA6C00107170 /* swypInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInterfaceManager.h; sourceTree = "<group>"; };
+		79F1467714C244E300107170 /* swypBluetoothPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBluetoothPairManager.h; sourceTree = "<group>"; };
+		79F1467814C244E300107170 /* swypBluetoothPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBluetoothPairManager.m; sourceTree = "<group>"; };
+		79F1467B14C2487900107170 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -246,6 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79F1467D14C2489000107170 /* GameKit.framework in Frameworks */,
 				79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */,
@@ -284,6 +291,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				79F1467B14C2487900107170 /* GameKit.framework */,
 				79635A7614904DE90098C265 /* SystemConfiguration.framework */,
 				680FC5B613E251DA00509CF2 /* CoreFoundation.framework */,
 				680FC4EF13E2473E00509CF2 /* UIKit.framework */,
@@ -608,6 +616,8 @@
 		79F1467414C1CA4100107170 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
+				79F1467714C244E300107170 /* swypBluetoothPairManager.h */,
+				79F1467814C244E300107170 /* swypBluetoothPairManager.m */,
 			);
 			name = Bluetooth;
 			sourceTree = "<group>";
@@ -676,6 +686,7 @@
 				79F1466D14C1AA4300107170 /* swypBidirectionalMutableDictionary.h in Headers */,
 				79F1467114C1B50C00107170 /* swypBonjourPairManager.h in Headers */,
 				79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */,
+				79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +795,7 @@
 				79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */,
 				79F1466E14C1AA4300107170 /* swypBidirectionalMutableDictionary.m in Sources */,
 				79F1467214C1B50C00107170 /* swypBonjourPairManager.m in Sources */,
+				79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

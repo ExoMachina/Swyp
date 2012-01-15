@@ -40,6 +40,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	referenceCount ++;
 	assert(referenceCount > 0);
 	[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
+	[_swypRefRetention	addObject:swypInfoRef];
 }
 
 -(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
@@ -54,6 +55,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	assert(referenceCount >= 0);
 	if (referenceCount == 0){
 		[_swypRefReferenceCountBySwypRef removeObjectForKey:swypValue];
+		[_swypRefRetention	removeObject:swypInfoRef];
 	}else{
 		[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
 	}
@@ -67,6 +69,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		
 		_swypRefByPendingConnectionSessions	=	[[NSMutableDictionary alloc] init];
 		_swypTimeoutsBySwypRef				= [NSMutableDictionary new];
+		_swypRefReferenceCountBySwypRef		= [NSMutableDictionary new];
+		_swypRefRetention					= [NSMutableSet new];
 	}
 	
 	return self;
@@ -80,6 +84,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	SRELS(_swypTimeoutsBySwypRef);
 	
 	SRELS(_swypRefByPendingConnectionSessions);
+	
+	SRELS(_swypRefReferenceCountBySwypRef);
+	SRELS(_swypRefRetention);
 	
 	[super dealloc];
 }
