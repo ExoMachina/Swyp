@@ -9,7 +9,65 @@
 #import "swypOutputToDataStream.h"
 
 @implementation swypOutputToDataStream
-@synthesize dataDelegate = _dataDelegate;
+@synthesize dataDelegate = _dataDelegate, delegate = _delegate;
+
+#pragma mark - streams
+#pragma mark NSOutputStream
+-(NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)len{
+	NSData * relayData	=	[NSData dataWithBytesNoCopy:(void*)buffer length:len];
+	[_dataDelegate outputToDataStream:self wantsProvideData:relayData];
+	return len;
+}
+- (BOOL)hasSpaceAvailable{
+	return TRUE;
+}
+
+#pragma mark NSStream
+-(void)	open{
+	_streamStatus = NSStreamStatusOpen;
+	
+	if ([_delegate respondsToSelector:@selector(stream:handleEvent:)]){
+		[_delegate stream:self handleEvent:NSStreamEventOpenCompleted];
+		[_delegate stream:self handleEvent:NSStreamEventHasSpaceAvailable];
+	}
+}
+
+-(void)	close{	
+	_streamStatus = NSStreamStatusClosed;
+	[_dataDelegate outputToDataStreamWasClosed:self];
+	
+	if ([_delegate respondsToSelector:@selector(stream:handleEvent:)]){
+		[_delegate stream:self handleEvent:NSStreamEventEndEncountered];
+	}
+}
+
+-(NSStreamStatus) streamStatus{
+	return _streamStatus;
+}
+
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+
+}
+
+- (void)removeFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode {
+
+}
+
+- (id)propertyForKey:(NSString *)key {
+    return nil;
+}
+
+- (BOOL)setProperty:(id)property forKey:(NSString *)key {
+    return NO;
+}
+
+- (NSError *)streamError {
+    return nil;
+}
+
+
+
+#pragma mark - NSObject
 
 -(id) initWithDataDelegate:(id <swypOutputToDataStreamDataDelegate>)delegate{
 	if (self =[super init]){
@@ -19,7 +77,11 @@
 }
 
 -(void)dealloc{
-	
+	if (_streamStatus == NSStreamStatusOpen){
+		[self close];
+	}
+	_dataDelegate	= nil;
+	_delegate		= nil;
 	[super dealloc];
 }
 @end

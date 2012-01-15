@@ -53,7 +53,7 @@
 }
 
 -(void)outputToDataStreamWasClosed:(swypOutputToDataStream *)stream{
-	
+	[self invalidateStreamSet];
 }
 
 #pragma mark NSObject
