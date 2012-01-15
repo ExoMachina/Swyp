@@ -23,32 +23,32 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
 }
 
--(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
-	if (swypInfoRef == nil) {
+-(void)	referenceSwypOutAsPending:(swypInfoRef*)ref{
+	if (ref == nil) {
 		return;
 	}
-	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
 	
 	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
 	referenceCount ++;
 	assert(referenceCount > 0);
 	[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
-	[_swypOutRefRetention	addObject:swypInfoRef];
+	[_swypOutRefRetention	addObject:ref];
 }
 
--(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
-	if (swypInfoRef == nil) {
+-(void)	dereferenceSwypOutAsPending:(swypInfoRef*)ref{
+	if (ref == nil) {
 		return;
 	}
 
-	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
 	
 	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
 	referenceCount --;
 	assert(referenceCount >= 0);
 	if (referenceCount == 0){
 		[_swypOutRefReferenceCountBySwypRef removeObjectForKey:swypValue];
-		[_swypOutRefRetention	removeObject:swypInfoRef];
+		[_swypOutRefRetention	removeObject:ref];
 	}else{
 		[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
 	}

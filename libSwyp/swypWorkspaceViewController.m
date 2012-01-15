@@ -60,6 +60,8 @@
 //update UI
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
 	
+#warning do this with connection classes
+	
 	if ((availableMethods & swypConnectionMethodWifiCloud) == swypConnectionMethodWifiCloud){
 		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
 	}else{

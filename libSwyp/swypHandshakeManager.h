@@ -51,14 +51,14 @@ typedef enum {
  
  Swyp outs that have reference count are used for matching client candidates in handshake process.
  */
--(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
+-(void)	referenceSwypOutAsPending:(swypInfoRef*)ref;
 
 /** Decrement reference count for a particular swyp out. 
  
  This probably means that an interface is no longer advertising for a swyp-out.
  Swyp outs that have reference count are used for matching client candidates in handshake process.
  */
--(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
+-(void)	dereferenceSwypOutAsPending:(swypInfoRef*)ref;
 
 
 /** 

@@ -46,9 +46,8 @@
 	[[self pairServerManager] putSwypUpdateToPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] withUserInfo:[self _userInfoDictionary]];
 }
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
-	
+	[_cloudPairPendingSwypRefs removeObject:ref];
 	[[self pairServerManager] deleteSwypFromPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]]];
-
 	
 	[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:ref forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 }
