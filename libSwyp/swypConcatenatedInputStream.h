@@ -24,7 +24,7 @@
 -(bool) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream;
 @end
 
-
+/** I can make one big stream out of a bunch of small ones now. Only encapsulating stream.*/
 @interface swypConcatenatedInputStream : NSInputStream <NSStreamDelegate> {
 	NSMutableArray *		_queuedStreams;
 	NSInputStream *			_currentInputStream;
@@ -58,17 +58,18 @@
 @property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	infoDelegate;
 @property (nonatomic, assign) id<NSStreamDelegate>						delegate;
 
-//NSInputStream array
+///NSInputStream array
 -(id)	initWithInputStreamArray:	(NSArray*)inputStreams; 
 
-
+///add NSInputStream
 -(void)	addInputStreamToQueue:		(NSInputStream*)input;
+///NSInputStream array
 -(void)	addInputStreamsToQueue:		(NSArray*)inputStreams;
 
 
 -(BOOL)	finishedRelayingAllQueuedStreamData;
 
-/*
+/**
 	Clears queue of any stream not running now.
 	Streams don't give notifications
 	Streams don't get added to completedStreams
@@ -76,16 +77,16 @@
 */
 -(void)	removeAllQueuedStreamsAfterCurrent;
 
-/*
+/**
 	if delegate is set, the following function will give an update each time bytes are read from the stream
 	'queuedStream' is a stream already queued
 	'lengthToTrack' is the length that a given stream has
 */
 -(void)			setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream;
-/*
+/**
 	The following function returns 0 if queued stream is finished or if it is not queued
 	Passing an NSUInteger by reference to 'refForTotalBytes' has the total placed into it.. 
-		It's value is non-zero if 'holdCompletedStreams' is YES, and length to track was set on it in the past
+		Its value is non-zero if 'holdCompletedStreams' is YES, and length to track was set on it in the past
 */
 -(NSUInteger)	remainingByteCountForQueuedStream:	(NSInputStream*)queuedStream withTotalLength:(NSUInteger *)refForTotalBytes;
 

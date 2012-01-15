@@ -24,6 +24,11 @@ GKSessionDelegate>{
 	
 	//game kit
 	GKSession *		_gameKitPeerSession;
+	NSMutableSet *	_pendingGKPeerServerConnections;
+	NSMutableSet *	_pendingGKPeerClientConnections;
+
 }
 
+//private
+-(void)	_updateInterfaceActivity;
 @end
