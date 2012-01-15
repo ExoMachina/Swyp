@@ -10,9 +10,9 @@
 #import "swypInfoRef.h"
 #import "swypInterfaceManager.h"
 #import <GameKit/GameKit.h>
+#import "swypGKPeerAbstractedStreamSet.h"
 
-@interface swypBluetoothPairManager : NSObject <swypInterfaceManager,
-GKSessionDelegate>{
+@interface swypBluetoothPairManager : NSObject <swypInterfaceManager,GKSessionDelegate, swypGKPeerAbstractedStreamSetDelegate>{
 	id<swypInterfaceManagerDelegate>	_delegate;
 		
 	NSMutableDictionary *				_swypOutTimeoutTimerBySwypInfoRef;
@@ -20,13 +20,14 @@ GKSessionDelegate>{
 	
 	NSMutableDictionary *				_swypInTimeoutTimerBySwypInfoRef;
 	NSMutableSet		*				_validSwypInForConnectionCreation;
-
 	
 	//game kit
 	GKSession *		_gameKitPeerSession;
 	NSMutableSet *	_pendingGKPeerServerConnections;
 	NSMutableSet *	_pendingGKPeerClientConnections;
 
+	NSMutableDictionary *	_activeAbstractedStreamSetsByPeerName;
+	
 }
 
 //private

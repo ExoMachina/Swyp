@@ -105,11 +105,13 @@
 
 -(void)interfaceManager:(id<swypInterfaceManager>)manager madeUninitializedSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method{
 
+	//swyp-in potentially matched ref
 	[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:method];
 }
 
 -(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method{
 	
+	//swyp out matched ref
 	[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession forSwypRef:ref];
 }
 

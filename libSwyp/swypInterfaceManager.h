@@ -94,7 +94,9 @@ typedef enum {
  
  These sessions will go to the swypHandshakeManager to begin connecting to their respective servers. 
  
- @param connectionSession the candidate within the session should contain any matchable swyp.
+ @param ref is optional. Not all interfaces know exactly what client is matching from.
+ 
+ @param connectionSession the candidate within the session can contain a matchable swyp when percise. 
  */
 -(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method;
 

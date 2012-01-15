@@ -12,13 +12,18 @@
 
 @class swypDiscernedInputStream;
 
+/** dataSource of a swypDiscernedInputStream must conform to two methods */
 @protocol swypDiscernedInputStreamDataSource <NSObject>
-
+/** See discussion of endIndefiniteStreamAtByteIndex in swypDiscernedInputStream.
+ 
+ This tells the datasource that discerning a particular object from the datasource completed at a certain byte index. */
 -(void)		discernedStreamEndedAtStreamByteIndex:(NSUInteger)endByteIndex  discernedInputStream:(swypDiscernedInputStream*)inputStream;
+/** How the discernedInputStream retrieves data */
 -(NSData*)	pullDataWithLength:(NSUInteger)maxLength discernedInputStream:(swypDiscernedInputStream*)inputStream;
 
 @end
 
+/** This class creates an input stream from an input dataSource, making the stream only have as much data as is authorized by the init function, and notifying the swypInputStreamDiscerner when completed. */
 @interface swypDiscernedInputStream : NSInputStream <NSStreamDelegate>{
 	BOOL					_isIndefinite;
 	NSUInteger				_streamLength;
@@ -42,9 +47,9 @@
 
 
 //stream info
-/*
+/**
 	Indefinite streams occur when both endpoints support the same proprietary protocol, and set stream payload length to 0
-	When the indefinite stream is to be ended, endIndefiniteStreamAtByteIndex: must be called referencing a byte that has either not yet been read, or has been read in the last read cycle 
+	When the indefinite stream is to be ended, endIndefiniteStreamAtByteIndex: must be called referencing a byte that has either not yet been read, or has been read in the last read cycle.
 */
 @property (nonatomic, readonly)	BOOL					isIndefinite;
 @property (nonatomic, readonly)	NSUInteger				streamLength;
@@ -56,10 +61,10 @@
 @property (nonatomic, assign)	id<swypDiscernedInputStreamDataSource>			dataSource;
 @property (nonatomic, assign)	id<NSStreamDelegate>							delegate;
 
-
+///the primary init function
 -(id)	initWithStreamDataSource:(id<swypDiscernedInputStreamDataSource>)dataSource type:(NSString*)type tag:(NSString*)tag length:(NSUInteger)streamLength;
 
-/*
+/**
 	This method enables the next input stream to be queued out of data already consumed by reading this object's NSStream
 	byteIndex must exist within the most recent read, or in the future
 		eg, it can't be from two stream reads back
@@ -68,7 +73,7 @@
 -(void) endIndefiniteStreamAtByteIndex:(NSUInteger)byteIndex;
 
 
-//this method tells the discernedInputStream that there is data available, and that it should pull it!
+///this method tells the discernedInputStream that there is data available, and that it should pull it!
 -(void)	shouldPullData;
 
 //

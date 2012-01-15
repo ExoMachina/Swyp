@@ -6,8 +6,6 @@
 //  Copyright 2011 ExoMachina. Some rights reserved -- see included 'license' file.
 //
 
-//provides one output stream from collection of input streams, immediately switching at end of each stream  
-
 #import <Foundation/Foundation.h>
 
 @class swypConcatenatedInputStream;
@@ -21,10 +19,12 @@
 /*
 	Returning NO will close the stream
 */
--(bool) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream;
+-(BOOL) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream;
 @end
 
-/** I can make one big stream out of a bunch of small ones now. Only encapsulating stream.*/
+/** Provides one input stream from collection of input streams, immediately switching at end of each stream  
+ 
+ I can make one big stream out of a bunch of small ones now. Only encapsulating stream.*/
 @interface swypConcatenatedInputStream : NSInputStream <NSStreamDelegate> {
 	NSMutableArray *		_queuedStreams;
 	NSInputStream *			_currentInputStream;
@@ -50,12 +50,28 @@
 	NSMutableData *			_dataOutBuffer;
 	NSUInteger				_nextDataOutputIndex;
 }
-
+/** Provides array of all currently queud streams */
 @property (nonatomic, readonly) NSArray *								queuedStreams;
-@property (nonatomic, assign) BOOL										closeStreamAtQueueEnd; // default is YES
-@property (nonatomic, assign) BOOL										holdCompletedStreams;
-@property (nonatomic, readonly) NSArray *								completedStreams; //only non-nil if above is YES
+
+/** Defines behavior when all queued streams are finished being read.
+ 
+ When TRUE, triggers NSStreamStatusAtEnd
+ when FALSE, the stream conveys that no data is available currently, but that the stream is still open
+
+ @warning default is YES;
+ */
+@property (nonatomic, assign) BOOL										closeStreamAtQueueEnd; 
+
+/** Allow access through completedStreams property to all streams past through completedStreams property. 
+ 
+ @warning the default value is NO;
+ */
+@property (nonatomic, assign) BOOL										holdCompletedStreams; 
+/** Only non-nil if holdCompletedStreams is YES; otherwise streams are deleted */
+@property (nonatomic, readonly) NSArray *								completedStreams; 
+///the delegate for non-NSStreamDelegate updates
 @property (nonatomic, assign) id<swypConcatenatedInputStreamDelegate>	infoDelegate;
+///the delegate for NSStreamDelegate updates
 @property (nonatomic, assign) id<NSStreamDelegate>						delegate;
 
 ///NSInputStream array
@@ -82,7 +98,7 @@
 	'queuedStream' is a stream already queued
 	'lengthToTrack' is the length that a given stream has
 */
--(void)			setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream;
+-(void)	setLengthToTrack:	(NSUInteger)lengthToTrack	forQueuedStream: (NSInputStream*)queuedStream;
 /**
 	The following function returns 0 if queued stream is finished or if it is not queued
 	Passing an NSUInteger by reference to 'refForTotalBytes' has the total placed into it.. 

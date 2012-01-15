@@ -106,6 +106,10 @@ typedef enum {
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 
+/** swypConnectionSessions are initialized with their candidate, and input and an output stream. 
+ 
+ Connections are opened with the 'inititate' function.
+ */
 -(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
 
 /** Start connection; schedule in runloop */

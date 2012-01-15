@@ -34,7 +34,7 @@ typedef enum {
 
 @end
 
-
+/** Handshake manager deals with */
 @interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate> {
 
 	NSMutableDictionary	*	_swypRefByPendingConnectionSessions;

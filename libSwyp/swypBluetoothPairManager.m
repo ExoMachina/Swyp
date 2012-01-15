@@ -26,6 +26,10 @@
 		[_gameKitPeerSession cancelConnectToPeer:peer];
 	}
 	
+	for (swypGKPeerAbstractedStreamSet * streamSet in [_activeAbstractedStreamSetsByPeerName allValues]){
+		[streamSet invalidateStreamSet];
+	}
+	
 	[self _updateInterfaceActivity];
 	SRELS(_gameKitPeerSession);
 }
@@ -34,6 +38,7 @@
 	if (_gameKitPeerSession == nil){
 		_gameKitPeerSession	=	[[GKSession alloc] initWithSessionID:@"swyp" displayName:nil sessionMode:GKSessionModePeer];
 		[_gameKitPeerSession setDelegate:self];
+		[_gameKitPeerSession setDataReceiveHandler:self withContext:nil];
 	}
 	
 	[self _updateInterfaceActivity];
@@ -120,6 +125,8 @@
 		
 		_pendingGKPeerServerConnections		=	[NSMutableSet new];
 		_pendingGKPeerClientConnections		=	[NSMutableSet new];
+		
+		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
 
 	}
 	return self;
@@ -135,6 +142,8 @@
 	
 	SRELS(_pendingGKPeerServerConnections);
 	SRELS(_pendingGKPeerClientConnections);
+	
+	SRELS(_activeAbstractedStreamSetsByPeerName);
 	[super dealloc];
 }
 
@@ -171,10 +180,62 @@
 		}
 	}else if (state == GKPeerStateConnected){
 		EXOLog(@"Connected via bluetooth to peer: %@",peerID);
-		//remove from queues 
-		//create encapsulation
-		//add to data receipt forwarder
+		
+		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self];
+		[_activeAbstractedStreamSetsByPeerName setObject:newPeerStreamSet forKey:peerID];
+		SRELS(newPeerStreamSet);
+		
+		
+		if ([_pendingGKPeerClientConnections containsObject:peerID]){
+			[_pendingGKPeerClientConnections removeObject:peerID];	
+			
+			swypClientCandidate * clientCandidate	= [[swypClientCandidate alloc] init];
+			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:clientCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+			[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:newSession forRef:nil withConnectionMethod:swypConnectionMethodBluetooth];
+			SRELS(newSession);
+			
+		}else if ([_pendingGKPeerServerConnections containsObject:peerID]){
+			[_pendingGKPeerServerConnections removeObject:peerID];	
+			
+			swypClientCandidate * serverCandidate	= [[swypClientCandidate alloc] init];
+			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:serverCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:nil withConnectionMethod:swypConnectionMethodBluetooth];
+			SRELS(newSession);
+#warning how do we pass swyp refs now???
+		}
+				
+	
 	}
+}
+
+-(void)receiveData:(NSData*)data fromPeer:(NSString*)peerName inSession:(GKSession*)session context:(void*)context{
+	swypGKPeerAbstractedStreamSet * sendToSet = [_activeAbstractedStreamSetsByPeerName valueForKey:peerName];
+	assert(sendToSet != nil);
+	if (sendToSet == nil){
+		EXOLog(@"Data sent to uninitialized peer named %@", peerName);
+		return;
+	}
+
+	[sendToSet addDataToPeerReadStream:data];
+}
+
+#pragma mark abstraction
+#pragma mark swypGKPeerAbstractedStreamSetDelegate
+-(void)	peerAbstractedStreamSet:(swypGKPeerAbstractedStreamSet*)peerAbstraction wantsDataSent:(NSData*)sendData toPeerNamed:(NSString*)peerName{
+	
+	NSError *sendError = nil;
+	[_gameKitPeerSession sendData:sendData toPeers:[NSArray arrayWithObject:peerName] withDataMode:GKSendDataReliable error:&sendError];
+	
+	if (sendError != nil){
+		EXOLog(@"Error sending data %@",[sendError description]);
+	}
+	
+	assert(sendError == nil);
+}
+
+-(void)	peerAbstractedStreamSetDidClose:(swypGKPeerAbstractedStreamSet*)peerAbstraction withPeerNamed:(NSString*)peerName{
+
+	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
 }
 
 #pragma mark - private
