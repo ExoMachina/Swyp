@@ -120,7 +120,7 @@
 	
 	swypConnectionSession * connectionSession	=	nil;
 	if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
-		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession forSwypRef:ref];
+		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
 	}
 }
 
@@ -136,7 +136,7 @@
 	
 	swypConnectionSession * connectionSession	=	nil;
 	if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
-		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession forSwypRef:ref];
+		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
 	}
 }
 -(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager{
@@ -305,9 +305,9 @@
 	[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];	
 	//
 	//setup service managers
-	_bonjourPairManager		= [[swypBonjourPairManager alloc] initWithInterfaceManagerDelegate:self];
+//	_bonjourPairManager		= [[swypBonjourPairManager alloc] initWithInterfaceManagerDelegate:self];
 	_cloudPairManager		= [[swypCloudPairManager alloc] initWithInterfaceManagerDelegate:self];
-	_bluetoothPairManager	= [[NSObject alloc] initWithInterfaceManagerDelegate:self];
+	_bluetoothPairManager	= [[swypBluetoothPairManager alloc] initWithInterfaceManagerDelegate:self];
 	
 	_handshakeManager	= [[swypHandshakeManager alloc] init];
 	[_handshakeManager	setDelegate:self];

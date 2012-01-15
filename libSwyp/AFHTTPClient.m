@@ -121,7 +121,7 @@ static NSString * AFJSONStringFromParameters(NSDictionary *parameters) {
         JSONString = [parameters JSONString];
     }
 #else
-    JSONString = [parameters JSONString];
+    JSONString = [parameters jsonStringValue];
 #endif
 
     return JSONString;

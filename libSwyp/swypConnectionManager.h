@@ -11,8 +11,10 @@
 #import "swypHandshakeManager.h"
 #import "swypInputToDataBridge.h"
 #import "swypNetworkAccessMonitor.h"
+
 #import "swypCloudPairManager.h"
 #import "swypBonjourPairManager.h"
+#import "swypBluetoothPairManager.h"
 #import "swypInterfaceManager.h"
 #import "swypPendingConnectionManager.h"
 
@@ -43,7 +45,7 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 
 	swypBonjourPairManager *		_bonjourPairManager;
 	swypCloudPairManager *			_cloudPairManager;
-	NSObject<swypInterfaceManager>* _bluetoothPairManager;
+	swypBluetoothPairManager*		_bluetoothPairManager;
 	
 	swypHandshakeManager *			_handshakeManager;
 	
