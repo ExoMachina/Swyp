@@ -27,6 +27,9 @@
 	NSMutableDictionary *			_swypRefByPeerInfo;		//stored when peer retreived from cloud
 	
 	NSMutableSet *					_cloudPairPendingSwypRefs; //stored before cloud access, removed afterwards
+		
+	//this stores the set of swypIns that are necessary for a client's connection to the server
+	NSMutableSet *					_pendingSwypIns;
 }
 @property (nonatomic, readonly)	swypCloudNetService*				cloudService;
 @property (nonatomic, readonly)	swypPairServerInteractionManger*pairServerManager;

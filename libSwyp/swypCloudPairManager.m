@@ -46,9 +46,11 @@
 	[[self pairServerManager] putSwypUpdateToPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] withUserInfo:[self _userInfoDictionary]];
 }
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
-	[[self pairServerManager] deleteSwypFromPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]]];
 	
-	[self _invalidateSwypRef:ref];
+	[[self pairServerManager] deleteSwypFromPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]]];
+
+	
+	[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:ref forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 }
 
 -(BOOL) isAdvertisingSwypOut:(swypInfoRef*)ref{
@@ -57,11 +59,15 @@
 
 -(void)	startFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
 	[_cloudPairPendingSwypRefs addObject:ref];
+	[_pendingSwypIns addObject:ref];
 	
 	[[self pairServerManager] postSwypToPairServer:ref withUserInfo:[self _userInfoDictionary]];
 }
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
-	[_cloudPairPendingSwypRefs removeObject:ref];
+	[_pendingSwypIns removeObject:ref];
+
+	
+	[_delegate interfaceManager:self isDoneSearchForSwypInServerCandidatesForRef:ref forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 }
 
 -(void)	resumeNetworkActivity{
@@ -80,6 +86,8 @@
 		_swypRefByPeerInfo		= [NSMutableDictionary new];
 		_cloudPairPendingSwypRefs	= [NSMutableSet new];
 		
+		_pendingSwypIns			=	[NSMutableSet new];
+		
 	}
 	return self;
 }
@@ -87,8 +95,8 @@
 -(void)dealloc{
 	SRELS(_swypTokenBySwypRef);
 	SRELS(_swypRefByPeerInfo);
-	//should invalidate all pending httpRequestManager requests
-	SRELS(_cloudPairPendingSwypRefs);
+	SRELS(_cloudPairPendingSwypRefs);	
+	SRELS(_pendingSwypIns);
 	SRELS(_cloudService);
 	SRELS(_pairServerManager);
 	_delegate	= nil;
@@ -105,14 +113,14 @@
 	return infoDictionary;
 }
 
--(void)	_invalidateSwypRef:(swypInfoRef*)swyp{
-	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:swyp]];
-	[_cloudPairPendingSwypRefs removeObject:swyp];
-	
-	if ([swyp swypType] == swypInfoRefTypeSwypIn){
-		[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
-	}else if ([swyp swypType] == swypInfoRefTypeSwypOut){
-		[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:swyp forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+-(void)	_invalidateSwypRef:(swypInfoRef*)ref{
+	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]];
+	[_cloudPairPendingSwypRefs removeObject:ref];
+
+	if ([ref swypType] == swypInfoRefTypeSwypIn){
+		[self stopFindingSwypInServerCandidatesForRef:ref];
+	}else if ([ref swypType] == swypInfoRefTypeSwypOut){
+		[self stopAdvertisingSwypOut:ref];
 	}
 }
 
@@ -157,7 +165,7 @@
 	
 	swypConnectionSession * pendingClient	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
 		
-	[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:pendingClient forRef:swypRef withConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
+	[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:pendingClient withConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 	
 	[self _invalidateSwypRef:swypRef];
 	[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; 

@@ -154,7 +154,10 @@
 	if ([[error domain] isEqual:kGKSessionErrorDomain] && ([error code] == GKSessionCannotEnableError)){
 		EXOLog(@"%@",@"Bluetooth Disabled: launching peer picker");
 		//let's prompt to turn on:
-		[[[[GKPeerPickerController alloc] init] autorelease] show];		
+		GKPeerPickerController * picker =  [[[GKPeerPickerController alloc] init] autorelease];
+		[picker setConnectionTypesMask:GKPeerPickerConnectionTypeNearby];
+		[picker show];
+		
 	}else{
 		EXOLog(@"GKSession error: %@", [error description]);
 	}
@@ -183,27 +186,52 @@
 		
 		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self];
 		[_activeAbstractedStreamSetsByPeerName setObject:newPeerStreamSet forKey:peerID];
-		SRELS(newPeerStreamSet);
+
+		//this sucks, but I'll try to explain:
 		
-		
+		//see if it's a pending connection from a client
 		if ([_pendingGKPeerClientConnections containsObject:peerID]){
+			//remove it from pending
 			[_pendingGKPeerClientConnections removeObject:peerID];	
 			
+			//create a client candidate
 			swypClientCandidate * clientCandidate	= [[swypClientCandidate alloc] init];
-			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:clientCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
-			[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:newSession forRef:nil withConnectionMethod:swypConnectionMethodBluetooth];
-			SRELS(newSession);
 			
+			//wrap it in a new connection session; setting the input and output stream to your new swypGKPeerAbstractedStreamSet
+			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:clientCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+			
+			//tell the delegate that a client is waiting to chat
+			[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:newSession withConnectionMethod:swypConnectionMethodBluetooth];
+			SRELS(newSession);
+			SRELS(clientCandidate);
+			
+			//otherwise it's probably a pending connection to a server
 		}else if ([_pendingGKPeerServerConnections containsObject:peerID]){
 			[_pendingGKPeerServerConnections removeObject:peerID];	
 			
+			//check to see whether we can match a local swyp in
+			if ([_validSwypInForConnectionCreation  count] == 0){
+				//we're wasting our time if we continue
+				EXOLog(@"NO valid swypIn, invalidating connection for peer:%@", peerID);
+				[newPeerStreamSet invalidateStreamSet];
+				SRELS(newPeerStreamSet);
+				return;
+			}
+						
 			swypClientCandidate * serverCandidate	= [[swypClientCandidate alloc] init];
+			
+			//as a client, we must set matchedLocalSwypInfo
+			[serverCandidate setMatchedLocalSwypInfo:[_validSwypInForConnectionCreation anyObject]];
+			
 			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:serverCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+
+			//tell manager that a server connection can be tapped if interested
 			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:nil withConnectionMethod:swypConnectionMethodBluetooth];
 			SRELS(newSession);
-#warning how do we pass swyp refs now???
+			SRELS(serverCandidate);
 		}
-				
+		
+		SRELS(newPeerStreamSet);
 	
 	}
 }
@@ -234,7 +262,8 @@
 }
 
 -(void)	peerAbstractedStreamSetDidClose:(swypGKPeerAbstractedStreamSet*)peerAbstraction withPeerNamed:(NSString*)peerName{
-
+	
+	[_gameKitPeerSession disconnectPeerFromAllPeers:peerName];
 	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
 }
 

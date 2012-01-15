@@ -101,6 +101,7 @@
 		79DF3AAA14C329930086CF85 /* swypGKPeerAbstractedStreamSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 79DF3AA814C329930086CF85 /* swypGKPeerAbstractedStreamSet.m */; };
 		79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF3AAB14C32C000086CF85 /* swypOutputToDataStream.h */; };
 		79DF3AAE14C32C000086CF85 /* swypOutputToDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 79DF3AAC14C32C000086CF85 /* swypOutputToDataStream.m */; };
+		79DF3AB014C34B4B0086CF85 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79DF3AAF14C34B4B0086CF85 /* GameKit.framework */; };
 		79E379F614B508A800C09690 /* swypCloudPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379F414B508A800C09690 /* swypCloudPairManager.h */; };
 		79E379F714B508A800C09690 /* swypCloudPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379F514B508A800C09690 /* swypCloudPairManager.m */; };
 		79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379FC14B50AC700C09690 /* swypCloudNetService.h */; };
@@ -125,7 +126,6 @@
 		79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467514C1CA6C00107170 /* swypInterfaceManager.h */; };
 		79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467714C244E300107170 /* swypBluetoothPairManager.h */; };
 		79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467814C244E300107170 /* swypBluetoothPairManager.m */; };
-		79F1467D14C2489000107170 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F1467B14C2487900107170 /* GameKit.framework */; };
 		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -225,6 +225,7 @@
 		79DF3AA814C329930086CF85 /* swypGKPeerAbstractedStreamSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypGKPeerAbstractedStreamSet.m; sourceTree = "<group>"; };
 		79DF3AAB14C32C000086CF85 /* swypOutputToDataStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypOutputToDataStream.h; sourceTree = "<group>"; };
 		79DF3AAC14C32C000086CF85 /* swypOutputToDataStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypOutputToDataStream.m; sourceTree = "<group>"; };
+		79DF3AAF14C34B4B0086CF85 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		79E379F414B508A800C09690 /* swypCloudPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudPairManager.h; sourceTree = "<group>"; };
 		79E379F514B508A800C09690 /* swypCloudPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudPairManager.m; sourceTree = "<group>"; };
 		79E379FC14B50AC700C09690 /* swypCloudNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudNetService.h; sourceTree = "<group>"; };
@@ -249,7 +250,6 @@
 		79F1467514C1CA6C00107170 /* swypInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInterfaceManager.h; sourceTree = "<group>"; };
 		79F1467714C244E300107170 /* swypBluetoothPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBluetoothPairManager.h; sourceTree = "<group>"; };
 		79F1467814C244E300107170 /* swypBluetoothPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBluetoothPairManager.m; sourceTree = "<group>"; };
-		79F1467B14C2487900107170 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -260,7 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79F1467D14C2489000107170 /* GameKit.framework in Frameworks */,
+				79DF3AB014C34B4B0086CF85 /* GameKit.framework in Frameworks */,
 				79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */,
@@ -299,7 +299,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				79F1467B14C2487900107170 /* GameKit.framework */,
+				79DF3AAF14C34B4B0086CF85 /* GameKit.framework */,
 				79635A7614904DE90098C265 /* SystemConfiguration.framework */,
 				680FC5B613E251DA00509CF2 /* CoreFoundation.framework */,
 				680FC4EF13E2473E00509CF2 /* UIKit.framework */,

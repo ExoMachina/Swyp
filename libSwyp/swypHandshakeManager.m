@@ -14,21 +14,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 @synthesize delegate = _delegate;
 #pragma mark -
 #pragma mark public
--(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref{
+-(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session{
 	
 	[session initiate];
 	[session addConnectionSessionInfoDelegate:self];
-	
-	[_swypRefByPendingConnectionSessions setObject:ref forKey:[NSValue valueWithNonretainedObject:session]];
-	
-	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
-	[_swypTimeoutsBySwypRef setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:ref]];
+		
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
 }
-
--(BOOL)	connectionIsPendingForSwypRef:(swypInfoRef*)ref{
-	return ([[_swypRefByPendingConnectionSessions allValues] containsObject:ref]);
-}
-
 
 -(void)	referenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
 	if (swypInfoRef == nil) {
@@ -36,11 +29,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
 	
-	NSInteger referenceCount =	[[_swypRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
 	referenceCount ++;
 	assert(referenceCount > 0);
-	[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
-	[_swypRefRetention	addObject:swypInfoRef];
+	[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
+	[_swypOutRefRetention	addObject:swypInfoRef];
 }
 
 -(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef{
@@ -50,14 +43,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 	NSValue *swypValue	= [NSValue valueWithNonretainedObject:swypInfoRef];
 	
-	NSInteger referenceCount =	[[_swypRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
 	referenceCount --;
 	assert(referenceCount >= 0);
 	if (referenceCount == 0){
-		[_swypRefReferenceCountBySwypRef removeObjectForKey:swypValue];
-		[_swypRefRetention	removeObject:swypInfoRef];
+		[_swypOutRefReferenceCountBySwypRef removeObjectForKey:swypValue];
+		[_swypOutRefRetention	removeObject:swypInfoRef];
 	}else{
-		[_swypRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
+		[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
 	}
 }
 
@@ -67,10 +60,10 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 -(id)	init{
 	if (self = [super init]){
 		
-		_swypRefByPendingConnectionSessions	=	[[NSMutableDictionary alloc] init];
-		_swypTimeoutsBySwypRef				= [NSMutableDictionary new];
-		_swypRefReferenceCountBySwypRef		= [NSMutableDictionary new];
-		_swypRefRetention					= [NSMutableSet new];
+		_swypRefByPendingConnectionSessions		=	[[NSMutableDictionary alloc] init];
+		_swypTimeoutsByConnectionSession					= [NSMutableDictionary new];
+		_swypOutRefReferenceCountBySwypRef		= [NSMutableDictionary new];
+		_swypOutRefRetention					= [NSMutableSet new];
 	}
 	
 	return self;
@@ -78,15 +71,15 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 -(void)	dealloc{
 	
-	for (NSTimer * timer in [_swypTimeoutsBySwypRef allValues]){
+	for (NSTimer * timer in [_swypTimeoutsByConnectionSession allValues]){
 		[timer invalidate];
 	}
-	SRELS(_swypTimeoutsBySwypRef);
+	SRELS(_swypTimeoutsByConnectionSession);
 	
 	SRELS(_swypRefByPendingConnectionSessions);
 	
-	SRELS(_swypRefReferenceCountBySwypRef);
-	SRELS(_swypRefRetention);
+	SRELS(_swypOutRefReferenceCountBySwypRef);
+	SRELS(_swypOutRefRetention);
 	
 	[super dealloc];
 }
@@ -110,7 +103,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 -(void) sessionDied:	(swypConnectionSession*)session withError:(NSError*)error{
 	EXOLog(@"Session connection died for candidate: %@",[error description]);
 
-	swypInfoRef * ref	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
+	swypInfoRef * ref	=	[[session representedCandidate] matchedLocalSwypInfo];
 	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:ref withHandshakeManager:self error:error];
 		
 	[session removeConnectionSessionInfoDelegate:self];
@@ -174,6 +167,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark - private
 -(void)_timedOutHandshakeForConnectionSession:(NSTimer*)sender{
 	swypConnectionSession * timedOutSession	=	[sender userInfo];
+	EXOLog(@"Timed out handshake for connection session w/ tagname: %@",[[timedOutSession representedCandidate] nametag]);
 
 	[self _removeAndInvalidateSession:timedOutSession];
 }
@@ -201,7 +195,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 -(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session{
 	NSMutableDictionary *	helloDictionary	=	[NSMutableDictionary dictionary];
 	
-	swypInfoRef *			querySwyp		=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];	
+	swypInfoRef *			querySwyp		=	[[session representedCandidate] matchedLocalSwypInfo];	
+	assert(querySwyp != nil);
 	
 	if (querySwyp != nil){
 		[session setSessionHueColor:[UIColor randomSwypHueColor]];
@@ -211,7 +206,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		[helloDictionary setValue:[NSNumber numberWithDouble:intervalSinceSwyp] forKey:@"intervalSinceSwypIn"];
 		[helloDictionary setValue:[[session sessionHueColor] swypEncodedColorStringValue] forKey:@"sessionHue"];
 	}else {
-		EXOLog(@"No swypIns found... this is odd!, check expiration times for swypIns");
+		EXOLog(@"No swypIn set for matchedLocalSwypInfo... this is odd!");
 		return;
 	}
 	
@@ -269,7 +264,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	
 	swypInfoRef * firstMatchingSwyp	=	nil;
-	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
+	for (swypInfoRef * localSwyp in _swypOutRefRetention){
 		if([self _clientCandidate:candidate isMatchForSwypInfo:localSwyp]){
 			firstMatchingSwyp	=	localSwyp;
 			break;
@@ -345,12 +340,9 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		return;
 	}
 	[candidate setSwypInfo:swypRefFromServerInfo];
-	
-	
-	
 
 
-	swypInfoRef * localMatchSwyp	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
+	swypInfoRef * localMatchSwyp	=	[[session representedCandidate] matchedLocalSwypInfo];
 	
 	if([self _serverCandidate:candidate isMatchForSwypInfo:localMatchSwyp] ==  NO){
 		localMatchSwyp = nil;
@@ -433,9 +425,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 -(void)	_removeSessionFromLocalStorage: (swypConnectionSession*)session{
-	swypInfoRef * ref	=	[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]];
 	[_swypRefByPendingConnectionSessions removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
-	[[_swypTimeoutsBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] invalidate];
-	[_swypTimeoutsBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]];
+	[[_swypTimeoutsByConnectionSession objectForKey:[NSValue valueWithNonretainedObject:session]] invalidate];
+	[_swypTimeoutsByConnectionSession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
 }
 @end

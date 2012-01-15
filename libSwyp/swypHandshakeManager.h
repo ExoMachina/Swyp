@@ -38,10 +38,10 @@ typedef enum {
 @interface swypHandshakeManager : NSObject <NSNetServiceDelegate, swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate> {
 
 	NSMutableDictionary	*	_swypRefByPendingConnectionSessions;
-	NSMutableDictionary	*	_swypTimeoutsBySwypRef;
+	NSMutableDictionary	*	_swypTimeoutsByConnectionSession;
 	
-	NSMutableDictionary *	_swypRefReferenceCountBySwypRef;
-	NSMutableSet		*	_swypRefRetention; //because no retention happens for swypInfoRefs as a key
+	NSMutableDictionary *	_swypOutRefReferenceCountBySwypRef;
+	NSMutableSet		*	_swypOutRefRetention; //because no retention happens for swypInfoRefs as a key
 	
 	id<swypHandshakeManagerDelegate>	_delegate;
 }
@@ -60,8 +60,6 @@ typedef enum {
  */
 -(void)	dereferenceSwypOutAsPending:(swypInfoRef*)swypInfoRef;
 
-/** Returns whether connection is pending for swypInfoRef; */
--(BOOL)	connectionIsPendingForSwypRef:(swypInfoRef*)ref;
 
 /** 
  The method for attaching swypConnectionSessions which have already been paired through NSInputStreams and NSOutputStreams, and supposedly work.
@@ -70,7 +68,7 @@ typedef enum {
  
  @warning the connectionSession should be uninitiated. The initiate function causes the socket connections to open and forces the handshake process. 
  */
--(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref;
+-(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session;
 
 //
 //private

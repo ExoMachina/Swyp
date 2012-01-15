@@ -82,22 +82,22 @@ typedef enum {
 -(void) interfaceManager:(id<swypInterfaceManager>)manager isDoneAdvertisingSwypOutAsPending:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method; 
 
 /** This method let's the swypConnectionManager know that this interface is no longer searching for candidates, and that it can proceed through to the lower priorities in swypPendingConnectionQueue */
--(void)interfaceManager:(id<swypInterfaceManager>)manager isDoneSearchForSwypOutServerCandidatesForRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method;
+-(void)interfaceManager:(id<swypInterfaceManager>)manager isDoneSearchForSwypInServerCandidatesForRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method;
 
 /** This method triggers when the interface has found a server candidate and made a connection session out of it.
  
 	These sessions will go to the swypPendingConnectionManager to be pulled one-by-one by the swypConnectionManager. 
+ 
+ @param ref This value is mandatory, as a client candidate must be the first to pitch its swyp info to a server.
  */
 -(void)interfaceManager:(id<swypInterfaceManager>)manager madeUninitializedSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method;
 
 /** This method triggers when the interface has received a client candidate connection and has made session out of it w/ out intitializing it.
  
  These sessions will go to the swypHandshakeManager to begin connecting to their respective servers. 
- 
- @param ref is optional. Not all interfaces know exactly what client is matching from.
- 
+  
  @param connectionSession the candidate within the session can contain a matchable swyp when percise. 
  */
--(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method;
+-(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession withConnectionMethod:(swypConnectionMethod)method;
 
 @end

@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <GameKit/GameKit.h>
 #import "swypInfoRef.h"
 #import "swypInterfaceManager.h"
-#import <GameKit/GameKit.h>
 #import "swypGKPeerAbstractedStreamSet.h"
 
 @interface swypBluetoothPairManager : NSObject <swypInterfaceManager,GKSessionDelegate, swypGKPeerAbstractedStreamSetDelegate>{

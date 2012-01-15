@@ -99,7 +99,7 @@
 	[_handshakeManager dereferenceSwypOutAsPending:ref];
 }
 
--(void)interfaceManager:(id<swypInterfaceManager>)manager isDoneSearchForSwypOutServerCandidatesForRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
+-(void)interfaceManager:(id<swypInterfaceManager>)manager isDoneSearchForSwypInServerCandidatesForRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
 	[_pendingSwypInConnections connectionMethodTimedOut:method forSwypRef:ref];
 }
 
@@ -109,10 +109,10 @@
 	[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:method];
 }
 
--(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method{
+-(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession withConnectionMethod:(swypConnectionMethod)method{
 	
 	//swyp out matched ref
-	[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession forSwypRef:ref];
+	[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
 }
 
 #pragma mark swypPendingConnectionManagerDelegate
