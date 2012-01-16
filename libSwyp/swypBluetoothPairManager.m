@@ -37,10 +37,15 @@
 -(void)	resumeNetworkActivity{
 	if (_gameKitPeerSession == nil){
 		_gameKitPeerSession	=	[[GKSession alloc] initWithSessionID:@"swyp" displayName:nil sessionMode:GKSessionModePeer];
+		[_gameKitPeerSession setDisconnectTimeout:5];
 		[_gameKitPeerSession setDelegate:self];
 		[_gameKitPeerSession setDataReceiveHandler:self withContext:nil];
 		[_gameKitPeerSession setAvailable:TRUE];
 	}
+	
+	//we should add something about BluetoothAvailabilityChangedNotification ; our issue is that we don't get warnings about bluetooth when starting the session, probably because delegate is set SECOND
+	
+	//for some reason, after a connection is on one end, we get failure on one side, but it doesn't disconnect the other...
 	
 	[self _updateInterfaceActivity];
 }
@@ -164,6 +169,16 @@
 
 
 #pragma mark gamekit
+#pragma mark GKPeerPickerDelegate
+- (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
+	
+	[picker dismiss];
+}
+- (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker{
+	[picker dismiss];
+	//tell someone that bluetooth is broken
+}
+
 #pragma mark GKSessionDelegate
 - (void)session:(GKSession *)session didFailWithError:(NSError *)error{
 	if ([[error domain] isEqual:kGKSessionErrorDomain] && ([error code] == GKSessionCannotEnableError)){
@@ -177,6 +192,7 @@
 		EXOLog(@"GKSession error: %@", [error description]);
 	}
 }
+
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error{
 	[_pendingGKPeerClientConnections removeObject:peerID];
 	[_pendingGKPeerServerConnections removeObject:peerID];
@@ -236,7 +252,7 @@
 				return;
 			}
 						
-			swypClientCandidate * serverCandidate	= [[swypClientCandidate alloc] init];
+			swypServerCandidate * serverCandidate	= [[swypServerCandidate alloc] init];
 			
 			//as a client, we must set matchedLocalSwypInfo
 			[serverCandidate setMatchedLocalSwypInfo:[_validSwypInForConnectionCreation anyObject]];
@@ -250,20 +266,22 @@
 		}
 		
 	
-	}else if (state == GKPeerStateDisconnected || state == GKPeerStateUnavailable){
-		[_availablePeers removeObject:peerID];
+	}else if (state == GKPeerStateDisconnected){
+		EXOLog(@"GKSession says peer is discon: %@",peerID);
 		swypGKPeerAbstractedStreamSet * existingStreamSet	=	[_activeAbstractedStreamSetsByPeerName valueForKey:peerID];
 		if (existingStreamSet != nil){
 			[existingStreamSet invalidateStreamSet];
 		}
+	}else if (state == GKPeerStateUnavailable){
+		EXOLog(@"GKSession says peer is unavail: %@",peerID);
+		[_availablePeers removeObject:peerID];
 	}
 }
 
 -(void)receiveData:(NSData*)data fromPeer:(NSString*)peerName inSession:(GKSession*)session context:(void*)context{
 	swypGKPeerAbstractedStreamSet * sendToSet = [_activeAbstractedStreamSetsByPeerName valueForKey:peerName];
-	assert(sendToSet != nil);
 	if (sendToSet == nil){
-		EXOLog(@"Data sent to uninitialized peer named %@", peerName);
+		EXOLog(@"Data sent to uninitialized, or pre-released peer named %@", peerName);
 		return;
 	}
 
@@ -292,17 +310,7 @@
 
 #pragma mark - private
 -(void)	_updateInterfaceActivity{
-/*
-	if ([_swypOutTimeoutTimerBySwypInfoRef count] > 0 || [_swypInTimeoutTimerBySwypInfoRef count] > 0){
-		[_gameKitPeerSession setAvailable:TRUE];
-	}else{
-		[_gameKitPeerSession setAvailable:FALSE];		
-	}
-*/
-//	if (([_swypOutTimeoutTimerBySwypInfoRef count] == 0 && [_swypInTimeoutTimerBySwypInfoRef count] == 0) && [_activeAbstractedStreamSetsByPeerName count] == 0){
-//		[_gameKitPeerSession disconnectFromAllPeers];
-//	}
-
+	
 	if ([_validSwypInForConnectionCreation count] == 0){
 		for (NSString * peer in _pendingGKPeerServerConnections){
 			[_gameKitPeerSession cancelConnectToPeer:peer];

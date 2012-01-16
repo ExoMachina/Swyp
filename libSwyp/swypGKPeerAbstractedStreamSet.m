@@ -32,7 +32,10 @@
 }
 
 -(void) invalidateStreamSet{
+	[_peerWriteStream invalidateByError]; //the only command really needed to push errors up the chain-- why stream is closing..
+	[_peerWriteStream setDataDelegate:nil];
 	[_delegate peerAbstractedStreamSetDidClose:self withPeerNamed:_peerName];
+
 	
 	SRELS(_peerReadStream);
 	SRELS(_peerWriteStream);
@@ -58,7 +61,6 @@
 
 #pragma mark NSObject
 -(void) dealloc{
-	[self invalidateStreamSet];
 	_delegate = nil;
 	SRELS(_peerName);
 	

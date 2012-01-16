@@ -201,6 +201,18 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}
 }
 
+-(void) _destroyConnectionWithError:(NSError*)error{
+	[self invalidate];
+	[self _teardownConnection];
+	[self _changeStatus:swypConnectionSessionStatusClosed];
+
+	for (NSValue * delegateValue in [[_connectionSessionInfoDelegates copy] autorelease]){
+		id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
+		if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
+			[delegate sessionDied:self withError:error];
+	}
+}
+
 #pragma mark -
 #pragma mark swypInputStreamDiscernerDelegate
 
@@ -313,15 +325,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		}
 	}else if (eventCode == NSStreamEventErrorOccurred){
 		EXOLog(@"Stream error occured in connection session w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
-		[self _teardownConnection];
-		[self _changeStatus:swypConnectionSessionStatusClosed];
-
 		NSError *error = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionSocketError userInfo:nil];
-		for (NSValue * delegateValue in [[_connectionSessionInfoDelegates copy] autorelease]){
-			id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
-			if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
-				[delegate sessionDied:self withError:error];
-		}
+		[self _destroyConnectionWithError:error];
 		
 	}else if (eventCode == NSStreamEventEndEncountered){
 		EXOLog(@"Stream end encountered in connection session with represented candidate w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
@@ -376,9 +381,11 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 #pragma mark swypInputToOutputStreamConnectorDelegate
 -(void) encounteredErrorInInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
 	EXOLog(@"encounteredErrorInInputStream withInputToOutputConnector");
+	[self _destroyConnectionWithError:nil];
 }
 -(void) encounteredErrorInOutputStream: (NSOutputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
 	EXOLog(@"encounteredErrorInOutputStream withInputToOutputConnector");
+	[self _destroyConnectionWithError:nil];
 }
 
 -(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{

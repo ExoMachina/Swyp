@@ -197,9 +197,15 @@
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
 		[_bonjourPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+		
+		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodWifiLoc]];
+
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
 		[_bluetoothPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+		
+		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodBluetooth]];
+
 	}
 	
 	if ([addedInterfacesForSwypIn count] > 0){

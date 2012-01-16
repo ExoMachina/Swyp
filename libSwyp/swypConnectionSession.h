@@ -141,4 +141,5 @@ typedef enum {
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status;
 -(void) _teardownConnection;
 -(void) _setupStreamPathways;
+-(void) _destroyConnectionWithError:(NSError*)error;
 @end

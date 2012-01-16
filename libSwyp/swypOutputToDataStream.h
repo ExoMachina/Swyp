@@ -33,4 +33,7 @@
 /// The delegate is of critical importance- otherwise use something else.
 -(id) initWithDataDelegate:(id <swypOutputToDataStreamDataDelegate>)delegate;
 
+///this is the invalidate command to push errors up from the GKSession
+-(void)invalidateByError;
+
 @end

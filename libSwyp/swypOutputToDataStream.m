@@ -12,15 +12,24 @@
 @synthesize dataDelegate = _dataDelegate, delegate = _delegate;
 
 #pragma mark - streams
+-(void)invalidateByError{
+	_streamStatus = NSStreamStatusError;
+	if ([_delegate respondsToSelector:@selector(stream:handleEvent:)]){
+		[_delegate stream:self handleEvent:NSStreamEventErrorOccurred];
+	}
+	
+}
+
 #pragma mark NSOutputStream
 -(NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)len{
-	NSData * relayData	=	[NSData dataWithBytesNoCopy:(void*)buffer length:len];
+	NSData * relayData	=	[NSData dataWithBytes:(void*)buffer length:len];
 	[_dataDelegate outputToDataStream:self wantsProvideData:relayData];
 	return len;
 }
 - (BOOL)hasSpaceAvailable{
 	return TRUE;
 }
+
 
 #pragma mark NSStream
 -(void)	open{
