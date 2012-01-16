@@ -15,10 +15,10 @@
 #pragma mark swypInterfaceManager
 -(void)	suspendNetworkActivity{
 	//stopping everything current
-	for (swypInfoRef * ref in [_validSwypOutsForConnectionReceipt copy]){
+	for (swypInfoRef * ref in [[_validSwypOutsForConnectionReceipt copy]autorelease]){
 		[self stopAdvertisingSwypOut:ref];
 	}
-	for (swypInfoRef * ref in [_validSwypInForConnectionCreation copy]){
+	for (swypInfoRef * ref in [[_validSwypInForConnectionCreation copy]autorelease]){
 		[self stopFindingSwypInServerCandidatesForRef:ref];
 	}
 	

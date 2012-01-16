@@ -317,7 +317,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		[self _changeStatus:swypConnectionSessionStatusClosed];
 
 		NSError *error = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionSocketError userInfo:nil];
-		for (NSValue * delegateValue in _connectionSessionInfoDelegates){
+		for (NSValue * delegateValue in [[_connectionSessionInfoDelegates copy] autorelease]){
 			id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
 			if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
 				[delegate sessionDied:self withError:error];
