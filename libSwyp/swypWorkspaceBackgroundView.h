@@ -15,7 +15,6 @@
 	
 }
 
-
 -(void)	redisplayPaths;
 
 @end

@@ -10,8 +10,6 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
-#import "swypWorkspaceBackgroundView.h"
-
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
 
@@ -30,8 +28,8 @@
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
 	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
-	[self.view addSubview:sessionViewController.view];
-	[self.view setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	[_backgroundView addSubview:sessionViewController.view];
+	[_backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
 	
@@ -116,12 +114,11 @@
 	[_swypBluetoothAvailableButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
 	[_swypCloudAvailableButton setAlpha:0];
-	[self.view addSubview:_swypPromptImageView];
-	[self.view sendSubviewToBack:_swypPromptImageView];
-	[self.view addSubview:_swypWifiAvailableButton];
-	[self.view addSubview:_swypBluetoothAvailableButton];
-	[self.view addSubview:_swypCloudAvailableButton];
-	
+	[_backgroundView addSubview:_swypPromptImageView];
+	[_backgroundView sendSubviewToBack:_swypPromptImageView];
+	[_backgroundView addSubview:_swypWifiAvailableButton];
+	[_backgroundView addSubview:_swypBluetoothAvailableButton];
+	[_backgroundView addSubview:_swypCloudAvailableButton];	
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
@@ -245,20 +242,24 @@
 
 -(void)	viewDidLoad{
 	[super viewDidLoad];
-    	
-	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
-	self.view	= backgroundView;
+    
+    /* we use backgroundView instead of just setting self.view to be the swypWorkspaceBackgroundView
+        because we need to preserve the opacity of the background for when the modal is dismissed. */
+    
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+	_backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	[self.view addSubview:_backgroundView];
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
-    [self.view addSubview:_downArrowView];
+    [_backgroundView addSubview:_downArrowView];
     
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 40);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
-    [self.view addSubview:curlButton];
+    [_backgroundView addSubview:curlButton];
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
     [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
@@ -279,7 +280,7 @@
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
-	SRELS(swypOutRecognizer);	
+	SRELS(swypOutRecognizer);
 
 	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
 		
@@ -290,6 +291,7 @@
 	SRELS( _swypPromptImageView);
 	SRELS(_swypWifiAvailableButton);
 	SRELS(_swypBluetoothAvailableButton);
+    SRELS(_backgroundView);
     
 	[super dealloc];
 }

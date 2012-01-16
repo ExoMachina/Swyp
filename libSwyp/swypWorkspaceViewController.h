@@ -10,7 +10,7 @@
 #import "swypContentInteractionManager.h"
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
-
+#import "swypWorkspaceBackgroundView.h"
 
 @class swypWorkspaceViewController;
 @protocol swypWorkspaceDelegate <NSObject>
@@ -28,6 +28,7 @@
 	
 	
 	//workspace UI Items	
+    swypWorkspaceBackgroundView *       _backgroundView;
 	UIImageView *						_swypPromptImageView;
 	UIButton *							_swypWifiAvailableButton;
 	UIButton *							_swypCloudAvailableButton;
