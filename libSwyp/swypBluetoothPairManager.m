@@ -39,6 +39,7 @@
 		_gameKitPeerSession	=	[[GKSession alloc] initWithSessionID:@"swyp" displayName:nil sessionMode:GKSessionModePeer];
 		[_gameKitPeerSession setDelegate:self];
 		[_gameKitPeerSession setDataReceiveHandler:self withContext:nil];
+		[_gameKitPeerSession setAvailable:TRUE];
 	}
 	
 	[self _updateInterfaceActivity];
@@ -96,6 +97,8 @@
 	[_validSwypInForConnectionCreation addObject:ref];
 	
 	[self _updateInterfaceActivity];
+	
+	[self _makeConnectionIfPossible];
 }
 
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
@@ -134,6 +137,8 @@
 		_pendingGKPeerServerConnections		=	[NSMutableSet new];
 		_pendingGKPeerClientConnections		=	[NSMutableSet new];
 		
+		_availablePeers						=	[NSMutableSet new];
+		
 		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
 
 	}
@@ -150,6 +155,8 @@
 	
 	SRELS(_pendingGKPeerServerConnections);
 	SRELS(_pendingGKPeerClientConnections);
+	
+	SRELS(_availablePeers);
 	
 	SRELS(_activeAbstractedStreamSetsByPeerName);
 	[super dealloc];
@@ -178,22 +185,25 @@
 - (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID{
 	if ([_validSwypOutsForConnectionReceipt count] > 0){
 		EXOLog(@"Connecting via bluetooth for swypOut to peer: %@",peerID);
-		[_gameKitPeerSession connectToPeer:peerID withTimeout:3];
+		NSError * connectError = nil;
+		[_gameKitPeerSession acceptConnectionFromPeer:peerID error:&connectError];
+		if (connectError != nil){
+			EXOLog(@"Error connecting to peer %@: %@",peerID,[connectError description]);
+		}
 		[_pendingGKPeerClientConnections addObject:peerID];
+	}else {
+		[_gameKitPeerSession denyConnectionFromPeer:peerID];
 	}
 }
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state{
 	if (state == GKPeerStateAvailable){
 		EXOLog(@"Found bluetooth peer: %@",peerID);
-		if ([_validSwypInForConnectionCreation count] > 0){
-			EXOLog(@"Connecting via bluetooth for swypIn to peer: %@",peerID);
-			[_gameKitPeerSession connectToPeer:peerID withTimeout:3];
-			[_pendingGKPeerServerConnections addObject:peerID];
-		}
+		[_availablePeers addObject:peerID];
+		[self _makeConnectionIfPossible];
 	}else if (state == GKPeerStateConnected){
 		EXOLog(@"Connected via bluetooth to peer: %@",peerID);
 		
-		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self];
+		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self] autorelease];
 		[_activeAbstractedStreamSetsByPeerName setObject:newPeerStreamSet forKey:peerID];
 
 		//this sucks, but I'll try to explain:
@@ -223,7 +233,6 @@
 				//we're wasting our time if we continue
 				EXOLog(@"NO valid swypIn, invalidating connection for peer:%@", peerID);
 				[newPeerStreamSet invalidateStreamSet];
-				SRELS(newPeerStreamSet);
 				return;
 			}
 						
@@ -235,13 +244,18 @@
 			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:serverCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
 
 			//tell manager that a server connection can be tapped if interested
-			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:nil withConnectionMethod:swypConnectionMethodBluetooth];
+			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:[_validSwypInForConnectionCreation anyObject] withConnectionMethod:swypConnectionMethodBluetooth];
 			SRELS(newSession);
 			SRELS(serverCandidate);
 		}
 		
-		SRELS(newPeerStreamSet);
 	
+	}else if (state == GKPeerStateDisconnected || state == GKPeerStateUnavailable){
+		[_availablePeers removeObject:peerID];
+		swypGKPeerAbstractedStreamSet * existingStreamSet	=	[_activeAbstractedStreamSetsByPeerName valueForKey:peerID];
+		if (existingStreamSet != nil){
+			[existingStreamSet invalidateStreamSet];
+		}
 	}
 }
 
@@ -271,19 +285,24 @@
 }
 
 -(void)	peerAbstractedStreamSetDidClose:(swypGKPeerAbstractedStreamSet*)peerAbstraction withPeerNamed:(NSString*)peerName{
-	
+	EXOLog(@"peerAbstractedStreamSetDidClose: %@", peerName);
 	[_gameKitPeerSession disconnectPeerFromAllPeers:peerName];
 	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
 }
 
 #pragma mark - private
 -(void)	_updateInterfaceActivity{
+/*
 	if ([_swypOutTimeoutTimerBySwypInfoRef count] > 0 || [_swypInTimeoutTimerBySwypInfoRef count] > 0){
 		[_gameKitPeerSession setAvailable:TRUE];
 	}else{
 		[_gameKitPeerSession setAvailable:FALSE];		
 	}
-	
+*/
+//	if (([_swypOutTimeoutTimerBySwypInfoRef count] == 0 && [_swypInTimeoutTimerBySwypInfoRef count] == 0) && [_activeAbstractedStreamSetsByPeerName count] == 0){
+//		[_gameKitPeerSession disconnectFromAllPeers];
+//	}
+
 	if ([_validSwypInForConnectionCreation count] == 0){
 		for (NSString * peer in _pendingGKPeerServerConnections){
 			[_gameKitPeerSession cancelConnectToPeer:peer];
@@ -295,6 +314,17 @@
 			[_gameKitPeerSession cancelConnectToPeer:peer];
 		}
 	}
+}
+
+-(void) _makeConnectionIfPossible{
+	if ([_validSwypInForConnectionCreation count] > 0){
+		for (NSString * peerID in _availablePeers){
+			EXOLog(@"Connecting via bluetooth for swypIn to peer: %@",peerID);
+			[_gameKitPeerSession connectToPeer:peerID withTimeout:3];
+			[_pendingGKPeerServerConnections addObject:peerID];
+		}
+	}
+
 }
 
 @end

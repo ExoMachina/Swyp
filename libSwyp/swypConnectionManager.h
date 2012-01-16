@@ -22,7 +22,7 @@
 @class swypConnectionManager;
 
 typedef enum {
-	swypConnectionClassNone,			//no preferrence; automatically selected through availability 
+	swypConnectionClassNone,			///no preferrence; automatically selected through availability 
 	swypConnectionClassWifiAndCloud,
 	swypConnectionClassBluetooth
 } swypConnectionClass;
@@ -96,4 +96,5 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 -(void)updateNetworkAvailability;
 //private 
 -(void)_setupNetworking;
+-(void)_activeConnectionInterfacesChanged;
 @end

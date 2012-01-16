@@ -38,12 +38,12 @@
 
 -(id)	initWithInputStream:(NSInputStream*)stream;
 
-/* 
+/**
 	Brings back to state before inputStream was set
 */
 -(void)	reset;
 
-/*
+/**
 	In subclassing, this method can be used to see whether the input stream did give the end event
 */
 -(BOOL)			inputStreamIsFinished; 
@@ -57,17 +57,17 @@
 
 //
 //to subclass 
-/*
+/**
 	if waitsForAllInput == NO, data will be passed in quantities of transformationChunkSize, until inputStreamIsFinished == YES
 */
 -(void) transformData:(NSData*)sourceData inRange:(NSRange)range;
 
-/*
+/**
 	If so, we wait until inputStream sends the end event before beginning transformations
 */
 -(BOOL)			waitsForAllInput;	
 
-/*
+/**
 	If non-zero, transformData:inRange: is called when available untransformedData's length exceeds this quantity
 		when inputStreamIsFinnished transformData:inRange: is called until no more untransformed data exists, regardless of chunkSize
 	If zero, chunk size is irrelevant and transformData is continuously run with full range of the remaining untransformedData
@@ -76,7 +76,7 @@
 
 //
 //to probably not subclass, but appreciate and understand
-/*
+/**
 	don't need to transform all data passed in transformData:inRange:
 	if bytes remaining >transformationChunkSize, or if inputStreamIsFinished == YES, transformData:: will be called until all bytes are transformed
 */

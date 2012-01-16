@@ -46,11 +46,8 @@
 	swypConnectionClass currentClass	=	self.activeConnectionClass;
 	_userPreferedConnectionClass		= class;
 	if (currentClass != _userPreferedConnectionClass){
-		[self stopServices];
-		[self startServices];
+		[self _activeConnectionInterfacesChanged];
 	}
-	
-	[_delegate swypConnectionMethodsUpdated:[self activeConnectionMethods] withConnectionManager:self];
 }
 
 -(swypConnectionClass)	activeConnectionClass{
@@ -314,7 +311,7 @@
 	_availableConnectionMethods |= swypConnectionMethodBluetooth;
 	
 	if (preUpdateAvailability != _availableConnectionMethods){
-		[_delegate swypConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
+		[self _activeConnectionInterfacesChanged];
 	}
 }
 
@@ -335,7 +332,7 @@
 	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
 	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
 	
-	_userPreferedConnectionClass	= swypConnectionClassNone;
+	_userPreferedConnectionClass	= swypConnectionClassBluetooth;
 	
 	//
 	//setup service managers
@@ -345,6 +342,13 @@
 	
 	_handshakeManager	= [[swypHandshakeManager alloc] init];
 	[_handshakeManager	setDelegate:self];
+}
+
+-(void) _activeConnectionInterfacesChanged{
+	[self stopServices];
+	[self startServices];
+
+	[_delegate swypConnectionMethodsUpdated:[self availableConnectionMethods] withConnectionManager:self];
 }
 
 

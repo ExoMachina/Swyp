@@ -25,6 +25,8 @@
 	GKSession *		_gameKitPeerSession;
 	NSMutableSet *	_pendingGKPeerServerConnections;
 	NSMutableSet *	_pendingGKPeerClientConnections;
+	
+	NSMutableSet *	_availablePeers;
 
 	NSMutableDictionary *	_activeAbstractedStreamSetsByPeerName;
 	
@@ -32,4 +34,5 @@
 
 //private
 -(void)	_updateInterfaceActivity;
+-(void) _makeConnectionIfPossible;
 @end

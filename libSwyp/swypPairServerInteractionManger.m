@@ -121,10 +121,16 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 			peerInfo = nil;
 		}
 		[peerInfo setValue:address forKey:@"address"];
+		
+		if (peerInfo == nil){
+			[_delegate swypPairServerInteractionManger:self didFailToGetSwypInfoForSwypRef:swyp orSwypToken:nil];
+			return;
+		}
 	}
 	
 	//phew, we made it
 	[_delegate swypPairServerInteractionManger:self didReturnSwypToken:swypToken forSwypRef:swyp withPeerInfo:peerInfo];
+	
 }
 
 -(void)_processSwypPairConnectionFailureWithResponse:(id)response error:(NSError*)error swypRef:(swypInfoRef*)swyp{
