@@ -10,6 +10,8 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
+#import "swypWorkspaceBackgroundView.h"
+
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
 
@@ -28,8 +30,8 @@
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
 	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
-	[_backgroundView addSubview:sessionViewController.view];
-	[_backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	[self.view addSubview:sessionViewController.view];
+	[self.view setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
 	
@@ -106,7 +108,7 @@
 	[self.view addSubview:_swypNetworkInterfaceClassButton];	
 	[_backgroundView addSubview:_swypPromptImageView];
 	[_backgroundView sendSubviewToBack:_swypPromptImageView];
-	
+
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
 		[_swypNetworkInterfaceClassButton setAlpha:1];
@@ -226,24 +228,20 @@
 
 -(void)	viewDidLoad{
 	[super viewDidLoad];
-    
-    /* we use backgroundView instead of just setting self.view to be the swypWorkspaceBackgroundView
-        because we need to preserve the opacity of the background for when the modal is dismissed. */
-    
-    [self.view setBackgroundColor:[UIColor whiteColor]];
-	_backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	[self.view addSubview:_backgroundView];
+    	
+	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
+	self.view	= backgroundView;
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
-    [_backgroundView addSubview:_downArrowView];
+    [self.view addSubview:_downArrowView];
     
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 40);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
-    [_backgroundView addSubview:curlButton];
+    [self.view addSubview:curlButton];
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
     [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
@@ -264,7 +262,7 @@
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
-	SRELS(swypOutRecognizer);
+	SRELS(swypOutRecognizer);	
 
 	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
 		
