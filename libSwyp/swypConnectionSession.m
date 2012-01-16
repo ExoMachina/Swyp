@@ -135,8 +135,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void)	dealloc{
 
 	SRELS(_delegatesForPendingInputBridges);
-	for (NSValue * unretainedBridge in _pendingInputBridges){
-		swypInputToDataBridge * bridge	=	[unretainedBridge nonretainedObjectValue];
+	for (swypInputToDataBridge * bridge in _pendingInputBridges){
 		[bridge setDelegate:nil];
 	}
 	SRELS(_pendingInputBridges);

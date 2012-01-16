@@ -59,7 +59,7 @@
 		EXOLog(@"advertiseSwypOutAsCompleted in swypBluetoothPairManager from ref@time:%@",[[ref startDate]description]);
 		[pendingTimer invalidate];
 		
-		NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
+		NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
 		[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 		[_validSwypOutsForConnectionReceipt addObject:ref];
 	}
