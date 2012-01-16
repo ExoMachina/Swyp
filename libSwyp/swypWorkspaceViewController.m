@@ -106,8 +106,8 @@
 	[_swypNetworkInterfaceClassButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
 	[self.view addSubview:_swypNetworkInterfaceClassButton];	
-	[_backgroundView addSubview:_swypPromptImageView];
-	[_backgroundView sendSubviewToBack:_swypPromptImageView];
+	[self.view addSubview:_swypPromptImageView];
+	[self.view sendSubviewToBack:_swypPromptImageView];
 
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
@@ -272,7 +272,6 @@
     SRELS( _downArrowView);
 	SRELS( _swypPromptImageView);
 	SRELS(_swypNetworkInterfaceClassButton);
-    	SRELS(_backgroundView)
     
 	[super dealloc];
 }

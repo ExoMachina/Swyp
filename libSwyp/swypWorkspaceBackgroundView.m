@@ -33,8 +33,9 @@
 		_touchToPathCoordinationDictionary =	[[NSMutableDictionary alloc] initWithCapacity:1];
 		
         // Initialization code.
-		self.backgroundColor = [UIColor grayColor];
-		self.multipleTouchEnabled = YES;
+		self.backgroundColor		= [UIColor grayColor];
+//		self.opaque					= YES;
+		self.multipleTouchEnabled	= YES;
     }
     return self;
 }
