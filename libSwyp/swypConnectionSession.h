@@ -45,7 +45,8 @@ typedef enum {
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
 @optional
-/*
+/** See whether delegate will handle data stream.
+ 
 	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
 		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
 		If no one handles, an exception is thrown
@@ -71,7 +72,9 @@ typedef enum {
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
 @end
 
-
+/** This class represents and manages the connection between this and one other device. 
+ 
+ Use this class to send data, and set data delegates for recieved data. */
 @interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
@@ -103,8 +106,15 @@ typedef enum {
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
 @property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 
+/** swypConnectionSessions are initialized with their candidate, and input and an output stream. 
+ 
+ Connections are opened with the 'inititate' function.
+ */
 -(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
 
+/** Start connection; schedule in runloop */
+-(void) initiate;
+/** Destroy connection; remove from runloop */
 -(void)	invalidate;
 
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
@@ -113,9 +123,9 @@ typedef enum {
 -(void)	addConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 -(void)	removeConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 
-//sending data
-/*
-	length: the length of the 'stream' property
+/** @name sending data */
+/**
+	@param length the length of the 'stream' property
 		if length is specified as 0, the stream will be written without a length specifier, to allow devs to do fun stuff
 		be aware, some malicious endpoints will try to overload the length of a stream to cause buffer overruns 
 			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!

@@ -8,6 +8,7 @@
 
 #import "swypCloudNetService.h"
 
+
 @implementation swypCloudNetService
 @synthesize delegate = _delegate, portNumber;
 @synthesize ipv4socket = _ipv4socket, ipv6socket = _ipv6socket;
@@ -76,7 +77,7 @@
 		_ipv4socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&_swypServerAcceptConnectionCallBack, &socketCtxt);
 		
 		if (!_ipv4socket) {
-			NSError * error = [NSError errorWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserNoSocketsAvailableError userInfo:nil];
+			NSError * error = [NSError errorWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorNoSockets userInfo:nil];
 			EXOLog(@"No sockets in ipv4 %@", [error description]);
 		}
 		
@@ -92,7 +93,7 @@
 		NSData * address4 = [NSData dataWithBytes:&v4ServerAddress length:nameLen];
 		
 		if (kCFSocketSuccess != CFSocketSetAddress(_ipv4socket, (CFDataRef)address4)) {
-			NSError *error = [[NSError alloc] initWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserCouldNotBindToIPv4AddressError userInfo:nil];
+			NSError *error = [[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil];
 			EXOLog(@"Could not bind to ipv4 socket %@", [error description]); 
 			
 			if (_ipv4socket) 
@@ -122,7 +123,7 @@
 		_ipv6socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&_swypServerAcceptConnectionCallBack, &socketCtxt);
 		
 		if (!_ipv6socket) {
-			NSError * error = [NSError errorWithDomain:swypBonjourServiceAdvertiserErrorDomain code:swypBonjourServiceAdvertiserNoSocketsAvailableError userInfo:nil];
+			NSError * error = [NSError errorWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorNoSockets userInfo:nil];
 			EXOLog(@"No sockets in ipv6 %@", [error description]); //would this occur for v6 too?
 		}
 		
@@ -138,8 +139,8 @@
 		NSData * address4 = [NSData dataWithBytes:&v6ServerAddress length:nameLen];
 		
 		if (kCFSocketSuccess != CFSocketSetAddress(_ipv6socket, (CFDataRef)address4)) {
-
-			EXOLog(@"Could not bind to ipv6 socket"); 
+			NSError *error = [[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil];
+			EXOLog(@"Could not bind to ipv6 socket %@", [error description]); 
 			
 			if (_ipv6socket) 
 				CFRelease(_ipv6socket);

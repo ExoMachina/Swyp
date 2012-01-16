@@ -58,6 +58,8 @@
 //update UI
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
 	
+#warning do this with connection classes
+	
 	if ((availableMethods & swypConnectionMethodWifiCloud) == swypConnectionMethodWifiCloud){
 		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
 	}else{
@@ -79,7 +81,7 @@
 #pragma mark swypContentInteractionManagerDelegate
 -(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager{
 	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypIPhonePromptHud.png"]];
+		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 	}
 	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
@@ -143,7 +145,7 @@
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view showingContentBeforeConnection:_showContentWithoutConnection];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
 		[_contentManager setInteractionManagerDelegate:self];
 		
 		#pragma mark CLUDGE!

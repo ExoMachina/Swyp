@@ -10,20 +10,27 @@
 #import "swypDiscernedInputStream.h"
 
 @implementation swypConnectionManager
-@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods, userPreferedConnectionClass = _userPreferedConnectionClass, activeConnectionClass = _activeConnectionClass, enabledConnectionMethods, activeConnectionMethods;
+@synthesize delegate = _delegate, activeConnectionSessions = _activeConnectionSessions, availableConnectionMethods = _availableConnectionMethods, userPreferedConnectionClass = _userPreferedConnectionClass, activeConnectionClass, enabledConnectionMethods, activeConnectionMethods,supportedConnectionMethods = _supportedConnectionMethods;
 
 #pragma mark -
 #pragma mark public 
 
 -(void)	startServices{
-	[_cloudPairManager resumeNetworkActivity];
-	[_bonjourListener	setServiceIsListening:TRUE];
+	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
+		[_cloudPairManager resumeNetworkActivity];
+	}else if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+		[_cloudPairManager resumeNetworkActivity];
+	}else if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+		[_bonjourPairManager resumeNetworkActivity];
+	}else if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+		[_bluetoothPairManager resumeNetworkActivity];
+	}
 }
 
 -(void)	stopServices{
 	[_cloudPairManager suspendNetworkActivity];
-	[_bonjourListener	setServiceIsListening:FALSE];
-	[_bonjourAdvertiser setAdvertising:FALSE];
+	[_bonjourPairManager suspendNetworkActivity];
+	[_bluetoothPairManager suspendNetworkActivity];
 
 	for (swypConnectionSession * session in _activeConnectionSessions){
 		[session removeConnectionSessionInfoDelegate:self];
@@ -31,28 +38,41 @@
 		[session invalidate];
 	}	
 }
+
+-(swypConnectionClass)	activeConnectionClass{
+	if (_userPreferedConnectionClass == swypConnectionClassNone){
+		if (_availableConnectionMethods & (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud)){
+			return swypConnectionClassWifiAndCloud;
+		}else{
+			return swypConnectionClassBluetooth;
+		}
+	}else return _userPreferedConnectionClass;
+}
+
 -(swypConnectionMethod)	enabledConnectionMethods{
-	if (_activeConnectionClass == swypConnectionClassWifiAndCloud){
-		return (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud);
-	}else if (_activeConnectionClass == swypConnectionMethodBluetooth){
+	if (self.activeConnectionClass == swypConnectionClassWifiAndCloud){
+		swypConnectionMethod enabledMethods = (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud);
+		return enabledMethods;
+	}else if (self.activeConnectionClass == swypConnectionMethodBluetooth){
 		return swypConnectionMethodBluetooth;
-	}else return 0;
+	}else return swypConnectionMethodNone;
 }
 
 -(swypConnectionMethod)	activeConnectionMethods{
-	return ([self enabledConnectionMethods] & [self availableConnectionMethods]);
+	swypConnectionMethod activeMethods = ([self enabledConnectionMethods] & [self availableConnectionMethods]);
+	return activeMethods;
 }
 
 #pragma mark NSOBject 
 -(id) init{
 	if (self = [super init]){
-		_activeConnectionSessions	=	[[NSMutableSet alloc] init];
-
-		_swypIns			= [[NSMutableSet alloc] init];
-		_swypOuts			= [[NSMutableSet alloc] init];
-		_swypOutTimeouts	= [[NSMutableSet alloc] init];
-		_swypInTimeouts		= [[NSMutableSet alloc] init];
 		
+		//find out what works
+		[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];	
+		
+		_activeConnectionSessions	=	[[NSMutableSet alloc] init];
+		
+		_pendingSwypInConnections	=	[[swypPendingConnectionManager alloc] initWithDelegate:self];
 		
 		[self _setupNetworking];
 		
@@ -68,116 +88,178 @@
 	[[swypNetworkAccessMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 		
-	SRELS(_bonjourListener);
-	SRELS(_bonjourAdvertiser);
-	SRELS(_handshakeManager);
-	
+	SRELS(_bonjourPairManager);
 	SRELS(_cloudPairManager);
+	SRELS(_bluetoothPairManager);
 	
-	for (NSTimer * timer in _swypOutTimeouts){
-		[timer invalidate];
-	}
-	SRELS(_swypOutTimeouts);
-	
-	for (NSTimer * timer in _swypInTimeouts){
-		[timer invalidate];
-	}
-	SRELS(_swypInTimeouts);
-	
+	SRELS(_handshakeManager);
+			
 	SRELS(_activeConnectionSessions);
-	
-	
-	SRELS(_swypIns);
-	SRELS(_swypOuts);
 	
 	[super dealloc];
 }
 
-#pragma mark -
+#pragma mark - Hardcore delegation
+#pragma mark swypInterfaceManagerDelegate
+-(void) interfaceManager:(id<swypInterfaceManager>)manager isDoneAdvertisingSwypOutAsPending:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
+	[_handshakeManager dereferenceSwypOutAsPending:ref];
+}
+
+-(void)interfaceManager:(id<swypInterfaceManager>)manager isDoneSearchForSwypInServerCandidatesForRef:(swypInfoRef*)ref forConnectionMethod:(swypConnectionMethod)method{
+	[_pendingSwypInConnections connectionMethodTimedOut:method forSwypRef:ref];
+}
+
+-(void)interfaceManager:(id<swypInterfaceManager>)manager madeUninitializedSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method{
+
+	//swyp-in potentially matched ref
+	[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:method];
+}
+
+-(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession withConnectionMethod:(swypConnectionMethod)method{
+	
+	//swyp out matched ref
+	[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
+}
+
+#pragma mark swypPendingConnectionManagerDelegate
+-(void)	swypPendingConnectionManager:(swypPendingConnectionManager*)manager hasAvailableHandshakeableConnectionSessionsForSwyp:(swypInfoRef*)ref{
+	
+	swypConnectionSession * connectionSession	=	nil;
+	if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
+		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
+	}
+}
+
+-(void)	swypPendingConnectionManager:(swypPendingConnectionManager*)manager finishedForSwyp:(swypInfoRef*)ref{
+	EXOLog(@"pending connection mngr completed swypRef from time %@",[[ref startDate] description]);
+}
+
+
+#pragma mark - less hardcore but still hardcore
+#pragma mark swypHandshakeManagerDelegate
+-(void)	connectionSessionCreationFailedForConnectionSession:(swypConnectionSession*)session	forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error{
+	EXOLog(@"session failed handshake with swyp from time: %@; with error: %@", [[ref startDate] description],[error description]);
+	
+	swypConnectionSession * connectionSession	=	nil;
+	if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
+		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
+	}
+}
+-(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager{
+	
+	if (ref.swypType == swypInfoRefTypeSwypIn){
+		[_pendingSwypInConnections clearAllPendingConnectionsForSwypRef:ref];
+	}else if (ref.swypType == swypInfoRefTypeSwypOut){
+		[self dropSwypOutSwypInfoRefFromAdvertisers:ref];
+	}
+	
+	[session addDataDelegate:self];
+	[session addConnectionSessionInfoDelegate:self];
+	[_activeConnectionSessions addObject:session];
+	[_delegate swypConnectionSessionWasCreated:session withConnectionManager:self];
+}
+
+
 #pragma mark SWYP Responders
-
--(swypInfoRef*)	oldestSwypInSet:(NSSet*)swypSet{
-	swypInfoRef * oldest = nil;
-	for (swypInfoRef * next in swypSet){
-		if ([[next startDate] timeIntervalSinceReferenceDate] < [[oldest startDate] timeIntervalSinceReferenceDate] || oldest == nil)
-			oldest = next;
-	}
-	
-	return oldest;
-}
-
--(swypInfoRef*)	newestSwypInSet:(NSSet*)swypSet{
-	swypInfoRef * newest = nil;
-	for (swypInfoRef * next in swypSet){
-		if ([[next startDate] timeIntervalSinceReferenceDate] > [[newest startDate] timeIntervalSinceReferenceDate] || newest == nil)
-			newest = next;
-	}
-	
-	return newest;
-}
-
-
 #pragma mark IN
 -(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo{
-	NSTimer* swypInTimeout = [[NSTimer timerWithTimeInterval:7 target:self selector:@selector(swypInResponseTimeoutOccuredWithTimer:) userInfo:inInfo repeats:NO] retain];
-	[[NSRunLoop mainRunLoop] addTimer:swypInTimeout forMode:NSRunLoopCommonModes];
-	[_swypInTimeouts addObject:swypInTimeout];
-	[_swypIns addObject:inInfo];
-	SRELS(swypInTimeout);
 
-	[_handshakeManager beginHandshakeProcessWithServerCandidates:[_bonjourListener allServerCandidates]];	
-	[_cloudPairManager swypInCompleted:inInfo];
-}
--(void) swypInResponseTimeoutOccuredWithTimer:	(NSTimer*)timeoutTimer{
-	[_swypInTimeouts removeObject:timeoutTimer];
-	
-	swypInfoRef* swypInfo =	[timeoutTimer userInfo];
-	if ([swypInfo isKindOfClass:[swypInfoRef class]]){
-		[_swypIns removeObject:swypInfo];
+	NSMutableArray * addedInterfacesForSwypIn	=	[NSMutableArray array];
+	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
+		[_cloudPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+		
+		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodWifiCloud]];
+	}else if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+		[_cloudPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+		
+		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodWWANCloud]];
+	}else if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+		[_bonjourPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+	}else if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+		[_bluetoothPairManager startFindingSwypInServerCandidatesForRef:inInfo];
 	}
 	
-	if ([_swypInTimeouts count] == 0){
-		EXOLog(@"no longer within swyp-in window");
+	if ([addedInterfacesForSwypIn count] > 0){
+		[_pendingSwypInConnections	setSwypInPending:inInfo forConnectionMethods:addedInterfacesForSwypIn];		
 	}
 }
 
 #pragma mark OUT
 -(void)	swypOutStartedWithSwypInfoRef:	(swypInfoRef*)outInfo{
-	[_bonjourAdvertiser setAdvertising:TRUE];
-	[_swypOuts addObject:outInfo];
 	
-	[_cloudPairManager swypOutBegan:outInfo];
+	NSMutableArray * addedInterfacesForSwypOut	=	[NSMutableArray array];
+	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
+		[_cloudPairManager advertiseSwypOutAsPending:outInfo];
+
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWifiCloud]];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+		[_cloudPairManager advertiseSwypOutAsPending:outInfo];
+
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWWANCloud]];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+		[_bonjourPairManager advertiseSwypOutAsPending:outInfo];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+		[_bluetoothPairManager advertiseSwypOutAsPending:outInfo];
+	}
+	
+	for (NSNumber * interface in addedInterfacesForSwypOut){
+		[_handshakeManager referenceSwypOutAsPending:outInfo];
+	}
 }
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo{
-	NSTimer* swypOutTimeout = [[NSTimer timerWithTimeInterval:4 target:self selector:@selector(swypOutResponseTimeoutOccuredWithTimer:) userInfo:outInfo repeats:NO] retain];
-	[[NSRunLoop mainRunLoop] addTimer:swypOutTimeout forMode:NSRunLoopCommonModes];
-	[_swypOutTimeouts addObject:swypOutTimeout];
-	[_swypOuts addObject:outInfo];
-	SRELS(swypOutTimeout);
+
+	NSMutableArray * addedInterfacesForSwypOut	=	[NSMutableArray array];
+	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
+		[_cloudPairManager advertiseSwypOutAsCompleted:outInfo];
+		
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWifiCloud]];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+		[_cloudPairManager advertiseSwypOutAsPending:outInfo];
+		
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWWANCloud]];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+		[_bonjourPairManager advertiseSwypOutAsPending:outInfo];
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+		[_bluetoothPairManager advertiseSwypOutAsPending:outInfo];
+	}
 	
-	[_cloudPairManager swypOutCompleted:outInfo];
 }
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo{
-	[_swypOuts removeObject:outInfo];
-	
-	if (SetHasItems(_swypOuts) == NO){
-		[_bonjourAdvertiser setAdvertising:FALSE];		
-	}
-	
-	[_cloudPairManager swypOutFailed:outInfo];
+	[self dropSwypOutSwypInfoRefFromAdvertisers:outInfo];
 }
 
--(void) swypOutResponseTimeoutOccuredWithTimer:	(NSTimer*)timeoutTimer{
-	[_swypOutTimeouts removeObject:timeoutTimer];
-	
-	swypInfoRef* swypInfo =	[timeoutTimer userInfo];
-	if ([swypInfo isKindOfClass:[swypInfoRef class]]){
-		[_swypOuts removeObject:swypInfo];
+
+-(void)dropSwypOutSwypInfoRefFromAdvertisers:(swypInfoRef*)outInfo{
+	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
+		if ([_cloudPairManager isAdvertisingSwypOut:outInfo]){
+			[_cloudPairManager stopAdvertisingSwypOut:outInfo];
+		}
 	}
 	
-	if (SetHasItems(_swypOuts) == NO){
-		[_bonjourAdvertiser setAdvertising:FALSE];		
+	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+		
+		if ([_cloudPairManager isAdvertisingSwypOut:outInfo]){
+			[_cloudPairManager stopAdvertisingSwypOut:outInfo];
+		}
 	}
+	
+	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+		if ([_bonjourPairManager isAdvertisingSwypOut:outInfo]){
+			[_bonjourPairManager stopAdvertisingSwypOut:outInfo];
+		}
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+		if ([_bluetoothPairManager isAdvertisingSwypOut:outInfo]){
+			[_bluetoothPairManager stopAdvertisingSwypOut:outInfo];
+		}
+	}
+	
 }
 
 #pragma mark - connectivity
@@ -198,14 +280,10 @@
 		_availableConnectionMethods	= (_availableConnectionMethods & (~swypConnectionMethodWifiCloud));
 	}
 
-	//check bluetooth only when it's already started, because it displays pop-ups and starts-up the module
-	if ((_availableConnectionMethods & swypConnectionMethodBluetooth) == swypConnectionMethodBluetooth){
-		[self _updateBluetoothAvailability];	
-	}
+	//we require bluetooth to always be 'available' even if it isn't turned on
+	_availableConnectionMethods |= swypConnectionMethodBluetooth;
 	
 	if (preUpdateAvailability != _availableConnectionMethods){
-        // Why are you setting something equal to itself?
-		_availableConnectionMethods = _availableConnectionMethods;
 		[_delegate swypConnectionMethodsUpdated:_availableConnectionMethods withConnectionManager:self];
 	}
 }
@@ -213,11 +291,6 @@
 #pragma mark swypNetworkAccessMonitorDelegate 
 -(void)networkReachablityMonitor:(swypNetworkAccessMonitor*)monitor changedReachabilityToStatus:(swypNetworkAccess)reachability{
 	[self updateNetworkAvailability];
-}
-
-#pragma mark CBCentralManagerDelegate
-- (void)centralManagerDidUpdateState:(id)central{
-	[self _updateBluetoothAvailability];
 }
 
 
@@ -233,116 +306,28 @@
 	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
 	
 	_userPreferedConnectionClass	= swypConnectionClassNone;
-	_activeConnectionClass			= swypConnectionClassWifiAndCloud;
 	
 	//
-	//find out what works
-	[[swypNetworkAccessMonitor sharedReachabilityMonitor] addDelegate:self];
-	[self _updateBluetoothAvailability];
-	
-	//
-	//setup services
-	
-	_bonjourListener	= [[swypBonjourServiceListener alloc] init];
-	[_bonjourListener	setDelegate:self];
-	
-	_bonjourAdvertiser	= [[swypBonjourServiceAdvertiser alloc] init];
-	[_bonjourAdvertiser setDelegate:self];
-	
-	_cloudPairManager	= [[swypCloudPairManager alloc] initWithSwypCloudPairManagerDelegate:self];
+	//setup service managers
+//	_bonjourPairManager		= [[swypBonjourPairManager alloc] initWithInterfaceManagerDelegate:self];
+	_cloudPairManager		= [[swypCloudPairManager alloc] initWithInterfaceManagerDelegate:self];
+	_bluetoothPairManager	= [[swypBluetoothPairManager alloc] initWithInterfaceManagerDelegate:self];
 	
 	_handshakeManager	= [[swypHandshakeManager alloc] init];
 	[_handshakeManager	setDelegate:self];
 }
 
--(void)_updateBluetoothAvailability{
-		if (1 == 1) { //bluetooth works!
-			_availableConnectionMethods |= swypConnectionMethodBluetooth;
-		}else{
-			_availableConnectionMethods = (_availableConnectionMethods & (!swypConnectionMethodBluetooth));
-		}
-}
-
 
 #pragma mark - System Notifcations
 - (void)_applicationWillResignActive:(NSNotification *)note{
-	[_cloudPairManager suspendNetworkActivity];
-	[_bonjourAdvertiser suspendNetworkActivity];
-	[_bonjourListener setServiceIsListening:NO];
+	[self stopServices];
 }
 
 - (void)_applicationDidBecomeActive:(NSNotification *)note{
-	[_cloudPairManager resumeNetworkActivity];
-	[_bonjourAdvertiser resumeNetworkActivity];
-	[_bonjourListener setServiceIsListening:YES];
+	[self startServices];
 	
 	//check network 
 	[self updateNetworkAvailability];
-	
-}
-
-#pragma mark -
-#pragma mark bonjourAdvertiser 
--(void)	bonjourServiceAdvertiserReceivedConnectionFromSwypClientCandidate:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
-	[_handshakeManager beginHandshakeProcessWithClientCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
-}
-
--(void)	bonjourServiceAdvertiserFailedAdvertisingWithError:(NSError*) error serviceAdvertiser: (swypBonjourServiceAdvertiser*)advertiser{
-	EXOLog(@"Failed advertising with error: %@", [error description]);
-}
-
-#pragma mark bonjourListener
--(void)	bonjourServiceListenerFoundServerCandidate: (swypServerCandidate*) serverCandidate withListener:(swypBonjourServiceListener*) serviceListener{
-	EXOLog(@"Listener found server candidate: %@", [[serverCandidate netService] name]);
-	if ([_swypInTimeouts count] > 0){
-		[_handshakeManager beginHandshakeProcessWithServerCandidates:[NSSet setWithObject:serverCandidate]];
-	}
-}
--(void)	bonjourServiceListenerFailedToBeginListen:	(swypBonjourServiceListener*) listener	error:(NSError*)error{
-	EXOLog(@"Listener failed to begin listen with error!:%@",[error description]);	
-}
-
-
-
-
-#pragma mark -
-#pragma mark swypHandshakeManagerDelegate
--(NSArray*)	relevantSwypsForCandidate:	(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager{
-	if ([candidate isKindOfClass:[swypServerCandidate class]]){
-		NSArray * swypArray	=	(SetHasItems(_swypIns))? [NSArray arrayWithObject:[self newestSwypInSet:_swypIns]] : nil;
-		return swypArray;
-	}else if ([candidate isKindOfClass:[swypClientCandidate class]]){
-		
-		NSMutableArray * swypArray	=	[NSMutableArray array];
-		for (swypInfoRef * outRef in _swypOuts){
-			if ([outRef endDate] != nil){
-				[swypArray addObject:outRef];
-			}
-		}
-		
-		return swypArray;
-	}
-	
-	return nil;
-}
-
--(void)	connectionSessionCreationFailedForCandidate:(swypCandidate*)candidate		withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error{
-	EXOLog(@"Candidate session failed creation with error: %@",[error description]);
-}
--(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session	withHandshakeManager:	(swypHandshakeManager*)manager{
-	[session addDataDelegate:self];
-	[session addConnectionSessionInfoDelegate:self];
-	[_activeConnectionSessions addObject:session];
-	[_delegate swypConnectionSessionWasCreated:session withConnectionManager:self];
-}
-
-#pragma mark -
-#pragma mark swypCloudPairManagerDelegate
--(void)swypCloudPairManager:(swypCloudPairManager*)manager didReceiveSwypConnectionFromClient:(swypClientCandidate*)clientCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream{
-	[_handshakeManager beginHandshakeProcessWithPrePairedCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
-}
--(void)swypCloudPairManager:(swypCloudPairManager*)manager didCreateSwypConnectionToServer:(swypServerCandidate*)serverCandidate withStreamIn:(NSInputStream*)inputStream streamOut:(NSOutputStream*)outputStream{
-	[_handshakeManager beginHandshakeProcessWithPrePairedCandidate:serverCandidate streamIn:inputStream streamOut:outputStream];
 }
 
 #pragma mark -

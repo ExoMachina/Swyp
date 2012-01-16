@@ -26,14 +26,14 @@ typedef enum{
 
 	swypInfoRefType	swypType;
 }
-@property (nonatomic, assign)	double		velocity;	//in mm/second
+@property (nonatomic, assign)	double		velocity;	/// in mm/second
 @property (nonatomic, assign)	CGPoint		startPoint;
 @property (nonatomic, assign)	CGPoint		endPoint;
 @property (nonatomic, retain)	NSDate*		startDate;
 @property (nonatomic, retain)	NSDate*		endDate;
 @property (nonatomic, assign)	swypInfoRefType	swypType;
 
-//property is filled when swyp out occurs on top of this content, not on workspace
+/** property is filled when swyp out occurs on top of displayed content, not filled when swyp begins on workspace */
 @property (nonatomic, retain)	UIView*		swypBeginningContentView;
 
 @end

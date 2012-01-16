@@ -8,23 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "swypConnectionSession.h"
-#import "swypBonjourServiceListener.h"
-#import "swypBonjourServiceAdvertiser.h"
 #import "swypHandshakeManager.h"
 #import "swypInputToDataBridge.h"
 #import "swypNetworkAccessMonitor.h"
+
 #import "swypCloudPairManager.h"
+#import "swypBonjourPairManager.h"
+#import "swypBluetoothPairManager.h"
+#import "swypInterfaceManager.h"
+#import "swypPendingConnectionManager.h"
 
 
 @class swypConnectionManager;
-
-typedef enum {
-	swypConnectionMethodNone = 0,
-	swypConnectionMethodWifiLoc		= 1 << 1,
-	swypConnectionMethodWifiCloud	= 1 << 2,
-	swypConnectionMethodWWANCloud	= 1 << 3,
-	swypConnectionMethodBluetooth	= 1 << 4
-} swypConnectionMethod;
 
 typedef enum {
 	swypConnectionClassNone,			//no preferrence; automatically selected through availability 
@@ -43,42 +38,38 @@ typedef enum {
 /**
  This guy does orchistrates the whole gig to get connections between devices established. 
  */
-@interface swypConnectionManager : NSObject 
-<swypBonjourServiceListenerDelegate, swypBonjourServiceAdvertiserDelegate, swypCloudPairManagerDelegate,
+@interface swypConnectionManager : NSObject <swypPendingConnectionManagerDelegate, swypInterfaceManagerDelegate,
 swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypHandshakeManagerDelegate,
 swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
-	swypBonjourServiceListener *	_bonjourListener;
-	swypBonjourServiceAdvertiser *	_bonjourAdvertiser;
-	
+	swypBonjourPairManager *		_bonjourPairManager;
 	swypCloudPairManager *			_cloudPairManager;
+	swypBluetoothPairManager*		_bluetoothPairManager;
+	
 	swypHandshakeManager *			_handshakeManager;
 	
+	swypPendingConnectionManager *	_pendingSwypInConnections; 
 
 	swypConnectionMethod			_supportedConnectionMethods;	//device supported
-	swypConnectionMethod			_availableConnectionMethods;	//currently usable per reachability
+	swypConnectionMethod			_availableConnectionMethods; //currently available per reachability
 	
 	swypConnectionClass				_userPreferedConnectionClass;	//NONE by default
-	swypConnectionClass				_activeConnectionClass;			//wifi&cloud by default
 	
-	//swypInfoRefs
-	NSMutableSet *			_swypIns;
-	NSMutableSet *			_swypOuts;	
-	NSMutableSet *			_swypOutTimeouts;
-	NSMutableSet *			_swypInTimeouts;
-	
+
 	id<swypConnectionManagerDelegate>	_delegate;
 }
 @property (nonatomic, readonly) NSSet *								activeConnectionSessions;
 @property (nonatomic, assign)	id<swypConnectionManagerDelegate>	delegate;
 
-@property (nonatomic, readonly)	swypConnectionMethod	availableConnectionMethods;
-@property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	//user/implicitly authorized
-@property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	//intersect of enabled and available
+@property (nonatomic, readonly)	swypConnectionMethod	supportedConnectionMethods; /// device supported
 
-@property (nonatomic, readonly) swypConnectionClass		userPreferedConnectionClass;
-@property (nonatomic, readonly) swypConnectionClass		activeConnectionClass;
+@property (nonatomic, readonly)	swypConnectionMethod	availableConnectionMethods; ///currently usable per reachability
+@property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	/// user or implicitly authorized methods through activeConnectionClass
+@property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	///intersect of enabled and available
+
+@property (nonatomic, readonly) swypConnectionClass	userPreferedConnectionClass; ///the preferred class that the UI reflects
+@property (nonatomic, readonly) swypConnectionClass	activeConnectionClass;	///on-the-fly generated connection class based on user pref & availability
 
 
 
@@ -95,16 +86,14 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 */
 -(void)	stopServices;
 
--(swypInfoRef*)	oldestSwypInSet:(NSSet*)swypSet;
-
 -(void) swypInCompletedWithSwypInfoRef:	(swypInfoRef*)inInfo;
 -(void)	swypOutStartedWithSwypInfoRef:	(swypInfoRef*)outInfo;
 -(void)	swypOutCompletedWithSwypInfoRef:(swypInfoRef*)outInfo; 
 -(void)	swypOutFailedWithSwypInfoRef:	(swypInfoRef*)outInfo;
 
+-(void)dropSwypOutSwypInfoRefFromAdvertisers:(swypInfoRef*)outInfo;
 
 -(void)updateNetworkAvailability;
 //private 
--(void)_updateBluetoothAvailability;
 -(void)_setupNetworking;
 @end

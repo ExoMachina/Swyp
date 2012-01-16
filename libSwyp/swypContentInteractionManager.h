@@ -49,6 +49,7 @@
 @end
 
 
+/** This class is responsible for unifying modal and controller, and displaying them upon the workspace. */
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
 	
@@ -62,22 +63,49 @@
 	
 	id<swypContentInteractionManagerDelegate>				_interactionManagerDelegate;
 }	
+
+/** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 
+ 
+ By default, this is also the default swypConnectionSessionDataDelegate delegate for received data.
+ 
+ @warning there is no default datasource.
+ */
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
-//if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
-//this value is assigned at init by workspace manager
+/** if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
+this value is assigned at init by workspace manager 
+ 
+  @warning this is a deprecated method 
+ */
 @property (nonatomic, readonly)	BOOL														showContentBeforeConnection;
 
-//if not set, the standard will be assigned
+
+/** This property is the view controller that contentDataSource content is displayed from. 
+ 
+ @warning if not set, the standard will be assigned. That is swypPhotoPlayground currently.
+ @warning this class must obey the swypContentDisplayViewController protocol. 
+ */
 @property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
 
 
 @property(nonatomic, assign)	id<swypContentInteractionManagerDelegate>					interactionManagerDelegate;
 
+/** The main init function. 
+ */
+-(id)	initWithMainWorkspaceView: (UIView*)workspaceView;
 
+/** Don't init this way.
+ 
+ @warning this is a deprecated method 
+ */
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent;
 
-//in order of preference where index 0=most preferant 
+
+#pragma mark TODO: update file types to set custom
+/** 
+ swyp in order of preference where index 0=most preferant 
+ @warning	Swyp's devs need to update this to be a modifible property.
+ */
 +(NSArray*)	supportedFileTypes;
 
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;

@@ -149,6 +149,7 @@
 		_streamStatus	= NSStreamStatusNotOpen;
 		_queuedStreams	=	[[NSMutableArray alloc] init];
 		_closeStreamAtQueueEnd	=	 YES;
+		_holdCompletedStreams	=	NO;
 	}
 	return self;
 }

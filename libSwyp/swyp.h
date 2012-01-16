@@ -54,3 +54,4 @@
 #import "NSDictionary+BSJSONAdditions.h"
 #import "UIColorAdditions.h"
 #import "UIViewAdditions+swypAdditions.h"
+#import "swypInterfaceManager.h"

@@ -21,6 +21,9 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	return self;
 }
 -(void)dealloc{
+	for (NSOperation * operation in  [[_httpRequestManager operationQueue] operations]){
+		[operation cancel];
+	}
 	_delegate = nil;
 	SRELS(_httpRequestManager);
 	
