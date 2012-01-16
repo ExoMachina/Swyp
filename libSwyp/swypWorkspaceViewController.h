@@ -34,9 +34,7 @@
 	
 	//workspace UI Items	
 	UIImageView *						_swypPromptImageView;
-	UIButton *							_swypWifiAvailableButton;
-	UIButton *							_swypCloudAvailableButton;
-	UIButton *							_swypBluetoothAvailableButton;
+	UIButton *							_swypNetworkInterfaceClassButton;
     UIView *                            _downArrowView;
 }
 
@@ -57,5 +55,10 @@
  
  */
 -(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
+
+
+//
+//private
+-(void) _setupUIForCurrentOrientation;
 
 @end

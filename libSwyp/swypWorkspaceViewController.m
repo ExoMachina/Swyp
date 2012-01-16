@@ -59,19 +59,19 @@
 
 //update UI
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
-	
-#warning do this with connection classes
-	
-	if ((availableMethods & swypConnectionMethodWifiCloud) == swypConnectionMethodWifiCloud){
-		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
-	}else{
-		[_swypCloudAvailableButton setImage:[UIImage imageNamed:@"connectivity-world-disabled.png"] forState:UIControlStateNormal];
-	}
-	
-	if ((availableMethods & swypConnectionMethodBluetooth) == swypConnectionMethodBluetooth){
-		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-enabled.png"] forState:UIControlStateNormal];
-	}else{
-		[_swypBluetoothAvailableButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-disabled.png"] forState:UIControlStateNormal];
+		
+	if ([manager activeConnectionClass] == swypConnectionClassWifiAndCloud){
+		if (availableMethods & (swypConnectionMethodWifiLoc |swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud)){
+			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
+		}else{
+			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-world-disabled.png"] forState:UIControlStateNormal];
+		}
+	}else if ([manager activeConnectionClass] == swypConnectionClassBluetooth) {
+		if (availableMethods & swypConnectionMethodBluetooth){
+			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-enabled.png"] forState:UIControlStateNormal];
+		}else{
+			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-disabled.png"] forState:UIControlStateNormal];
+		}
 	}
 	
 
@@ -86,50 +86,32 @@
 		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 	}
-	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
 	
 	//we're phasing out wifi as a availability-selectable type in favor of globe vs bluetooth
 	
 	
-//	if (_swypCloudAvailableButton == nil){
-//		_swypCloudAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
-//		[_swypCloudAvailableButton setShowsTouchWhenHighlighted:TRUE];
-//		[_swypCloudAvailableButton addTarget:self action:@selector(cloudAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];	
-//		[_swypCloudAvailableButton setEnabled:FALSE];
-//	}
-//	[_swypCloudAvailableButton setOrigin:CGPointMake(9, self.view.size.height-32)];
-	
-	
-	if (_swypBluetoothAvailableButton == nil){
-		_swypBluetoothAvailableButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
-		[_swypBluetoothAvailableButton setShowsTouchWhenHighlighted:TRUE];
-		[_swypBluetoothAvailableButton addTarget:self action:@selector(bluetoothAvailableButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+	if (_swypNetworkInterfaceClassButton == nil){
+		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
+		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 	}
 	
-	[_swypBluetoothAvailableButton setOrigin:CGPointMake(9, self.view.size.height-32)];
+	[self _setupUIForCurrentOrientation];
 
 	
-
 	
 	//set background images
 	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
 	
-	[_swypWifiAvailableButton setAlpha:0];
-	[_swypBluetoothAvailableButton setAlpha:0];
+	[_swypNetworkInterfaceClassButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
-	[_swypCloudAvailableButton setAlpha:0];
 	[self.view addSubview:_swypPromptImageView];
 	[self.view sendSubviewToBack:_swypPromptImageView];
-	[self.view addSubview:_swypWifiAvailableButton];
-	[self.view addSubview:_swypBluetoothAvailableButton];
-	[self.view addSubview:_swypCloudAvailableButton];
-	
+	[self.view addSubview:_swypNetworkInterfaceClassButton];	
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:1];
-		[_swypWifiAvailableButton setAlpha:1];
-		[_swypBluetoothAvailableButton setAlpha:1];
-		[_swypCloudAvailableButton setAlpha:1];
+		[_swypNetworkInterfaceClassButton setAlpha:1];
 	}completion:nil];
 }
 -(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
@@ -137,9 +119,7 @@
 	if ([_swypPromptImageView superview] != nil){
 		[UIView animateWithDuration:.75 animations:^{
 			[_swypPromptImageView setAlpha:0];
-			[_swypWifiAvailableButton setAlpha:0];
-			[_swypBluetoothAvailableButton setAlpha:0];
-			[_swypCloudAvailableButton setAlpha:0];
+			[_swypNetworkInterfaceClassButton setAlpha:0];
 		}completion:nil];
 	}
 }
@@ -177,11 +157,12 @@
 }
 
 
--(void)bluetoothAvailableButtonPressed:(id)sender{
-	
-}
--(void)wifiAvailableButtonPressed:(id)sender{
-	
+-(void)networkInterfaceClassButtonPressed:(id)sender{
+	if ([_connectionManager activeConnectionClass] == swypConnectionClassWifiAndCloud){
+		[_connectionManager setUserPreferedConnectionClass:swypConnectionClassBluetooth];
+	}else if ([_connectionManager activeConnectionClass] == swypConnectionClassBluetooth){
+		[_connectionManager setUserPreferedConnectionClass:swypConnectionClassWifiAndCloud];
+	}
 }
 
 #pragma mark -
@@ -288,8 +269,7 @@
 -(void)	dealloc{
 	
 	SRELS( _swypPromptImageView);
-	SRELS(_swypWifiAvailableButton);
-	SRELS(_swypBluetoothAvailableButton);
+	SRELS(_swypNetworkInterfaceClassButton);
 	
 	[super dealloc];
 }
@@ -304,17 +284,20 @@
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 	
 	[UIView animateWithDuration:.5 animations:^{
-		[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
-		[_swypWifiAvailableButton setOrigin:CGPointMake(self.view.size.width/2 - (200/2), self.view.size.height/2 + 30+ (250/2))];
-		[_swypBluetoothAvailableButton setOrigin:CGPointMake(self.view.size.width/2 + 50, self.view.size.height/2 + 10+ (250/2))];
+		[self _setupUIForCurrentOrientation];
 	}];
+}
+			
+
+-(void) _setupUIForCurrentOrientation{
+	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
+	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, self.view.size.height-32)];
 }
 
 - (void)didReceiveMemoryWarning {
 	if ([_swypPromptImageView superview] == nil){
 		SRELS(_swypPromptImageView);
-		SRELS(_swypWifiAvailableButton);
-		SRELS(_swypBluetoothAvailableButton);
+		SRELS(_swypNetworkInterfaceClassButton);
 	}
 }
 @end

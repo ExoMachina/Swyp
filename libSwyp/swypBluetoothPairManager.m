@@ -15,11 +15,11 @@
 #pragma mark swypInterfaceManager
 -(void)	suspendNetworkActivity{
 	//stopping everything current
-	for (NSValue * swypValue in [_swypOutTimeoutTimerBySwypInfoRef allKeys]){
-		[self stopAdvertisingSwypOut:[swypValue nonretainedObjectValue]];
+	for (swypInfoRef * ref in [_validSwypOutsForConnectionReceipt copy]){
+		[self stopAdvertisingSwypOut:ref];
 	}
-	for (NSValue * swypValue in [_swypInTimeoutTimerBySwypInfoRef allKeys]){
-		[self stopFindingSwypInServerCandidatesForRef:[swypValue nonretainedObjectValue]];
+	for (swypInfoRef * ref in [_validSwypInForConnectionCreation copy]){
+		[self stopFindingSwypInServerCandidatesForRef:ref];
 	}
 	
 	for (NSString * peer in _pendingGKPeerServerConnections){
@@ -68,8 +68,13 @@
 }
 
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
+	EXOLog(@"No longer advertising outRef in swypBluetoothPairManager from time: %@",[[ref startDate] description]);
+	
+	if ([_validSwypOutsForConnectionReceipt containsObject:ref] == NO){
+		return;
+	}
+	
 	NSTimer * advertiseTimer	=	[_swypOutTimeoutTimerBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
-	if (advertiseTimer == nil) return;
 	
 	[advertiseTimer invalidate];
 
@@ -94,10 +99,13 @@
 }
 
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
+	if ([_validSwypInForConnectionCreation containsObject:ref] == NO)
+		return;
+	
 	[_swypInTimeoutTimerBySwypInfoRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]];
 	[_validSwypInForConnectionCreation removeObject:ref];
 
-	[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:ref forConnectionMethod:swypConnectionMethodBluetooth];
+	[_delegate interfaceManager:self isDoneSearchForSwypInServerCandidatesForRef:ref forConnectionMethod:swypConnectionMethodBluetooth];
 	
 	[self _updateInterfaceActivity];
 }
@@ -176,6 +184,7 @@
 }
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state{
 	if (state == GKPeerStateAvailable){
+		EXOLog(@"Found bluetooth peer: %@",peerID);
 		if ([_validSwypInForConnectionCreation count] > 0){
 			EXOLog(@"Connecting via bluetooth for swypIn to peer: %@",peerID);
 			[_gameKitPeerSession connectToPeer:peerID withTimeout:3];

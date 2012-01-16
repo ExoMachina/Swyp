@@ -46,6 +46,7 @@
 	[[self pairServerManager] putSwypUpdateToPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]] withUserInfo:[self _userInfoDictionary]];
 }
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
+	assert(ref != nil);
 	[_cloudPairPendingSwypRefs removeObject:ref];
 	[[self pairServerManager] deleteSwypFromPairServer:ref swypToken:[_swypTokenBySwypRef objectForKey:[NSValue valueWithNonretainedObject:ref]]];
 	
@@ -63,8 +64,8 @@
 	[[self pairServerManager] postSwypToPairServer:ref withUserInfo:[self _userInfoDictionary]];
 }
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
+	assert(ref != nil);
 	[_pendingSwypIns removeObject:ref];
-
 	
 	[_delegate interfaceManager:self isDoneSearchForSwypInServerCandidatesForRef:ref forConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
 }
@@ -113,6 +114,7 @@
 }
 
 -(void)	_invalidateSwypRef:(swypInfoRef*)ref{
+	assert(ref != nil);
 	[_swypTokenBySwypRef removeObjectForKey:[NSValue valueWithNonretainedObject:ref]];
 	[_cloudPairPendingSwypRefs removeObject:ref];
 
@@ -165,10 +167,11 @@
 	swypConnectionSession * pendingClient	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
 		
 	[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:pendingClient withConnectionMethod:swypConnectionMethodWifiCloud|swypConnectionMethodWWANCloud];
-	
-	[self _invalidateSwypRef:swypRef];
-	[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; 
-	
+
+	if (swypRef != nil){
+		[self _invalidateSwypRef:swypRef];
+		[_swypRefByPeerInfo removeObjectForKey:[NSValue valueWithNonretainedObject:peerInfo]]; 
+	}
 	SRELS(candidate);
 	
 }

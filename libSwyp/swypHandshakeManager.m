@@ -43,7 +43,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
 	
-	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	NSNumber * refForSwypOut	=	[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue];
+	NSInteger referenceCount	=	[refForSwypOut intValue];
 	referenceCount --;
 	assert(referenceCount >= 0);
 	if (referenceCount == 0){
@@ -406,6 +407,11 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark -
 #pragma mark finalization
 -(void)	_postNegotiationSessionHandOff:	(swypConnectionSession*)session{
+	//SUCCESS!
+	
+	EXOLog(@"Successful connection with session w/ swyp from time %@",[[[session representedCandidate] startDate] description]);
+	[_swypTimeoutsByConnectionSession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
+	
 	
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];

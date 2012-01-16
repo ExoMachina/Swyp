@@ -68,7 +68,7 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 @property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	/// user or implicitly authorized methods through activeConnectionClass
 @property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	///intersect of enabled and available
 
-@property (nonatomic, readonly) swypConnectionClass	userPreferedConnectionClass; ///the preferred class that the UI reflects
+@property (nonatomic, assign)	swypConnectionClass	userPreferedConnectionClass; ///the preferred class that the UI reflects
 @property (nonatomic, readonly) swypConnectionClass	activeConnectionClass;	///on-the-fly generated connection class based on user pref & availability
 
 

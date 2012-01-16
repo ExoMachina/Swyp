@@ -18,11 +18,14 @@
 -(void)	startServices{
 	if (self.activeConnectionMethods & swypConnectionMethodWifiCloud){
 		[_cloudPairManager resumeNetworkActivity];
-	}else if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
 		[_cloudPairManager resumeNetworkActivity];
-	}else if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
 		[_bonjourPairManager resumeNetworkActivity];
-	}else if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
 		[_bluetoothPairManager resumeNetworkActivity];
 	}
 }
@@ -39,6 +42,17 @@
 	}	
 }
 
+-(void) setUserPreferedConnectionClass:(swypConnectionClass)class{
+	swypConnectionClass currentClass	=	self.activeConnectionClass;
+	_userPreferedConnectionClass		= class;
+	if (currentClass != _userPreferedConnectionClass){
+		[self stopServices];
+		[self startServices];
+	}
+	
+	[_delegate swypConnectionMethodsUpdated:[self activeConnectionMethods] withConnectionManager:self];
+}
+
 -(swypConnectionClass)	activeConnectionClass{
 	if (_userPreferedConnectionClass == swypConnectionClassNone){
 		if (_availableConnectionMethods & (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud)){
@@ -53,7 +67,7 @@
 	if (self.activeConnectionClass == swypConnectionClassWifiAndCloud){
 		swypConnectionMethod enabledMethods = (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud);
 		return enabledMethods;
-	}else if (self.activeConnectionClass == swypConnectionMethodBluetooth){
+	}else if (self.activeConnectionClass == swypConnectionClassBluetooth){
 		return swypConnectionMethodBluetooth;
 	}else return swypConnectionMethodNone;
 }
@@ -111,8 +125,17 @@
 
 -(void)interfaceManager:(id<swypInterfaceManager>)manager madeUninitializedSwypServerCandidateConnectionSession:(swypConnectionSession*)connectionSession forRef:(swypInfoRef*)ref withConnectionMethod:(swypConnectionMethod)method{
 
+	
+	for (int i = 0; i <= 7; i ++){
+		//swypConnectionMethod are bitshifted values, and method might be too
+		swypConnectionMethod testMethod  = ((char)1 << i);
+		
+		if (testMethod & method){
+			[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:testMethod];
+		}
+	}
+	
 	//swyp-in potentially matched ref
-	[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:method];
 }
 
 -(void)interfaceManager:(id<swypInterfaceManager>)manager receivedUninitializedSwypClientCandidateConnectionSession:(swypConnectionSession*)connectionSession withConnectionMethod:(swypConnectionMethod)method{
@@ -169,13 +192,16 @@
 		[_cloudPairManager startFindingSwypInServerCandidatesForRef:inInfo];
 		
 		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodWifiCloud]];
-	}else if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
 		[_cloudPairManager startFindingSwypInServerCandidatesForRef:inInfo];
 		
 		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodWWANCloud]];
-	}else if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
 		[_bonjourPairManager startFindingSwypInServerCandidatesForRef:inInfo];
-	}else if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
+	}
+	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
 		[_bluetoothPairManager startFindingSwypInServerCandidatesForRef:inInfo];
 	}
 	
@@ -200,9 +226,13 @@
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
 		[_bonjourPairManager advertiseSwypOutAsPending:outInfo];
+		
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWifiLoc]];
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
 		[_bluetoothPairManager advertiseSwypOutAsPending:outInfo];
+		
+		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodBluetooth]];
 	}
 	
 	for (NSNumber * interface in addedInterfacesForSwypOut){
@@ -218,15 +248,15 @@
 		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWifiCloud]];
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodWWANCloud){
-		[_cloudPairManager advertiseSwypOutAsPending:outInfo];
+		[_cloudPairManager advertiseSwypOutAsCompleted:outInfo];
 		
 		[addedInterfacesForSwypOut addObject:[NSNumber numberWithInt:swypConnectionMethodWWANCloud]];
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodWifiLoc){
-		[_bonjourPairManager advertiseSwypOutAsPending:outInfo];
+		[_bonjourPairManager advertiseSwypOutAsCompleted:outInfo];
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
-		[_bluetoothPairManager advertiseSwypOutAsPending:outInfo];
+		[_bluetoothPairManager advertiseSwypOutAsCompleted:outInfo];
 	}
 	
 }
@@ -300,7 +330,7 @@
 
 	//
 	//set defaults 
-	_supportedConnectionMethods	|= swypConnectionMethodWifiLoc;
+//	_supportedConnectionMethods	|= swypConnectionMethodWifiLoc;
 	_supportedConnectionMethods	|= swypConnectionMethodWifiCloud;
 	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
 	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
