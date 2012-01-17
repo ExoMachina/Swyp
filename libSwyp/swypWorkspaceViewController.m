@@ -228,7 +228,12 @@
 
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    
+    if ([[[UIDevice currentDevice] systemVersion] intValue] >= 5) {
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    } else {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    }
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
@@ -254,10 +259,14 @@
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
     [curlButton.layer setOpaque:NO];
     
+    // weird ios4 bug
+    if ([[[UIDevice currentDevice] systemVersion] intValue] >= 5) {
+        [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
+    }
+    
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
          forControlEvents:UIControlEventTouchUpInside];
-    
-    [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
+         
     [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
     UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
