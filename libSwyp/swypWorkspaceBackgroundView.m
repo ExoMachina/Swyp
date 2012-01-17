@@ -53,7 +53,7 @@
 	
 }
 
-- (swypPrettyPath*)	_newPrettyPath{	
+- (swypPrettyPath*)	_prettyPath{	
 	swypPrettyPath *	prettyPath	= [[swypPrettyPath alloc] init];
 	UIBezierPath *		path		= [[[UIBezierPath alloc] init] autorelease];
 	[path setLineWidth:20];
@@ -77,7 +77,7 @@
     
 	for (UITouch * touch in touches){
 		
-		swypPrettyPath *newInstantiatedPath =	[self _newPrettyPath];
+		swypPrettyPath *newInstantiatedPath =	[self _prettyPath];
 		
 		[_touchToPathCoordinationDictionary setObject:newInstantiatedPath forKey:[NSValue valueWithNonretainedObject:touch]];
 		

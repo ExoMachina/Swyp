@@ -12,7 +12,7 @@
 #import "swypInterfaceManager.h"
 #import "swypGKPeerAbstractedStreamSet.h"
 
-@interface swypBluetoothPairManager : NSObject <swypInterfaceManager,GKSessionDelegate, swypGKPeerAbstractedStreamSetDelegate>{
+@interface swypBluetoothPairManager : NSObject <swypInterfaceManager,GKSessionDelegate, GKPeerPickerControllerDelegate, swypGKPeerAbstractedStreamSetDelegate>{
 	id<swypInterfaceManagerDelegate>	_delegate;
 		
 	NSMutableDictionary *				_swypOutTimeoutTimerBySwypInfoRef;
@@ -30,9 +30,14 @@
 
 	NSMutableDictionary *	_activeAbstractedStreamSetsByPeerName;
 	
+	NSTimer	*				_connectabilityTimer; //timer to see if BT is enabled...
+	GKPeerPickerController*	_bluetoothPromptController;
+	
 }
 
 //private
 -(void)	_updateInterfaceActivity;
 -(void) _makeConnectionIfPossible;
+
+-(void)_launchBluetoothPromptPeerPicker;
 @end

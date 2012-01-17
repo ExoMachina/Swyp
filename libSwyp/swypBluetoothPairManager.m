@@ -132,6 +132,9 @@
 #pragma mark NSObject
 -(id) initWithInterfaceManagerDelegate:(id<swypInterfaceManagerDelegate>)delegate{
 	if (self = [super init]){
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_bluetoothAvailabilityChanged:) name:@"BluetoothAvailabilityChangedNotification" object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_bluetoothConnectabilityChanged:) name:@"BluetoothConnectabilityChangedNotification" object:nil];
+		
 		_delegate = delegate;
 		_swypOutTimeoutTimerBySwypInfoRef	=	[NSMutableDictionary new];
 		_validSwypOutsForConnectionReceipt	=	[NSMutableSet new];
@@ -151,6 +154,8 @@
 }
 
 -(void)dealloc{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[self suspendNetworkActivity];
 	
 	SRELS(_swypOutTimeoutTimerBySwypInfoRef);
@@ -164,6 +169,10 @@
 	SRELS(_availablePeers);
 	
 	SRELS(_activeAbstractedStreamSetsByPeerName);
+	
+	SRELS(_connectabilityTimer);
+	[_bluetoothPromptController setDelegate:nil];
+	SRELS(_bluetoothPromptController);
 	[super dealloc];
 }
 
@@ -182,11 +191,7 @@
 #pragma mark GKSessionDelegate
 - (void)session:(GKSession *)session didFailWithError:(NSError *)error{
 	if ([[error domain] isEqual:kGKSessionErrorDomain] && ([error code] == GKSessionCannotEnableError)){
-		EXOLog(@"%@",@"Bluetooth Disabled: launching peer picker");
-		//let's prompt to turn on:
-		GKPeerPickerController * picker =  [[[GKPeerPickerController alloc] init] autorelease];
-		[picker setConnectionTypesMask:GKPeerPickerConnectionTypeNearby];
-		[picker show];
+		[self _launchBluetoothPromptPeerPicker];
 		
 	}else{
 		EXOLog(@"GKSession error: %@", [error description]);
@@ -309,6 +314,44 @@
 }
 
 #pragma mark - private
+#pragma mark bluetooth detection
+-(void)_bluetoothAvailabilityChanged:(id)sender{
+	EXOLog(@"bluetooth availability notification: %@",[sender description]);
+	//if this notification shows but connectability doesn't, then we know BT is disabled, and we prompt to enable.
+	if (_connectabilityTimer == nil){
+		_connectabilityTimer = [[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_connectabilityTimeoutOccured:) userInfo:nil repeats:NO] retain];
+	}
+}
+-(void)_bluetoothConnectabilityChanged:(id)sender{
+	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
+	if (_bluetoothPromptController != nil){
+		[_bluetoothPromptController dismiss];
+		[_bluetoothPromptController autorelease];
+		[_bluetoothPromptController setDelegate:nil];
+		_bluetoothPromptController = nil;
+	}else{
+		[_connectabilityTimer invalidate];
+	}
+}
+
+-(void) _connectabilityTimeoutOccured:(NSTimer*)sender{
+	[_connectabilityTimer invalidate];
+	[self _launchBluetoothPromptPeerPicker];
+}
+	
+-(void)_launchBluetoothPromptPeerPicker{
+	EXOLog(@"%@",@"Bluetooth Disabled: launching peer picker");
+	//let's prompt to turn on:
+	if (_bluetoothPromptController == nil){
+		_bluetoothPromptController =  [[GKPeerPickerController alloc] init];
+		[_bluetoothPromptController setDelegate:self];
+		[_bluetoothPromptController setConnectionTypesMask:GKPeerPickerConnectionTypeNearby];
+	}
+	[_bluetoothPromptController show];	
+}
+
+
+#pragma mark connections
 -(void)	_updateInterfaceActivity{
 	
 	if ([_validSwypInForConnectionCreation count] == 0){

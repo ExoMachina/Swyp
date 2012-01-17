@@ -62,10 +62,10 @@
 
 -(swypConnectionMethod)	enabledConnectionMethods{
 	if (self.activeConnectionClass == swypConnectionClassWifiAndCloud){
-		swypConnectionMethod enabledMethods = (swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud);
+		swypConnectionMethod enabledMethods = ((swypConnectionMethodWifiLoc	| swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud) & _supportedConnectionMethods);
 		return enabledMethods;
 	}else if (self.activeConnectionClass == swypConnectionClassBluetooth){
-		return swypConnectionMethodBluetooth;
+		return (swypConnectionMethodBluetooth & _supportedConnectionMethods);
 	}else return swypConnectionMethodNone;
 }
 
@@ -126,9 +126,9 @@
 	for (int i = 0; i <= 7; i ++){
 		//swypConnectionMethod are bitshifted values, and method might be too
 		swypConnectionMethod testMethod  = ((char)1 << i);
-		
 		if (testMethod & method){
 			[_pendingSwypInConnections addSwypServerCandidateConnectionSession:connectionSession forSwypRef:ref forConnectionMethod:testMethod];
+			break; //only add for the highest priority
 		}
 	}
 	
@@ -160,9 +160,11 @@
 -(void)	connectionSessionCreationFailedForConnectionSession:(swypConnectionSession*)session	forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager error:(NSError*)error{
 	EXOLog(@"session failed handshake with swyp from time: %@; with error: %@", [[ref startDate] description],[error description]);
 	
-	swypConnectionSession * connectionSession	=	nil;
-	if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
-		[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
+	if (ref.swypType == swypInfoRefTypeSwypIn){
+		swypConnectionSession * connectionSession	=	nil;
+		if ((connectionSession = [_pendingSwypInConnections nextConnectionSessionToAttemptHandshakeForSwypRef:ref])){
+			[_handshakeManager beginHandshakeProcessWithConnectionSession:connectionSession];
+		}
 	}
 }
 -(void)	connectionSessionWasCreatedSuccessfully:	(swypConnectionSession*)session forSwypRef:(swypInfoRef*)ref	withHandshakeManager:	(swypHandshakeManager*)manager{

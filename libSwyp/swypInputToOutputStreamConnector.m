@@ -46,7 +46,9 @@
 
 -(void) dealloc{
 	[self _teardownInputStream:_inputStream];
-	[self _teardownOutputStream];
+#pragma mark CLUDGE: not removing stream, just srels'n it
+//	[self _teardownOutputStream];
+	SRELS(_outputStream);
 	SRELS(_bufferedData);
 
 	[super dealloc];

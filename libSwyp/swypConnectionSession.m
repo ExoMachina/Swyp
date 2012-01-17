@@ -91,8 +91,10 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	[_sendDataQueueStream removeAllQueuedStreamsAfterCurrent];
 	
-	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
-	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
+	[self _destroyConnectionWithError:nil];
+	
+	//	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
+//	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
 }
 
 #pragma mark delegatation
@@ -202,7 +204,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 }
 
 -(void) _destroyConnectionWithError:(NSError*)error{
-	[self invalidate];
 	[self _teardownConnection];
 	[self _changeStatus:swypConnectionSessionStatusClosed];
 

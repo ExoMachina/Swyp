@@ -63,8 +63,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 -(id)	init{
 	if (self = [super init]){
 		
-		_swypRefByPendingConnectionSessions		=	[[NSMutableDictionary alloc] init];
-		_swypTimeoutsByConnectionSession					= [NSMutableDictionary new];
+		_swypTimeoutsByConnectionSession		= [NSMutableDictionary new];
 		_swypOutRefReferenceCountBySwypRef		= [NSMutableDictionary new];
 		_swypOutRefRetention					= [NSMutableSet new];
 		_pendingSwypConnectionSessions			= [NSMutableSet new];
@@ -79,8 +78,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		[timer invalidate];
 	}
 	SRELS(_swypTimeoutsByConnectionSession);
-	
-	SRELS(_swypRefByPendingConnectionSessions);
 	
 	SRELS(_swypOutRefReferenceCountBySwypRef);
 	SRELS(_swypOutRefRetention);
@@ -423,14 +420,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-	[_delegate connectionSessionWasCreatedSuccessfully:session forSwypRef:[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]] withHandshakeManager:self];
+	[_delegate connectionSessionWasCreatedSuccessfully:session forSwypRef:[[session representedCandidate] matchedLocalSwypInfo] withHandshakeManager:self];
 	
 	[self _removeSessionFromLocalStorage:session];
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{
 
-	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:[_swypRefByPendingConnectionSessions objectForKey:[NSValue valueWithNonretainedObject:session]] withHandshakeManager:self error:nil];
+	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:[[session representedCandidate] matchedLocalSwypInfo] withHandshakeManager:self error:nil];
 
 	[session	removeConnectionSessionInfoDelegate:self];
 	[session	removeDataDelegate:self];
@@ -440,7 +437,6 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 -(void)	_removeSessionFromLocalStorage: (swypConnectionSession*)session{
-	[_swypRefByPendingConnectionSessions removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
 	[[_swypTimeoutsByConnectionSession objectForKey:[NSValue valueWithNonretainedObject:session]] invalidate];
 	[_swypTimeoutsByConnectionSession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
 	

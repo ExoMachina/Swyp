@@ -93,7 +93,7 @@
 		NSData * address4 = [NSData dataWithBytes:&v4ServerAddress length:nameLen];
 		
 		if (kCFSocketSuccess != CFSocketSetAddress(_ipv4socket, (CFDataRef)address4)) {
-			NSError *error = [[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil];
+			NSError *error = [[[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil]autorelease];
 			EXOLog(@"Could not bind to ipv4 socket %@", [error description]); 
 			
 			if (_ipv4socket) 
@@ -139,7 +139,7 @@
 		NSData * address4 = [NSData dataWithBytes:&v6ServerAddress length:nameLen];
 		
 		if (kCFSocketSuccess != CFSocketSetAddress(_ipv6socket, (CFDataRef)address4)) {
-			NSError *error = [[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil];
+			NSError *error = [[[NSError alloc] initWithDomain:swypCloudServiceErrorDomain code:swypCloudServiceErrorCouldNotBind userInfo:nil] autorelease];
 			EXOLog(@"Could not bind to ipv6 socket %@", [error description]); 
 			
 			if (_ipv6socket) 
@@ -184,7 +184,6 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 		CFWriteStreamRef	writeStream		= NULL;
 		
 		NSString *			clientIPAddress	= nil;
-		NSUInteger			clientPort		= 0;
 		NSUInteger			adrBufferLength	= 50;
 		
 		if (socket == cloudySelf.ipv4socket){
@@ -194,7 +193,6 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 						
 			if (getpeername(nativeSocketHandle, (struct sockaddr *)&peerAddress, (socklen_t *)&peerLen) == 0) {
 
-				clientPort = ntohs(peerAddress.sin_port); 
 				
 				if (inet_ntop(AF_INET,&peerAddress,addressBuffer,adrBufferLength) != NULL){
 					clientIPAddress	=	[NSString stringWithUTF8String:addressBuffer];
@@ -206,8 +204,6 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 			char		addressBuffer[adrBufferLength];
 						
 			if (getpeername(nativeSocketHandle, (struct sockaddr *)&peerAddress, (socklen_t *)&peerLen) == 0) {
-
-				clientPort = ntohs(peerAddress.sin6_port); 
 				
 				if (inet_ntop(AF_INET6,&peerAddress,addressBuffer,adrBufferLength) != NULL){
 					clientIPAddress	=	[NSString stringWithUTF8String:addressBuffer];
@@ -258,6 +254,7 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 
 		[_delegate cloudNetService:self didFailToCreateConnectionWithPeerFromInfo:peerInfo];
 	}else{
+		EXOLog(@"Connected socket pair successfully to ip: %@",ip);
 		[_delegate cloudNetService:self didCreateInputStream:(NSInputStream *)readStream outputStream:(NSOutputStream *)writeStream withPeerFromInfo:peerInfo];
 		
 		CFRelease(readStream);

@@ -170,10 +170,12 @@ static unsigned int const memoryPageSize	=	4096;
 	
 	NSString*	headerLengthStr		=	[[NSString alloc]	initWithBytes:relevantBytes length:semicolonRange.location + semicolonRange.length encoding:NSUTF8StringEncoding];	
 	if (StringHasText(headerLengthStr) == NO){
+		SRELS(headerLengthStr);
 		return;
 	}
 		
 	NSString * 	headerLengthStringWOSemi=	[headerLengthStr substringWithRange:NSMakeRange(0, semicolonRange.location)]; //to before second semicolon
+	SRELS(headerLengthStr);
 	NSUInteger	headerLength			=	[headerLengthStringWOSemi intValue];
 	
 	
