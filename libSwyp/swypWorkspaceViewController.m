@@ -12,6 +12,13 @@
 
 #import "swypWorkspaceBackgroundView.h"
 
+@interface swypWorkspaceViewController (Private)
+
+-(void)animateArrows;
+-(void)stopArrows;
+    
+@end
+
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
 
@@ -110,7 +117,7 @@
 	[self.view sendSubviewToBack:_swypPromptImageView];
 
 	[UIView animateWithDuration:.75 animations:^{
-		[_swypPromptImageView setAlpha:1];
+		[_swypPromptImageView setAlpha:0.5];
 		[_swypNetworkInterfaceClassButton setAlpha:1];
 	}completion:nil];
 }
@@ -192,18 +199,19 @@
 	return FALSE;
 }
 
--(void)	leaveWorkspaceButtonPressed: (id)leaveButton{
+-(void)	leaveWorkspaceButtonPressed:(id)sender {
+    NSLog(@"PRESSED IT.");
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
-
-- (void)animateArrows {
+- (void)animateArrows:(id)sender {
     [UIView animateWithDuration:0.5 delay:0 options:(UIViewAnimationOptionAutoreverse|UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionRepeat) animations:^(void){
         _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 10);
     } completion:nil];
 }
-- (void)stopArrows {
+- (void)stopArrows:(id)sender {
     _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 0);
 }
+
 
 #pragma mark UIViewController
 -(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
@@ -218,7 +226,7 @@
 
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];	
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
@@ -234,17 +242,25 @@
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
+    // workaround for bug in iOS 4
+    [_downArrowView.layer setOpaque:NO];
     [self.view addSubview:_downArrowView];
-    
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
-    curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 40);
+    curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
+    [curlButton.layer setOpaque:NO];
+    [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
+         forControlEvents:UIControlEventTouchUpInside];
+    [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
+    [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
+    
+    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed)] autorelease];
+    swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    [curlButton addGestureRecognizer:swipeDownRecognizer];
+    
     [self.view addSubview:curlButton];
-    [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
-    [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
 	
 	[[self connectionManager] startServices];
 	
@@ -262,7 +278,9 @@
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[self.view addGestureRecognizer:swypOutRecognizer];	
-	SRELS(swypOutRecognizer);	
+	SRELS(swypOutRecognizer);
+    
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];
 
 	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
 		

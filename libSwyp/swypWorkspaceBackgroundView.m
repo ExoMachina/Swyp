@@ -34,7 +34,7 @@
 		
         // Initialization code.
 		self.backgroundColor		= [UIColor grayColor];
-//		self.opaque					= YES;
+		self.opaque					= YES;
 		self.multipleTouchEnabled	= YES;
     }
     return self;
