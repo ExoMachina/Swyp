@@ -38,6 +38,7 @@
 //private
 -(void)	_updateInterfaceActivity;
 -(void) _makeConnectionIfPossible;
+-(void) _restartBluetooth;
 
--(void)_launchBluetoothPromptPeerPicker;
+-(void)	_launchBluetoothPromptPeerPicker;
 @end

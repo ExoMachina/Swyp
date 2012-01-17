@@ -316,6 +316,10 @@
 	EXOLog(@"peerAbstractedStreamSetDidClose: %@", peerName);
 	[_gameKitPeerSession disconnectPeerFromAllPeers:peerName];
 	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
+	
+	if ([_activeAbstractedStreamSetsByPeerName count] == 0){
+//		[self _restartBluetooth];
+	}
 }
 
 #pragma mark - private
@@ -369,6 +373,12 @@
 			[_gameKitPeerSession cancelConnectToPeer:peer];
 		}
 	}
+	
+}
+
+-(void) _restartBluetooth{
+	SRELS(_gameKitPeerSession);
+	[self resumeNetworkActivity];
 }
 
 -(void) _makeConnectionIfPossible{
