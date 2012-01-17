@@ -204,10 +204,12 @@
 
 	}
 	if (self.activeConnectionMethods & swypConnectionMethodBluetooth){
-		[_bluetoothPairManager startFindingSwypInServerCandidatesForRef:inInfo];
-		
-		[addedInterfacesForSwypIn addObject:[NSNumber numberWithInt:swypConnectionMethodBluetooth]];
 
+		[_pendingSwypInConnections setSwypInPending:inInfo forConnectionMethod:swypConnectionMethodBluetooth];
+		[_bluetoothPairManager startFindingSwypInServerCandidatesForRef:inInfo];
+
+		//we're not doing the bulk add
+		
 	}
 	
 	if ([addedInterfacesForSwypIn count] > 0){

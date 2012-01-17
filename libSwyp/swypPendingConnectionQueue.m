@@ -27,6 +27,15 @@
 	[super dealloc];
 }
 
+-(void) addInterfaceMethod:(swypConnectionMethod)method{
+	if ([_pendingInterfaceMethods containsObject:[NSNumber numberWithInt:method]]){
+		//already contained
+		return;
+	}
+	
+	[_pendingConnectionSessionsByInterfaceMethod setObject:[NSMutableArray array] forKey:[NSNumber numberWithInt:method]];
+	[_pendingInterfaceMethods addObject:[NSNumber numberWithInt:method]];
+}
 
 -(NSMutableArray*) connectionSessionArrayForInterfaceMethod:(swypConnectionMethod)connectionMethod{
 	return [_pendingConnectionSessionsByInterfaceMethod objectForKey:[NSNumber numberWithInt:connectionMethod]];

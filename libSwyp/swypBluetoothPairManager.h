@@ -22,11 +22,7 @@
 	NSMutableSet		*				_validSwypInForConnectionCreation;
 	
 	//game kit
-	GKSession *		_gameKitPeerSession;
-	NSMutableSet *	_pendingGKPeerServerConnections;
-	NSMutableSet *	_pendingGKPeerClientConnections;
-	
-	NSMutableSet *	_availablePeers;
+	GKSession *		_gameKitPeerSession;	
 
 	NSMutableDictionary *	_activeAbstractedStreamSetsByPeerName;
 	
@@ -36,8 +32,7 @@
 }
 
 //private
--(void)	_updateInterfaceActivity;
--(void) _makeConnectionIfPossible;
+-(void) _createSessionsIfNeeded;
 -(void) _restartBluetooth;
 
 -(void)	_launchBluetoothPromptPeerPicker;

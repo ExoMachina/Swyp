@@ -56,6 +56,13 @@
  */
 -(void) setSwypInPending:(swypInfoRef*)swypRef forConnectionMethods:(NSArray*)methods;
 
+/** After swypConnnectionManager posts swypInfoRef to listen on interfaces, it sets it as pending here 
+ Feel free to use both the singular and pluralized form here
+ @param method swypConnectionMethod
+ */
+-(void) setSwypInPending:(swypInfoRef*)swypRef forConnectionMethod:(swypConnectionMethod)method;
+
+
 /**
  This tells the manager that an interface method will no longer send new candidates
  This allows the manager to clear out deadspace and proceed to call swypPendingConnectionManagerHasAvailableHandshakeableConnectionSessionsForSwyp:

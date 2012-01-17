@@ -26,6 +26,12 @@
  */
 -(id)initWithInterfaceMethods:(NSArray*)supportedInterfaceMethods;
 
+/** adds a supported interface
+ If you add an interface of higher priority after the emptying of other interfaces, this might cause some undefined behavior...
+ @param method swypConnectionMethod 
+ */
+-(void) addInterfaceMethod:(swypConnectionMethod)method;
+
 /** Returns a mutable array for managing connection sessions within a specific connection method 
  @return returns mutable array for manipulation at will, or returns nil if either not supported or removed
  */
