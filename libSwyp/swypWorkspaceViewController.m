@@ -229,7 +229,7 @@
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
     
-    if ([[[UIDevice currentDevice] systemVersion] intValue] >= 5) {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
@@ -260,7 +260,7 @@
     [curlButton.layer setOpaque:NO];
     
     // weird ios4 bug
-    if ([[[UIDevice currentDevice] systemVersion] intValue] >= 5) {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
         [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
     }
     
@@ -331,4 +331,5 @@
 		SRELS(_swypNetworkInterfaceClassButton);
 	}
 }
+
 @end
