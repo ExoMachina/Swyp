@@ -30,8 +30,9 @@
 		[streamSet invalidateStreamSet];
 	}
 	
-	[self _updateInterfaceActivity];
-	SRELS(_gameKitPeerSession);
+	[_connectabilityTimer invalidate];
+	SRELS(_connectabilityTimer);
+	
 }
 
 -(void)	resumeNetworkActivity{
@@ -180,11 +181,14 @@
 #pragma mark gamekit
 #pragma mark GKPeerPickerDelegate
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
-	
-	[picker dismiss];
+	[_bluetoothPromptController dismiss];
+	[_bluetoothPromptController autorelease];
+	_bluetoothPromptController = nil;
 }
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker{
-	[picker dismiss];
+	[_bluetoothPromptController dismiss];
+	[_bluetoothPromptController autorelease];
+	_bluetoothPromptController = nil;
 	//tell someone that bluetooth is broken
 }
 
@@ -323,11 +327,12 @@
 	}
 }
 -(void)_bluetoothConnectabilityChanged:(id)sender{
+	//indicating that bluetooth is enabled
 	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
 	if (_bluetoothPromptController != nil){
+		[_bluetoothPromptController setDelegate:nil];
 		[_bluetoothPromptController dismiss];
 		[_bluetoothPromptController autorelease];
-		[_bluetoothPromptController setDelegate:nil];
 		_bluetoothPromptController = nil;
 	}else{
 		[_connectabilityTimer invalidate];
