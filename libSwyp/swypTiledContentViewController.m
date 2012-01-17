@@ -276,7 +276,7 @@
 	NSInteger column		= tileNumber % (int)_maxTileColumns;
 	
 	frameRect.origin.x += column * (_tileSize.width + _tileMarginSize.width);
-	frameRect.origin.y += row *  (_tileSize.height + _tileMarginSize.height);
+	frameRect.origin.y += row *  (_tileSize.height + _tileMarginSize.height) + 40;
 	
 	//now fit in the center of the cell
 	//be sure that the object's size is smaller or equal to the cellSize
