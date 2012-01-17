@@ -226,7 +226,9 @@
 		EXOLog(@"Found bluetooth peer: %@",peerID);
 		[_availablePeers addObject:peerID];
 		[self _makeConnectionIfPossible];
-	}else if (state == GKPeerStateConnected){
+        [_connectabilityTimer invalidate];
+        [_bluetoothPromptController dismiss];
+	} else if (state == GKPeerStateConnected){
 		EXOLog(@"Connected via bluetooth to peer: %@",peerID);
 		
 		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self] autorelease];
