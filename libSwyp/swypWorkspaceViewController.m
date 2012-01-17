@@ -121,6 +121,7 @@
 		[_swypNetworkInterfaceClassButton setAlpha:1];
 	}completion:nil];
 }
+
 -(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
 
 	if ([_swypPromptImageView superview] != nil){
@@ -226,17 +227,17 @@
 
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
 	[super viewWillDisappear:animated];
-	[[UIApplication sharedApplication] setStatusBarHidden:FALSE withAnimation:YES];	
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
 }
 
 -(void)	viewDidLoad{
 	[super viewDidLoad];
-    	
+        
 	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
 	self.view	= backgroundView;
     
@@ -251,12 +252,14 @@
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
     [curlButton.layer setOpaque:NO];
+    
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
          forControlEvents:UIControlEventTouchUpInside];
+    
     [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
     [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
-    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed)] autorelease];
+    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [curlButton addGestureRecognizer:swipeDownRecognizer];
     
@@ -280,11 +283,9 @@
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);
     
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];
-
-	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];
-		
+	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];    
 }
+
 -(void)	dealloc{
 	
     SRELS( _downArrowView);
