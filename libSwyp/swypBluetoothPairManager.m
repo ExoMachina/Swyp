@@ -38,7 +38,7 @@
 	
 }
 
--(void)	resumeNetworkActivity{
+-(GKSession*)gameKitPeerSession{
 	if (_gameKitPeerSession == nil){
 		_gameKitPeerSession	=	[[GKSession alloc] initWithSessionID:@"swyp" displayName:nil sessionMode:GKSessionModePeer];
 		[_gameKitPeerSession setDisconnectTimeout:5];
@@ -46,7 +46,11 @@
 		[_gameKitPeerSession setDataReceiveHandler:self withContext:nil];
 		[_gameKitPeerSession setAvailable:TRUE];
 	}
-	
+	return _gameKitPeerSession;
+}
+
+-(void)	resumeNetworkActivity{
+	[self gameKitPeerSession];
 	//we should add something about BluetoothAvailabilityChangedNotification ; our issue is that we don't get warnings about bluetooth when starting the session, probably because delegate is set SECOND
 	
 	//for some reason, after a connection is on one end, we get failure on one side, but it doesn't disconnect the other...
@@ -320,7 +324,7 @@
 	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
 	
 	if ([_activeAbstractedStreamSetsByPeerName count] == 0){
-//		[self _restartBluetooth];
+		[self _restartBluetooth];
 	}
 }
 
@@ -380,7 +384,7 @@
 
 -(void) _restartBluetooth{
 	SRELS(_gameKitPeerSession);
-	[self resumeNetworkActivity];
+	[self gameKitPeerSession];
 }
 
 -(void) _makeConnectionIfPossible{
