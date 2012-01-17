@@ -33,6 +33,9 @@
 	[_connectabilityTimer invalidate];
 	SRELS(_connectabilityTimer);
 	
+	[self _updateInterfaceActivity];
+	SRELS(_gameKitPeerSession);
+	
 }
 
 -(void)	resumeNetworkActivity{
@@ -323,7 +326,7 @@
 	EXOLog(@"bluetooth availability notification: %@",[sender description]);
 	//if this notification shows but connectability doesn't, then we know BT is disabled, and we prompt to enable.
 	if (_connectabilityTimer == nil){
-		_connectabilityTimer = [[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_connectabilityTimeoutOccured:) userInfo:nil repeats:NO] retain];
+		_connectabilityTimer = [[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_connectabilityTimeoutOccured:) userInfo:nil repeats:NO] retain];
 	}
 }
 -(void)_bluetoothConnectabilityChanged:(id)sender{
@@ -376,7 +379,7 @@
 	if ([_validSwypInForConnectionCreation count] > 0){
 		for (NSString * peerID in _availablePeers){
 			EXOLog(@"Connecting via bluetooth for swypIn to peer: %@",peerID);
-			[_gameKitPeerSession connectToPeer:peerID withTimeout:3];
+			[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
 			[_pendingGKPeerServerConnections addObject:peerID];
 		}
 	}
