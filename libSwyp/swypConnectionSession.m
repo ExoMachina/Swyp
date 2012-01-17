@@ -165,7 +165,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	[_socketInputStream		setDelegate:nil];
 	[_socketOutputStream	setDelegate:nil];
 	SRELS(_socketInputStream);
-	[_socketOutputStream close];
+//	[_socketOutputStream close];
 	SRELS(_socketOutputStream);	
 	
 	SRELS(_sendDataQueueStream);

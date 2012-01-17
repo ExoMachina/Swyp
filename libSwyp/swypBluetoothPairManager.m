@@ -288,6 +288,9 @@
 		if (existingStreamSet != nil){
 			[existingStreamSet invalidateStreamSet];
 		}
+		if ([_activeAbstractedStreamSetsByPeerName count] == 0){
+			[self _restartBluetooth];
+		}
 	}else if (state == GKPeerStateUnavailable){
 		EXOLog(@"GKSession says peer is unavail: %@",peerID);
 		[_availablePeers removeObject:peerID];
