@@ -185,13 +185,11 @@
 #pragma mark GKPeerPickerDelegate
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
 	[_bluetoothPromptController dismiss];
-	[_bluetoothPromptController autorelease];
-	_bluetoothPromptController = nil;
+	[_bluetoothPromptController setDelegate:nil];
 }
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker{
 	[_bluetoothPromptController dismiss];
-	[_bluetoothPromptController autorelease];
-	_bluetoothPromptController = nil;
+	[_bluetoothPromptController setDelegate:nil];
 	//tell someone that bluetooth is broken
 }
 
@@ -335,8 +333,6 @@
 	if (_bluetoothPromptController != nil){
 		[_bluetoothPromptController setDelegate:nil];
 		[_bluetoothPromptController dismiss];
-		[_bluetoothPromptController autorelease];
-		_bluetoothPromptController = nil;
 	}else{
 		[_connectabilityTimer invalidate];
 	}
