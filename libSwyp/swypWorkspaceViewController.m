@@ -239,12 +239,16 @@
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
-    curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 40);
+    curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
     [self.view addSubview:curlButton];
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [curlButton addTarget:self action:@selector(animateArrows) forControlEvents:UIControlEventTouchDown];
     [curlButton addTarget:self action:@selector(stopArrows) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
+    
+    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
+    swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    [curlButton addGestureRecognizer:swipeDownRecognizer];
 	
 	[[self connectionManager] startServices];
 	
