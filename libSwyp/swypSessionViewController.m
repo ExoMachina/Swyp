@@ -69,7 +69,6 @@
 	
 	if (showActiveTransferIndicator){
 		[self.view addSubview:_activityIndicator];
-		[_activityIndicator setOrigin:self.view.origin];
 		[_activityIndicator startAnimating];
 	}else{
 		[_activityIndicator stopAnimating];

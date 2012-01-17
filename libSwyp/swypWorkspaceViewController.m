@@ -200,7 +200,7 @@
 }
 
 -(void)	leaveWorkspaceButtonPressed:(id)sender {
-    NSLog(@"PRESSED IT.");
+    EXOLog(@"PRESSED IT.");
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
 - (void)animateArrows:(id)sender {
@@ -256,7 +256,7 @@
     [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
     [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
-    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed)] autorelease];
+    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [curlButton addGestureRecognizer:swipeDownRecognizer];
     
