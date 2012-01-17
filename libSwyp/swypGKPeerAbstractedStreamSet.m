@@ -36,9 +36,6 @@
 	[_peerWriteStream setDataDelegate:nil];
 	[_delegate peerAbstractedStreamSetDidClose:self withPeerNamed:_peerName];
 
-	
-	SRELS(_peerReadStream);
-	SRELS(_peerWriteStream);
 }
 
 
@@ -63,6 +60,9 @@
 -(void) dealloc{
 	_delegate = nil;
 	SRELS(_peerName);
+	
+	SRELS(_peerReadStream);
+	SRELS(_peerWriteStream);
 	
 	[super dealloc];
 }
