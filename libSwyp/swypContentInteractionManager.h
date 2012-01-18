@@ -102,11 +102,10 @@ this value is assigned at init by workspace manager
 
 
 #pragma mark TODO: update file types to set custom
-/** 
- swyp in order of preference where index 0=most preferant 
- @warning	Swyp's devs need to update this to be a modifible property.
+/** Supported swyp receipt file types; in order of greatest preference, where index 0=most preferant 
+ @warning	This value is only non-nil after setting a dataSource
  */
-+(NSArray*)	supportedFileTypes;
++(NSArray*)	supportedReceiptFileTypes;
 
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;
 

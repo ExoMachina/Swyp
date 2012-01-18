@@ -145,7 +145,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	SRELS(_inputStreamDiscerner);
 	SRELS(_socketInputTransformInputStream);
 	
-	[self _teardownConnection];
+//	[self _teardownConnection];
 	SRELS(_dataDelegates);					
 	SRELS(_connectionSessionInfoDelegates);	
 	
@@ -164,8 +164,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void) _teardownConnection{
 	[_socketInputStream		setDelegate:nil];
 	[_socketOutputStream	setDelegate:nil];
+	[_socketInputStream close];
 	SRELS(_socketInputStream);
-//	[_socketOutputStream close];
+	[_socketOutputStream close];
 	SRELS(_socketOutputStream);	
 	
 	SRELS(_sendDataQueueStream);

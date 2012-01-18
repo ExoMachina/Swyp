@@ -19,7 +19,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session addConnectionSessionInfoDelegate:self];
 	[session initiate];
 		
-	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
 	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
 	
 	[_pendingSwypConnectionSessions addObject:session];
@@ -182,7 +182,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	if (matchedSwyp != nil){
 		[helloDictionary setValue:@"accepted" forKey:@"status"];
-		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
+		[helloDictionary setValue:[swypContentInteractionManager supportedReceiptFileTypes] forKey:@"supportedFileTypes"];
 		[helloDictionary setValue:[NSNumber numberWithDouble:[matchedSwyp velocity]] forKey:@"swypOutVelocity"];
 	}else {
 		[helloDictionary setValue:@"rejected" forKey:@"status"];
@@ -204,7 +204,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	if (querySwyp != nil){
 		[session setSessionHueColor:[UIColor randomSwypHueColor]];
 		
-		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
+		[helloDictionary setValue:[swypContentInteractionManager supportedReceiptFileTypes] forKey:@"supportedFileTypes"];
 		double intervalSinceSwyp	=	[[querySwyp startDate] timeIntervalSinceNow] * -1;
 		[helloDictionary setValue:[NSNumber numberWithDouble:intervalSinceSwyp] forKey:@"intervalSinceSwypIn"];
 		[helloDictionary setValue:[[session sessionHueColor] swypEncodedColorStringValue] forKey:@"sessionHue"];

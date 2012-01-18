@@ -18,6 +18,19 @@
 	[_allPendingSwypConnectionQueuesBySwypInfoRef setObject:[[[swypPendingConnectionQueue alloc] initWithInterfaceMethods:methods] autorelease] forKey:[NSValue valueWithNonretainedObject:swypRef]];
 }
 
+-(void) setSwypInPending:(swypInfoRef*)swypRef forConnectionMethod:(swypConnectionMethod)method{
+	if ((swypRef && method) == NO) return;
+
+	swypPendingConnectionQueue	* queue	=	[_allPendingSwypConnectionQueuesBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:swypRef]];
+	
+	if (queue == nil){
+		queue = [[[swypPendingConnectionQueue alloc] initWithInterfaceMethods:[NSArray array]] autorelease];
+		[_allPendingSwypConnectionQueuesBySwypInfoRef setObject:queue forKey:[NSValue valueWithNonretainedObject:swypRef]];
+	}
+	
+	[queue addInterfaceMethod:method];
+}
+
 -(void) connectionMethodTimedOut:(swypConnectionMethod)method forSwypRef:(swypInfoRef*)ref{
 	swypPendingConnectionQueue	* existingQueue	=	[_allPendingSwypConnectionQueuesBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
 	

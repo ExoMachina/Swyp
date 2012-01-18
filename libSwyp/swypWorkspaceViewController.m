@@ -246,6 +246,7 @@
         
 	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
 	self.view	= backgroundView;
+    self.view.opaque = YES;
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];

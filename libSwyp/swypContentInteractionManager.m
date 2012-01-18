@@ -10,13 +10,15 @@
 #import "swypPhotoPlayground.h"
 #import <QuartzCore/QuartzCore.h>
 
+static NSArray * supportedReceiveFileTypes =  nil;
+
 @implementation swypContentInteractionManager
 @synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController, showContentBeforeConnection = _showContentBeforeConnection, interactionManagerDelegate = _interactionManagerDelegate;
 
 #pragma public
 
-+(NSArray*)	supportedFileTypes{
-	return [NSArray arrayWithObjects:[NSString imagePNGFileType], nil];
++(NSArray*)	supportedReceiptFileTypes{	
+	return supportedReceiveFileTypes;
 }
 
 -(swypSessionViewController*)	maintainedSwypSessionViewControllerForSession:(swypConnectionSession*)session{
@@ -76,10 +78,14 @@
 	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
 		[connectionSession removeDataDelegate:contentDataSource];
 	}
+	SRELS(supportedReceiveFileTypes);
 	[_contentDataSource setDatasourceDelegate:nil];
 	SRELS(_contentDataSource);
+	
 	_contentDataSource	=	[contentDataSource retain];
 	[_contentDataSource setDatasourceDelegate:self];
+	supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
+	
 	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
 		[connectionSession addDataDelegate:contentDataSource];
 	}
@@ -102,7 +108,7 @@
 -(void) sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session{
 	NSUInteger dataLength 		= 0;
 	
-	NSString * fileTypeToUse	= [[_contentDataSource supportedFileTypesForContentAtIndex:index] firstObjectCommonWithArray:[[session representedCandidate] supportedFiletypes]];
+	NSString * fileTypeToUse	= [[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentAtIndex:index]];
 	
 	if (fileTypeToUse == nil){
 		[[[[UIAlertView alloc] initWithTitle:@"No Support" message:@"The recipient app doesn't want any form of this file... This is a bug on one of your apps' part" delegate:nil cancelButtonTitle:@"okay" otherButtonTitles:nil] autorelease] show];

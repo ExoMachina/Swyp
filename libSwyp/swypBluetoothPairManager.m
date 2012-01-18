@@ -22,18 +22,17 @@
 		[self stopFindingSwypInServerCandidatesForRef:ref];
 	}
 	
-	for (NSString * peer in _pendingGKPeerServerConnections){
-		[_gameKitPeerSession cancelConnectToPeer:peer];
-	}
+	[_gameKitPeerSession disconnectFromAllPeers];
+	
 	
 	for (swypGKPeerAbstractedStreamSet * streamSet in [_activeAbstractedStreamSetsByPeerName allValues]){
-		[streamSet invalidateStreamSet];
+		[streamSet invalidateFromManager];
 	}
+	[_activeAbstractedStreamSetsByPeerName removeAllObjects];
 	
 	[_connectabilityTimer invalidate];
 	SRELS(_connectabilityTimer);
 	
-	[self _updateInterfaceActivity];
 	SRELS(_gameKitPeerSession);
 	
 }
@@ -55,14 +54,12 @@
 	
 	//for some reason, after a connection is on one end, we get failure on one side, but it doesn't disconnect the other...
 	
-	[self _updateInterfaceActivity];
 }
 
 -(void) advertiseSwypOutAsPending:(swypInfoRef*)ref{
 	NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseAsPendingTimedOutWithTimer:) userInfo:ref repeats:NO];
 	[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 	
-	[self _updateInterfaceActivity];
 }
 
 -(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
@@ -76,9 +73,10 @@
 		NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
 		[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 		[_validSwypOutsForConnectionReceipt addObject:ref];
+
+		[self _createSessionsIfNeeded];
 	}
 	
-	[self _updateInterfaceActivity];
 }
 
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
@@ -97,7 +95,6 @@
 	
 	[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:ref forConnectionMethod:swypConnectionMethodBluetooth];
 
-	[self _updateInterfaceActivity];
 }
 
 -(BOOL) isAdvertisingSwypOut:(swypInfoRef*)ref{
@@ -109,9 +106,8 @@
 	[_swypInTimeoutTimerBySwypInfoRef setObject:searchTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 	[_validSwypInForConnectionCreation addObject:ref];
 	
-	[self _updateInterfaceActivity];
 	
-	[self _makeConnectionIfPossible];
+	[self _createSessionsIfNeeded];
 }
 
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref{
@@ -123,7 +119,6 @@
 
 	[_delegate interfaceManager:self isDoneSearchForSwypInServerCandidatesForRef:ref forConnectionMethod:swypConnectionMethodBluetooth];
 	
-	[self _updateInterfaceActivity];
 }
 
 #pragma mark timeouts
@@ -149,12 +144,7 @@
 		
 		_swypInTimeoutTimerBySwypInfoRef	=	[NSMutableDictionary new];
 		_validSwypInForConnectionCreation	=	[NSMutableSet new];
-		
-		_pendingGKPeerServerConnections		=	[NSMutableSet new];
-		_pendingGKPeerClientConnections		=	[NSMutableSet new];
-		
-		_availablePeers						=	[NSMutableSet new];
-		
+						
 		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
 
 	}
@@ -170,12 +160,7 @@
 	SRELS(_validSwypOutsForConnectionReceipt);
 	SRELS(_swypInTimeoutTimerBySwypInfoRef);
 	SRELS(_validSwypInForConnectionCreation);
-	
-	SRELS(_pendingGKPeerServerConnections);
-	SRELS(_pendingGKPeerClientConnections);
-	
-	SRELS(_availablePeers);
-	
+			
 	SRELS(_activeAbstractedStreamSetsByPeerName);
 	
 	SRELS(_connectabilityTimer);
@@ -190,10 +175,12 @@
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
+	_bluetoothPromptController = nil;
 }
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker{
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
+	_bluetoothPromptController = nil;
 	//tell someone that bluetooth is broken
 }
 
@@ -208,92 +195,50 @@
 }
 
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error{
-	[_pendingGKPeerClientConnections removeObject:peerID];
-	[_pendingGKPeerServerConnections removeObject:peerID];
+	EXOLog(@"Failed connecting to peer :%@",peerID);
 }
 
 - (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID{
-	if ([_validSwypOutsForConnectionReceipt count] > 0){
-		EXOLog(@"Connecting via bluetooth for swypOut to peer: %@",peerID);
-		NSError * connectError = nil;
-		[_gameKitPeerSession acceptConnectionFromPeer:peerID error:&connectError];
-		if (connectError != nil){
-			EXOLog(@"Error connecting to peer %@: %@",peerID,[connectError description]);
-		}
-		[_pendingGKPeerClientConnections addObject:peerID];
-	}else {
-		[_gameKitPeerSession denyConnectionFromPeer:peerID];
+	EXOLog(@"Accepting connection via bluetooth for peer: %@",peerID);
+	NSError * connectError = nil;
+	[_gameKitPeerSession acceptConnectionFromPeer:peerID error:&connectError];
+	if (connectError != nil){
+		EXOLog(@"Error connecting to peer %@: %@",peerID,[connectError description]);
 	}
+	
 }
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state{
+	
 	if (state == GKPeerStateAvailable){
-		EXOLog(@"Found bluetooth peer: %@",peerID);
-		[_availablePeers addObject:peerID];
-		[self _makeConnectionIfPossible];
-        [_connectabilityTimer invalidate];
-        [_bluetoothPromptController dismiss];
-	} else if (state == GKPeerStateConnected){
-		EXOLog(@"Connected via bluetooth to peer: %@",peerID);
+		EXOLog(@"Found bluetooth peer, preconnecting: %@",peerID);
+		[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
 		
-		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self] autorelease];
-		[_activeAbstractedStreamSetsByPeerName setObject:newPeerStreamSet forKey:peerID];
-
-		//this sucks, but I'll try to explain:
-		
-		//see if it's a pending connection from a client
-		if ([_pendingGKPeerClientConnections containsObject:peerID]){
-			//remove it from pending
-			[_pendingGKPeerClientConnections removeObject:peerID];	
-			
-			//create a client candidate
-			swypClientCandidate * clientCandidate	= [[swypClientCandidate alloc] init];
-			
-			//wrap it in a new connection session; setting the input and output stream to your new swypGKPeerAbstractedStreamSet
-			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:clientCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
-			
-			//tell the delegate that a client is waiting to chat
-			[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:newSession withConnectionMethod:swypConnectionMethodBluetooth];
-			SRELS(newSession);
-			SRELS(clientCandidate);
-			
-			//otherwise it's probably a pending connection to a server
-		}else if ([_pendingGKPeerServerConnections containsObject:peerID]){
-			[_pendingGKPeerServerConnections removeObject:peerID];	
-			
-			//check to see whether we can match a local swyp in
-			if ([_validSwypInForConnectionCreation  count] == 0){
-				//we're wasting our time if we continue
-				EXOLog(@"NO valid swypIn, invalidating connection for peer:%@", peerID);
-				[newPeerStreamSet invalidateStreamSet];
-				return;
-			}
-						
-			swypServerCandidate * serverCandidate	= [[swypServerCandidate alloc] init];
-			
-			//as a client, we must set matchedLocalSwypInfo
-			[serverCandidate setMatchedLocalSwypInfo:[_validSwypInForConnectionCreation anyObject]];
-			
-			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:serverCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
-
-			//tell manager that a server connection can be tapped if interested
-			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:[_validSwypInForConnectionCreation anyObject] withConnectionMethod:swypConnectionMethodBluetooth];
-			SRELS(newSession);
-			SRELS(serverCandidate);
+		if (_bluetoothPromptController != nil){
+			[_bluetoothPromptController setDelegate:nil];
+			[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
+			_bluetoothPromptController	=	nil; // set to nil to remove.
+		}else{
+			[_connectabilityTimer invalidate];
 		}
 		
-	
+	}else if (state == GKPeerStateConnected){
+		//great, we're connected, but NBD, we'll use it if there's a swyp later
+		//we are de-coupling connections on swyp level from those on GameKit
+		EXOLog(@"pre-connected via bluetooth to peer: %@",peerID);
+		[self _createSessionsIfNeeded];
+		
 	}else if (state == GKPeerStateDisconnected){
 		EXOLog(@"GKSession says peer is discon: %@",peerID);
 		swypGKPeerAbstractedStreamSet * existingStreamSet	=	[_activeAbstractedStreamSetsByPeerName valueForKey:peerID];
 		if (existingStreamSet != nil){
-			[existingStreamSet invalidateStreamSet];
+			[existingStreamSet invalidateFromManager];
 		}
-		if ([_activeAbstractedStreamSetsByPeerName count] == 0){
-			[self _restartBluetooth];
-		}
+
+//		if ([_activeAbstractedStreamSetsByPeerName count] == 0){
+//			[self _restartBluetooth];
+//		}
 	}else if (state == GKPeerStateUnavailable){
 		EXOLog(@"GKSession says peer is unavail: %@",peerID);
-		[_availablePeers removeObject:peerID];
 	}
 }
 
@@ -323,12 +268,10 @@
 
 -(void)	peerAbstractedStreamSetDidClose:(swypGKPeerAbstractedStreamSet*)peerAbstraction withPeerNamed:(NSString*)peerName{
 	EXOLog(@"peerAbstractedStreamSetDidClose: %@", peerName);
-	[_gameKitPeerSession disconnectPeerFromAllPeers:peerName];
+	//all we need to do is remove it from here
+	[peerAbstraction setDelegate:nil];
 	[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerName];
 	
-	if ([_activeAbstractedStreamSetsByPeerName count] == 0){
-		[self _restartBluetooth];
-	}
 }
 
 #pragma mark - private
@@ -345,7 +288,8 @@
 	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
 	if (_bluetoothPromptController != nil){
 		[_bluetoothPromptController setDelegate:nil];
-		[_bluetoothPromptController dismiss];
+		[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
+		_bluetoothPromptController	=	nil; // set to nil to remove.
 	}else{
 		[_connectabilityTimer invalidate];
 	}
@@ -359,6 +303,7 @@
 -(void)_launchBluetoothPromptPeerPicker{
 	EXOLog(@"%@",@"Bluetooth Disabled: launching peer picker");
 	//let's prompt to turn on:
+	//keep in mind that there is a shitty bug where calling dismiss literally 'DEALLOCS' the picker!
 	if (_bluetoothPromptController == nil){
 		_bluetoothPromptController =  [[GKPeerPickerController alloc] init];
 		[_bluetoothPromptController setDelegate:self];
@@ -369,36 +314,85 @@
 
 
 #pragma mark connections
--(void)	_updateInterfaceActivity{
-	
-	if ([_validSwypInForConnectionCreation count] == 0){
-		for (NSString * peer in _pendingGKPeerServerConnections){
-			[_gameKitPeerSession cancelConnectToPeer:peer];
-		}
-	}
-	
-	if ([_validSwypOutsForConnectionReceipt count] == 0){
-		for (NSString * peer in _pendingGKPeerClientConnections){
-			[_gameKitPeerSession cancelConnectToPeer:peer];
-		}
-	}
-	
-}
 
 -(void) _restartBluetooth{
 	SRELS(_gameKitPeerSession);
 	[self gameKitPeerSession];
 }
 
--(void) _makeConnectionIfPossible{
-	if ([_validSwypInForConnectionCreation count] > 0){
-		for (NSString * peerID in _availablePeers){
-			EXOLog(@"Connecting via bluetooth for swypIn to peer: %@",peerID);
-			[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
-			[_pendingGKPeerServerConnections addObject:peerID];
+-(void) _createSessionsIfNeeded{
+	//at this point we're already connected, but we need to make sessions out of users
+	if (([_validSwypInForConnectionCreation count] == 0 )&& ([_validSwypOutsForConnectionReceipt count] == 0)){
+		EXOLog(@"No swypIn/outs for creating conneciton sessions: %@",[[NSDate date]description]);
+		return;
+	}
+		
+	EXOLog(@"Creating sessions from peerIDs at time: %@",[[NSDate date] description]);
+	
+	for (NSString * peerID in [_gameKitPeerSession peersWithConnectionState:GKPeerStateConnected]){
+		if ([self _peerIsInConnection:peerID]){
+			EXOLog(@"Session aleady exists with peerID:%@",peerID);
+			continue;
+		}
+		
+		swypGKPeerAbstractedStreamSet * newPeerStreamSet	=	[[[swypGKPeerAbstractedStreamSet alloc] initWithPeerName:peerID streamSetDelegate:self] autorelease];
+		[_activeAbstractedStreamSetsByPeerName setObject:newPeerStreamSet forKey:peerID];
+		
+		//this sucks, but I'll try to explain:
+		
+		//see if it's a pending connection from a client
+		if ([_validSwypOutsForConnectionReceipt count] > 0){
+			
+			//create a client candidate
+			//they are connecting to us
+			swypClientCandidate * clientCandidate	= [[swypClientCandidate alloc] init];
+			
+			//wrap it in a new connection session; setting the input and output stream to your new swypGKPeerAbstractedStreamSet
+			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:clientCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+			
+			EXOLog(@"Created client candidate & session out of peer %@",peerID);
+			//tell the delegate that a client is waiting to chat
+			[_delegate interfaceManager:self receivedUninitializedSwypClientCandidateConnectionSession:newSession withConnectionMethod:swypConnectionMethodBluetooth];
+			SRELS(newSession);
+			SRELS(clientCandidate);
+			
+			//otherwise it's probably a pending connection to a server
+		}else if ([_validSwypInForConnectionCreation count] > 0){
+			
+			swypServerCandidate * serverCandidate	= [[swypServerCandidate alloc] init];
+			
+			//as a client, we must set matchedLocalSwypInfo
+			[serverCandidate setMatchedLocalSwypInfo:[_validSwypInForConnectionCreation anyObject]];
+			
+			swypConnectionSession * newSession		= [[swypConnectionSession alloc] initWithSwypCandidate:serverCandidate inputStream:[newPeerStreamSet peerReadStream]  outputStream:[newPeerStreamSet peerWriteStream]];
+			
+			EXOLog(@"Created server candidate & session out of peer %@",peerID);
+			//tell manager that a server connection can be tapped if interested
+			[_delegate interfaceManager:self madeUninitializedSwypServerCandidateConnectionSession:newSession forRef:[serverCandidate matchedLocalSwypInfo] withConnectionMethod:swypConnectionMethodBluetooth];
+			SRELS(newSession);
+			SRELS(serverCandidate);
+		}else{
+			//otherwise what are we even doing?
+			EXOLog(@"did not create candidate out of peer %@",peerID);
+			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
+			newPeerStreamSet = nil;
 		}
 	}
 
 }
+
+
+-(BOOL)_peerIsInConnection:(NSString*)peerID{
+	if ([_activeAbstractedStreamSetsByPeerName objectForKey:peerID] != nil){
+		if ([[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] & (NSStreamStatusClosed | NSStreamStatusError) || [[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] == NSStreamStatusNotOpen){
+			[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] invalidateFromManager];
+			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
+		}else{
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 
 @end

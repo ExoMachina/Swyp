@@ -822,7 +822,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					armv7,
+				);
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/swyp.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -839,6 +842,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = swyp;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Debug;
 		};
@@ -846,7 +850,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					armv7,
+				);
 				DSTROOT = /tmp/swyp.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -860,6 +867,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = swyp;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Release;
 		};

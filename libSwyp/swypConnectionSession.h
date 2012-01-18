@@ -45,6 +45,12 @@ typedef enum {
 
 @protocol swypConnectionSessionDataDelegate <NSObject>
 @optional
+
+/** swypFileTypeStrings in order of preference where 0 = most preferent
+	Use this on your datasource set in swypContentInteractionManager to choose what files your app accepts.
+*/
+-(NSArray*)	supportedFileTypesForReceipt;
+
 /** See whether delegate will handle data stream.
  
 	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
@@ -55,20 +61,22 @@ typedef enum {
 	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, *wantsProvidedAsNSData = TRUE;, to have data provided in a method bellow
 */
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session;
-/*
+
+/**
 	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
 */
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
 
-
+/** Upon failing to send data */
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
+/** Upon happily sending data */
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
 
 
-//	These functions should notify you when the data IN stream is receiving or NOT so that UI can be updated accordingly
+///	Will notify you when the data IN stream is receiving so that UI can be updated accordingly
 -(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session;
-
+///	Will notify you when the data IN stream is DONE receiving so that UI can be updated accordingly
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
 @end
 
