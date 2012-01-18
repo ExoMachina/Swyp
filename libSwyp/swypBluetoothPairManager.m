@@ -26,8 +26,9 @@
 	
 	
 	for (swypGKPeerAbstractedStreamSet * streamSet in [_activeAbstractedStreamSetsByPeerName allValues]){
-		[streamSet invalidateStreamSet];
+		[streamSet invalidateFromManager];
 	}
+	[_activeAbstractedStreamSetsByPeerName removeAllObjects];
 	
 	[_connectabilityTimer invalidate];
 	SRELS(_connectabilityTimer);
@@ -210,8 +211,15 @@
 	
 	if (state == GKPeerStateAvailable){
 		EXOLog(@"Found bluetooth peer, preconnecting: %@",peerID);
-		
 		[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
+		
+		if (_bluetoothPromptController != nil){
+			[_bluetoothPromptController setDelegate:nil];
+			[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
+			_bluetoothPromptController	=	nil; // set to nil to remove.
+		}else{
+			[_connectabilityTimer invalidate];
+		}
 		
 	}else if (state == GKPeerStateConnected){
 		//great, we're connected, but NBD, we'll use it if there's a swyp later
@@ -223,7 +231,7 @@
 		EXOLog(@"GKSession says peer is discon: %@",peerID);
 		swypGKPeerAbstractedStreamSet * existingStreamSet	=	[_activeAbstractedStreamSetsByPeerName valueForKey:peerID];
 		if (existingStreamSet != nil){
-			[existingStreamSet invalidateStreamSet];
+			[existingStreamSet invalidateFromManager];
 		}
 
 //		if ([_activeAbstractedStreamSetsByPeerName count] == 0){
@@ -377,8 +385,8 @@
 -(BOOL)_peerIsInConnection:(NSString*)peerID{
 	if ([_activeAbstractedStreamSetsByPeerName objectForKey:peerID] != nil){
 		if ([[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] & (NSStreamStatusClosed | NSStreamStatusError) || [[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] == NSStreamStatusNotOpen){
-			[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] invalidate];
-//			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
+			[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] invalidateFromManager];
+			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
 		}else{
 			return TRUE;
 		}

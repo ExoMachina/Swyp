@@ -46,4 +46,7 @@
 ///Invalidates both streams, notifies delegate with peerAbstractedStreamSetDidClose:withPeerNamed:
 -(void) invalidateStreamSet;
 
+///Invalidates both streams, without notifying delegate;
+-(void) invalidateFromManager;
+
 @end

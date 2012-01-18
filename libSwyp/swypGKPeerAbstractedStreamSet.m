@@ -38,6 +38,10 @@
 
 }
 
+-(void) invalidateFromManager{
+	[_peerWriteStream invalidateByError]; //the only command really needed to push errors up the chain-- why stream is closing..
+}
+
 
 #pragma mark - delegation 
 #pragma mark swypConcatenatedInputStreamDelegate
