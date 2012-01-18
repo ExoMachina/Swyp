@@ -39,7 +39,9 @@
 }
 @property (nonatomic, readonly)	NSOutputStream *	outputStream;
 @property (nonatomic, retain)	NSInputStream*		inputStream;
-@property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate; ///this protocol will let you know about encountered errors
+
+///this protocol will let you know about encountered errors
+@property (nonatomic, assign) 	id<swypInputToOutputStreamConnectorDelegate>	delegate;
 
 /** the main init function which sets up streams as open, and begins sending any available inStream data over any available space in outputStream.
  

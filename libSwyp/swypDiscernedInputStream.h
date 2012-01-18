@@ -23,7 +23,11 @@
 
 @end
 
-/** This class creates an input stream from an input dataSource, making the stream only have as much data as is authorized by the init function, and notifying the swypInputStreamDiscerner when completed. */
+/** This class allows discrete files to be removed from a flowing NSInputStream.
+ 
+ This class creates an input stream from an input dataSource, making the stream only have as much data as is authorized by the init function, and notifying the swypInputStreamDiscerner when completed.
+
+ */
 @interface swypDiscernedInputStream : NSInputStream <NSStreamDelegate>{
 	BOOL					_isIndefinite;
 	NSUInteger				_streamLength;
