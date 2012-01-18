@@ -36,4 +36,5 @@
 -(void) _restartBluetooth;
 
 -(void)	_launchBluetoothPromptPeerPicker;
+-(BOOL)_peerIsInConnection:(NSString*)peerID;
 @end

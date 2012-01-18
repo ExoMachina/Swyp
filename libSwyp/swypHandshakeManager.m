@@ -19,7 +19,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session addConnectionSessionInfoDelegate:self];
 	[session initiate];
 		
-	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
 	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
 	
 	[_pendingSwypConnectionSessions addObject:session];

@@ -58,6 +58,7 @@
 
 #pragma mark NSObject
 -(void) dealloc{
+	[_peerWriteStream setDataDelegate:nil];
 	_delegate = nil;
 	SRELS(_peerName);
 	

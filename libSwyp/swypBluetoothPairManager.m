@@ -174,10 +174,12 @@
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
+	_bluetoothPromptController = nil;
 }
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker{
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
+	_bluetoothPromptController = nil;
 	//tell someone that bluetooth is broken
 }
 
@@ -278,7 +280,8 @@
 	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
 	if (_bluetoothPromptController != nil){
 		[_bluetoothPromptController setDelegate:nil];
-		[_bluetoothPromptController dismiss];
+		[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
+		_bluetoothPromptController	=	nil; // set to nil to remove.
 	}else{
 		[_connectabilityTimer invalidate];
 	}
@@ -292,6 +295,7 @@
 -(void)_launchBluetoothPromptPeerPicker{
 	EXOLog(@"%@",@"Bluetooth Disabled: launching peer picker");
 	//let's prompt to turn on:
+	//keep in mind that there is a shitty bug where calling dismiss literally 'DEALLOCS' the picker!
 	if (_bluetoothPromptController == nil){
 		_bluetoothPromptController =  [[GKPeerPickerController alloc] init];
 		[_bluetoothPromptController setDelegate:self];
@@ -318,7 +322,7 @@
 	EXOLog(@"Creating sessions from peerIDs at time: %@",[[NSDate date] description]);
 	
 	for (NSString * peerID in [_gameKitPeerSession peersWithConnectionState:GKPeerStateConnected]){
-		if ([_activeAbstractedStreamSetsByPeerName objectForKey:peerID] != nil){
+		if ([self _peerIsInConnection:peerID]){
 			EXOLog(@"Session aleady exists with peerID:%@",peerID);
 			continue;
 		}
@@ -367,6 +371,19 @@
 		}
 	}
 
+}
+
+
+-(BOOL)_peerIsInConnection:(NSString*)peerID{
+	if ([_activeAbstractedStreamSetsByPeerName objectForKey:peerID] != nil){
+		if ([[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] & (NSStreamStatusClosed | NSStreamStatusError) || [[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] == NSStreamStatusNotOpen){
+			[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] invalidate];
+//			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
+		}else{
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 
