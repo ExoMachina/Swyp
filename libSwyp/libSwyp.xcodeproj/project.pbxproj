@@ -126,7 +126,7 @@
 		79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467514C1CA6C00107170 /* swypInterfaceManager.h */; };
 		79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467714C244E300107170 /* swypBluetoothPairManager.h */; };
 		79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467814C244E300107170 /* swypBluetoothPairManager.m */; };
-		AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */; };
+		AA747D9F0F9514B9006C5449 /* libSwyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -250,9 +250,9 @@
 		79F1467514C1CA6C00107170 /* swypInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInterfaceManager.h; sourceTree = "<group>"; };
 		79F1467714C244E300107170 /* swypBluetoothPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBluetoothPairManager.h; sourceTree = "<group>"; };
 		79F1467814C244E300107170 /* swypBluetoothPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBluetoothPairManager.m; sourceTree = "<group>"; };
-		AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libSwyp_Prefix.pch; path = Users/alist/Documents/highFyve/dev/swypPhotos/lib/swyp/libSwyp/libSwyp_Prefix.pch; sourceTree = SDKROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libswyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* liblibSwyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibSwyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -276,7 +276,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libswyp.a */,
+				D2AAC07E0554694100DB518D /* liblibSwyp.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -314,7 +314,7 @@
 			isa = PBXGroup;
 			children = (
 				79E3236A1454B6EC0028CD42 /* External Libraries */,
-				AA747D9E0F9514B9006C5449 /* swyp_Prefix.pch */,
+				AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -641,7 +641,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA747D9F0F9514B9006C5449 /* swyp_Prefix.pch in Headers */,
+				AA747D9F0F9514B9006C5449 /* libSwyp_Prefix.pch in Headers */,
 				68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */,
 				68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */,
 				68B18E0113E0B2B800D094A9 /* swypBonjourServiceListener.h in Headers */,
@@ -707,9 +707,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		D2AAC07D0554694100DB518D /* swyp */ = {
+		D2AAC07D0554694100DB518D /* libSwyp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "swyp" */;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "libSwyp" */;
 			buildPhases = (
 				D2AAC07A0554694100DB518D /* Headers */,
 				D2AAC07B0554694100DB518D /* Sources */,
@@ -719,9 +719,9 @@
 			);
 			dependencies = (
 			);
-			name = swyp;
+			name = libSwyp;
 			productName = swyp;
-			productReference = D2AAC07E0554694100DB518D /* libswyp.a */;
+			productReference = D2AAC07E0554694100DB518D /* liblibSwyp.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -733,7 +733,7 @@
 				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = ExoMachina;
 			};
-			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "swyp" */;
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "libSwyp" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -748,7 +748,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D2AAC07D0554694100DB518D /* swyp */,
+				D2AAC07D0554694100DB518D /* libSwyp */,
 			);
 		};
 /* End PBXProject section */
@@ -836,11 +836,11 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = swyp_Prefix.pch;
+				GCC_PREFIX_HEADER = libSwyp_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_NAME = swyp;
+				PRODUCT_NAME = libSwyp;
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "armv6 armv7";
 			};
@@ -861,11 +861,11 @@
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = swyp_Prefix.pch;
+				GCC_PREFIX_HEADER = libSwyp_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_NAME = swyp;
+				PRODUCT_NAME = libSwyp;
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "armv6 armv7";
 			};
@@ -901,7 +901,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "swyp" */ = {
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "libSwyp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB921F08733DC00010E9CD /* Debug */,
@@ -910,7 +910,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "swyp" */ = {
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "libSwyp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB922308733DC00010E9CD /* Debug */,

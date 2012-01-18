@@ -14,9 +14,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D2AAC07D0554694100DB518D"
-               BuildableName = "libswyp.a"
-               BlueprintName = "swyp"
-               ReferencedContainer = "container:swyp.xcodeproj">
+               BuildableName = "liblibSwyp.a"
+               BlueprintName = "libSwyp"
+               ReferencedContainer = "container:libSwyp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
