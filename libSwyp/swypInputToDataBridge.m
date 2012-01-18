@@ -65,7 +65,7 @@
 		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];
 
 		//no longer need these
-		[_streamConnector setDelegate:nil];
+//		[_streamConnector setDelegate:nil];
 		SRELS(_streamConnector);
 		SRELS(_outputStream);
 	}else{

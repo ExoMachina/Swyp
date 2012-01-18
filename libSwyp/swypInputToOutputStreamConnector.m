@@ -48,6 +48,7 @@
 	[self _teardownInputStream:_inputStream];
 #pragma mark CLUDGE: not removing stream, just srels'n it
 //	[self _teardownOutputStream];
+	_delegate = nil;
 	SRELS(_outputStream);
 	SRELS(_bufferedData);
 
