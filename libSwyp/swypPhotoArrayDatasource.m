@@ -167,9 +167,13 @@
 
 
 #pragma mark swypConnectionSessionDataDelegate
+-(NSArray*)supportedFileTypesForReceipt{
+	return [NSArray arrayWithObjects:[NSString imageJPEGFileType] ,[NSString imagePNGFileType], nil];
+}
+
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
 	
-	if ([[NSSet setWithArray:[swypContentInteractionManager supportedFileTypes]] containsObject:[discernedStream streamType]]){
+	if ([[NSSet setWithArray:[swypContentInteractionManager supportedReceiptFileTypes]] containsObject:[discernedStream streamType]]){
 		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
 	}else{
