@@ -13,7 +13,7 @@
 static NSArray * supportedReceiveFileTypes =  nil;
 
 @implementation swypContentInteractionManager
-@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController, showContentBeforeConnection = _showContentBeforeConnection, interactionManagerDelegate = _interactionManagerDelegate;
+@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController;
 
 #pragma public
 
@@ -33,9 +33,6 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[session addDataDelegate:self];
 	[session addDataDelegate:_contentDataSource];
 	[session addConnectionSessionInfoDelegate:self];
-	if ([_sessionViewControllersBySession count] == 1){
-		[self _setupForFirstSessionAdded];
-	}
 }
 
 -(void)		stopMaintainingViewControllerForSwypSession:(swypConnectionSession*)session{
@@ -51,9 +48,6 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}];
 	
 	[_sessionViewControllersBySession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
-	if ([_sessionViewControllersBySession count] == 0){
-		[self _setupForAllSessionsRemoved];
-	}
 }
 
 -(void)		stopMaintainingAllSessionViewControllers{
@@ -91,18 +85,12 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 	
 	
-	if (_showContentBeforeConnection || [_sessionViewControllersBySession count] > 0){
-		[[self contentDisplayController] reloadAllData];
-	}
-
+	[[self contentDisplayController] reloadAllData];
 }
 
 -(void)		initializeInteractionWorkspace{
-	[self _setupForAllSessionsRemoved];
 	
-	if (_showContentBeforeConnection){
-		[self _displayContentDisplayController:TRUE];
-	}
+	[self _displayContentDisplayController:TRUE];
 }
 
 -(void) sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session{
@@ -127,15 +115,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 #pragma mark NSObject
 
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView{
-	if (self = [self initWithMainWorkspaceView:workspaceView showingContentBeforeConnection:TRUE]){
-		
-	}
-	return self;
-}
-
--(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent{
 	if (self = [super init]){
-		_showContentBeforeConnection		=	showContent;
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
@@ -280,26 +260,6 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 	
 	return nil;
-}
-
--(void)		_setupForAllSessionsRemoved{
-	
-	
-	if (_interactionManagerDelegate != nil){
-		[_interactionManagerDelegate setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:self];
-	}
-	
-	if (_contentDisplayController != nil && _showContentBeforeConnection == NO){
-		[self _displayContentDisplayController:FALSE];
-	}
-}
--(void)		_setupForFirstSessionAdded{	
-	if (_interactionManagerDelegate != nil){
-		[_interactionManagerDelegate setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:self];
-	}
-	
-	[self _displayContentDisplayController:TRUE];
-
 }
 
 -(void) _displayContentDisplayController:(BOOL)display{

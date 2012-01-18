@@ -20,7 +20,7 @@
 @end
 
 @implementation swypWorkspaceViewController
-@synthesize connectionManager = _connectionManager, contentManager = _contentManager, showContentWithoutConnection = _showContentWithoutConnection, worspaceDelegate = _worspaceDelegate;
+@synthesize connectionManager = _connectionManager, contentManager = _contentManager, worspaceDelegate = _worspaceDelegate;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -86,62 +86,13 @@
 
 
 
-#pragma mark - 
-#pragma mark swypContentInteractionManagerDelegate
--(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager{
-	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
-		[_swypPromptImageView setUserInteractionEnabled:FALSE];
-	}
-	
-	//we're phasing out wifi as a availability-selectable type in favor of globe vs bluetooth
-	
-	
-	if (_swypNetworkInterfaceClassButton == nil){
-		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
-		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
-		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
-	}
-	
-	[self _setupUIForCurrentOrientation];
-
-	
-	
-	//set background images
-	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
-	
-	[_swypNetworkInterfaceClassButton setAlpha:0];
-	[_swypPromptImageView setAlpha:0];
-	[self.view addSubview:_swypNetworkInterfaceClassButton];	
-	[self.view addSubview:_swypPromptImageView];
-	[self.view sendSubviewToBack:_swypPromptImageView];
-
-	[UIView animateWithDuration:.75 animations:^{
-		[_swypPromptImageView setAlpha:0.5];
-		[_swypNetworkInterfaceClassButton setAlpha:1];
-	}completion:nil];
-}
-
--(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
-
-	if ([_swypPromptImageView superview] != nil){
-		[UIView animateWithDuration:.75 animations:^{
-			[_swypPromptImageView setAlpha:0];
-			[_swypNetworkInterfaceClassButton setAlpha:0];
-		}completion:nil];
-	}
-}
-
 #pragma mark -
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
 		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
-		[_contentManager setInteractionManagerDelegate:self];
 		
-		#pragma mark CLUDGE!
-		#warning CLUDGE!
+		#pragma mark TODO: File bug; we need to wait until next runloop otherwise no user interface works
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
 		//	So we just run this at the beginning of the next runLoop
 		NSBlockOperation * initializeWorkspaceOperation = [NSBlockOperation blockOperationWithBlock:^{
@@ -157,14 +108,6 @@
 
 #pragma mark -
 #pragma mark workspaceInteraction
--(void)setShowContentWithoutConnection:(BOOL)showContentWithoutConnection{
-	_showContentWithoutConnection = showContentWithoutConnection;
-	if ((_contentManager != nil || _showContentWithoutConnection == TRUE) && [[self contentManager] showContentBeforeConnection] != showContentWithoutConnection){
-		SRELS(_contentManager);
-		[self contentManager];
-	}
-}
-
 
 -(void)networkInterfaceClassButtonPressed:(id)sender{
 	if ([_connectionManager activeConnectionClass] == swypConnectionClassWifiAndCloud){
@@ -294,7 +237,7 @@
 	[self.view addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);
     
-	[self setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:nil];    
+	[self _setupWorkspacePromptUI];    
 }
 
 -(void)	dealloc{
@@ -321,16 +264,54 @@
 }
 			
 
--(void) _setupUIForCurrentOrientation{
-	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
-	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, self.view.size.height-32)];
-}
-
 - (void)didReceiveMemoryWarning {
 	if ([_swypPromptImageView superview] == nil){
 		SRELS(_swypPromptImageView);
 		SRELS(_swypNetworkInterfaceClassButton);
 	}
 }
+
+#pragma mark - Internal
+
+-(void) _setupUIForCurrentOrientation{
+	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
+	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, self.view.size.height-32)];
+}
+
+-(void) _setupWorkspacePromptUI{
+	if (_swypPromptImageView == nil){
+		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
+		[_swypPromptImageView setUserInteractionEnabled:FALSE];
+	}
+	
+	//we're phasing out wifi as a availability-selectable type in favor of globe vs bluetooth
+	
+	
+	if (_swypNetworkInterfaceClassButton == nil){
+		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
+		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
+	}
+	
+	[self _setupUIForCurrentOrientation];
+	
+	
+	
+	//set background images
+	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
+	
+	[_swypNetworkInterfaceClassButton setAlpha:0];
+	[_swypPromptImageView setAlpha:0];
+	[self.view addSubview:_swypNetworkInterfaceClassButton];	
+	[self.view addSubview:_swypPromptImageView];
+	[self.view sendSubviewToBack:_swypPromptImageView];
+	
+	[UIView animateWithDuration:.75 animations:^{
+		[_swypPromptImageView setAlpha:0.5];
+		[_swypNetworkInterfaceClassButton setAlpha:1];
+	}completion:nil];
+}
+
 
 @end

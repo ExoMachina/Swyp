@@ -26,7 +26,8 @@ typedef enum{
 
 	swypInfoRefType	swypType;
 }
-@property (nonatomic, assign)	double		velocity;	/// in mm/second
+/// in mm/second
+@property (nonatomic, assign)	double		velocity;	
 @property (nonatomic, assign)	CGPoint		startPoint;
 @property (nonatomic, assign)	CGPoint		endPoint;
 @property (nonatomic, retain)	NSDate*		startDate;
