@@ -21,6 +21,9 @@
 	NSMutableDictionary *				_swypInTimeoutTimerBySwypInfoRef;
 	NSMutableSet		*				_validSwypInForConnectionCreation;
 	
+	
+	BOOL								_bluetoothEnabled;
+	
 	//game kit
 	GKSession *		_gameKitPeerSession;	
 

@@ -146,6 +146,8 @@
 		_validSwypInForConnectionCreation	=	[NSMutableSet new];
 						
 		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
+		
+		_bluetoothEnabled					= FALSE; //begin with false until proved otherwise
 
 	}
 	return self;
@@ -173,6 +175,7 @@
 #pragma mark gamekit
 #pragma mark GKPeerPickerDelegate
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
+	_bluetoothEnabled	= TRUE;
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
 	_bluetoothPromptController = nil;
@@ -213,12 +216,12 @@
 		EXOLog(@"Found bluetooth peer, preconnecting: %@",peerID);
 		[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
 		
+		_bluetoothEnabled	= TRUE;
+		
 		if (_bluetoothPromptController != nil){
 			[_bluetoothPromptController setDelegate:nil];
 			[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
 			_bluetoothPromptController	=	nil; // set to nil to remove.
-		}else{
-			[_connectabilityTimer invalidate];
 		}
 		
 	}else if (state == GKPeerStateConnected){
@@ -279,13 +282,14 @@
 -(void)_bluetoothAvailabilityChanged:(id)sender{
 	EXOLog(@"bluetooth availability notification: %@",[sender description]);
 	//if this notification shows but connectability doesn't, then we know BT is disabled, and we prompt to enable.
-	if (_connectabilityTimer == nil){
+	if (_connectabilityTimer == nil && _bluetoothEnabled == FALSE){
 		_connectabilityTimer = [[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_connectabilityTimeoutOccured:) userInfo:nil repeats:NO] retain];
 	}
 }
 -(void)_bluetoothConnectabilityChanged:(id)sender{
 	//indicating that bluetooth is enabled
 	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
+	_bluetoothEnabled = TRUE;
 	if (_bluetoothPromptController != nil){
 		[_bluetoothPromptController setDelegate:nil];
 		[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
@@ -296,8 +300,9 @@
 }
 
 -(void) _connectabilityTimeoutOccured:(NSTimer*)sender{
-	[_connectabilityTimer invalidate];
-	[self _launchBluetoothPromptPeerPicker];
+	if (_bluetoothEnabled == FALSE){
+		[self _launchBluetoothPromptPeerPicker];
+	}
 }
 	
 -(void)_launchBluetoothPromptPeerPicker{
