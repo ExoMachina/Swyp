@@ -63,11 +63,16 @@
 }
 
 -(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
+	//We'll try clearing out existing swypOuts to see if we get more responsivenes
+	for (swypInfoRef * ref in _validSwypOutsForConnectionReceipt){
+		[self stopAdvertisingSwypOut:ref];
+	}
+	
 	NSTimer * pendingTimer	=	[_swypOutTimeoutTimerBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
 	if (pendingTimer == nil){
 		return;	
 	}else{
-		EXOLog(@"advertiseSwypOutAsCompleted in swypBluetoothPairManager from ref@time:%@",[[ref startDate]description]);
+//		EXOLog(@"advertiseSwypOutAsCompleted in swypBluetoothPairManager from ref@time:%@",[[ref startDate]description]);
 		[pendingTimer invalidate];
 		
 		NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
@@ -80,7 +85,7 @@
 }
 
 -(void) stopAdvertisingSwypOut:(swypInfoRef*)ref{
-	EXOLog(@"No longer advertising outRef in swypBluetoothPairManager from time: %@",[[ref startDate] description]);
+//	EXOLog(@"No longer advertising outRef in swypBluetoothPairManager from time: %@",[[ref startDate] description]);
 	
 	if ([_validSwypOutsForConnectionReceipt containsObject:ref] == NO){
 		return;
@@ -328,12 +333,9 @@
 -(void) _createSessionsIfNeeded{
 	//at this point we're already connected, but we need to make sessions out of users
 	if (([_validSwypInForConnectionCreation count] == 0 )&& ([_validSwypOutsForConnectionReceipt count] == 0)){
-		EXOLog(@"No swypIn/outs for creating conneciton sessions: %@",[[NSDate date]description]);
 		return;
 	}
-		
-	EXOLog(@"Creating sessions from peerIDs at time: %@",[[NSDate date] description]);
-	
+			
 	for (NSString * peerID in [_gameKitPeerSession peersWithConnectionState:GKPeerStateConnected]){
 		if ([self _peerIsInConnection:peerID]){
 			EXOLog(@"Session aleady exists with peerID:%@",peerID);

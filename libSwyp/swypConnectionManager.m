@@ -151,7 +151,7 @@
 }
 
 -(void)	swypPendingConnectionManager:(swypPendingConnectionManager*)manager finishedForSwyp:(swypInfoRef*)ref{
-	EXOLog(@"pending connection mngr completed swypRef from time %@",[[ref startDate] description]);
+//	EXOLog(@"pending connection mngr completed swypRef from time %@",[[ref startDate] description]);
 }
 
 

@@ -32,6 +32,7 @@
 }
 
 -(void) dealloc{
+	EXOLog(@"inputToDataBridge dealloc'd at time %@",[[NSDate date] description]);
 	_delegate = nil;
 	[_streamConnector setDelegate:nil];
 	SRELS(_streamConnector);
@@ -62,12 +63,18 @@
 	NSData * yield = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
 	if (yield){
 		_yieldedData = [yield retain];
+//		EXOLog(@"_streamConnector reference ct for obj: %@",[_streamConnector description]);
+
+//		EXOLog(@"setDelegate:nil reference count at: %i",[_streamConnector retainCount]);
+		//no longer need these
+		[_streamConnector setDelegate:nil];
+//		EXOLog(@"SRELS(_streamConnector); reference count at: %i",[_streamConnector retainCount]);
+		SRELS(_streamConnector);
+//		SRELS(_outputStream);
+
+//		EXOLog(@"dataBridgeYieldedData count at: %i",[_streamConnector retainCount]);
 		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];
 
-		//no longer need these
-//		[_streamConnector setDelegate:nil];
-		SRELS(_streamConnector);
-		SRELS(_outputStream);
 	}else{
 		[_delegate dataBridgeFailedYieldingDataFromInputStream:_inputStream withError:[NSError errorWithDomain:swypInputToOutputStreamConnectorErrorDomain code:swypInputToOutputStreamConnectorErrorUnknown userInfo:nil] inInputToDataBridge:self];
 	}

@@ -33,7 +33,7 @@ typedef enum{
 @end
 
 
-/** This class(y) class written by alex soaks an NSInputStream into NSData
+/** This class written by alex soaks an NSInputStream into NSData
  
  Set an input within init and set a delegate. Be notified when the stream is at end and data is ready.
  */

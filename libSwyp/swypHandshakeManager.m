@@ -397,7 +397,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	double velocityDifference	=	 abs(localVelocity - remoteVelocity);
 	
-	EXOLog(@"NEEDIMPR: Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
+//	EXOLog(@"NEEDIMPR: Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
 	
 	if (velocityDifference >= 0){ //fix algorithm for determining velocity
 		return TRUE;
