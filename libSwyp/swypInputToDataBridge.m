@@ -63,6 +63,7 @@
 	if (yield){
 		_yieldedData = [yield retain];
 		[_streamConnector setDelegate:nil];
+		SRELS(_streamConnector);
 		//we don't need the stream connector anymore, but we'll dealloc it later to be kind to the runloop
 		
 		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];

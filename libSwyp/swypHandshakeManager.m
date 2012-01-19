@@ -222,6 +222,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 -(void)	_handleClientHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
+	EXOLog(@"client hello received for session! :%@",[session description]);
 	swypClientCandidate	*	candidate		=	(swypClientCandidate*)[session representedCandidate];
 	swypInfoRef *	swypRefFromClientInfo	=	[[[swypInfoRef alloc] init] autorelease];
 
@@ -298,6 +299,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 }
 -(void)	_handleServerHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
+	EXOLog(@"server hello received for session! :%@",[session description]);
+	
 	swypServerCandidate	*	candidate		=	(swypServerCandidate*)[session representedCandidate];
 	swypInfoRef *	swypRefFromServerInfo	=	[[[swypInfoRef alloc] init] autorelease];
 	NSString *		statusString			=	[helloPacket valueForKey:@"status"];

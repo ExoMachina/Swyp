@@ -129,6 +129,9 @@
 		}else if (eventCode == NSStreamEventHasBytesAvailable){
 			[self _attemptDataHandoff];
 		}else if (eventCode == NSStreamEventEndEncountered){
+			//the following seems to be a good thing for preventing multiple creations of the delegate block
+			[_inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+			
 			//we need to do this on the next run loop or we'll crash
 			[[NSOperationQueue mainQueue] addOperationWithBlock:^{
 				[_delegate completedInputStream:_inputStream forOutputStream:_outputStream withInputToOutputConnector:self];				

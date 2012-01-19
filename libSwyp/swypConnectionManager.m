@@ -360,7 +360,6 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqual:@"bluetoothEnabled"]){
-        EXOLog(@"BLUETOOTH AVAILABILITY CHANGED: %@", [change objectForKey:NSKeyValueChangeNewKey]);
         [self.delegate performSelector:@selector(setBluetoothReady:) 
                             withObject:[change objectForKey:NSKeyValueChangeNewKey]];
     }

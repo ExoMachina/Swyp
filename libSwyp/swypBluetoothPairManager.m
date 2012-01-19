@@ -66,9 +66,9 @@
 
 -(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
 	//We'll try clearing out existing swypOuts to see if we get more responsivenes
-	for (swypInfoRef * ref in _validSwypOutsForConnectionReceipt){
-		[self stopAdvertisingSwypOut:ref];
-	}
+//	for (swypInfoRef * ref in _validSwypOutsForConnectionReceipt){
+//		[self stopAdvertisingSwypOut:ref];
+//	}
 	
 	NSTimer * pendingTimer	=	[_swypOutTimeoutTimerBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
 	if (pendingTimer == nil){
