@@ -86,6 +86,56 @@
 
 
 
+<<<<<<< HEAD
+#pragma mark - 
+#pragma mark swypContentInteractionManagerDelegate
+-(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager{
+	if (_swypPromptImageView == nil){
+		_swypPromptImageView = [[SwypPromptImageView alloc] init];
+		[_swypPromptImageView setUserInteractionEnabled:FALSE];
+	}
+	
+	//we're phasing out wifi as a availability-selectable type in favor of globe vs bluetooth
+	
+	
+	if (_swypNetworkInterfaceClassButton == nil){
+		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
+		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
+		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
+	}
+	
+	[self _setupUIForCurrentOrientation];
+
+	
+	
+	//set background images
+	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
+	
+	[_swypNetworkInterfaceClassButton setAlpha:0];
+	[_swypPromptImageView setAlpha:0];
+	[self.view addSubview:_swypNetworkInterfaceClassButton];	
+	[self.view addSubview:_swypPromptImageView];
+	[self.view sendSubviewToBack:_swypPromptImageView];
+
+	[UIView animateWithDuration:.75 animations:^{
+		[_swypPromptImageView setAlpha:0.5];
+		[_swypNetworkInterfaceClassButton setAlpha:1];
+	}completion:nil];
+}
+
+-(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager{
+
+	if ([_swypPromptImageView superview] != nil){
+		[UIView animateWithDuration:.75 animations:^{
+			[_swypPromptImageView setAlpha:0];
+			[_swypNetworkInterfaceClassButton setAlpha:0];
+		}completion:nil];
+	}
+}
+
+=======
+>>>>>>> 3c739cb905d53f766a7e0473b81a930f4624eb67
 #pragma mark -
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
@@ -177,6 +227,10 @@
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [_swypPromptImageView showBluetoothWaiting];
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
@@ -271,10 +325,6 @@
 	}
 }
 
-- (void)setBluetoothReady:(NSNumber)isReady {
-    [_swypPromptImageView setBluetoothReady:[isReady boolValue]];
-}
-
 #pragma mark - Internal
 
 -(void) _setupUIForCurrentOrientation{
@@ -284,7 +334,7 @@
 
 -(void) _setupWorkspacePromptUI{
 	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[SwypPromptImageView alloc] init];
+		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 	}
 	

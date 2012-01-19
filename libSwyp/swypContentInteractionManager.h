@@ -43,12 +43,6 @@
 -(NSInteger)	contentIndexMatchingSwypOutView:	(UIView*)swypedView;
 @end
 
-@protocol swypContentInteractionManagerDelegate <NSObject>
--(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager;
--(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager;
-@end
-
-
 /** This class is responsible for unifying modal and controller, and displaying them upon the workspace. */
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
@@ -58,10 +52,7 @@
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
 	
 	UIView*													_mainWorkspaceView;
-	
-	BOOL													_showContentBeforeConnection;
-	
-	id<swypContentInteractionManagerDelegate>				_interactionManagerDelegate;
+		
 }	
 
 /** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 
@@ -72,13 +63,6 @@
  */
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
-/** if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
-this value is assigned at init by workspace manager 
- 
-  @warning this is a deprecated method 
- */
-@property (nonatomic, readonly)	BOOL														showContentBeforeConnection;
-
 
 /** This property is the view controller that contentDataSource content is displayed from. 
  
@@ -88,17 +72,9 @@ this value is assigned at init by workspace manager
 @property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
 
 
-@property(nonatomic, assign)	id<swypContentInteractionManagerDelegate>					interactionManagerDelegate;
-
 /** The main init function. 
  */
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView;
-
-/** Don't init this way.
- 
- @warning this is a deprecated method 
- */
--(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent;
 
 
 #pragma mark TODO: update file types to set custom
@@ -127,8 +103,6 @@ this value is assigned at init by workspace manager
 //private
 -(swypSessionViewController*)		_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
 //-(void)							_contentRepresentationViewWasReleased:;
--(void)		_setupForAllSessionsRemoved;
--(void)		_setupForFirstSessionAdded;
 
 -(void)		_displayContentDisplayController:(BOOL)display;
 

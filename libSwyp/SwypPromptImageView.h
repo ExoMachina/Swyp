@@ -13,6 +13,6 @@
     UIView *_bluetoothView;
 }
 
-- (void) showBluetoothWaiting;
+- (void) setBluetoothReady:(BOOL)isWaiting;
 
 @end

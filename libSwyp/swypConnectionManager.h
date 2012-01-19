@@ -22,7 +22,8 @@
 @class swypConnectionManager;
 
 typedef enum {
-	swypConnectionClassNone,			///no preferrence; automatically selected through availability 
+	///no preferrence; automatically selected through availability 
+	swypConnectionClassNone,			
 	swypConnectionClassWifiAndCloud,
 	swypConnectionClassBluetooth
 } swypConnectionClass;
@@ -36,7 +37,7 @@ typedef enum {
 @end
 
 /**
- This guy does orchistrates the whole gig to get connections between devices established. 
+ This class orchistrates the establishment of connections between devices. 
  */
 @interface swypConnectionManager : NSObject <swypPendingConnectionManagerDelegate, swypInterfaceManagerDelegate,
 swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypHandshakeManagerDelegate,
@@ -62,14 +63,22 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 @property (nonatomic, readonly) NSSet *								activeConnectionSessions;
 @property (nonatomic, assign)	id<swypConnectionManagerDelegate>	delegate;
 
-@property (nonatomic, readonly)	swypConnectionMethod	supportedConnectionMethods; /// device supported
+/// device supported
+@property (nonatomic, readonly)	swypConnectionMethod	supportedConnectionMethods; 
 
-@property (nonatomic, readonly)	swypConnectionMethod	availableConnectionMethods; ///currently usable per reachability
-@property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	/// user or implicitly authorized methods through activeConnectionClass
-@property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	///intersect of enabled and available
+///currently usable per reachability
+@property (nonatomic, readonly)	swypConnectionMethod	availableConnectionMethods; 
 
-@property (nonatomic, assign)	swypConnectionClass	userPreferedConnectionClass; ///the preferred class that the UI reflects
-@property (nonatomic, readonly) swypConnectionClass	activeConnectionClass;	///on-the-fly generated connection class based on user pref & availability
+/// user or implicitly authorized methods through activeConnectionClass
+@property (nonatomic, readonly)	swypConnectionMethod	enabledConnectionMethods;	
+///intersect of enabled and available
+@property (nonatomic, readonly)	swypConnectionMethod	activeConnectionMethods;	
+
+///the preferred class that the UI reflects
+@property (nonatomic, assign)	swypConnectionClass	userPreferedConnectionClass; 
+
+///on-the-fly generated connection class based on user pref & availability
+@property (nonatomic, readonly) swypConnectionClass	activeConnectionClass;	
 
 
 

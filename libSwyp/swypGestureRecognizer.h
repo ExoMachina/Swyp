@@ -31,4 +31,7 @@
 -(double)	absoluteTravel;
 +(double)	currentDevicePixelsPerLinearMillimeter;
 
+-(double)distanceFromViewCenterWithPoint:(CGPoint)point;
+-(double)travelAwayFromCenter;
+
 @end
