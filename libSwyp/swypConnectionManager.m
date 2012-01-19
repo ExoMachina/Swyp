@@ -98,6 +98,8 @@
 
 	[[swypNetworkAccessMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [_bluetoothPairManager removeObserver:self forKeyPath:@"bluetoothEnabled"];
 		
 	SRELS(_bonjourPairManager);
 	SRELS(_cloudPairManager);
@@ -349,9 +351,19 @@
 //	_bonjourPairManager		= [[swypBonjourPairManager alloc] initWithInterfaceManagerDelegate:self];
 	_cloudPairManager		= [[swypCloudPairManager alloc] initWithInterfaceManagerDelegate:self];
 	_bluetoothPairManager	= [[swypBluetoothPairManager alloc] initWithInterfaceManagerDelegate:self];
+    
+    [_bluetoothPairManager addObserver:self forKeyPath:@"bluetoothEnabled" options:NSKeyValueObservingOptionNew context:NULL];
 	
 	_handshakeManager	= [[swypHandshakeManager alloc] init];
 	[_handshakeManager	setDelegate:self];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqual:@"bluetoothEnabled"]){
+        EXOLog(@"BLUETOOTH AVAILABILITY CHANGED: %@", [change objectForKey:NSKeyValueChangeNewKey]);
+        [self.delegate performSelector:@selector(setBluetoothReady:) 
+                            withObject:[change objectForKey:NSKeyValueChangeNewKey]];
+    }
 }
 
 -(void) _activeConnectionInterfacesChanged{

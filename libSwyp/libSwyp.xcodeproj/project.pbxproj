@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */; };
+		3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */; };
 		680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03613E0C3CD00509CF2 /* CFNetwork.framework */; };
 		680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03813E0C3D600509CF2 /* Security.framework */; };
 		680FC05213E0C63700509CF2 /* swypInfoRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC05013E0C63700509CF2 /* swypInfoRef.h */; };
@@ -131,6 +133,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPromptImageView.h; sourceTree = "<group>"; };
+		3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPromptImageView.m; sourceTree = "<group>"; };
 		680FC03613E0C3CD00509CF2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		680FC03813E0C3D600509CF2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		680FC05013E0C63700509CF2 /* swypInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInfoRef.h; sourceTree = "<group>"; };
@@ -346,6 +350,8 @@
 		680FC61413E30F2300509CF2 /* Content Display */ = {
 			isa = PBXGroup;
 			children = (
+				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
+				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
 				79C080771481B00C00306F67 /* swypPhotoPlayground.h */,
 				79C080781481B00C00306F67 /* swypPhotoPlayground.m */,
 				79C080721481A9B700306F67 /* swypTiledContentViewController.h */,
@@ -701,6 +707,7 @@
 				79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */,
 				79DF3AA914C329930086CF85 /* swypGKPeerAbstractedStreamSet.h in Headers */,
 				79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */,
+				3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,6 +819,7 @@
 				79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */,
 				79DF3AAA14C329930086CF85 /* swypGKPeerAbstractedStreamSet.m in Sources */,
 				79DF3AAE14C32C000086CF85 /* swypOutputToDataStream.m in Sources */,
+				3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

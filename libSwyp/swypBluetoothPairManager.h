@@ -34,6 +34,8 @@
 	
 }
 
+@property (nonatomic, assign) BOOL bluetoothEnabled;
+
 //private
 -(void) _createSessionsIfNeeded;
 -(void) _restartBluetooth;

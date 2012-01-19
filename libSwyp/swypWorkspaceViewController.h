@@ -10,7 +10,8 @@
 #import "swypContentInteractionManager.h"
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
-
+#import "swypPromptImageView.h"
+#import "swypWorkspaceBackgroundView.h"
 
 @class swypWorkspaceViewController;
 @protocol swypWorkspaceDelegate <NSObject>
@@ -33,13 +34,14 @@
 	
 	
 	//workspace UI Items	
-	UIImageView *						_swypPromptImageView;
+	SwypPromptImageView *				_swypPromptImageView;
 	UIButton *							_swypNetworkInterfaceClassButton;
     UIView *                            _downArrowView;
 }
 
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
+@property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
 
 @property (nonatomic, assign)	id<swypWorkspaceDelegate>		worspaceDelegate;
 
@@ -48,8 +50,8 @@
  You'll need to set the workpace delegate to be told when workspace wants to be dismissed.
  
  */
--(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
-
+-(id)   initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
+-(void) setBluetoothReady;
 
 //
 //private

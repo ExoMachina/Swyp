@@ -15,7 +15,7 @@
 //see libSwyp.h for how-to
 
 //1 = regular logs; 2=logoverlay + logs
-#define DEBUG_MODE_ENABLED 2
+#define DEBUG_MODE_ENABLED 1
 
 //	Developer conviniences
 #define SRELS RELEASE_SAFELY
