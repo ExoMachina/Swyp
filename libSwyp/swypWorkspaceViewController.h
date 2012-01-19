@@ -11,6 +11,7 @@
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
 #import "swypPromptImageView.h"
+#import "swypWorkspaceBackgroundView.h"
 
 @class swypWorkspaceViewController;
 @protocol swypWorkspaceDelegate <NSObject>
@@ -40,6 +41,7 @@
 
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
+@property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
 
 @property (nonatomic, assign)	id<swypWorkspaceDelegate>		worspaceDelegate;
 

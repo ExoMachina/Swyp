@@ -10,8 +10,6 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
-#import "swypWorkspaceBackgroundView.h"
-
 @interface swypWorkspaceViewController (Private)
 
 -(void)animateArrows;
@@ -20,7 +18,8 @@
 @end
 
 @implementation swypWorkspaceViewController
-@synthesize connectionManager = _connectionManager, contentManager = _contentManager, worspaceDelegate = _worspaceDelegate;
+@synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
+            worspaceDelegate = _worspaceDelegate, backgroundView = _backgroundView;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -37,8 +36,8 @@
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
 	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
-	[self.view addSubview:sessionViewController.view];
-	[self.view setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	[self.backgroundView addSubview:sessionViewController.view];
+	[self.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
 	
@@ -90,7 +89,7 @@
 #pragma mark public
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.view];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.backgroundView];
 		
 		#pragma mark TODO: File bug; we need to wait until next runloop otherwise no user interface works
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
@@ -187,15 +186,17 @@
 -(void)	viewDidLoad{
 	[super viewDidLoad];
         
-	swypWorkspaceBackgroundView * backgroundView	= [[[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame] autorelease];
-	self.view	= backgroundView;
-    self.view.opaque = YES;
+	self.view	= [[[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds] autorelease];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    self.backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
+    [self.view addSubview:self.backgroundView];
     
     _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
     _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
     // workaround for bug in iOS 4
     [_downArrowView.layer setOpaque:NO];
-    [self.view addSubview:_downArrowView];
+    [self.backgroundView addSubview:_downArrowView];
     
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
@@ -217,7 +218,7 @@
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [curlButton addGestureRecognizer:swipeDownRecognizer];
     
-    [self.view addSubview:curlButton];
+    [self.backgroundView addSubview:curlButton];
 	
 	[[self connectionManager] startServices];
 	
@@ -226,7 +227,7 @@
 	[swypInRecognizer setDelaysTouchesBegan:FALSE];
 	[swypInRecognizer setDelaysTouchesEnded:FALSE];
 	[swypInRecognizer setCancelsTouchesInView:FALSE];
-	[self.view addGestureRecognizer:swypInRecognizer];
+	[self.backgroundView addGestureRecognizer:swypInRecognizer];
 	SRELS(swypInRecognizer);
 
 	swypOutGestureRecognizer*	swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
@@ -234,7 +235,7 @@
 	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
 	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
 	[swypOutRecognizer setCancelsTouchesInView:FALSE];
-	[self.view addGestureRecognizer:swypOutRecognizer];	
+	[self.backgroundView addGestureRecognizer:swypOutRecognizer];	
 	SRELS(swypOutRecognizer);
     
 	[self _setupWorkspacePromptUI];    
@@ -245,6 +246,7 @@
     SRELS( _downArrowView);
 	SRELS( _swypPromptImageView);
 	SRELS(_swypNetworkInterfaceClassButton);
+    SRELS(_backgroundView);
     
 	[super dealloc];
 }
@@ -307,9 +309,9 @@
 	
 	[_swypNetworkInterfaceClassButton setAlpha:0];
 	[_swypPromptImageView setAlpha:0];
-	[self.view addSubview:_swypNetworkInterfaceClassButton];	
-	[self.view addSubview:_swypPromptImageView];
-	[self.view sendSubviewToBack:_swypPromptImageView];
+	[self.backgroundView addSubview:_swypNetworkInterfaceClassButton];	
+	[self.backgroundView addSubview:_swypPromptImageView];
+	[self.backgroundView sendSubviewToBack:_swypPromptImageView];
 	
 	[UIView animateWithDuration:.75 animations:^{
 		[_swypPromptImageView setAlpha:0.5];

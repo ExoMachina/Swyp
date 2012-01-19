@@ -64,9 +64,7 @@
 		_yieldedData = [yield retain];
 		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];
 
-        if (_streamConnector) {
-            SRELS(_streamConnector);
-        }
+        SRELS(_streamConnector);
 		SRELS(_outputStream);
 	}else{
 		[_delegate dataBridgeFailedYieldingDataFromInputStream:_inputStream withError:[NSError errorWithDomain:swypInputToOutputStreamConnectorErrorDomain code:swypInputToOutputStreamConnectorErrorUnknown userInfo:nil] inInputToDataBridge:self];
