@@ -271,7 +271,7 @@
 	}
 }
 
-- (void)setBluetoothReady:(NSNumber)isReady {
+- (void)setBluetoothReady:(NSNumber *)isReady {
     [_swypPromptImageView setBluetoothReady:[isReady boolValue]];
 }
 
