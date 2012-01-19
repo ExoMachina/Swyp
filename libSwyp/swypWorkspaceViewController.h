@@ -10,7 +10,7 @@
 #import "swypContentInteractionManager.h"
 #import "swypConnectionManager.h"
 #import "swypSessionViewController.h"
-
+#import "swypPromptImageView.h"
 
 @class swypWorkspaceViewController;
 @protocol swypWorkspaceDelegate <NSObject>
@@ -33,7 +33,7 @@
 	
 	
 	//workspace UI Items	
-	UIImageView *						_swypPromptImageView;
+	SwypPromptImageView *				_swypPromptImageView;
 	UIButton *							_swypNetworkInterfaceClassButton;
     UIView *                            _downArrowView;
 }

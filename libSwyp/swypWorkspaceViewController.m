@@ -90,7 +90,7 @@
 #pragma mark swypContentInteractionManagerDelegate
 -(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager{
 	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud.png"]];
+		_swypPromptImageView = [[SwypPromptImageView alloc] init];
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 	}
 	
@@ -234,6 +234,10 @@
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [_swypPromptImageView showBluetoothWaiting];
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
