@@ -42,12 +42,9 @@
 }
 
 -(void)	close{	
+	EXOLog(@"Closing swypOutputToDataStream %@",[[NSDate date] description]);
 	_streamStatus = NSStreamStatusClosed;
 	[_dataDelegate outputToDataStreamWasClosed:self];
-	
-	if ([_delegate respondsToSelector:@selector(stream:handleEvent:)]){
-		[_delegate stream:self handleEvent:NSStreamEventEndEncountered];
-	}
 }
 
 -(NSStreamStatus) streamStatus{
