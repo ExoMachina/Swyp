@@ -393,7 +393,7 @@
 
 -(BOOL)_peerIsInConnection:(NSString*)peerID{
 	if ([_activeAbstractedStreamSetsByPeerName objectForKey:peerID] != nil){
-		if ([[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] & (NSStreamStatusClosed | NSStreamStatusError) || [[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] == NSStreamStatusNotOpen){
+		if ([[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] peerWriteStream] streamStatus] != NSStreamStatusOpen) {
 			[[_activeAbstractedStreamSetsByPeerName objectForKey:peerID] invalidateFromManager];
 			[_activeAbstractedStreamSetsByPeerName removeObjectForKey:peerID];
 		}else{
