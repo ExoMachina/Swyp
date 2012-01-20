@@ -22,6 +22,7 @@ static float framePadding = 8.0;
         self.backgroundColor = [UIColor whiteColor];
         
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        _activityIndicator.size = frame.size;
         [self insertSubview:_activityIndicator atIndex:1];
         
         self.userInteractionEnabled = YES;
@@ -57,10 +58,16 @@ static float framePadding = 8.0;
 
 - (void)showLoading {
     [_activityIndicator startAnimating];
+    [UIView animateWithDuration:1 animations:^{
+        _activityIndicator.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
+    }];
 }
 
 - (void)hideLoading {
     [_activityIndicator stopAnimating];
+    [UIView animateWithDuration:1 animations:^{
+        _activityIndicator.backgroundColor = [UIColor clearColor];
+    }];
 }
 
 - (void)drawRect:(CGRect)rect

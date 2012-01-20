@@ -134,6 +134,7 @@
                                                                                 ofMaxSize:_photoSize 
                                                                              inController:self];
         photoTileView = [swypThumbView thumbViewWithImage:contentImage];
+        [photoTileView showLoading];
 		
 		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
 		[photoTileView addGestureRecognizer:dragRecognizer];
