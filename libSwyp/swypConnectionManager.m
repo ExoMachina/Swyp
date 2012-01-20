@@ -415,7 +415,7 @@
 		if ([[discernedStream streamTag] isEqualToString:@"goodbye"]){
 			[session invalidate];
 		}
-		wantsProvidedAsNSData = (BOOL*) TRUE;
+		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
 	}	
 	return FALSE;

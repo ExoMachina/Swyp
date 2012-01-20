@@ -105,12 +105,11 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	NSString * tag	=	@"userContent";
 	
-#pragma mark TODO:
-//	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentAtIndex:index ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
-//	if (thumbnailImageData != nil){
-//		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
-//		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:dataLength];
-//	}
+	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentAtIndex:index ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
+	if (thumbnailImageData != nil){
+		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
+		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:dataLength];
+	}
 	
 	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:fileTypeToUse length:&dataLength];
 	[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
@@ -168,12 +167,21 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		return FALSE;
 	}
 	
+	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
+		*wantsProvidedAsNSData = TRUE;
+		return TRUE;
+	}
+	
 	return FALSE;//we wont be handling here.. the datasource should
 }
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
 	EXOLog(@"Successfully received data of type %@",[discernedStream streamType]);
+	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
+		
+	}
 }
+
 
 
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session{
