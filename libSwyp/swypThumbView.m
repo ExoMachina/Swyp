@@ -77,7 +77,7 @@ static float framePadding = 8.0;
 }
 
 - (void)dealloc {
-    [self.image release];
+    [_image release];
     [_imageView release];
     [_activityIndicator release];
 
