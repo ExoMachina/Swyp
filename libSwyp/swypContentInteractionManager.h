@@ -17,6 +17,9 @@
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
 	
+	NSMutableDictionary * _contentViewsByContentID;
+	NSMutableDictionary * _thumbnailLoadingViewsByContentID;
+	
 	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
@@ -63,7 +66,7 @@
 -(void)		initializeInteractionWorkspace;
 
 //simply attempts to post conent to a session, as used during "contentSwyps"
--(void)		sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session;
+-(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session;
 
 //
 //private

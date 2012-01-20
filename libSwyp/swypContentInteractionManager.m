@@ -93,10 +93,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[self _displayContentDisplayController:TRUE];
 }
 
--(void) sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session{
+-(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session{
 	NSUInteger dataLength 		= 0;
 	
-	NSString * fileTypeToUse	= [[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentAtIndex:index]];
+	NSString * fileTypeToUse	= [[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentWithID:contentID]];
 	
 	if (fileTypeToUse == nil){
 		[[[[UIAlertView alloc] initWithTitle:@"No Support" message:@"The recipient app doesn't want any form of this file... This is a bug on one of your apps' part" delegate:nil cancelButtonTitle:@"okay" otherButtonTitles:nil] autorelease] show];
@@ -105,15 +105,15 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	NSString * tag	=	@"userContent";
 	
-	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentAtIndex:index ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
+	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentWithID:contentID ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
 	if (thumbnailImageData != nil){
 		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
 		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:dataLength];
 	}
 	
-	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:fileTypeToUse length:&dataLength];
+	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentWithID:contentID fileType:fileTypeToUse length:&dataLength];
 	[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
-	
+
 }
 
 
@@ -122,6 +122,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView{
 	if (self = [super init]){
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
+		_contentViewsByContentID			=	[[NSMutableDictionary alloc] init];
+		_thumbnailLoadingViewsByContentID	=	[[NSMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
 	}
@@ -138,6 +140,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	SRELS(_contentDisplayController);
 	SRELS(_contentDataSource);
 	SRELS(_mainWorkspaceView);
+	SRELS(_contentViewsByContentID);
+	SRELS(_thumbnailLoadingViewsByContentID);
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
@@ -179,6 +183,15 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	EXOLog(@"Successfully received data of type %@",[discernedStream streamType]);
 	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
 		
+		NSInteger thumbNum	= [_thumbnailLoadingViewsByContentID count];
+		NSString * thumbID	= [NSString stringWithFormat:@"thumbLoad_%i",thumbNum];
+		while ([_thumbnailLoadingViewsByContentID objectForKey:thumbID] != nil) {
+			thumbID = [NSString stringWithFormat:@"thumbLoad_%i",thumbNum];
+		}
+		
+		UIView * thumbView = [[[UIView alloc]initWithFrame:CGRectMake(0, 0, 200, 100)]autorelease];
+		[_thumbnailLoadingViewsByContentID setObject:thumbView forKey:thumbID];
+		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE fromStartLocation:CGPointZero];
 	}
 }
 
@@ -188,12 +201,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 }
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session{
-	
-	[_contentDisplayController returnContentAtIndexToNormalLocation:-1 animated:TRUE ];	
-	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
-		[sessionViewController setShowActiveTransferIndicator:FALSE];
-		sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
-	}
+	EXOLog(@"Completed sending stream in session!:%@", [session description]);
 }
 
 #pragma mark swypConnectionSessionInfoDelegate
@@ -202,48 +210,67 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 #pragma mark swypContentDisplayViewControllerDelegate
--(void)	contentAtIndex: (NSUInteger)index wasDraggedToFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController{
-	CGRect newXlatedRect	=	[contentDisplayController.view convertRect:draggedFrame toView:_mainWorkspaceView];
-	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:newXlatedRect];
-	if (overlapSession){
-		
-		if (CGColorEqualToColor([[UIColor whiteColor] CGColor], overlapSession.view.layer.borderColor) == NO){
-		
-			overlapSession.view.layer.borderColor	=	[[UIColor whiteColor] CGColor];
-			
-		}
-	}
-}
--(void)	contentAtIndex: (NSUInteger)index wasReleasedWithFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController{
+-(void)	contentWithID:(NSString*)contentID underwentSwypOutWithInfoRef:(swypInfoRef*)ref inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	
-	CGRect newXlatedRect	=	[contentDisplayController.view convertRect:draggedFrame toView:_mainWorkspaceView];
-	
-	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:newXlatedRect];
+	CGRect contentRect		=	[[_contentViewsByContentID objectForKey:contentID] frame];
+
+	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:contentRect];
+
 	if (overlapSession){
+		[self sendContentWithID:contentID throughConnectionSession:[overlapSession connectionSession]];
 		
-		[self sendContentAtIndex:index throughConnectionSession:[overlapSession connectionSession]];
-				
 		[overlapSession setShowActiveTransferIndicator:TRUE];
-		EXOLog(@"Queuing content at index: %i", index);
-	}else{
-		//not all implmentations will wish for this functionality
-//		if ([_contentDisplayController respondsToSelector:@selector(returnContentAtIndexToNormalLocation:animated:)]){
-//			[_contentDisplayController returnContentAtIndexToNormalLocation:index animated:TRUE];	
-//		}
-		
-		for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
-			sessionViewController.view.layer.borderColor	= [[UIColor blackColor] CGColor];
-		}
 	}
+
+}
+
+-(UIView*)		viewForContentWithID:(NSString*)contentID ofMaxSize:(CGSize)maxIconSize inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+	
+	UIView * cachedView	=	[_contentViewsByContentID valueForKey:contentID];
+	if (cachedView == nil){
+		cachedView = [_thumbnailLoadingViewsByContentID valueForKey:contentID];
+	}
+	
+	if (cachedView == nil){
+		UIImage * previewImage =	[_contentDataSource iconImageForContentWithID:contentID ofMaxSize:maxIconSize];
+		
+		assert(previewImage != nil);
+		
+		UIImageView * photoTileView	=	[[UIImageView alloc] initWithImage:previewImage];
+		
+		[photoTileView setUserInteractionEnabled:TRUE];
+		[photoTileView setBackgroundColor:[UIColor blackColor]];
+		
+		CALayer	*layer	=	photoTileView.layer;
+		[layer setBorderColor: [[UIColor whiteColor] CGColor]];
+		[layer setBorderWidth:8.0f];
+		[layer setShadowColor: [[UIColor blackColor] CGColor]];
+		[layer setShadowOpacity:0.9f];
+		[layer setShadowOffset: CGSizeMake(1, 3)];
+		[layer setShadowRadius:4.0];
+		CGMutablePathRef shadowPath		=	CGPathCreateMutable();
+		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.height));
+		[layer setShadowPath:shadowPath];
+        CFRelease(shadowPath);
+		[photoTileView setClipsToBounds:NO];
+		
+		
+		[_contentViewsByContentID setValue:photoTileView forKey:contentID];
+		cachedView = photoTileView;
+		SRELS(photoTileView);
+	}
+	return cachedView;
+	
+}
+
+-(NSArray*)		allIDsForContentInController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+	NSMutableArray * ids = [NSMutableArray array];
+	[ids addObjectsFromArray:[_contentViewsByContentID allKeys]];
+	[ids addObjectsFromArray:[_thumbnailLoadingViewsByContentID allKeys]];
+	return ids;
 }
 
 
--(UIImage*)		imageForContentAtIndex:	(NSUInteger)index ofMaxSize:(CGSize)maxIconSize	inController:(UIViewController*)contentDisplayController{
-	return [_contentDataSource iconImageForContentAtIndex:index ofMaxSize:maxIconSize];
-}
--(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController{
-	return [_contentDataSource countOfContent];
-}
 #pragma mark swypContentDataSourceDelegate 
 -(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:(id<swypContentDataSourceProtocol>)datasource withSession:(swypConnectionSession*)session{
 	

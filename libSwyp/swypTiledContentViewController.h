@@ -15,8 +15,8 @@
 @class swypTiledContentViewController;
 
 @protocol swypTiledContentViewControllerContentDelegate<NSObject>
--(NSInteger)tileCountForTiledContentController:(swypTiledContentViewController*)tileContentController;
--(UIView*)tileViewAtIndex:(NSInteger)tileIndex forTiledContentController:(swypTiledContentViewController*)tileContentController;
+
+-(NSArray*) allTileViewsForTiledContentController:(swypTiledContentViewController*)tileContentController;
 @end
 
 
@@ -30,12 +30,6 @@
 	double	_maxTileColumns;
 	CGPoint	_layoutStartPoint;
 	CGRect	_tileDisplayFrame; 
-	BOOL	_pagingDisabled;
-	
-	NSRange		_displayedTiles;
-	NSInteger	_currentPage;
-	
-	UIView*		_loadingStatusView;
 	
 	NSMutableSet*	_displayedTileViews;
 	
@@ -48,35 +42,30 @@
 @property (nonatomic, assign) double	maxTileColumns;
 @property (nonatomic, assign) CGPoint	layoutStartPoint;
 
-//for setting margins & overall size
+///All the currently displayed tile views;
+@property (nonatomic, readonly) NSSet * displayedTileViews;
+
+///for setting margins & overall size
 @property (nonatomic, assign) CGRect	tileDisplayFrame; 
 
-@property (nonatomic, assign) NSRange	displayedTiles;
-@property (nonatomic, assign) NSInteger currentPage;
+///Just gets a frame for a tile, as if it were at the given index
+-(CGRect)frameForTileNumber:(NSInteger)tileNumber;
 
-@property (nonatomic, assign) BOOL		pagingDisabled;
 
-//set hidden as needed, and will create nice spinny loading indicator
-//the default is hidden
-@property (nonatomic, readonly) UIView*	loadingStatusView;
--(void)		layoutTilePageNumber:(NSInteger)startTilePage;
+///This delegate method allTileViewsForTiledContentController to be called, and all tiles to be layed-out 
 -(void)		reloadTileObjectData;
 
--(void)		viewPreviousTilePageAnimated:(BOOL)animate;
--(void)		viewNextTilePageAnimated:(BOOL)animate;
+/// add a tile to display; it will be place at frameForTileNumber:[[self displayedTileViews] count]
+-(void)		addTile:(UIView*)tile;
+/// remove the tile from view
+-(void)		removeTile:(UIView*)tile;
 
--(id)		initWithDisplayFrame:(CGRect)tileDisplayFrame tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)delegate;
+///This one is great for setting cell size and their margins; use this init function
 -(id)		initWithDisplayFrame:(CGRect)tileDisplayFrame tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)delegate withCenteredTilesSized:(CGSize)tileSize andMargins:(CGSize)tileMargins;
+
 -(id)		initWithDisplayFrame:(CGRect)tileDisplayFrame tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)delegate withCenteredTilesSized:(CGSize)tileSize withMaxRows:(double)maxRows maxColumns:(double)maxColumns;
 
--(void)		showLoadingStatusViewWithLabelText:(NSString*)labelText withIndicatorAnimating:(BOOL)animate;
+-(id)		initWithDisplayFrame:(CGRect)tileDisplayFrame tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)delegate;
 
-//privateish
--(CGRect)	frameForTileNumber:(NSInteger)tileNumber;
-
--(NSRange)		tileRangeForPage:(NSInteger)pageNumber needsForwardPagination:(BOOL*)forwardPaginationNeeded needsBackwardPagination:(BOOL*)backwardPaginationNeeded;
-
-
--(NSInteger)	tilePageCount;
 
 @end
