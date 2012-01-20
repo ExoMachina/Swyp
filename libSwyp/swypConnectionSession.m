@@ -91,10 +91,15 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	[_sendDataQueueStream removeAllQueuedStreamsAfterCurrent];
 	
-	[self _destroyConnectionWithError:nil];
 	
-	//	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
-//	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
+	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
+	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
+	
+	//give the goodbye time to send
+	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+		[self _destroyConnectionWithError:nil];
+	}];
+	
 }
 
 #pragma mark delegatation
