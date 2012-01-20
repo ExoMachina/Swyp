@@ -11,7 +11,7 @@
 
 @implementation swypThumbView
 
-@synthesize image;
+@synthesize image = _image;
 
 static float framePadding = 8.0;
 
@@ -41,8 +41,11 @@ static float framePadding = 8.0;
 }
 
 - (void)setImage:(UIImage *)theImage {
-    self.image = theImage;
-    _imageView.image = self.image;
+    if (theImage != self.image) {
+        [_image release];
+        _image = [theImage retain];
+        _imageView.image = _image;
+    }
 }
 
 + (swypThumbView *)thumbViewWithImage:(UIImage *)theImage {
@@ -62,7 +65,7 @@ static float framePadding = 8.0;
     CALayer	*layer	=	self.layer;
     [layer setShadowColor:[UIColor blackColor].CGColor];
     [layer setShadowOpacity:0.9f];
-    [layer setShadowOffset: CGSizeMake(1, 3)];
+    [layer setShadowOffset: CGSizeMake(0, 1)];
     [layer setShadowRadius:4.0];
     
     CGMutablePathRef shadowPath	= CGPathCreateMutable();
@@ -74,7 +77,7 @@ static float framePadding = 8.0;
 }
 
 - (void)dealloc {
-    [image release];
+    [self.image release];
     [_imageView release];
     [_activityIndicator release];
 

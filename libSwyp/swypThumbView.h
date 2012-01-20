@@ -17,7 +17,9 @@
 - (id)initWithImage:(UIImage *)theImage;
 - (void)showLoading;
 - (void)hideLoading;
+- (void)setImage:(UIImage *)theImage;
 
+// make atomic if we intend to access from multiple threads.
 @property (nonatomic, retain) UIImage *image;
 
 @end
