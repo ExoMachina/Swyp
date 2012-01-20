@@ -12,6 +12,7 @@
 @implementation swypThumbView
 
 @synthesize image = _image;
+@synthesize progress = _progress;
 
 static float framePadding = 8.0;
 
@@ -23,7 +24,19 @@ static float framePadding = 8.0;
         
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
         _activityIndicator.size = frame.size;
+        _activityIndicator.alpha = 0;
         [self insertSubview:_activityIndicator atIndex:1];
+        
+        _progressView = [[SSPieProgressView alloc] initWithFrame:CGRectMake(0, 0, 48, 48)];
+        _progressView.center = self.center;
+        _progressView.frame = CGRectOffset(_progressView.frame, framePadding, framePadding);
+        _progressView.pieBorderWidth = 2.0;
+        _progressView.pieBorderColor = [UIColor whiteColor];
+        _progressView.pieBackgroundColor = [UIColor blackColor];
+        _progressView.pieFillColor = [UIColor whiteColor];
+        _progressView.alpha = 0;
+        
+        [self insertSubview:_progressView atIndex:2];
         
         self.userInteractionEnabled = YES;
         self.clipsToBounds = NO;
@@ -57,16 +70,33 @@ static float framePadding = 8.0;
 }
 
 - (void)showLoading {
+    _progressView.hidden = NO;
     [_activityIndicator startAnimating];
     [UIView animateWithDuration:1 animations:^{
+        _progressView.alpha = 1;
+        _activityIndicator.alpha = 1;
         _activityIndicator.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
     }];
 }
 
+- (void)setProgress:(CGFloat)theProgress {
+    _progress = theProgress;
+    _progressView.progress = _progress;
+    if (theProgress >= 1.0f) {
+        [self hideLoading];
+    }
+}
+
 - (void)hideLoading {
-    [_activityIndicator stopAnimating];
     [UIView animateWithDuration:1 animations:^{
+        _progressView.alpha = 0;
+        _activityIndicator.alpha = 0;
         _activityIndicator.backgroundColor = [UIColor clearColor];
+    } completion:^(BOOL finished){
+        if (finished) {
+            _progressView.hidden = YES;
+            [_activityIndicator stopAnimating];
+        }
     }];
 }
 
@@ -87,6 +117,7 @@ static float framePadding = 8.0;
 - (void)dealloc {
     [_image release];
     [_imageView release];
+    [_progressView release];
     [_activityIndicator release];
 
     [super dealloc];

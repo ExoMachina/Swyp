@@ -31,7 +31,15 @@
 	[[_tiledContentViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 	[[_tiledContentViewController view] setClipsToBounds:FALSE];
 	[[self view] addSubview:[_tiledContentViewController view]];
+    
+    // Just for demo purposes.
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(incrementProgress:) userInfo:nil repeats:YES];
 }
+-(void)viewDidUnload {
+    [super viewDidUnload];
+    [_timer invalidate];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return TRUE;
@@ -139,11 +147,20 @@
 		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
 		[photoTileView addGestureRecognizer:dragRecognizer];
 		SRELS(dragRecognizer);
-        
+                
 		[self setViewTile:photoTileView forTileIndex:tileIndex];
 	}
 	
 	return photoTileView;
+}
+
+
+// Just for demo purposes
+- (void)incrementProgress:(NSTimer *)timer {
+    for (id key in _viewTilesByIndex) {
+        swypThumbView *view = [_viewTilesByIndex objectForKey:key];
+        view.progress = (view.progress + 0.01);
+    }
 }
 										
 

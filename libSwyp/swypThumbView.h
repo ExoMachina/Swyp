@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SSPieProgressView.h"
 
 @interface swypThumbView : UIView {
     UIActivityIndicatorView *_activityIndicator;
+    SSPieProgressView *_progressView;
     UIImageView *_imageView;
 }
 
@@ -18,8 +20,10 @@
 - (void)showLoading;
 - (void)hideLoading;
 - (void)setImage:(UIImage *)theImage;
+- (void)setProgress:(CGFloat)theProgress;
 
 // make atomic if we intend to access from multiple threads.
 @property (nonatomic, retain) UIImage *image;
+@property (nonatomic, assign) CGFloat progress;
 
 @end
