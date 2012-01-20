@@ -23,6 +23,9 @@ static float framePadding = 8.0;
         
         _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
         [self insertSubview:_activityIndicator atIndex:1];
+        
+        self.userInteractionEnabled = YES;
+        self.clipsToBounds = NO;
     }
     return self;
 }
@@ -63,17 +66,15 @@ static float framePadding = 8.0;
 - (void)drawRect:(CGRect)rect
 {
     CALayer	*layer	=	self.layer;
-    [layer setShadowColor:[UIColor blackColor].CGColor];
-    [layer setShadowOpacity:0.9f];
-    [layer setShadowOffset: CGSizeMake(0, 1)];
-    [layer setShadowRadius:4.0];
+    layer.shadowColor = [UIColor blackColor].CGColor;
+    layer.shadowOpacity = 0.9f;
+    layer.shadowOffset = CGSizeMake(0, 2);
+    layer.shadowRadius = 4.0;
     
     CGMutablePathRef shadowPath	= CGPathCreateMutable();
-    CGPathAddRect(shadowPath, NULL, self.frame);
-    [layer setShadowPath:shadowPath];
+    CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, self.frame.size.width, self.frame.size.height));
+    layer.shadowPath = shadowPath;
     CFRelease(shadowPath);
-    
-    [self setClipsToBounds:NO];
 }
 
 - (void)dealloc {
