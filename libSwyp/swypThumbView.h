@@ -10,13 +10,14 @@
 
 @interface swypThumbView : UIView {
     UIActivityIndicatorView *_activityIndicator;
+    UIImageView *_imageView;
 }
 
-+ (swypThumbView *)thumbViewWithImage:(UIImageView *)theImage;
-- (id)initWithImageView:(UIImageView *)theImage;
++ (swypThumbView *)thumbViewWithImage:(UIImage *)theImage;
+- (id)initWithImage:(UIImage *)theImage;
 - (void)showLoading;
 - (void)hideLoading;
 
-@property (nonatomic, retain) UIImageView *image;
+@property (nonatomic, retain) UIImage *image;
 
 @end

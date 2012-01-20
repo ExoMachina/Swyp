@@ -27,19 +27,26 @@ static float framePadding = 8.0;
     return self;
 }
 
-- (id)initWithImageView:(UIImageView *)theImage {
+- (id)initWithImage:(UIImage *)theImage {
+    CGRect imageFrame = CGRectMake(0, 0, theImage.size.width, theImage.size.height);
     
-    self = [self initWithFrame:CGRectInset(theImage.frame, -1*framePadding, -1*framePadding)];
+    self = [self initWithFrame:CGRectInset(imageFrame, -1*framePadding, -1*framePadding)];
     if (self) {
         self.image = theImage;
-        self.image.frame = CGRectOffset(self.image.frame, framePadding, framePadding);
-        [self insertSubview:self.image atIndex:0];
+        _imageView = [[UIImageView alloc] initWithFrame:CGRectOffset(imageFrame, framePadding, framePadding)];
+        _imageView.image = self.image;
+        [self insertSubview:_imageView atIndex:0];
     }
     return self;
 }
 
-+ (swypThumbView *)thumbViewWithImage:(UIImageView *)theImage {
-    return [[[swypThumbView alloc] initWithImageView:theImage] autorelease];
+- (void)setImage:(UIImage *)theImage {
+    self.image = theImage;
+    _imageView.image = self.image;
+}
+
++ (swypThumbView *)thumbViewWithImage:(UIImage *)theImage {
+    return [[[swypThumbView alloc] initWithImage:theImage] autorelease];
 }
 
 - (void)showLoading {
@@ -67,8 +74,10 @@ static float framePadding = 8.0;
 }
 
 - (void)dealloc {
-    [_activityIndicator release];
     [image release];
+    [_imageView release];
+    [_activityIndicator release];
+
     [super dealloc];
 }
 
