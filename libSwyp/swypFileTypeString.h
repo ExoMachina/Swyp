@@ -53,9 +53,23 @@
 		Used to notify peer of changes in connection state, like intention to terminate.
 		MIME: "swyp/ControlPacket"
  
- @warning an exception is thrown if you use this yourself. Use invalidate on swypConnectionSession instead.
+ @warning don't try to use this anywhere. Use invalidate on swypConnectionSession to close connections instead.
 */
 +(id) swypControlPacketFileType;
 
+/**
+ Used by swyp workspace to show preview image of loading content. 
+
+ Only handled by swypContentInteractionManager, which provides things like a waterfall UI.
+ 
+ We internally rely upon an 80% quality JPEG for v-fast xfer.
+ 
+ MIME: "swyp/WorkspaceThumbnail"
+ 
+ @warning to have the workspace display the thumbnail, you must have the swypContentInteractionManager as a swypConnectionSession dataDelegate. 
+
+ @warning send the actual file right after the thumbnail, and set the tags of each to be identical. Behavior otherwise is undefined, but isn't good.
+ */
++(id) swypWorkspaceThumbnailFileType;
 
 @end

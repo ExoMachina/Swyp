@@ -103,14 +103,20 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		return;
 	}
 	
+	NSString * tag	=	@"userContent";
+	
+#pragma mark TODO:
+//	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentAtIndex:index ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
+//	if (thumbnailImageData != nil){
+//		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
+//		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:dataLength];
+//	}
+	
 	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentAtIndex:index fileType:fileTypeToUse length:&dataLength];
-	[session beginSendingFileStreamWithTag:@"photo" type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
+	[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
 	
 }
 
--(void)		temporarilyExagerateContentAtIndex:	(NSUInteger)index{
-	
-}
 
 #pragma mark NSObject
 

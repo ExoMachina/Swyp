@@ -128,6 +128,7 @@
 		79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467514C1CA6C00107170 /* swypInterfaceManager.h */; };
 		79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467714C244E300107170 /* swypBluetoothPairManager.h */; };
 		79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467814C244E300107170 /* swypBluetoothPairManager.m */; };
+		79FD02DD14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */; };
 		AA747D9F0F9514B9006C5449 /* libSwyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -254,6 +255,7 @@
 		79F1467514C1CA6C00107170 /* swypInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInterfaceManager.h; sourceTree = "<group>"; };
 		79F1467714C244E300107170 /* swypBluetoothPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBluetoothPairManager.h; sourceTree = "<group>"; };
 		79F1467814C244E300107170 /* swypBluetoothPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBluetoothPairManager.m; sourceTree = "<group>"; };
+		79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDisplayViewControllerProtocol.h; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libSwyp_Prefix.pch; path = Users/alist/Documents/highFyve/dev/swypPhotos/lib/swyp/libSwyp/libSwyp_Prefix.pch; sourceTree = SDKROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* liblibSwyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibSwyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -350,6 +352,7 @@
 		680FC61413E30F2300509CF2 /* Content Display */ = {
 			isa = PBXGroup;
 			children = (
+				79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */,
 				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
 				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
 				79C080771481B00C00306F67 /* swypPhotoPlayground.h */,
@@ -372,9 +375,8 @@
 		680FC61613E30F4000509CF2 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
+				79FD02DA14C9EA2B00BD4382 /* workspace components */,
 				680FC61413E30F2300509CF2 /* Content Display */,
-				680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */,
-				680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */,
 			);
 			name = Interface;
 			sourceTree = "<group>";
@@ -640,6 +642,15 @@
 			name = Bluetooth;
 			sourceTree = "<group>";
 		};
+		79FD02DA14C9EA2B00BD4382 /* workspace components */ = {
+			isa = PBXGroup;
+			children = (
+				680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */,
+				680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */,
+			);
+			name = "workspace components";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -708,6 +719,7 @@
 				79DF3AA914C329930086CF85 /* swypGKPeerAbstractedStreamSet.h in Headers */,
 				79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */,
 				3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */,
+				79FD02DD14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

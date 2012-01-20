@@ -214,4 +214,8 @@
 	return returnContentIndex;
 }
 
+-(CGSize) choiceMaxSizeForContentDisplay{
+	return _photoSize;
+}
+
 @end

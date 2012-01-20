@@ -39,6 +39,8 @@
 //the photo playground makes a nice interface for browsing images on a background
 #import "swypPhotoPlayground.h"
 #import "swypContentInteractionManager.h"
+//here's the protocol file for all contentDisplayControllers
+#import "swypContentDisplayViewControllerProtocol.h"
 
 //the following are for conneciton creation
 #import "swypHandshakeManager.h"

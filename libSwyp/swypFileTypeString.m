@@ -32,6 +32,11 @@
 	return type;
 }
 
++(id) swypWorkspaceThumbnailFileType{
+	static NSString * type = @"swyp/WorkspaceThumbnail";
+	return type;
+}
+
 
 -(BOOL) isFileType:	(NSString*)fileType{
 	return [self isEqualToString:fileType];
