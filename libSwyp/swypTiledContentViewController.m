@@ -37,6 +37,7 @@
 	}completion:^(BOOL finished){
 		[tile removeFromSuperview];
 	}];
+	[_displayedTileViews removeObject:tile];
 }
 
 -(void)		layoutTiles:(NSArray*)tiles{

@@ -271,7 +271,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(NSArray*)		allIDsForContentInController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	NSMutableArray * ids = [NSMutableArray array];
-	[ids addObjectsFromArray:[_contentViewsByContentID allKeys]];
+	[ids addObjectsFromArray:[_contentDataSource idsForAllContent]];
 	[ids addObjectsFromArray:[_thumbnailLoadingViewsByContentID allKeys]];
 	return ids;
 }
