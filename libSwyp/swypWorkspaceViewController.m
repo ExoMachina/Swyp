@@ -190,13 +190,13 @@
     
     // weird ios4 bug
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
-        [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
+        [curlButton addTarget:self action:@selector(_animateArrows:) forControlEvents:UIControlEventTouchDown];
     }
     
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
          forControlEvents:UIControlEventTouchUpInside];
          
-    [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
+    [curlButton addTarget:self action:@selector(_stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
     UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
