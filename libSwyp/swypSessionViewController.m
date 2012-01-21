@@ -13,6 +13,7 @@
 @implementation swypSessionViewController
 @synthesize connectionSession = _connectionSession;
 @synthesize showActiveTransferIndicator = _showActiveTransferIndicator;
+@synthesize contentLoadingThumbs = _contentLoadingThumbs;
 
 #pragma mark public 
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView{
@@ -30,13 +31,15 @@
 #pragma mark private
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session{
 	if (self = [super initWithNibName:nil bundle:nil]){
-		_connectionSession = [session retain];
+		_connectionSession		= [session retain];
+		_contentLoadingThumbs	= [NSMutableSet new];
 	}
 	return self;
 }
 
 -(void)dealloc{
 	SRELS(_connectionSession);
+	SRELS(_contentLoadingThumbs);
 	
 	[super dealloc];
 }

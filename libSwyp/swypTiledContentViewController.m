@@ -14,13 +14,15 @@
 
 #pragma mark layout 
 
--(void)		addTile:(UIView*)tile{
+-(void)		addTile:(UIView*)tile animated:(BOOL)animate{
 	if ([_displayedTileViews containsObject:tile] == NO){
 		[self.view addSubview:tile];
 		
-		double preAlpha	= tile.alpha;
-		tile.alpha	= 0;
-		[UIView animateWithDuration:.4 animations:^{tile.alpha = preAlpha;} completion:nil];
+		if (animate){
+			double preAlpha	= tile.alpha;
+			tile.alpha	= 0;
+			[UIView animateWithDuration:.4 animations:^{tile.alpha = preAlpha;} completion:nil];
+		}
 		
 		CGRect tileFrame	= [self frameForTileNumber:[_displayedTileViews count]];
 		if (CGSizeEqualToSize(tileFrame.size, tile.size) == NO){
@@ -31,12 +33,17 @@
 		[_displayedTileViews addObject:tile];
 	}
 }
--(void)		removeTile:(UIView*)tile{
-	[UIView animateWithDuration:.4 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent animations:^{
-		[tile setAlpha:0];
-	}completion:^(BOOL finished){
+-(void)		removeTile:(UIView*)tile animated:(BOOL)animate{
+	if (animate){
+		[UIView animateWithDuration:.4 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent animations:^{
+			[tile setAlpha:0];
+		}completion:^(BOOL finished){
+			[tile removeFromSuperview];
+		}];
+	}else{
 		[tile removeFromSuperview];
-	}];
+	
+	}
 	[_displayedTileViews removeObject:tile];
 }
 

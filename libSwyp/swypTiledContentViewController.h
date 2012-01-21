@@ -56,9 +56,9 @@
 -(void)		reloadTileObjectData;
 
 /// add a tile to display; it will be place at frameForTileNumber:[[self displayedTileViews] count]
--(void)		addTile:(UIView*)tile;
+-(void)		addTile:(UIView*)tile animated:(BOOL)animate;
 /// remove the tile from view
--(void)		removeTile:(UIView*)tile;
+-(void)		removeTile:(UIView*)tile animated:(BOOL)animate;
 
 ///This one is great for setting cell size and their margins; use this init function
 -(id)		initWithDisplayFrame:(CGRect)tileDisplayFrame tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)delegate withCenteredTilesSized:(CGSize)tileSize andMargins:(CGSize)tileMargins;

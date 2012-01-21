@@ -22,7 +22,7 @@
 	NSMutableDictionary *									_sessionViewControllersBySession;
 	
 	swypBidirectionalMutableDictionary * _contentViewsByContentID;
-	NSMutableDictionary *	_thumbnailLoadingViewsByContentID;
+	swypBidirectionalMutableDictionary * _thumbnailLoadingViewsByContentID;
 	
 	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	

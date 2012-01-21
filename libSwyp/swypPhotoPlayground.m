@@ -152,7 +152,7 @@
 #pragma mark swypContentDisplayViewController <NSObject>
 -(void)	removeContentFromDisplayWithID:	(NSString*)removeID animated:(BOOL)animate{
 	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:removeID ofMaxSize:_photoSize inController:self];
-	[_tiledContentViewController removeTile:tileView];
+	[_tiledContentViewController removeTile:tileView animated:animate];
 }
 
 -(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate{
@@ -160,7 +160,7 @@
 	UIView * tileView	=	[self _setupTileWithID:insertID];
 	[_contentViewTilesByID setObject:tileView forKey:insertID];
 	
-	[_tiledContentViewController addTile:tileView];
+	[_tiledContentViewController addTile:tileView animated:animate];
 }
 
 

@@ -9,6 +9,7 @@
 #import "swypContentInteractionManager.h"
 #import "swypPhotoPlayground.h"
 #import <QuartzCore/QuartzCore.h>
+#import "swypThumbView.h"
 
 static NSArray * supportedReceiveFileTypes =  nil;
 
@@ -42,6 +43,15 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[session removeConnectionSessionInfoDelegate:self];
 	
 	swypSessionViewController*	sessionView	=	[self maintainedSwypSessionViewControllerForSession:session];
+	
+	for (swypThumbView * thumb in [sessionView contentLoadingThumbs]){
+		
+		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumb];
+		
+		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+	}
+	
 	[UIView animateWithDuration:.75 animations:^{
 		sessionView.view.alpha = 0;
 	}completion:^(BOOL completed){
@@ -126,7 +136,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if (self = [super init]){
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_contentViewsByContentID			=	[[swypBidirectionalMutableDictionary alloc] init];
-		_thumbnailLoadingViewsByContentID	=	[[NSMutableDictionary alloc] init];
+		_thumbnailLoadingViewsByContentID	=	[[swypBidirectionalMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
 	}
@@ -183,6 +193,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+
 	EXOLog(@"Successfully received data of type %@",[discernedStream streamType]);
 	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
 		
@@ -192,9 +203,48 @@ static NSArray * supportedReceiveFileTypes =  nil;
 			thumbID = [NSString stringWithFormat:@"thumbLoad_%i",thumbNum];
 		}
 		
-		UIView * thumbView = [[[UIView alloc]initWithFrame:CGRectMake(0, 0, 200, 100)]autorelease];
+		swypThumbView * thumbView	=	[swypThumbView thumbViewWithImage:[UIImage imageWithData:streamData]];
+		[thumbView showLoading];
+
 		[_thumbnailLoadingViewsByContentID setObject:thumbView forKey:thumbID];
 		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE];
+
+		
+		swypSessionViewController * sessionView =	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:session]];
+		[[sessionView contentLoadingThumbs] addObject:thumbView];
+
+		swypInfoRef * swypInfo = [[session representedCandidate] matchedLocalSwypInfo];
+		
+		[thumbView setCenter:[[sessionView view] center]];
+		
+		
+		CGRect thumbFrame			= [thumbView frame];
+		CGRect newTranslationFrame	= CGRectZero;
+		double velocity				= [swypInfo velocity];
+		
+		CGRect leftRect		= CGRectMake(0, 0, 150, 1200);
+		CGRect rightRect	= CGRectMake(self.contentDisplayController.view.width-150, 0, 150, 1200);
+		CGRect bottomRect	= CGRectMake(0, self.contentDisplayController.view.height-200, 1200, 200);
+		CGRect topRect	= CGRectMake(0, 0, 1200, 200);
+
+		if (CGRectIntersectsRect(leftRect, thumbFrame)){
+			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * .5, 0));
+		}else if (CGRectIntersectsRect(rightRect, thumbFrame)){
+			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * -0.5, 0));
+		}else if (CGRectIntersectsRect(bottomRect, thumbFrame)){
+			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * -0.5));
+		}else if (CGRectIntersectsRect(topRect, thumbFrame)){
+			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * 0.5));
+		}else{
+			newTranslationFrame = thumbFrame;
+		}
+		
+		EXOLog(@"Org %@, Dest %@",rectDescriptionString(thumbFrame),rectDescriptionString(newTranslationFrame));
+
+		[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
+			[thumbView setFrame:newTranslationFrame];
+		}completion:nil];
+		
 	}
 }
 
