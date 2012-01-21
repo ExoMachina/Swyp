@@ -9,8 +9,9 @@
 #import "swypPhotoPlayground.h"
 #import "swypTiledContentViewController.h"
 #import <QuartzCore/QuartzCore.h>
-@implementation swypPhotoPlayground
+#import "swypThumbView.h"
 
+@implementation swypPhotoPlayground
 
 #pragma mark UIViewController
 -(id) initWithPhotoSize:(CGSize)imageSize{
@@ -30,7 +31,15 @@
 	[[_tiledContentViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 	[[_tiledContentViewController view] setClipsToBounds:FALSE];
 	[[self view] addSubview:[_tiledContentViewController view]];
+    
+    // Just for demo purposes.
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(incrementProgress:) userInfo:nil repeats:YES];
 }
+-(void)viewDidUnload {
+    [super viewDidUnload];
+    [_timer invalidate];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return TRUE;
@@ -123,33 +132,35 @@
 	return [_contentDisplayControllerDelegate totalContentCountInController:self];
 }
 -(UIView*)tileViewAtIndex:(NSInteger)tileIndex forTiledContentController:(swypTiledContentViewController*)tileContentController{
+    /*
 	UIImageView * photoTileView =	(UIImageView*)[self viewForTileIndex:tileIndex];
+     */
+    swypThumbView *photoTileView = (swypThumbView *)[self viewForTileIndex:tileIndex];
+    
 	if (photoTileView == nil){
-		photoTileView	=	[[UIImageView alloc] initWithImage:[_contentDisplayControllerDelegate imageForContentAtIndex:tileIndex ofMaxSize:_photoSize inController:self]];
-		[photoTileView setUserInteractionEnabled:TRUE];
-		[photoTileView setBackgroundColor:[UIColor blackColor]];
-		
-		CALayer	*layer	=	photoTileView.layer;
-		[layer setBorderColor: [[UIColor whiteColor] CGColor]];
-		[layer setBorderWidth:8.0f];
-		[layer setShadowColor: [[UIColor blackColor] CGColor]];
-		[layer setShadowOpacity:0.9f];
-		[layer setShadowOffset: CGSizeMake(1, 3)];
-		[layer setShadowRadius:4.0];
-		CGMutablePathRef shadowPath		=	CGPathCreateMutable();
-		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.height));
-		[layer setShadowPath:shadowPath];
-        CFRelease(shadowPath);
-		[photoTileView setClipsToBounds:NO];
+        UIImage *contentImage = [_contentDisplayControllerDelegate imageForContentAtIndex:tileIndex 
+                                                                                ofMaxSize:_photoSize 
+                                                                             inController:self];
+        photoTileView = [swypThumbView thumbViewWithImage:contentImage];
+        [photoTileView showLoading];
 		
 		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
 		[photoTileView addGestureRecognizer:dragRecognizer];
 		SRELS(dragRecognizer);
+                
 		[self setViewTile:photoTileView forTileIndex:tileIndex];
-		[photoTileView release];
 	}
 	
 	return photoTileView;
+}
+
+
+// Just for demo purposes
+- (void)incrementProgress:(NSTimer *)timer {
+    for (id key in _viewTilesByIndex) {
+        swypThumbView *view = [_viewTilesByIndex objectForKey:key];
+        view.progress = (view.progress + 0.01);
+    }
 }
 										
 

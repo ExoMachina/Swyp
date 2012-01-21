@@ -17,6 +17,8 @@
 	NSMutableDictionary *							_viewTilesByIndex;
 	
 	CGSize											_photoSize;
+    
+    NSTimer *                                       _timer;
 }
 -(id)		initWithPhotoSize:(CGSize)imageSize;
 

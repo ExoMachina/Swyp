@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3EA111AC14CA04D40073A717 /* swypThumbView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111AA14CA04D40073A717 /* swypThumbView.h */; };
+		3EA111AD14CA04D40073A717 /* swypThumbView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111AB14CA04D40073A717 /* swypThumbView.m */; };
+		3EA111B114CA1F6F0073A717 /* SSPieProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */; };
+		3EA111B214CA1F6F0073A717 /* SSPieProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */; };
+		3EA111B514CA1FF00073A717 /* SSDrawingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */; };
+		3EA111B614CA1FF00073A717 /* SSDrawingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */; };
 		3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */; };
 		3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */; };
 		680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03613E0C3CD00509CF2 /* CFNetwork.framework */; };
@@ -134,6 +140,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3EA111AA14CA04D40073A717 /* swypThumbView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypThumbView.h; sourceTree = "<group>"; };
+		3EA111AB14CA04D40073A717 /* swypThumbView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypThumbView.m; sourceTree = "<group>"; };
+		3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPieProgressView.h; sourceTree = "<group>"; };
+		3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSPieProgressView.m; sourceTree = "<group>"; };
+		3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSDrawingUtilities.h; sourceTree = "<group>"; };
+		3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSDrawingUtilities.m; sourceTree = "<group>"; };
 		3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPromptImageView.h; sourceTree = "<group>"; };
 		3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPromptImageView.m; sourceTree = "<group>"; };
 		680FC03613E0C3CD00509CF2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -352,6 +364,10 @@
 		680FC61413E30F2300509CF2 /* Content Display */ = {
 			isa = PBXGroup;
 			children = (
+				3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */,
+				3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */,
+				3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */,
+				3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */,
 				79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */,
 				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
 				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
@@ -359,6 +375,8 @@
 				79C080781481B00C00306F67 /* swypPhotoPlayground.m */,
 				79C080721481A9B700306F67 /* swypTiledContentViewController.h */,
 				79C080731481A9B700306F67 /* swypTiledContentViewController.m */,
+				3EA111AA14CA04D40073A717 /* swypThumbView.h */,
+				3EA111AB14CA04D40073A717 /* swypThumbView.m */,
 			);
 			name = "Content Display";
 			sourceTree = "<group>";
@@ -720,6 +738,9 @@
 				79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */,
 				3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */,
 				79FD02DD14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h in Headers */,
+				3EA111AC14CA04D40073A717 /* swypThumbView.h in Headers */,
+				3EA111B114CA1F6F0073A717 /* SSPieProgressView.h in Headers */,
+				3EA111B514CA1FF00073A717 /* SSDrawingUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,6 +853,9 @@
 				79DF3AAA14C329930086CF85 /* swypGKPeerAbstractedStreamSet.m in Sources */,
 				79DF3AAE14C32C000086CF85 /* swypOutputToDataStream.m in Sources */,
 				3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */,
+				3EA111AD14CA04D40073A717 /* swypThumbView.m in Sources */,
+				3EA111B214CA1F6F0073A717 /* SSPieProgressView.m in Sources */,
+				3EA111B614CA1FF00073A717 /* SSDrawingUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
