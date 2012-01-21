@@ -52,7 +52,6 @@
 }
 
 - (void) setBluetoothReady:(BOOL)isReady {
-    
     [UIView transitionFromView:(isReady ? _bluetoothView: _imageView)
                         toView:(isReady ? _imageView: _bluetoothView) 
                       duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)
