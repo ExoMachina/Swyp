@@ -49,19 +49,19 @@
 
 /** 
  The thumbnail image. 
- @see setImage:
+ @see setImage
  */
 @property (nonatomic, retain) UIImage *image;
 
 /**
  The current download progress, a float between 0.0 and 1.0.
- @see setProgress:
+ @see setProgress
  */
 @property (nonatomic, assign) CGFloat progress;
 
 /**
  Indicates whether or not the file is currently loadign.
- @see setLoading:
+ @see setLoading
  */
 @property (nonatomic, assign) BOOL loading;
 
