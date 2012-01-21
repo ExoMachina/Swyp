@@ -57,5 +57,7 @@
 //private
 -(void) _setupUIForCurrentOrientation;
 -(void) _setupWorkspacePromptUI;
+-(void) _animateArrows;
+-(void) _stopArrows;
 
 @end
