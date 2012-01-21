@@ -49,11 +49,13 @@
 	if (StringHasText(contentID)){
 
 #pragma mark TODO: make some runloop excuse for this not being a cludge		
-		[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+		NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
 			
-				EXOLog(@"Sending 'contentSwyp' content : %@", contentID );
 				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
 		}];
+		
+		[NSTimer scheduledTimerWithTimeInterval:.1 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
+
 	}
 			
 }
