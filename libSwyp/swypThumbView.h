@@ -60,7 +60,7 @@
 @property (nonatomic, assign) CGFloat progress;
 
 /**
- Indicates whether or not the file is currently loadign.
+ Indicates whether or not the file is currently loading.
  @see setLoading
  */
 @property (nonatomic, assign) BOOL loading;
