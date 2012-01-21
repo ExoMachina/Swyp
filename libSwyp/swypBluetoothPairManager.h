@@ -35,7 +35,7 @@
 	
 }
 ///when paired by peer; defined in swypInterfaceManager
-@property (nonatomic, readonly) BOOL interfaceReady;
+@property (nonatomic, assign) BOOL interfaceReady;
 
 //private
 -(void) _createSessionsIfNeeded;

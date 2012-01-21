@@ -37,6 +37,9 @@
 	
 	SRELS(_gameKitPeerSession);
 	
+	_bluetoothEnabled	= FALSE;
+	[self setInterfaceReady:FALSE];
+	
 }
 
 -(GKSession*)gameKitPeerSession{
@@ -154,8 +157,6 @@
 						
 		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
 		
-		_bluetoothEnabled					= FALSE;
-		_interfaceReady						= FALSE;
 	}
 	return self;
 }
@@ -232,7 +233,7 @@
 		}
 		
 	}else if (state == GKPeerStateConnected){
-		_interfaceReady = TRUE;
+		[self setInterfaceReady:TRUE];
 		//great, we're connected, but NBD, we'll use it if there's a swyp later
 		//we are de-coupling connections on swyp level from those on GameKit
 		EXOLog(@"pre-connected via bluetooth to peer: %@",peerID);
