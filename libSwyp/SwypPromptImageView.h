@@ -13,6 +13,8 @@
     UIView *_bluetoothView;
 }
 
-- (void) setBluetoothReady:(BOOL)isWaiting;
+///This performs a flip animation to/from the regular swyp icon once
+///bluetooth is on and ready to accept connections.
+- (void) setBluetoothReady:(BOOL)isReady;
 
 @end
