@@ -25,4 +25,8 @@
 
 ///this just keeps the photo in bounds
 -(CGRect)	rectToKeepInPlaygroundWithIntendedRect:	(CGRect)intendedRect;
+
+//
+//private 
+-(UIView*) _setupTileWithID:(NSString*)tileID;
 @end

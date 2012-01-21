@@ -35,6 +35,8 @@
 	
 	swypOutGestureRecognizer * swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
 	[swypOutRecognizer setDelegate:self];
+	[[self view] addGestureRecognizer:swypOutRecognizer];
+	SRELS(swypOutRecognizer);
 	
 }
 														 
@@ -108,8 +110,11 @@
 -(void)	swypOutGestureChanged:(swypOutGestureRecognizer*)recognizer{
 	if (recognizer.state == UIGestureRecognizerStateRecognized){
 		UIView * gestureView	=	[[recognizer swypGestureInfo] swypBeginningContentView];
-		if ([_contentViewTilesByID keyForObject:gestureView] != nil){
-			[_contentDisplayControllerDelegate contentWithID:[_contentViewTilesByID keyForObject:gestureView] underwentSwypOutWithInfoRef:[recognizer swypGestureInfo] inController:self];
+		NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:gestureView];
+		if (StringHasText(swypOutContentID)){
+
+			EXOLog(@"Swyp-out occured in contentDisplayViewController w/ content :%@",swypOutContentID);
+			[_contentDisplayControllerDelegate contentWithID:swypOutContentID underwentSwypOutWithInfoRef:[recognizer swypGestureInfo] inController:self];
 		}
 	}
 }
@@ -131,24 +136,9 @@
 	NSMutableArray * allTilesArray = [NSMutableArray array];
 	for (NSString * tileID  in [_contentDisplayControllerDelegate allIDsForContentInController:self]){
 		
-		UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:tileID ofMaxSize:_photoSize inController:self];
-		
-		BOOL needAddPanRecognizer = TRUE;
-		for (UIGestureRecognizer * recognizer in [tileView gestureRecognizers]){
-			if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]){
-				needAddPanRecognizer = FALSE;
-				break;
-			}
-		}
-		if (needAddPanRecognizer){
-			UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
-			[tileView addGestureRecognizer:dragRecognizer];
-			SRELS(dragRecognizer);
-		}
-		
-		#pragma mark TODO: add swypOutGesture recognition here
-		EXOLog(@"Need swyp-out recognition!! %@",@"here!");
-		
+		UIView * tileView	=	[self _setupTileWithID:tileID];
+		[_contentViewTilesByID setObject:tileView forKey:tileID];
+				
 		[allTilesArray addObject:tileView];
 	}
 	return allTilesArray;
@@ -162,7 +152,9 @@
 
 -(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate{
 	
-	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:insertID ofMaxSize:_photoSize inController:self];
+	UIView * tileView	=	[self _setupTileWithID:insertID];
+	[_contentViewTilesByID setObject:tileView forKey:insertID];
+	
 	[_tiledContentViewController addTile:tileView];
 }
 
@@ -175,6 +167,7 @@
 }
 
 -(void)	reloadAllData{
+	[_contentViewTilesByID removeAllObjects];
 	[_tiledContentViewController reloadTileObjectData];
 }
 
@@ -182,19 +175,6 @@
 	
 #pragma mark TODO:
 	EXOLog(@"returnContentWithIDToNormalLocation is marked TODO!");
-	/**
-	if (animate){
-		[UIView animateWithDuration:.5 animations:^{
-			[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-				[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
-			}];
-		}];
-	}else{
-		[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-			[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
-		}];
-	}	
-	 */
 }
   
 
@@ -212,4 +192,24 @@
 	return _photoSize;
 }
 
+
+#pragma mark - private
+-(UIView*) _setupTileWithID:(NSString*)tileID{
+	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:tileID ofMaxSize:_photoSize inController:self];
+	
+	BOOL needAddPanRecognizer = TRUE;
+	for (UIGestureRecognizer * recognizer in [tileView gestureRecognizers]){
+		if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]){
+			needAddPanRecognizer = FALSE;
+			break;
+		}
+	}
+	if (needAddPanRecognizer){
+		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
+		[tileView addGestureRecognizer:dragRecognizer];
+		SRELS(dragRecognizer);
+	}
+	
+	return tileView;
+}
 @end

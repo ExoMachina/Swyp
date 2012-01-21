@@ -145,7 +145,6 @@
 }
 
 -(void)	leaveWorkspaceButtonPressed:(id)sender {
-    EXOLog(@"PRESSED IT.");
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
 - (void)animateArrows:(id)sender {
