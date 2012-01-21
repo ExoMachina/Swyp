@@ -14,6 +14,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 @implementation swypContentInteractionManager
 @synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController;
+@synthesize contentViewsByContentID = _contentViewsByContentID;
 
 #pragma public
 
@@ -122,7 +123,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 -(id)	initWithMainWorkspaceView: (UIView*)workspaceView{
 	if (self = [super init]){
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
-		_contentViewsByContentID			=	[[NSMutableDictionary alloc] init];
+		_contentViewsByContentID			=	[[swypBidirectionalMutableDictionary alloc] init];
 		_thumbnailLoadingViewsByContentID	=	[[NSMutableDictionary alloc] init];
 		_mainWorkspaceView					=	[workspaceView retain];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
@@ -191,7 +192,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		
 		UIView * thumbView = [[[UIView alloc]initWithFrame:CGRectMake(0, 0, 200, 100)]autorelease];
 		[_thumbnailLoadingViewsByContentID setObject:thumbView forKey:thumbID];
-		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE fromStartLocation:CGPointZero];
+		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE];
 	}
 }
 
@@ -213,7 +214,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 -(void)	contentWithID:(NSString*)contentID underwentSwypOutWithInfoRef:(swypInfoRef*)ref inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	
 	CGRect contentRect		=	[[_contentViewsByContentID objectForKey:contentID] frame];
-
+	
+	EXOLog(@"underwentSwypOutWithInfoRef contentRect: {x,y,w,h}, {%f,%f,%f,%f}",contentRect.origin.x,contentRect.origin.y,contentRect.size.width,contentRect.size.height);
+	EXOLog(@"TODO: %@",@"setup tragectory calculation");
+	
 	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:contentRect];
 
 	if (overlapSession){
@@ -272,18 +276,17 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 
 #pragma mark swypContentDataSourceDelegate 
--(void)	datasourceInsertedContentAtIndex:(NSUInteger)insertIndex withDatasource:(id<swypContentDataSourceProtocol>)datasource withSession:(swypConnectionSession*)session{
-	
-	CGPoint contentShowLocation	=	CGPointZero;
-	if (session){
-		contentShowLocation		=	[[[session representedCandidate] matchedLocalSwypInfo] endPoint];
-	}
-	[_contentDisplayController insertContentToDisplayAtIndex:insertIndex animated:TRUE fromStartLocation:contentShowLocation];
+-(void)	datasourceInsertedContentWithID:(NSString*)insertID withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentDisplayController addContentToDisplayWithID:insertID animated:TRUE];
 }
--(void)	datasourceRemovedContentAtIndex:(NSUInteger)removeIndex withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
-	[_contentDisplayController removeContentFromDisplayAtIndex:removeIndex animated:TRUE];
+
+-(void)	datasourceRemovedContentWithID:(NSString*)removeID withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentViewsByContentID removeObjectForKey:removeID];
+	[_contentDisplayController removeContentFromDisplayWithID:removeID animated:TRUE];
 }
+
 -(void)	datasourceSignificantlyModifiedContent:	(id<swypContentDataSourceProtocol>)datasource{
+	[_contentViewsByContentID removeAllObjects];
 	[_contentDisplayController reloadAllData];
 }
 

@@ -12,23 +12,22 @@
 @implementation swypPhotoArrayDatasource
 
 
--(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
-	UIImage * iconImage		=	[self generateIconImageForImageData:photoData maxSize:CGSizeMake(250, 250)];
+-(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex{
+	UIImage * iconImage		=	[self _generateIconImageForImageData:photoData maxSize:CGSizeMake(250, 250)];
 	if (iconImage == nil)
 		return;
 	
-	[_photoDataArray insertObject:photoData atIndex:insertIndex];
-	[_cachedPhotoUIImages	insertObject:iconImage atIndex:insertIndex];
+	NSString * uniqueID	= [self _generateUniqueContentID];
 	
-	[_datasourceDelegate datasourceInsertedContentAtIndex:insertIndex withDatasource:self withSession:session];
+	[_photoDataByContentID setValue:photoData forKey:uniqueID];
+	[_cachedImagesByContentID setValue:iconImage forKey:uniqueID];
+	[_orderedContentIDs insertObject:uniqueID atIndex:insertIndex];
+	
+	[_datasourceDelegate datasourceInsertedContentWithID:uniqueID withDatasource:self];
 }
 
--(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex{
-	[self addUIImage:addImage atIndex:insertIndex fromSession:nil];
-}
-
--(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
-	[self addPhotoData:UIImagePNGRepresentation(addImage) atIndex:insertIndex fromSession:session];
+-(void) addUIImage:(UIImage*)addImage atIndex:(NSUInteger)insertIndex{
+	[self addPhotoData:UIImagePNGRepresentation(addImage) atIndex:insertIndex];
 }
 
 -(void) addUIImageArray:(NSArray*)imageArray{
@@ -43,59 +42,34 @@
 	}
 }
 
--(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex{
-	[self addPhotoData:photoData atIndex:insertIndex fromSession:nil];
-}
 
 -(void) removeAllPhotos{
-	[_cachedPhotoUIImages removeAllObjects];
-	[_photoDataArray removeAllObjects];
+	[_cachedImagesByContentID removeAllObjects];
+	[_photoDataByContentID removeAllObjects];
+	[_orderedContentIDs removeAllObjects];
 	
 	[_datasourceDelegate datasourceSignificantlyModifiedContent:self];
 }
 
 -(void) removePhotoAtIndex:	(NSUInteger)removeIndex{
-	[_cachedPhotoUIImages removeObjectAtIndex:removeIndex];
-	[_photoDataArray removeObjectAtIndex:removeIndex];
+
+	NSString * contentID	=	[_orderedContentIDs objectAtIndex:removeIndex];
+	assert(StringHasText(contentID));
 	
-	[_datasourceDelegate datasourceRemovedContentAtIndex:removeIndex withDatasource:self];
+	[_photoDataByContentID removeObjectForKey:contentID];
+	[_cachedImagesByContentID removeObjectForKey:contentID];
+	[_orderedContentIDs removeObjectAtIndex:removeIndex];
+	
+
+	[_datasourceDelegate datasourceRemovedContentWithID:contentID withDatasource:self];
+
 }
-	 
--(UIImage*)	generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize{
-	UIImage * loadImage		=	[[UIImage alloc] initWithData:imageData];
-	if (loadImage == nil)
-		return nil;
-	
-	CGSize oversize = CGSizeMake([loadImage size].width - maxSize.width, [loadImage size].height - maxSize.height);
-
-	CGSize iconSize			=	CGSizeZero;
-	
-	if (oversize.width > 0 || oversize.height > 0){
-		if (oversize.height > oversize.width){
-			double scaleQuantity	=	maxSize.height/ loadImage.size.height;
-			iconSize		=	CGSizeMake(scaleQuantity * loadImage.size.width, maxSize.height);
-		}else{
-			double scaleQuantity	=	maxSize.width/ loadImage.size.width;	
-			iconSize		=	CGSizeMake(maxSize.width, scaleQuantity * loadImage.size.height);		
-		}
-	}else{
-		iconSize			= [loadImage size];
-	}
-
-	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
-	[loadImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
-	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	SRELS(loadImage);
-	
-	return cachedIconImage;
-}
-
 #pragma mark NSObject
 -(id)	initWithImageDataArray:(NSArray*) arrayOfPhotoData{
 	if (self = [super init]){
-		_photoDataArray			=	[[NSMutableArray alloc] init];
-		_cachedPhotoUIImages	=	[[NSMutableArray alloc] init];
+		_photoDataByContentID		= [[NSMutableDictionary alloc] init];
+		_cachedImagesByContentID	= [[NSMutableDictionary alloc] init];
+		_orderedContentIDs			= [[NSMutableArray alloc] init];
 
 		for (NSData * photoData in arrayOfPhotoData){
 			[self addPhotoData:photoData atIndex:0];
@@ -111,43 +85,38 @@
 }
 	 
 -(void)dealloc{
-	SRELS(_photoDataArray);
-	SRELS(_cachedPhotoUIImages);
+	SRELS(_photoDataByContentID);
+	SRELS(_cachedImagesByContentID);
+	SRELS(_orderedContentIDs);
 	
 	[super dealloc];
 }
 
 #pragma mark swypContentDataSource
-- (UIImage *)		iconImageForContentAtIndex:	(NSUInteger)contentIndex ofMaxSize:(CGSize)maxIconSize{
-	UIImage * cachedImage	=	[_cachedPhotoUIImages objectAtIndex:contentIndex]; 
+- (NSArray*)	idsForAllContent{
+	return _orderedContentIDs;
+}
+- (UIImage *)	iconImageForContentWithID: (NSString*)contentID ofMaxSize:(CGSize)maxIconSize{
+	
+	UIImage *cachedImage	=	[_cachedImagesByContentID objectForKey:contentID];
+	
 	if (CGSizeEqualToSize([cachedImage size], maxIconSize) == NO){
-		cachedImage		=	[self generateIconImageForImageData:[_photoDataArray objectAtIndex:contentIndex] maxSize:maxIconSize];
+		cachedImage		=	[self _generateIconImageForImageData:[_photoDataByContentID objectForKey:contentID] maxSize:maxIconSize];
 		if (cachedImage == nil)
 			return nil;
-		[_cachedPhotoUIImages removeObjectAtIndex:contentIndex];
-		[_cachedPhotoUIImages insertObject:cachedImage atIndex:contentIndex];
+		[_cachedImagesByContentID setObject:cachedImage forKey:contentID];
 	}
-	
 	return cachedImage;
-}
--(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate{
-	_datasourceDelegate	=	delegate;
-}
--(id<swypContentDataSourceDelegate>)	datasourceDelegate{
-	return _datasourceDelegate;
-}
 
-- (NSUInteger)		countOfContent{
-	return [_photoDataArray count];
 }
-
-- (NSArray*)		supportedFileTypesForContentAtIndex: (NSUInteger)contentIndex{
+- (NSArray*)		supportedFileTypesForContentWithID: (NSString*)contentID{
 	return [NSArray arrayWithObjects:[NSString imagePNGFileType],[NSString imageJPEGFileType],nil];
 }
-- (NSInputStream*)	inputStreamForContentAtIndex:	(NSUInteger)contentIndex fileType:	(swypFileTypeString*)type length: (NSUInteger*)contentLengthDestOrNULL{
-	
-	NSData *	photoPNGData		=	[_photoDataArray objectAtIndex:contentIndex];
 
+- (NSInputStream*)	inputStreamForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL{
+	
+	NSData *	photoPNGData		=	[_photoDataByContentID objectForKey:contentID];
+	
 	NSData *	sendPhotoData	=	nil;
 	if ([type isEqualToString:[swypFileTypeString imagePNGFileType]]){
 		sendPhotoData	=  photoPNGData;
@@ -162,9 +131,15 @@
 	*contentLengthDestOrNULL	=	[sendPhotoData length];
 	
 	return [NSInputStream inputStreamWithData:sendPhotoData];
-	
+
 }
 
+-(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate{
+	_datasourceDelegate	=	delegate;
+}
+-(id<swypContentDataSourceDelegate>)	datasourceDelegate{
+	return _datasourceDelegate;
+}
 
 #pragma mark swypConnectionSessionDataDelegate
 -(NSArray*)supportedFileTypesForReceipt{
@@ -183,14 +158,53 @@
 }
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
-	if (streamData != nil){
-		if ([[discernedStream streamType] isEqualToString:[swypFileTypeString imagePNGFileType]]){
-			[self addPhotoData:streamData atIndex:0 fromSession:session];
-		}else{
-			[self addUIImage:[UIImage imageWithData:streamData] atIndex:0 fromSession:session];
-		}
-	}
+	EXOLog(@"swypPhotoArrayDataSource datasource received data of type: %@",[discernedStream streamType]);
+	//you may want to see the swypBackedPhotoDataSource override
 }
+
+#pragma mark - private
+
+-(UIImage*)	_generateIconImageForImageData:(NSData*)imageData maxSize:(CGSize)maxSize{
+	UIImage * loadImage		=	[[UIImage alloc] initWithData:imageData];
+	if (loadImage == nil)
+		return nil;
+	
+	CGSize oversize = CGSizeMake([loadImage size].width - maxSize.width, [loadImage size].height - maxSize.height);
+	
+	CGSize iconSize			=	CGSizeZero;
+	
+	if (oversize.width > 0 || oversize.height > 0){
+		if (oversize.height > oversize.width){
+			double scaleQuantity	=	maxSize.height/ loadImage.size.height;
+			iconSize		=	CGSizeMake(scaleQuantity * loadImage.size.width, maxSize.height);
+		}else{
+			double scaleQuantity	=	maxSize.width/ loadImage.size.width;	
+			iconSize		=	CGSizeMake(maxSize.width, scaleQuantity * loadImage.size.height);		
+		}
+	}else{
+		iconSize			= [loadImage size];
+	}
+	
+	UIGraphicsBeginImageContextWithOptions(iconSize, NO, [[UIScreen mainScreen] scale]);
+	[loadImage drawInRect:CGRectMake(0,0,iconSize.width,iconSize.height)];
+	UIImage* cachedIconImage = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	SRELS(loadImage);
+	
+	return cachedIconImage;
+}
+
+-(NSString*) _generateUniqueContentID{
+	NSInteger idNum 	= [_photoDataByContentID count];
+	NSString * uniqueID = [NSString stringWithFormat:@"MODEL_%i",idNum];
+	while ([_photoDataByContentID objectForKey:uniqueID] != nil) {
+		idNum ++;
+		uniqueID = [NSString stringWithFormat:@"MODEL_%i",idNum];
+	}
+	return uniqueID;
+}
+
+
 
 
 @end

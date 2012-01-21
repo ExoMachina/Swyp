@@ -160,7 +160,7 @@
 	[_tiledContentViewController removeTile:tileView];
 }
 
--(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation{
+-(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate{
 	
 	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:insertID ofMaxSize:_photoSize inController:self];
 	[_tiledContentViewController addTile:tileView];
@@ -205,7 +205,7 @@
 			return [_contentViewTilesByID keyForValue:swypedView];
 		}
 	}
-	
+	return nil;
 }
  
 -(CGSize) choiceMaxSizeForContentDisplay{

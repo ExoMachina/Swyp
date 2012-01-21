@@ -16,6 +16,7 @@
  */
 @interface swypBidirectionalMutableDictionary : NSMutableDictionary{
 	NSMutableDictionary	*	_inverseDictionary;
+	NSMutableDictionary *	_normalDictionary;
 }
 
 /**  This is the core functionality. Returns nil if nothing available.*/

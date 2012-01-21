@@ -30,7 +30,7 @@
 ///How model updates propigate removed content through swypContentInteractionManager
 -(void)	removeContentFromDisplayWithID:	(NSString*)removeID animated:(BOOL)animate;
 ///How modal updates propigate added content through swypContentInteractionManager
--(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation;
+-(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate;
 
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate;
 -(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate;

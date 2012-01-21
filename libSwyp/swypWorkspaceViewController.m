@@ -43,15 +43,16 @@
 	
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
-#pragma mark CLUDGE!
+
 #pragma mark TODO: make some runloop excuse for this not being a cludge
 	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
-		if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
-			NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
-			if (swypOutContentIndex > -1){
-				EXOLog(@"Sending 'contentSwyp' content at index: %i", swypOutContentIndex );
-				[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
-				[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
+		if (swypBeginningContentView != nil){
+
+			NSString * contentID	=	[[[_contentManager contentViewsByContentID] inverseDictionary] objectForKey:swypBeginningContentView];
+			
+			if (StringHasText(contentID)){
+				EXOLog(@"Sending 'contentSwyp' content : %@", contentID );
+				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
 			}
 		}
 	}];
