@@ -1,5 +1,5 @@
 //
-//  ;
+//  SwypPromptImageView.m
 //  swyp
 //
 //  Created by Ethan Sherbondy on 1/18/12.
