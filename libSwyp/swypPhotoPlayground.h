@@ -11,7 +11,7 @@
 #import "swypBidirectionalMutableDictionary.h"
 
 @interface swypPhotoPlayground : UIViewController <swypTiledContentViewControllerContentDelegate,swypContentDisplayViewController, UIGestureRecognizerDelegate>{
-	swypTiledContentViewController *				_tiledContentViewController;
+	swypTiledContentViewController *		_tiledContentViewController;
 	
 	id<swypContentDisplayViewControllerDelegate>	_contentDisplayControllerDelegate;	
 	

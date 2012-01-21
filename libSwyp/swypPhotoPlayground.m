@@ -10,8 +10,8 @@
 #import "swypTiledContentViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "swypOutGestureRecognizer.h"
+#import "swypThumbView.h"
 @implementation swypPhotoPlayground
-
 
 #pragma mark UIViewController
 -(id) initWithPhotoSize:(CGSize)imageSize{
@@ -42,10 +42,12 @@
 	SRELS(swypOutRecognizer);
 	
 }
-														 
 												
 														 
-														 
+-(void)viewDidUnload {
+    [super viewDidUnload];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return TRUE;
@@ -145,8 +147,8 @@
 		[allTilesArray addObject:tileView];
 	}
 	return allTilesArray;
-}										
-
+}
+										
 #pragma mark swypContentDisplayViewController <NSObject>
 -(void)	removeContentFromDisplayWithID:	(NSString*)removeID animated:(BOOL)animate{
 	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:removeID ofMaxSize:_photoSize inController:self];
@@ -177,7 +179,7 @@
 -(void)	returnContentWithIDToNormalLocation:(NSString*)contentID	animated:(BOOL)animate{
 	
 #pragma mark TODO:
-	EXOLog(@"returnContentWithIDToNormalLocation is marked TODO!");
+	EXOLog(@"returnContentWithIDToNormalLocation is marked TODO! CID%@",contentID);
 }
   
 
