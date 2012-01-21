@@ -366,8 +366,6 @@
 			children = (
 				799F83E514CB260700F642F3 /* helpers */,
 				79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */,
-				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
-				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
 				79C080771481B00C00306F67 /* swypPhotoPlayground.h */,
 				79C080781481B00C00306F67 /* swypPhotoPlayground.m */,
 				79C080721481A9B700306F67 /* swypTiledContentViewController.h */,
@@ -663,6 +661,8 @@
 		79FD02DA14C9EA2B00BD4382 /* workspace components */ = {
 			isa = PBXGroup;
 			children = (
+				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
+				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
 				680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */,
 				680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */,
 			);

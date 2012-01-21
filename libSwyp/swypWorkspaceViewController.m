@@ -43,22 +43,19 @@
 	
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
+	NSString * contentID	=	[[_contentManager contentViewsByContentID] keyForObject:swypBeginningContentView];
 
-#pragma mark TODO: make some runloop excuse for this not being a cludge
-	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
-		if (swypBeginningContentView != nil){
 
-			NSString * contentID	=	[[[_contentManager contentViewsByContentID] inverseDictionary] objectForKey:swypBeginningContentView];
+	if (StringHasText(contentID)){
+
+#pragma mark TODO: make some runloop excuse for this not being a cludge		
+		[[NSOperationQueue mainQueue] addOperationWithBlock:^{
 			
-			if (StringHasText(contentID)){
 				EXOLog(@"Sending 'contentSwyp' content : %@", contentID );
 				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
-			}
-		}
-	}];
-	
-	[NSTimer scheduledTimerWithTimeInterval:.2 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
-		
+		}];
+	}
+			
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
 	
