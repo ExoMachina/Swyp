@@ -1,5 +1,5 @@
 //
-//  ;
+//  SwypPromptImageView.m
 //  swyp
 //
 //  Created by Ethan Sherbondy on 1/18/12.
@@ -12,23 +12,23 @@
 @implementation SwypPromptImageView
 
 -(id)init {
-    _imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud"]];
-    _bluetoothView = [[UIView alloc] initWithFrame:_imageView.frame];
-    
-    _bluetoothView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.75];
-    _bluetoothView.layer.cornerRadius = 12;
-    
-    UIImageView *bluetoothImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bluetooth-logo-enabled"]] autorelease];
-    bluetoothImage.center = _bluetoothView.center;
-    UIActivityIndicatorView *bluetoothIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
-    bluetoothIndicator.center = _bluetoothView.center;
-    
-    [_bluetoothView addSubview:bluetoothImage];
-    [_bluetoothView addSubview:bluetoothIndicator];
-    
-    [bluetoothIndicator startAnimating];
-
     if (self = [super initWithFrame:_imageView.frame]){
+        _imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud"]];
+        _bluetoothView = [[UIView alloc] initWithFrame:_imageView.frame];
+        
+        _bluetoothView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.75];
+        _bluetoothView.layer.cornerRadius = 12;
+        
+        UIImageView *bluetoothImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bluetooth-logo-enabled"]] autorelease];
+        bluetoothImage.center = _bluetoothView.center;
+        UIActivityIndicatorView *bluetoothIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
+        bluetoothIndicator.center = _bluetoothView.center;
+        
+        [_bluetoothView addSubview:bluetoothImage];
+        [_bluetoothView addSubview:bluetoothIndicator];
+        
+        [bluetoothIndicator startAnimating];
+        
         [self addSubview:_imageView];
     }
     
@@ -52,7 +52,6 @@
 }
 
 - (void) setBluetoothReady:(BOOL)isReady {
-    
     [UIView transitionFromView:(isReady ? _bluetoothView: _imageView)
                         toView:(isReady ? _imageView: _bluetoothView) 
                       duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)

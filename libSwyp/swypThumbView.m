@@ -13,11 +13,11 @@
 
 @synthesize image = _image;
 @synthesize progress = _progress;
+@synthesize loading = _loading;
 
 static float framePadding = 8.0;
 
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
@@ -69,39 +69,39 @@ static float framePadding = 8.0;
     return [[[swypThumbView alloc] initWithImage:theImage] autorelease];
 }
 
-- (void)showLoading {
-    _progressView.hidden = NO;
-    [_activityIndicator startAnimating];
-    [UIView animateWithDuration:1 animations:^{
-        _progressView.alpha = 1;
-        _activityIndicator.alpha = 1;
-        _activityIndicator.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-    }];
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    if (_loading) {
+        _progressView.hidden = NO;
+        [_activityIndicator startAnimating];
+        [UIView animateWithDuration:1 animations:^{
+            _progressView.alpha = 1;
+            _activityIndicator.alpha = 1;
+            _activityIndicator.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
+        }];
+    } else {
+        [UIView animateWithDuration:1 animations:^{
+            _progressView.alpha = 0;
+            _activityIndicator.alpha = 0;
+            _activityIndicator.backgroundColor = [UIColor clearColor];
+        } completion:^(BOOL finished){
+            if (finished) {
+                _progressView.hidden = YES;
+                [_activityIndicator stopAnimating];
+            }
+        }];
+    }
 }
 
 - (void)setProgress:(CGFloat)theProgress {
     _progress = theProgress;
     _progressView.progress = _progress;
     if (theProgress >= 1.0f) {
-        [self hideLoading];
+        self.loading = NO;
     }
 }
 
-- (void)hideLoading {
-    [UIView animateWithDuration:1 animations:^{
-        _progressView.alpha = 0;
-        _activityIndicator.alpha = 0;
-        _activityIndicator.backgroundColor = [UIColor clearColor];
-    } completion:^(BOOL finished){
-        if (finished) {
-            _progressView.hidden = YES;
-            [_activityIndicator stopAnimating];
-        }
-    }];
-}
-
-- (void)drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
     CALayer	*layer	=	self.layer;
     layer.shadowColor = [UIColor blackColor].CGColor;
     layer.shadowOpacity = 0.9f;

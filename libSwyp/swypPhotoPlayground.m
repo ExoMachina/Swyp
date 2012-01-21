@@ -8,9 +8,8 @@
 
 #import "swypPhotoPlayground.h"
 #import "swypTiledContentViewController.h"
-#import <QuartzCore/QuartzCore.h>
 #import "swypOutGestureRecognizer.h"
-#import "swypThumbView.h"
+
 @implementation swypPhotoPlayground
 
 #pragma mark UIViewController

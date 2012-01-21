@@ -10,13 +10,6 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
-@interface swypWorkspaceViewController (Private)
-
--(void)animateArrows;
--(void)stopArrows;
-    
-@end
-
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
             worspaceDelegate = _worspaceDelegate, backgroundView = _backgroundView;
@@ -146,14 +139,6 @@
 -(void)	leaveWorkspaceButtonPressed:(id)sender {
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
-- (void)animateArrows:(id)sender {
-    [UIView animateWithDuration:0.5 delay:0 options:(UIViewAnimationOptionAutoreverse|UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionRepeat) animations:^(void){
-        _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 10);
-    } completion:nil];
-}
-- (void)stopArrows:(id)sender {
-    _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 0);
-}
 
 
 #pragma mark UIViewController
@@ -205,13 +190,13 @@
     
     // weird ios4 bug
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
-        [curlButton addTarget:self action:@selector(animateArrows:) forControlEvents:UIControlEventTouchDown];
+        [curlButton addTarget:self action:@selector(_animateArrows:) forControlEvents:UIControlEventTouchDown];
     }
     
     [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
          forControlEvents:UIControlEventTouchUpInside];
          
-    [curlButton addTarget:self action:@selector(stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
+    [curlButton addTarget:self action:@selector(_stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
     UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
@@ -318,5 +303,13 @@
 	}completion:nil];
 }
 
+- (void) _animateArrows:(id)sender {
+    [UIView animateWithDuration:0.5 delay:0 options:(UIViewAnimationOptionAutoreverse|UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionRepeat) animations:^(void){
+        _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 10);
+    } completion:nil];
+}
+- (void) _stopArrows:(id)sender {
+    _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 0);
+}
 
 @end
