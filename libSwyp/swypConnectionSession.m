@@ -14,7 +14,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 @implementation swypConnectionSession
 @synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
-@synthesize socketOutputTransformStream = _socketOutputTransformStream, socketInputTransformStream = _socketInputTransformStream;
 
 #pragma mark -
 #pragma mark public

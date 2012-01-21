@@ -43,21 +43,21 @@
 	
 	
 	UIView *swypBeginningContentView	=	[[[session representedCandidate] matchedLocalSwypInfo] swypBeginningContentView];
-#pragma mark CLUDGE!
-#pragma mark TODO: make some runloop excuse for this not being a cludge
-	NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
-		if (swypBeginningContentView != nil && [[_contentManager contentDisplayController] respondsToSelector:@selector(contentIndexMatchingSwypOutView:)]){
-			NSInteger swypOutContentIndex	=	[[_contentManager contentDisplayController] contentIndexMatchingSwypOutView:swypBeginningContentView];
-			if (swypOutContentIndex > -1){
-				EXOLog(@"Sending 'contentSwyp' content at index: %i", swypOutContentIndex );
-				[_contentManager sendContentAtIndex:swypOutContentIndex throughConnectionSession:session];
-				[[_contentManager contentDisplayController] returnContentAtIndexToNormalLocation:swypOutContentIndex animated:TRUE];
-			}
-		}
-	}];
-	
-	[NSTimer scheduledTimerWithTimeInterval:.2 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
+	NSString * contentID	=	[[_contentManager contentViewsByContentID] keyForObject:swypBeginningContentView];
+
+
+	if (StringHasText(contentID)){
+
+#pragma mark TODO: make some runloop excuse for this not being a cludge		
+		NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
+			
+				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
+		}];
 		
+		[NSTimer scheduledTimerWithTimeInterval:.1 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
+
+	}
+			
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
 	
@@ -144,7 +144,6 @@
 }
 
 -(void)	leaveWorkspaceButtonPressed:(id)sender {
-    EXOLog(@"PRESSED IT.");
 	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
 }
 - (void)animateArrows:(id)sender {

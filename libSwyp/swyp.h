@@ -52,6 +52,7 @@
 #import "swypFileTypeString.h"
 #import "swypContentDataSourceProtocol.h"
 #import "NSDictionary+BSJSONAdditions.h"
+#import "swypBidirectionalMutableDictionary.h"
 #import "UIColorAdditions.h"
 #import "UIViewAdditions+swypAdditions.h"
 #import "swypInterfaceManager.h"

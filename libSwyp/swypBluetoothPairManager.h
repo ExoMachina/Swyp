@@ -23,9 +23,10 @@
 	
 	
 	BOOL								_bluetoothEnabled;
+	BOOL								_interfaceReady;
 	
 	//game kit
-	GKSession *		_gameKitPeerSession;	
+	GKSession *				_gameKitPeerSession;	
 
 	NSMutableDictionary *	_activeAbstractedStreamSetsByPeerName;
 	
@@ -33,8 +34,8 @@
 	GKPeerPickerController*	_bluetoothPromptController;
 	
 }
-
-@property (nonatomic, assign) BOOL bluetoothEnabled;
+///when paired by peer; defined in swypInterfaceManager
+@property (nonatomic, assign) BOOL interfaceReady;
 
 //private
 -(void) _createSessionsIfNeeded;

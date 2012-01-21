@@ -56,13 +56,25 @@
 	When the indefinite stream is to be ended, endIndefiniteStreamAtByteIndex: must be called referencing a byte that has either not yet been read, or has been read in the last read cycle.
 */
 @property (nonatomic, readonly)	BOOL					isIndefinite;
+///Length of stream, if known
 @property (nonatomic, readonly)	NSUInteger				streamLength;
+///Tag for the stream
 @property (nonatomic, readonly) NSString*				streamTag;
+///The swypFileTypeString for the stream type
 @property (nonatomic, readonly)	NSString*				streamType;
+///last read byte in stream... Ideal for key-value observing progress.
 @property (nonatomic, readonly)	NSUInteger				lastProvidedByteIndex;
+///Last byte in stream streamEndByteIndex - lastProvidedByteIndex = remaining bytes.
 @property (nonatomic, readonly)	NSUInteger				streamEndByteIndex;
 
+
+/** This is for swypInputStreamDiscerner, which will notify you if you are a swypConnectionSessionDataDelegate, don't worry about this.
+ 
+	Instead of directly manipulating delegation of this class, use a model in swypContentInteractionManager, or set yourself as swypConnectionSessionDataDelegate on swypConnectionSession.
+ */
 @property (nonatomic, assign)	id<swypDiscernedInputStreamDataSource>			dataSource;
+
+//Input streams need a delegate, don't worry about this. 
 @property (nonatomic, assign)	id<NSStreamDelegate>							delegate;
 
 ///the primary init function

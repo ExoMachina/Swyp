@@ -73,6 +73,10 @@ typedef enum {
 	Do not send further delegate messages with this ref after notifying of the stoppage. */
 -(void) stopFindingSwypInServerCandidatesForRef:(swypInfoRef*)ref;
 
+@optional 
+///Tells when the interface is ready for use; used with key-value coding to show and hide the bluetooth pending view
+@property (nonatomic, readonly) BOOL interfaceReady;
+
 @end
 
 

@@ -58,7 +58,7 @@
                       duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)
                     completion:^(BOOL completed){
         if (completed){
-            NSLog(@"Flipped %i", isReady);
+//            EXOLog(@"Flipped %i", isReady);
         }
     }];
 }

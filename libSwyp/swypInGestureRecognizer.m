@@ -18,7 +18,7 @@
 	
 	CGPoint firstPoint			= [[self swypGestureInfo] startPoint];
 	CGRect	viewRect			= self.view.frame;
-	CGRect	invalidSwypInRect	= CGRectInset(viewRect, 40, 40);
+	CGRect	invalidSwypInRect	= CGRectInset(viewRect, 50, 50);
 	if (CGRectContainsPoint(invalidSwypInRect, firstPoint) == YES){
 		self.state = UIGestureRecognizerStateFailed;
 	}else {

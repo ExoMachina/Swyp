@@ -11,11 +11,18 @@
 #import "swypConnectionSession.h"
 #import "swypContentDataSourceProtocol.h"
 #import "swypContentDisplayViewControllerProtocol.h"
+#import "swypBidirectionalMutableDictionary.h"
 
 
-/** This class is responsible for unifying modal and controller, and displaying them upon the workspace. */
+/** This class is responsible for unifying modal and controller, and displaying them upon the workspace. 
+ 
+	This class also caches UIImageViews for display by swypContentDisplayViewController, with image content from the contentDataSource.
+ */
 @interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
 	NSMutableDictionary *									_sessionViewControllersBySession;
+	
+	swypBidirectionalMutableDictionary * _contentViewsByContentID;
+	swypBidirectionalMutableDictionary * _thumbnailLoadingViewsByContentID;
 	
 	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	
@@ -24,6 +31,7 @@
 	UIView*													_mainWorkspaceView;
 		
 }	
+@property (nonatomic, readonly) swypBidirectionalMutableDictionary * contentViewsByContentID;
 
 /** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 
  
@@ -63,7 +71,7 @@
 -(void)		initializeInteractionWorkspace;
 
 //simply attempts to post conent to a session, as used during "contentSwyps"
--(void)		sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session;
+-(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session;
 
 //
 //private

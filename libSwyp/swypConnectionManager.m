@@ -99,7 +99,7 @@
 	[[swypNetworkAccessMonitor sharedReachabilityMonitor] removeDelegate:self];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [_bluetoothPairManager removeObserver:self forKeyPath:@"bluetoothEnabled"];
+    [_bluetoothPairManager removeObserver:self forKeyPath:@"interfaceReady"];
 		
 	SRELS(_bonjourPairManager);
 	SRELS(_cloudPairManager);
@@ -352,14 +352,14 @@
 	_cloudPairManager		= [[swypCloudPairManager alloc] initWithInterfaceManagerDelegate:self];
 	_bluetoothPairManager	= [[swypBluetoothPairManager alloc] initWithInterfaceManagerDelegate:self];
     
-    [_bluetoothPairManager addObserver:self forKeyPath:@"bluetoothEnabled" options:NSKeyValueObservingOptionNew context:NULL];
+    [_bluetoothPairManager addObserver:self forKeyPath:@"interfaceReady" options:NSKeyValueObservingOptionNew context:NULL];
 	
 	_handshakeManager	= [[swypHandshakeManager alloc] init];
 	[_handshakeManager	setDelegate:self];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqual:@"bluetoothEnabled"]){
+    if ([keyPath isEqual:@"interfaceReady"]){
         [self.delegate performSelector:@selector(setBluetoothReady:) 
                             withObject:[change objectForKey:NSKeyValueChangeNewKey]];
     }
@@ -415,7 +415,7 @@
 		if ([[discernedStream streamTag] isEqualToString:@"goodbye"]){
 			[session invalidate];
 		}
-		wantsProvidedAsNSData = (BOOL*) TRUE;
+		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
 	}	
 	return FALSE;

@@ -12,7 +12,7 @@
 
 @implementation swypBluetoothPairManager
 
-@synthesize bluetoothEnabled = _bluetoothEnabled;
+@synthesize interfaceReady = _interfaceReady;
 
 #pragma mark swypInterfaceManager
 -(void)	suspendNetworkActivity{
@@ -36,6 +36,9 @@
 	SRELS(_connectabilityTimer);
 	
 	SRELS(_gameKitPeerSession);
+	
+	_bluetoothEnabled	= FALSE;
+	[self setInterfaceReady:FALSE];
 	
 }
 
@@ -154,8 +157,6 @@
 						
 		_activeAbstractedStreamSetsByPeerName =	[NSMutableDictionary new];
 		
-		[self setBluetoothEnabled:FALSE]; //begin with false until proved otherwise
-
 	}
 	return self;
 }
@@ -182,7 +183,7 @@
 #pragma mark gamekit
 #pragma mark GKPeerPickerDelegate
 - (void)peerPickerController:(GKPeerPickerController *)picker didSelectConnectionType:(GKPeerPickerConnectionType)type{
-	[self setBluetoothEnabled:TRUE];
+	_bluetoothEnabled = TRUE;
 	[_bluetoothPromptController dismiss];
 	[_bluetoothPromptController setDelegate:nil];
 	_bluetoothPromptController = nil;
@@ -223,7 +224,7 @@
 		EXOLog(@"Found bluetooth peer, preconnecting: %@",peerID);
 		[_gameKitPeerSession connectToPeer:peerID withTimeout:5];
 		
-		[self setBluetoothEnabled:TRUE];
+		_bluetoothEnabled = TRUE;
 		
 		if (_bluetoothPromptController != nil){
 			[_bluetoothPromptController setDelegate:nil];
@@ -232,6 +233,7 @@
 		}
 		
 	}else if (state == GKPeerStateConnected){
+		[self setInterfaceReady:TRUE];
 		//great, we're connected, but NBD, we'll use it if there's a swyp later
 		//we are de-coupling connections on swyp level from those on GameKit
 		EXOLog(@"pre-connected via bluetooth to peer: %@",peerID);
@@ -289,14 +291,14 @@
 -(void)_bluetoothAvailabilityChanged:(id)sender{
 	EXOLog(@"bluetooth availability notification: %@",[sender description]);
 	//if this notification shows but connectability doesn't, then we know BT is disabled, and we prompt to enable.
-	if (_connectabilityTimer == nil && self.bluetoothEnabled == FALSE){
+	if (_connectabilityTimer == nil && _bluetoothEnabled == FALSE){
 		_connectabilityTimer = [[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_connectabilityTimeoutOccured:) userInfo:nil repeats:NO] retain];
 	}
 }
 -(void)_bluetoothConnectabilityChanged:(id)sender{
 	//indicating that bluetooth is enabled
 	EXOLog(@"bluetooth connectivity notification: %@",[sender description]);
-	[self setBluetoothEnabled:TRUE];
+	_bluetoothEnabled  = TRUE;
 	if (_bluetoothPromptController != nil){
 		[_bluetoothPromptController setDelegate:nil];
 		[_bluetoothPromptController dismiss]; //this command seems to deallocating the controller.
@@ -307,7 +309,7 @@
 }
 
 -(void) _connectabilityTimeoutOccured:(NSTimer*)sender{
-	if (self.bluetoothEnabled == FALSE){
+	if (_bluetoothEnabled == FALSE){
 		[self _launchBluetoothPromptPeerPicker];
 	}
 }

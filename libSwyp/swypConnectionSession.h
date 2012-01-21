@@ -27,22 +27,31 @@ typedef enum {
 
 @class swypConnectionSession;
 
+///Defines the various connectionStatus states the swypConnectionSession can be in. 
 typedef enum {
+	///The connection is closed. No data may be sent.
 	swypConnectionSessionStatusClosed = -1,
-	swypConnectionSessionStatusNotReady = 0,
+	///The connection is going down.
 	swypConnectionSessionStatusWillDie,
+	///Indicates that a swypConnectionSession is currently opening via the 'initiate' function
 	swypConnectionSessionStatusPreparing,
+	///Indicates that a connection is ready for transfers; commonly used by swypHandshakeManager for handshaking connecition, so don't expect a sessionStatusChanged with it. 
 	swypConnectionSessionStatusReady
 } swypConnectionSessionStatus;
 
+///The protocol for deleages of the swypConnectionSession, which wish to hear about connectivity updates from the session. See addInfoDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionInfoDelegate <NSObject>
+///Alerts that the session is over. Error is commonly nil because we r lazy.
 -(void) sessionDied:			(swypConnectionSession*)session withError:(NSError*)error;
 
 @optional
+///Alerts that the session will be dying VERY soon. IE, even including this runlooop.
 -(void) sessionWillDie:			(swypConnectionSession*)session;
+///Alerts that the status of the connection session changed. Perhaps it's swypConnectionSessionStatusReady
 -(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session;
 @end
 
+///How a swypConnectionSession gives away its received data. See addDataDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionDataDelegate <NSObject>
 @optional
 
@@ -64,6 +73,9 @@ typedef enum {
 
 /**
 	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
+	
+	@param discernedStream the stream containing properties like streamType, and streamTag.
+	@param streamData Data from the discernedStream.
 */
 
 -(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
@@ -108,11 +120,13 @@ typedef enum {
 	NSInputStream *			_socketInputStream;
 	NSOutputStream *		_socketOutputStream;
 }
+
+///The connection status property contains the current session's state w/ a swypConnectionSessionStatus value.
 @property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
+///The hue of swyp workspace background and connection indicators, proving that you're connected to the appropiate individual.
 @property (nonatomic, retain)	UIColor*					sessionHueColor;
+///The remote candidate that you're communicating with through this connectionSession.
 @property (nonatomic, readonly)	swypCandidate *				representedCandidate;
-@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
-@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 
 /** swypConnectionSessions are initialized with their candidate, and input and an output stream. 
  
@@ -125,10 +139,14 @@ typedef enum {
 /** Destroy connection; remove from runloop */
 -(void)	invalidate;
 
+///For adding a swypConnectionSessionDataDelegate.
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
+///For removing a swypConnectionSessionDataDelegate.
 -(void)	removeDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 
+///For adding a swypConnectionSessionInfoDelegate.
 -(void)	addConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
+///For removing a swypConnectionSessionInfoDelegate.
 -(void)	removeConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 
 /** @name sending data */
