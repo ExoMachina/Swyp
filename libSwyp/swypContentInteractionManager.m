@@ -204,7 +204,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		}
 		
 		swypThumbView * thumbView	=	[swypThumbView thumbViewWithImage:[UIImage imageWithData:streamData]];
-		[thumbView showLoading];
+		[thumbView setLoading:YES];
 
 		[_thumbnailLoadingViewsByContentID setObject:thumbView forKey:thumbID];
 		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE];
