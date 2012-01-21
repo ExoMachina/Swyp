@@ -35,6 +35,9 @@
 	
 	swypOutGestureRecognizer * swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
 	[swypOutRecognizer setDelegate:self];
+	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
+	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
+	[swypOutRecognizer setCancelsTouchesInView:FALSE];
 	[[self view] addGestureRecognizer:swypOutRecognizer];
 	SRELS(swypOutRecognizer);
 	

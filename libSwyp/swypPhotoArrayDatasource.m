@@ -152,7 +152,6 @@
 		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
 	}else{
-		EXOLog(@"Unsupported filetype: %@", [discernedStream streamType]);
 		return FALSE;
 	}
 }

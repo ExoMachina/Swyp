@@ -79,7 +79,7 @@
 		[[self swypGestureInfo] setVelocity:velocity]; 	
 		self.state = UIGestureRecognizerStateRecognized;
 		
-//		EXOLog(@"SwypOut with velocity:%f",[self velocity]);
+		EXOLog(@"SwypOut with velocity:%f",[self velocity]);
 
 //		EXOLog(@"SwypOut: velocity:%f travel:%f euclidDelta:%f startPt:%f,%f endPt:%f,%f startDt:%f endDt:%f", [[self swypGestureInfo] velocity], [self absoluteTravel],euclidDelta, [[self swypGestureInfo] startPoint].x,[[self swypGestureInfo] startPoint].y, [[self swypGestureInfo] endPoint].x,[[self swypGestureInfo] endPoint].y,[[[self swypGestureInfo] startDate] timeIntervalSinceReferenceDate],[[[self swypGestureInfo] endDate] timeIntervalSinceReferenceDate]);
 	}else {

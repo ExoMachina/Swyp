@@ -95,7 +95,6 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session{
-	NSUInteger dataLength 		= 0;
 	
 	NSString * fileTypeToUse	= [[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentWithID:contentID]];
 	
@@ -109,9 +108,12 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentWithID:contentID ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
 	if (thumbnailImageData != nil){
 		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
-		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:dataLength];
+		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:[thumbnailImageData length]];
 	}
 	
+	
+	NSUInteger dataLength 		= 0;
+
 	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentWithID:contentID fileType:fileTypeToUse length:&dataLength];
 	[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
 
