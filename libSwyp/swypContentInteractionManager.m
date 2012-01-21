@@ -168,6 +168,16 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark -
 #pragma mark delegation
+#pragma mark swypDiscernedInputStreamStatusDelegate
+-(void)	updatedProgressToPercentage:(double)complete withDiscernedInputStream:(swypDiscernedInputStream*)inputStream{
+	
+}
+-(void)	discernedInputStreamCompletedReceivingData:(swypDiscernedInputStream*)inputStream{
+	_thumbnailViewsByDiscernedInputStream;
+}
+-(void)	discernedInputStreamFailedReceivingData:(swypDiscernedInputStream*)inputStream{
+}
+
 #pragma mark swypConnectionSessionDataDelegate
 -(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
 	[[self maintainedSwypSessionViewControllerForSession:session] setShowActiveTransferIndicator:TRUE];
@@ -262,12 +272,14 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[self stopMaintainingViewControllerForSwypSession:session];
 }
 
+#pragma mark swyp
+
 #pragma mark swypContentDisplayViewControllerDelegate
 -(void)	contentWithID:(NSString*)contentID underwentSwypOutWithInfoRef:(swypInfoRef*)ref inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	
 	CGRect contentRect		=	[[_contentViewsByContentID objectForKey:contentID] frame];
 	
-	EXOLog(@"underwentSwypOutWithInfoRef contentRect: {x,y,w,h}, {%f,%f,%f,%f}",contentRect.origin.x,contentRect.origin.y,contentRect.size.width,contentRect.size.height);
+//	EXOLog(@"underwentSwypOutWithInfoRef contentRect: {x,y,w,h}, {%f,%f,%f,%f}",contentRect.origin.x,contentRect.origin.y,contentRect.size.width,contentRect.size.height);
 	EXOLog(@"TODO: %@",@"setup tragectory calculation");
 	
 	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:contentRect];

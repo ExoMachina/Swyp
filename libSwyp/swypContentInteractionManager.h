@@ -24,6 +24,8 @@
 	swypBidirectionalMutableDictionary * _contentViewsByContentID;
 	swypBidirectionalMutableDictionary * _thumbnailLoadingViewsByContentID;
 	
+	swypBidirectionalMutableDictionary * _thumbnailViewsByDiscernedInputStream;
+	
 	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
