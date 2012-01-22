@@ -344,7 +344,7 @@
 	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
 	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
 	
-	_userPreferedConnectionClass	= swypConnectionClassBluetooth;
+	_userPreferedConnectionClass	= swypConnectionClassNone;
 	
 	//
 	//setup service managers
@@ -360,8 +360,7 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqual:@"interfaceReady"]){
-        [self.delegate performSelector:@selector(setBluetoothReady:) 
-                            withObject:[change objectForKey:NSKeyValueChangeNewKey]];
+		[_delegate swypConnectionMethod:swypConnectionMethodBluetooth setReadyStatus:[[change objectForKey:NSKeyValueChangeNewKey] boolValue] withConnectionManager:self];
     }
 }
 

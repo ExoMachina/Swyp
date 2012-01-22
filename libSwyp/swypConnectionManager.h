@@ -29,11 +29,24 @@ typedef enum {
 } swypConnectionClass;
 
 
+///protocol between swypConnectionManager to swypWorkspaceViewController
 @protocol swypConnectionManagerDelegate <NSObject>
+///Session was created, please handle display
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager;
+///Session was invalidated, please remove
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error;
 
+/**
+ An update letting the swypWorkspaceViewController know that available connection methods have changed.
+ */
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager;
+
+/** 
+ This lets swypWorkspaceViewController know that an interface is on or offline so it can adjust its UI accordingly.
+ */
+-(void) swypConnectionMethod:(swypConnectionMethod)method setReadyStatus:(BOOL)isReady withConnectionManager:(swypConnectionManager*)manager;
+
+
 @end
 
 /**
@@ -77,7 +90,7 @@ swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
 ///the preferred class that the UI reflects
 @property (nonatomic, assign)	swypConnectionClass	userPreferedConnectionClass; 
 
-///on-the-fly generated connection class based on user pref & availability
+///on-the-fly generated connection class based on user pref & availability; IE, the one you usin'
 @property (nonatomic, readonly) swypConnectionClass	activeConnectionClass;	
 
 
