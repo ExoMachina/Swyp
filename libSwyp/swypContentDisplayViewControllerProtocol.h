@@ -14,7 +14,7 @@
 
 	If there is no tray in the location swyped-out to, the swypContentInteractionManager should notify the workspace.
  */
--(void)	contentWithID:(NSString*)contentID underwentSwypOutWithInfoRef:(swypInfoRef*)ref inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
+-(void)	contentWithIDUnderwentSwypOut:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
 
 ///the returned UIView will be as close as possible to and no larger than maxIconSize, while in proper-perspective and not distorted
 -(UIView*)		viewForContentWithID:(NSString*)contentID ofMaxSize:(CGSize)maxIconSize inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
