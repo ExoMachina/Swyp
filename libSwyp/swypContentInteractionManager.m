@@ -326,12 +326,13 @@ static NSArray * supportedReceiveFileTypes =  nil;
 #pragma mark swyp
 
 #pragma mark swypContentDisplayViewControllerDelegate
--(void)	contentWithID:(NSString*)contentID underwentSwypOutWithInfoRef:(swypInfoRef*)ref inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+-(void)	contentWithIDUnderwentSwypOut:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	
-	CGRect contentRect		=	[[_contentViewsByContentID objectForKey:contentID] frame];
+	UIView * content		= [_contentViewsByContentID objectForKey:contentID];
+	if (content == nil)
+		return;
 	
-//	EXOLog(@"underwentSwypOutWithInfoRef contentRect: {x,y,w,h}, {%f,%f,%f,%f}",contentRect.origin.x,contentRect.origin.y,contentRect.size.width,contentRect.size.height);
-	EXOLog(@"TODO: %@",@"setup tragectory calculation");
+	CGRect contentRect		=	[content frame];
 	
 	swypSessionViewController*	overlapSession	=	[self _sessionViewControllerInMainViewOverlappingRect:contentRect];
 

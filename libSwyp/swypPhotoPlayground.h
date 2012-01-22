@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "swypTiledContentViewController.h"
 #import "swypBidirectionalMutableDictionary.h"
+#import "swypOutGestureRecognizer.h"
+
 
 @interface swypPhotoPlayground : UIViewController <swypTiledContentViewControllerContentDelegate,swypContentDisplayViewController, UIGestureRecognizerDelegate>{
 	swypTiledContentViewController *		_tiledContentViewController;
@@ -16,6 +18,8 @@
 	id<swypContentDisplayViewControllerDelegate>	_contentDisplayControllerDelegate;	
 	
 	swypBidirectionalMutableDictionary *	_contentViewTilesByID;
+	
+	swypOutGestureRecognizer *				_swypOutRecognizer;
 		
 	CGSize									_photoSize;
 }

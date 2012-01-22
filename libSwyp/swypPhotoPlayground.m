@@ -32,13 +32,12 @@
 	[[_tiledContentViewController view] setClipsToBounds:FALSE];
 	[[self view] addSubview:[_tiledContentViewController view]];
 	
-	swypOutGestureRecognizer * swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
-	[swypOutRecognizer setDelegate:self];
-	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
-	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
-	[swypOutRecognizer setCancelsTouchesInView:FALSE];
-	[[self view] addGestureRecognizer:swypOutRecognizer];
-	SRELS(swypOutRecognizer);
+	_swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
+	[_swypOutRecognizer setDelegate:self];
+	[_swypOutRecognizer setDelaysTouchesBegan:FALSE];
+	[_swypOutRecognizer setDelaysTouchesEnded:TRUE];
+	[_swypOutRecognizer setCancelsTouchesInView:FALSE];
+	[[self view] addGestureRecognizer:_swypOutRecognizer];
 	
 }
 												
@@ -54,7 +53,8 @@
 
 -(void) dealloc{
 	SRELS(_tiledContentViewController);
-
+	SRELS(_swypOutRecognizer);
+	
 	[super dealloc];
 }
 
@@ -104,9 +104,25 @@
 	}else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
 		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
 		newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
+		
+		double tossDistance	=	euclideanDistance(newTranslationFrame.origin, [[recognizer view] frame].origin);
+		BOOL recognizeToss	= FALSE;
+		if (tossDistance > 100 && [_swypOutRecognizer state] == UIGestureRecognizerStateCancelled){
+			recognizeToss = TRUE;
+			EXOLog(@"TOSSER! %f",tossDistance);
+		}
+		
+		NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
+
 		[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
 			[[recognizer view] setFrame:newTranslationFrame];
-		}completion:nil];
+		}completion:^(BOOL completed){
+			if (recognizeToss){
+				if (StringHasText(swypOutContentID)){
+					[_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
+				}
+			}
+		}];
 		
 	}
 }
@@ -116,9 +132,8 @@
 		UIView * gestureView	=	[[recognizer swypGestureInfo] swypBeginningContentView];
 		NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:gestureView];
 		if (StringHasText(swypOutContentID)){
-
-			EXOLog(@"Swyp-out occured in contentDisplayViewController w/ content :%@",swypOutContentID);
-			[_contentDisplayControllerDelegate contentWithID:swypOutContentID underwentSwypOutWithInfoRef:[recognizer swypGestureInfo] inController:self];
+			EXOLog(@"swypOutGestureChanged recogn in contentDisplayViewController on: %@",swypOutContentID);
+			[_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
 		}
 	}
 }
