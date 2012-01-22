@@ -42,9 +42,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[session removeDataDelegate:_contentDataSource];
 	[session removeConnectionSessionInfoDelegate:self];
 	
-	swypSessionViewController*	sessionView	=	[self maintainedSwypSessionViewControllerForSession:session];
+	swypSessionViewController*	sessionViewController	=	[self maintainedSwypSessionViewControllerForSession:session];
 	
-	for (swypThumbView * thumb in [sessionView contentLoadingThumbs]){
+	for (swypThumbView * thumb in [sessionViewController contentLoadingThumbs]){
 		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumb];
 		
@@ -53,9 +53,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 	
 	[UIView animateWithDuration:.75 animations:^{
-		sessionView.view.alpha = 0;
+		sessionViewController.view.alpha = 0;
 	}completion:^(BOOL completed){
-		[sessionView.view removeFromSuperview];		
+		[sessionViewController.view removeFromSuperview];		
 	}];
 	
 	[_sessionViewControllersBySession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
@@ -218,12 +218,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark swypConnectionSessionDataDelegate
 -(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setShowActiveTransferIndicator:TRUE];
-
 }
 
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setShowActiveTransferIndicator:FALSE];
 }
 
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{

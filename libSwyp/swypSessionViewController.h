@@ -16,17 +16,11 @@
 
 @interface swypSessionViewController : UIViewController {
 	swypConnectionSession *		_connectionSession;
-	
 	NSMutableSet	*			_contentLoadingThumbs;
-	
-	BOOL						_showActiveTransferIndicator; 
-	UIActivityIndicatorView	*	_activityIndicator;
 }
 
 ///associated connection session
 @property (nonatomic, readonly) swypConnectionSession *		connectionSession;
-///shows the loading indicator on the swyp session indicator
-@property (nonatomic, assign)	BOOL						showActiveTransferIndicator;
 @property (nonatomic, readonly) NSMutableSet * contentLoadingThumbs;
 
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session;

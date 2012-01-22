@@ -12,7 +12,6 @@
 
 @implementation swypSessionViewController
 @synthesize connectionSession = _connectionSession;
-@synthesize showActiveTransferIndicator = _showActiveTransferIndicator;
 @synthesize contentLoadingThumbs = _contentLoadingThumbs;
 
 #pragma mark public 
@@ -61,23 +60,6 @@
 	[cancelationRecognizer setNumberOfTapsRequired:1];
 	[self.view addGestureRecognizer:cancelationRecognizer];
 	SRELS(cancelationRecognizer);
-}
-
--(void) setShowActiveTransferIndicator:(BOOL)showActiveTransferIndicator{
-	_showActiveTransferIndicator	= showActiveTransferIndicator;
-	if (_activityIndicator == nil) {
-		_activityIndicator			= [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		[_activityIndicator setFrame:self.view.frame];
-	}
-	
-	if (showActiveTransferIndicator){
-		[self.view addSubview:_activityIndicator];
-		[_activityIndicator startAnimating];
-	}else{
-		[_activityIndicator stopAnimating];
-		[_activityIndicator removeFromSuperview];
-	}
-	
 }
 
 #pragma mark gestures
