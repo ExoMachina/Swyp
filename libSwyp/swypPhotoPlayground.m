@@ -117,6 +117,10 @@
             CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
             newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
             
+            if (newTranslationFrame.origin.y < 50) {
+                newTranslationFrame.origin.y = 50;
+            }
+            
             double tossDistance	=	euclideanDistance(newTranslationFrame.origin, [[recognizer view] frame].origin);
             BOOL recognizeToss	= FALSE;
             if (tossDistance > 100 && [_swypOutRecognizer state] == UIGestureRecognizerStateCancelled){
