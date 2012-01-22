@@ -44,7 +44,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	swypSessionViewController*	sessionView	=	[self maintainedSwypSessionViewControllerForSession:session];
 	
-	for (swypThumbView * thumb in [sessionView contentLoadingThumbs]){
+	for (swypThumbView * thumb in [[[sessionView contentLoadingThumbs] copy] autorelease]){
 		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumb];
 		
@@ -185,13 +185,16 @@ static NSArray * supportedReceiveFileTypes =  nil;
 -(void)	discernedInputStreamCompletedReceivingData:(swypDiscernedInputStream*)discernedStream{
 	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
 		
-	for( swypThumbView * thumProgView in [sessionVC contentLoadingThumbs]){
+	for( swypThumbView * thumProgView in [[[sessionVC contentLoadingThumbs] copy] autorelease]){
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
 
-		[UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionCurveEaseIn animations:^{
-			[thumProgView setOrigin:CGPointMake(thumProgView.size.width, thumProgView.size.height)];
+		[thumProgView setLoading:FALSE];
+		
+		[UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionCurveEaseIn|UIViewAnimationOptionAllowUserInteraction animations:^{
+			[thumProgView setOrigin:CGPointMake(100, 100)];
+			
 		}completion:^(BOOL completed){
-			[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowAnimatedContent animations:^{
+			[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionAllowUserInteraction animations:^{
 
 				[thumProgView setTransform:CGAffineTransformMakeScale(.1, .1)];
 				[thumProgView setCenter:CGPointMake([_contentDisplayController view].size.width/2, 20)];
@@ -200,6 +203,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 				[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 			}];
 		}];
+
+		//settm loose
+		[[sessionVC contentLoadingThumbs] removeObject:thumProgView];
 	}
 	[discernedStream removeStatusDelegate:self];
 
@@ -207,11 +213,14 @@ static NSArray * supportedReceiveFileTypes =  nil;
 -(void)	discernedInputStreamFailedReceivingData:(swypDiscernedInputStream*)discernedStream{
 	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
 	
-	for( swypThumbView * thumProgView in [sessionVC contentLoadingThumbs]){
+	for( swypThumbView * thumProgView in [[[sessionVC contentLoadingThumbs] copy] autorelease]){
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
 		
 		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+		
+		//settm loose
+		[[sessionVC contentLoadingThumbs] removeObject:thumProgView];
 	}
 	[discernedStream removeStatusDelegate:self];
 }
@@ -344,6 +353,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if (cachedView == nil){
 		UIImage * previewImage =	[_contentDataSource iconImageForContentWithID:contentID ofMaxSize:maxIconSize];
 		
+		//you should remove from view first, then remove from local storage
 		assert(previewImage != nil);
 		
 		UIImageView * photoTileView	=	[[UIImageView alloc] initWithImage:previewImage];
