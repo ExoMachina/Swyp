@@ -12,8 +12,8 @@
 
 @implementation swypSessionViewController
 @synthesize connectionSession = _connectionSession;
-@synthesize showActiveTransferIndicator = _showActiveTransferIndicator;
 @synthesize contentLoadingThumbs = _contentLoadingThumbs;
+@synthesize transferringData = _transferringData;
 
 #pragma mark public 
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView{
@@ -52,9 +52,9 @@
 	[super viewDidLoad];
 	
 	self.view.layer.cornerRadius	=	20;
-	self.view.layer.borderWidth		=	5;
-	self.view.layer.borderColor		=	[[UIColor blackColor] CGColor];
-	[self.view setBounds:CGRectMake(0, 0, 50, 50)];
+	self.view.layer.borderWidth		=	2;
+	self.view.layer.borderColor		=	[UIColor blackColor].CGColor;
+	[self.view setBounds:CGRectMake(0, 0, 50, 150)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
 	
 	UITapGestureRecognizer * cancelationRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
@@ -63,21 +63,14 @@
 	SRELS(cancelationRecognizer);
 }
 
--(void) setShowActiveTransferIndicator:(BOOL)showActiveTransferIndicator{
-	_showActiveTransferIndicator	= showActiveTransferIndicator;
-	if (_activityIndicator == nil) {
-		_activityIndicator			= [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		[_activityIndicator setFrame:CGRectMake(0, 0, 50, 50)];
-	}
-	
-	if (showActiveTransferIndicator){
-		[self.view addSubview:_activityIndicator];
-		[_activityIndicator startAnimating];
-	}else{
-		[_activityIndicator stopAnimating];
-		[_activityIndicator removeFromSuperview];
-	}
-	
+-(void)setTransferringData:(BOOL)isTransferring {
+    _transferringData = isTransferring;
+    
+    if (isTransferring) {
+        self.view.layer.borderColor = [UIColor whiteColor].CGColor;
+    } else {
+        self.view.layer.borderColor	= [UIColor blackColor].CGColor;
+    }
 }
 
 #pragma mark gestures

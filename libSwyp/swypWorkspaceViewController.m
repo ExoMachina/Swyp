@@ -28,7 +28,7 @@
 -(void)	swypConnectionSessionWasCreated:(swypConnectionSession*)session		withConnectionManager:(swypConnectionManager*)manager{
 	
 	swypSessionViewController * sessionViewController	= [[swypSessionViewController alloc] initWithConnectionSession:session];
-	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo]endPoint]];
+	[sessionViewController.view setCenter:[[[session representedCandidate] matchedLocalSwypInfo] endPoint]];
 	[self.backgroundView addSubview:sessionViewController.view];
 	[self.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
