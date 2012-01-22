@@ -41,7 +41,7 @@ typedef enum{
 @property (nonatomic, retain)	NSDate*		endDate;
 @property (nonatomic, assign)	swypInfoRefType	swypType;
 
-// Get the general screen position of a swipe (bottom, top, left, right)
+/// Get the general screen position of a swipe (bottom, top, left, right)
 -(swypScreenEdgeType)screenEdgeOfSwyp;
 
 /** property is filled when swyp out occurs on top of displayed content, not filled when swyp begins on workspace */
