@@ -51,7 +51,6 @@
  
  */
 -(id)   initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
--(void) setBluetoothReady:(NSNumber *)isReady;
 
 //
 //private
