@@ -28,5 +28,6 @@
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session;
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView;
 -(void) setTransferringData:(BOOL)isTransferring;
+-(void) makeLandscape;
 
 @end

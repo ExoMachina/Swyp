@@ -73,6 +73,10 @@
     }
 }
 
+-(void) makeLandscape {
+    self.view.size = CGSizeMake(150, 50);
+}
+
 #pragma mark gestures
 -(void) tapGestureRecognized: (UITapGestureRecognizer*) tapGesture{
 	if (tapGesture.state == UIGestureRecognizerStateRecognized){

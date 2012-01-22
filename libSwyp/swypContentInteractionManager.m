@@ -283,22 +283,31 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		CGRect newTranslationFrame	= CGRectZero;
 		double velocity				= [swypInfo velocity];
 		
+        /*
 		CGRect leftRect		= CGRectMake(0, 0, 150, 1200);
 		CGRect rightRect	= CGRectMake(self.contentDisplayController.view.width-150, 0, 150, 1200);
 		CGRect bottomRect	= CGRectMake(0, self.contentDisplayController.view.height-200, 1200, 200);
 		CGRect topRect	= CGRectMake(0, 0, 1200, 200);
+         */
 
-		if (CGRectIntersectsRect(leftRect, thumbFrame)){
-			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * .5, 0));
-		}else if (CGRectIntersectsRect(rightRect, thumbFrame)){
-			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * -0.5, 0));
-		}else if (CGRectIntersectsRect(bottomRect, thumbFrame)){
-			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * -0.5));
-		}else if (CGRectIntersectsRect(topRect, thumbFrame)){
-			newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * 0.5));
-		}else{
-			newTranslationFrame = thumbFrame;
-		}
+        switch ([swypInfo screenEdgeOfSwyp]) {
+            case swypScreenEdgeTypeLeft:
+                newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * .5, 0));
+                break;
+            
+            case swypScreenEdgeTypeRight:
+                newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(velocity * -0.5, 0));
+                break;
+            case swypScreenEdgeTypeBottom:
+                newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * -0.5));
+                break;
+            case swypScreenEdgeTypeTop:
+                newTranslationFrame = CGRectApplyAffineTransform(thumbFrame,CGAffineTransformMakeTranslation(0, velocity * 0.5));
+                break;
+            default:
+                newTranslationFrame = thumbFrame;
+                break;
+        }
 		
 		EXOLog(@"Org %@, Dest %@",rectDescriptionString(thumbFrame),rectDescriptionString(newTranslationFrame));
 

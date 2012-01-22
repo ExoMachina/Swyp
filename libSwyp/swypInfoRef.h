@@ -13,6 +13,13 @@ typedef enum{
 	swypInfoRefTypeSwypOut
 }swypInfoRefType;
 
+typedef enum{
+	swypScreenEdgeTypeBottom= 0,
+	swypScreenEdgeTypeTop,
+	swypScreenEdgeTypeLeft,
+    swypScreenEdgeTypeRight
+}swypScreenEdgeType;
+
 /** This class encapsulates the logical components of the gestures found in swypGestureRecognizer.
 	The swypInfoRef is the tracking method for all connections based on gestures. 
  */
@@ -34,7 +41,12 @@ typedef enum{
 @property (nonatomic, retain)	NSDate*		endDate;
 @property (nonatomic, assign)	swypInfoRefType	swypType;
 
+// Get the general screen position of a swipe (bottom, top, left, right)
+-(swypScreenEdgeType)screenEdgeOfSwyp;
+
 /** property is filled when swyp out occurs on top of displayed content, not filled when swyp begins on workspace */
 @property (nonatomic, retain)	UIView*		swypBeginningContentView;
+
+
 
 @end
