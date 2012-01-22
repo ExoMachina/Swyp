@@ -18,14 +18,12 @@
  
 	This class also caches UIImageViews for display by swypContentDisplayViewController, with image content from the contentDataSource.
  */
-@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
-	NSMutableDictionary *									_sessionViewControllersBySession;
+@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate, swypDiscernedInputStreamStatusDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
+	NSMutableDictionary *									_sessionViewControllersBySession; //swypSessionViewControllers
 	
-	swypBidirectionalMutableDictionary * _contentViewsByContentID;
-	swypBidirectionalMutableDictionary * _thumbnailLoadingViewsByContentID;
-	
-	swypBidirectionalMutableDictionary * _thumbnailViewsByDiscernedInputStream;
-	
+	swypBidirectionalMutableDictionary*	_contentViewsByContentID;
+	swypBidirectionalMutableDictionary*	_thumbnailLoadingViewsByContentID;
+		
 	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
 	
 	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;

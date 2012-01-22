@@ -47,7 +47,7 @@
 				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
 		}];
 		
-		[NSTimer scheduledTimerWithTimeInterval:.1 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
+		[NSTimer scheduledTimerWithTimeInterval:.2 target:contentSwypOp selector:@selector(start) userInfo:nil repeats:NO];
 
 	}
 			

@@ -66,6 +66,8 @@ typedef enum {
 		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
 		If no one handles, an exception is thrown
 	
+	All delegates will be notified using this method, but only one should return TRUE.
+	
 	discernedStream can be read as an input stream, and attached to output streams using SwypInputToOutput, for example
 	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, *wantsProvidedAsNSData = TRUE;, to have data provided in a method bellow
 */

@@ -224,7 +224,10 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 #pragma mark swypInputStreamDiscernerDelegate
 
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
+	[discernedStream setSourceConnectionSession:self];
+	
 	BOOL willHandleStream = FALSE;
+	id<swypConnectionSessionDataDelegate> handlingDelegate	= nil;
 	for (NSValue * delegateValue in _dataDelegates){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
 		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
@@ -248,7 +251,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 					SRELS(pendingInputBridge);
 					
 				}
-				break;
+				assert (handlingDelegate == nil);
+				handlingDelegate = delegate;
 			}
 		}
 	}	
