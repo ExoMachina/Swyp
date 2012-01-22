@@ -169,13 +169,51 @@ static NSArray * supportedReceiveFileTypes =  nil;
 #pragma mark -
 #pragma mark delegation
 #pragma mark swypDiscernedInputStreamStatusDelegate
--(void)	updatedProgressToPercentage:(double)complete withDiscernedInputStream:(swypDiscernedInputStream*)inputStream{
+-(void)	updatedProgressToPercentage:(double)complete withDiscernedInputStream:(swypDiscernedInputStream*)discernedStream{
+	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
+	
+	if (sessionVC == nil){
+		[discernedStream removeStatusDelegate:self];
+		return;
+	}
+	
+	for( swypThumbView * thumProgView in [sessionVC contentLoadingThumbs]){
+		[thumProgView setProgress:complete];
+	}
 	
 }
--(void)	discernedInputStreamCompletedReceivingData:(swypDiscernedInputStream*)inputStream{
-	_thumbnailViewsByDiscernedInputStream;
+-(void)	discernedInputStreamCompletedReceivingData:(swypDiscernedInputStream*)discernedStream{
+	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
+		
+	for( swypThumbView * thumProgView in [sessionVC contentLoadingThumbs]){
+		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
+
+		[UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionCurveEaseIn animations:^{
+			[thumProgView setOrigin:CGPointMake(thumProgView.size.width, thumProgView.size.height)];
+		}completion:^(BOOL completed){
+			[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowAnimatedContent animations:^{
+
+				[thumProgView setTransform:CGAffineTransformMakeScale(.1, .1)];
+				[thumProgView setCenter:CGPointMake([_contentDisplayController view].size.width/2, 20)];
+			}completion:^(BOOL completed){
+				[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+				[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+			}];
+		}];
+	}
+	[discernedStream removeStatusDelegate:self];
+
 }
--(void)	discernedInputStreamFailedReceivingData:(swypDiscernedInputStream*)inputStream{
+-(void)	discernedInputStreamFailedReceivingData:(swypDiscernedInputStream*)discernedStream{
+	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
+	
+	for( swypThumbView * thumProgView in [sessionVC contentLoadingThumbs]){
+		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
+		
+		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+	}
+	[discernedStream removeStatusDelegate:self];
 }
 
 #pragma mark swypConnectionSessionDataDelegate
@@ -189,7 +227,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
-
+	
 	if ([self maintainedSwypSessionViewControllerForSession:session] == nil){
 		return FALSE;
 	}
@@ -197,6 +235,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
 		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
+	}
+	
+	if ([[_contentDataSource supportedFileTypesForReceipt] containsObject:[discernedStream streamType]]){
+		[discernedStream addStatusDelegate:self];
 	}
 	
 	return FALSE;//we wont be handling here.. the datasource should

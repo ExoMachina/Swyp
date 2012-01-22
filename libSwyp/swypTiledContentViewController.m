@@ -55,7 +55,7 @@
 		UIView *nextTile = [tiles objectAtIndex:index];		
 		if ([_displayedTileViews containsObject:nextTile] == NO){
 			
-			[self addTile:nextTile];
+			[self addTile:nextTile animated:TRUE];
 			
 			[tilesToRemove removeObject:nextTile];
 			
@@ -67,7 +67,7 @@
 	}
 	
 	for (UIView * removeTileView in tilesToRemove){
-		[self removeTile:removeTileView];
+		[self removeTile:removeTileView animated:TRUE];	
 	}
 	
 }

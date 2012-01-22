@@ -12,11 +12,12 @@
 
 @class swypInputStreamDiscerner;
 @protocol swypInputStreamDiscernerDelegate <NSObject>
-
+///Notifies that discerned stream is ready for consumption
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
+///Notifies that discerned stream has concluded
 -(void)	concludedDiscernedStream: (swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
+///Notifies that discerned stream has concluded with an error
 -(void)	inputStreamDiscernerFinishedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner;
-
 @end
 
 
@@ -38,6 +39,7 @@
 	id<swypInputStreamDiscernerDelegate>	_delegate;
 
 }
+///The primary input stream
 @property (nonatomic, readonly) NSInputStream *					discernmentStream;
 @property (nonatomic, assign)	id<swypInputStreamDiscernerDelegate>	delegate;
 
