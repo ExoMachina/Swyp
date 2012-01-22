@@ -13,6 +13,7 @@
 @implementation swypSessionViewController
 @synthesize connectionSession = _connectionSession;
 @synthesize contentLoadingThumbs = _contentLoadingThumbs;
+@synthesize transferringData = _transferringData;
 
 #pragma mark public 
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView{
@@ -52,7 +53,7 @@
 	
 	self.view.layer.cornerRadius	=	20;
 	self.view.layer.borderWidth		=	2;
-	self.view.layer.borderColor		=	[[UIColor blackColor] CGColor];
+	self.view.layer.borderColor		=	[UIColor blackColor].CGColor;
 	[self.view setBounds:CGRectMake(0, 0, 50, 150)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
 	
@@ -60,6 +61,16 @@
 	[cancelationRecognizer setNumberOfTapsRequired:1];
 	[self.view addGestureRecognizer:cancelationRecognizer];
 	SRELS(cancelationRecognizer);
+}
+
+-(void)setTransferringData:(BOOL)isTransferring {
+    _transferringData = isTransferring;
+    
+    if (isTransferring) {
+        self.view.layer.borderColor = [UIColor whiteColor].CGColor;
+    } else {
+        self.view.layer.borderColor	= [UIColor blackColor].CGColor;
+    }
 }
 
 #pragma mark gestures

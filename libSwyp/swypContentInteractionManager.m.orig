@@ -44,7 +44,11 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	swypSessionViewController*	sessionViewController	=	[self maintainedSwypSessionViewControllerForSession:session];
 	
+<<<<<<< HEAD
 	for (swypThumbView * thumb in [sessionViewController contentLoadingThumbs]){
+=======
+	for (swypThumbView * thumb in [[[sessionView contentLoadingThumbs] copy] autorelease]){
+>>>>>>> 2081ba390e634dbbb8fbf51591525d604fb3138b
 		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumb];
 		
@@ -227,12 +231,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark swypConnectionSessionDataDelegate
 -(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setTransferringData:YES];
-
 }
 
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setTransferringData:NO];
 }
 
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
@@ -338,7 +339,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if (overlapSession){
 		[self sendContentWithID:contentID throughConnectionSession:[overlapSession connectionSession]];
 		
-		[overlapSession setTransferringData:YES];
+		[overlapSession setShowActiveTransferIndicator:TRUE];
 	}
 
 }
