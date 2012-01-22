@@ -87,43 +87,64 @@
 
 #pragma mark delegation
 #pragma mark gestures
--(void)		contentPanOccuredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
+-(void)		contentPanOccurredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
+    
+    float centerY = recognizer.view.center.y;
 	
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
         // change z index to top here
         [_tiledContentViewController.view bringSubviewToFront:[recognizer view]];
 		
-	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
+	} else if ([recognizer state] == UIGestureRecognizerStateChanged){
 		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y));
 		newTranslationFrame	=	[self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
 		
-		
 		[[recognizer view] setFrame:newTranslationFrame];
 		[recognizer setTranslation:CGPointZero inView:self.view];
+        
+        if (centerY < 60) {
+            EXOLog(@"Dragged to top!");
+            float fraction = powf(0.98, (60-centerY));
+            recognizer.view.transform = CGAffineTransformMakeScale(fraction, fraction);
+            recognizer.view.alpha = fraction;
+        } else {
+            recognizer.view.transform = CGAffineTransformMakeScale(1, 1);
+        }
 				
-	}else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
-		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
-		newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
-		
-		double tossDistance	=	euclideanDistance(newTranslationFrame.origin, [[recognizer view] frame].origin);
-		BOOL recognizeToss	= FALSE;
-		if (tossDistance > 100 && [_swypOutRecognizer state] == UIGestureRecognizerStateCancelled){
-			recognizeToss = TRUE;
-			EXOLog(@"TOSSER! %f",tossDistance);
-		}
-		
-		NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
+	} else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
+        
+        if (centerY > 60) {
+            CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
+            newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
+            
+            double tossDistance	=	euclideanDistance(newTranslationFrame.origin, [[recognizer view] frame].origin);
+            BOOL recognizeToss	= FALSE;
+            if (tossDistance > 100 && [_swypOutRecognizer state] == UIGestureRecognizerStateCancelled){
+                recognizeToss = TRUE;
+                EXOLog(@"TOSSER! %f",tossDistance);
+            }
+            
+            NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
 
-		[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
-			[[recognizer view] setFrame:newTranslationFrame];
-		}completion:^(BOOL completed){
-			if (recognizeToss){
-				if (StringHasText(swypOutContentID)){
-					[_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
-				}
-			}
-		}];
-		
+            [UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
+                [[recognizer view] setFrame:newTranslationFrame];
+            }completion:^(BOOL completed){
+                if (recognizeToss){
+                    if (StringHasText(swypOutContentID)){
+                        [_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
+                    }
+                }
+            }];
+        } else {
+            [UIView animateWithDuration:0.25 animations:^{
+                recognizer.view.alpha = 0;
+                recognizer.view.transform = CGAffineTransformMakeScale(0.01, 0.01);
+            }completion:^(BOOL completed){
+                if (completed) {
+                    [_tiledContentViewController removeTile:recognizer.view animated:NO];
+                }
+            }];
+        }		
 	}
 }
 
@@ -224,7 +245,7 @@
 		}
 	}
 	if (needAddPanRecognizer){
-		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
+		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccurredWithRecognizer:)];
 		[tileView addGestureRecognizer:dragRecognizer];
 		SRELS(dragRecognizer);
 	}
