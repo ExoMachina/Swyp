@@ -52,9 +52,9 @@
 	[super viewDidLoad];
 	
 	self.view.layer.cornerRadius	=	20;
-	self.view.layer.borderWidth		=	5;
+	self.view.layer.borderWidth		=	2;
 	self.view.layer.borderColor		=	[[UIColor blackColor] CGColor];
-	[self.view setBounds:CGRectMake(0, 0, 50, 50)];
+	[self.view setBounds:CGRectMake(0, 0, 50, 150)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
 	
 	UITapGestureRecognizer * cancelationRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
@@ -66,8 +66,8 @@
 -(void) setShowActiveTransferIndicator:(BOOL)showActiveTransferIndicator{
 	_showActiveTransferIndicator	= showActiveTransferIndicator;
 	if (_activityIndicator == nil) {
-		_activityIndicator			= [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		[_activityIndicator setFrame:CGRectMake(0, 0, 50, 50)];
+		_activityIndicator			= [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		[_activityIndicator setFrame:self.view.frame];
 	}
 	
 	if (showActiveTransferIndicator){
