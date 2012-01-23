@@ -82,6 +82,11 @@
 		revisedRect.origin.y	-= negativeOverflow.height;
 	}
 	
+	if (revisedRect.origin.y < 50) {
+		revisedRect.origin.y = 50;
+	}
+
+	
 	return revisedRect;
 }
 
@@ -114,24 +119,22 @@
 	} else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
         
         if (centerY > 60) {
-            CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
-            newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
-            
-            if (newTranslationFrame.origin.y < 50) {
-                newTranslationFrame.origin.y = 50;
-            }
-            
-            double tossDistance	=	euclideanDistance(newTranslationFrame.origin, [[recognizer view] frame].origin);
+            CGRect keneticTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
+                                    
+            double tossDistance	=	euclideanDistance(keneticTranslationFrame.origin, [[recognizer view] frame].origin);
             BOOL recognizeToss	= FALSE;
-            if (tossDistance > 100 && [_swypOutRecognizer state] == UIGestureRecognizerStateCancelled){
+            if (tossDistance > 100 && [_swypOutRecognizer state] != UIGestureRecognizerStateRecognized){
+				EXOLog(@"TOSSER! %f",tossDistance);
                 recognizeToss = TRUE;
-                EXOLog(@"TOSSER! %f",tossDistance);
             }
             
+			CGRect revisedKeneticTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:keneticTranslationFrame];
+			
+			
             NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
 
             [UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
-                [[recognizer view] setFrame:newTranslationFrame];
+                [[recognizer view] setFrame:revisedKeneticTranslationFrame];
             }completion:^(BOOL completed){
                 if (recognizeToss){
                     if (StringHasText(swypOutContentID)){
