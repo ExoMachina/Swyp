@@ -82,10 +82,6 @@
 		revisedRect.origin.y	-= negativeOverflow.height;
 	}
 	
-	if (revisedRect.origin.y < 50) {
-		revisedRect.origin.y = 50;
-	}
-
 	
 	return revisedRect;
 }
@@ -129,6 +125,11 @@
             }
             
 			CGRect revisedKeneticTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:keneticTranslationFrame];
+			
+			//Toss mode should have different upper bound
+			if (revisedKeneticTranslationFrame.origin.y < 50) {
+				revisedKeneticTranslationFrame.origin.y = 50;
+			}
 			
 			
             NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
