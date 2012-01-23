@@ -33,6 +33,8 @@
 	if (self = [super initWithNibName:nil bundle:nil]){
 		_connectionSession		= [session retain];
 		_contentLoadingThumbs	= [NSMutableSet new];
+		
+		_transferIndicatorActiveCount	= 0;
 	}
 	return self;
 }
@@ -63,8 +65,18 @@
 	SRELS(cancelationRecognizer);
 }
 
--(void)setTransferringData:(BOOL)isTransferring {
-    _transferringData = isTransferring;
+-(void)indicateTransferringData:(BOOL)isTransferring {
+	if( isTransferring){
+		_transferIndicatorActiveCount ++;
+	}else{
+		_transferIndicatorActiveCount --;
+	}
+	
+	if (_transferIndicatorActiveCount > 0){
+		_transferringData = TRUE;
+	}else if (_transferIndicatorActiveCount <= 0){
+		_transferringData = FALSE;
+	}
     
     if (isTransferring) {
         self.view.layer.borderColor = [UIColor whiteColor].CGColor;

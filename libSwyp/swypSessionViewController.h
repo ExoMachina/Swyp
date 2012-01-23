@@ -18,6 +18,8 @@
 	swypConnectionSession *		_connectionSession;
 	NSMutableSet	*			_contentLoadingThumbs;
     BOOL                        _transferringData;
+	
+	NSInteger					_transferIndicatorActiveCount;
 }
 
 ///associated connection session
@@ -27,7 +29,9 @@
 
 -(id)	initWithConnectionSession:	(swypConnectionSession*)session;
 -(BOOL)	overlapsRect:(CGRect)testRect inView:(UIView*)	testView;
--(void) setTransferringData:(BOOL)isTransferring;
+
+///The following is a 'smart' status indicator set true twice, and false once, and the thing is still indicating 
+-(void) indicateTransferringData:(BOOL)isTransferring;
 -(void) makeLandscape;
 
 @end

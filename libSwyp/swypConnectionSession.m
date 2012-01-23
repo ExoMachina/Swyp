@@ -226,14 +226,14 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
 	[discernedStream setSourceConnectionSession:self];
 	
-	BOOL willHandleStream = FALSE;
 	id<swypConnectionSessionDataDelegate> handlingDelegate	= nil;
+	
 	for (NSValue * delegateValue in _dataDelegates){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
 		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
 			
 			BOOL	delegateWantsData = FALSE;
-			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
+			BOOL willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
 			
 			if (willHandleStream){
 				if (delegateWantsData){
@@ -257,9 +257,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		}
 	}	
 	
-	if (willHandleStream == FALSE){
+	if (handlingDelegate == nil){
 		EXOLog(@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]);
-//		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
+		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
 	}else{
 		for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
 			id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
