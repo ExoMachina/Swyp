@@ -59,7 +59,7 @@ typedef enum {
 /*
 //peer info includes the following
  "port"		: remote listening port
- "address"	: remote ip address
+ "ip"	: remote ip address
  "publicKey": peer's public key
 //To Jingle
  "smppPeer"	: peer's username

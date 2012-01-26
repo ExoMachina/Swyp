@@ -117,11 +117,13 @@ static NSString * const swypPairServerURL	=	@"https://swyp.herokuapp.com/";
 		}
 		[peerInfo setValue:port forKey:@"port"];
 		
-		NSString * address	= [peerResponse valueForKey:@"address"];
-		if (StringHasText(address) == NO){
+		NSString * ip	= [peerResponse valueForKey:@"ip"];
+		if (StringHasText(ip) == NO){
 			peerInfo = nil;
 		}
-		[peerInfo setValue:address forKey:@"address"];
+		[peerInfo setValue:ip forKey:@"ip"];
+        
+        EXOLog(@"Got peer info %@", peerInfo);
 		
 		if (peerInfo == nil){
 			[_delegate swypPairServerInteractionManger:self didFailToGetSwypInfoForSwypRef:swyp orSwypToken:nil];

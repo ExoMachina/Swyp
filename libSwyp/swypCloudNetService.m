@@ -17,7 +17,7 @@
 -(void)beginConnectionToPeerWithInfo:(NSDictionary*)peerInfo{
 	
 	//xmpp to come
-	[self _connectToServerWithIP:[peerInfo valueForKey:@"address"] port:[[peerInfo valueForKey:@"port"] intValue] info:peerInfo];
+	[self _connectToServerWithIP:[peerInfo valueForKey:@"ip"] port:[[peerInfo valueForKey:@"port"] intValue] info:peerInfo];
 }
 
 -(NSUInteger)portNumber{
@@ -221,7 +221,7 @@ static void _swypServerAcceptConnectionCallBack(CFSocketRef socket, CFSocketCall
 			
 			//this is for dict system
 			NSMutableDictionary * peerInfo	=	[NSMutableDictionary dictionary];
-			[peerInfo setValue:clientIPAddress forKey:@"address"];
+			[peerInfo setValue:clientIPAddress forKey:@"ip"];
 			
 			[[cloudySelf delegate] cloudNetService:cloudySelf didReceiveInputStream:(NSInputStream*) readStream outputStream:(NSOutputStream*)writeStream withPeerFromInfo:peerInfo];
         } else {
