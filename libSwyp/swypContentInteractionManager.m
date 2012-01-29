@@ -85,8 +85,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		return;
 	
 	if (_contentDataSource != contentDataSource){
-		for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
-			[connectionSession removeDataDelegate:_contentDataSource];
+		for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
+			[[connectionSession nonretainedObjectValue] removeDataDelegate:_contentDataSource];
 		}
 	}
 	
@@ -101,8 +101,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[_contentDataSource setDatasourceDelegate:self];
 	supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
 	
-	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
-		[connectionSession addDataDelegate:contentDataSource];
+	for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
+		[[connectionSession nonretainedObjectValue] addDataDelegate:contentDataSource];
 	}
 	
 	
