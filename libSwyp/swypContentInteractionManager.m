@@ -81,7 +81,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
 
-	if (_contentDataSource){
+	if (_contentDataSource == contentDataSource)
+		return;
+	
+	if (_contentDataSource != contentDataSource){
 		for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
 			[connectionSession removeDataDelegate:_contentDataSource];
 		}
@@ -193,6 +196,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	swypSessionViewController * sessionVC	=	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:[discernedStream sourceConnectionSession]]];
 		
 	for( swypThumbView * thumProgView in [[[sessionVC contentLoadingThumbs] copy] autorelease]){
+		EXOLog(@"Done tracking content receipt for type: %@", [discernedStream streamType]);
+		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
 
 		[thumProgView setLoading:FALSE];
