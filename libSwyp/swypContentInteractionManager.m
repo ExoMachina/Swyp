@@ -80,9 +80,13 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
-	for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
-		[connectionSession removeDataDelegate:contentDataSource];
+
+	if (_contentDataSource){
+		for (swypConnectionSession * connectionSession in [_sessionViewControllersBySession allKeys]){
+			[connectionSession removeDataDelegate:_contentDataSource];
+		}
 	}
+	
 	SRELS(supportedReceiveFileTypes);
 	[_contentDataSource setDatasourceDelegate:nil];
 	SRELS(_contentDataSource);
