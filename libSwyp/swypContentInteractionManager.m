@@ -87,6 +87,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	[_contentDataSource setDatasourceDelegate:nil];
 	SRELS(_contentDataSource);
 	
+	if (contentDataSource == nil)
+		return;
+	
 	_contentDataSource	=	[contentDataSource retain];
 	[_contentDataSource setDatasourceDelegate:self];
 	supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
