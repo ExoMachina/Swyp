@@ -15,7 +15,7 @@
 static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
-            worspaceDelegate = _worspaceDelegate, backgroundView = _backgroundView;
+            backgroundView = _backgroundView;
 @synthesize contentDataSource;
 
 #pragma mark -
