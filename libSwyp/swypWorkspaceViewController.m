@@ -9,6 +9,7 @@
 #import "swypWorkspaceViewController.h"
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
+#import "swypSessionViewController.h"
 
 
 static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
@@ -110,6 +111,16 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		}
 	}
 }
+
+#pragma mark swypSwypableContentSuperviewWorkspaceDelegate
+-(UIView*)workspaceView{
+	return self.view;
+}
+-(void)	presentContentSwypWorkspaceAtopSwypableContentSuperview:(swypSwypableContentSuperview*)superview forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
+	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
+	//
+}
+
 
 #pragma mark -
 #pragma mark public

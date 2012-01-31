@@ -219,11 +219,6 @@
 	[_tiledContentViewController reloadTileObjectData];
 }
 
--(void)	returnContentWithIDToNormalLocation:(NSString*)contentID	animated:(BOOL)animate{
-	
-#pragma mark TODO:
-	EXOLog(@"returnContentWithIDToNormalLocation is marked TODO! CID%@",contentID);
-}
   
 
 -(NSString*)	contentIDMatchingSwypOutView:	(UIView*)swypedView{

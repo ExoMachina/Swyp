@@ -42,8 +42,8 @@
 -(CGSize) choiceMaxSizeForContentDisplay;
 
 @optional
-//-1 means all content
--(void)	returnContentWithIDToNormalLocation:(NSString*)contentID	animated:(BOOL)animate;
+///Reposition content to frame location within view
+-(void)	moveContentWithID: (NSString*)insertID toFrame:(CGRect)frame animated:(BOOL)animate;
 
 //If a swyp out begins on a content piece, the recognizer knows what view it started on, and especially if showContentBeforeConnection is TRUE, 
 //	we can use this to check whether we should commence a "content swyp"

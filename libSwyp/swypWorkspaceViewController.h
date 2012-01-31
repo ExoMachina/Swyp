@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "swypContentInteractionManager.h"
 #import "swypConnectionManager.h"
-#import "swypSessionViewController.h"
 #import "swypPromptImageView.h"
 #import "swypWorkspaceBackgroundView.h"
+#import "swypSwypableContentSuperview.h"
 
 @class swypWorkspaceViewController;
 ///@warning Depreciated! The workspace now dismisses itself. 
@@ -23,7 +23,7 @@
  Set a datasource using [swypWorkspace setContentDataSource:(NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*) contentDataSource], then display this swyp workspace as a modal view!
  
  */
-@interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
+@interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate, swypSwypableContentSuperviewWorkspaceDelegate> {
 	swypContentInteractionManager *		_contentManager;
 	swypConnectionManager *				_connectionManager;
 		
@@ -48,8 +48,8 @@
 ///Sets the swypContentInteractionManager's contentDataSource
 @property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
 
-/** 
- DEPRECATED; the workspace now dismisses itself. 
+/** Old init function.
+ @warning DEPRECATED; the workspace now dismisses itself. 
  Use regular init, instead.
  */
 -(id)   initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
