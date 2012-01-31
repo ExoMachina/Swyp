@@ -99,6 +99,8 @@
 		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
 		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
 		7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */; };
+		798A839614D891D300504333 /* swypSwypableContentSuperview.h in Headers */ = {isa = PBXBuildFile; fileRef = 798A839414D891D300504333 /* swypSwypableContentSuperview.h */; };
+		798A839714D891D300504333 /* swypSwypableContentSuperview.m in Sources */ = {isa = PBXBuildFile; fileRef = 798A839514D891D300504333 /* swypSwypableContentSuperview.m */; };
 		79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080721481A9B700306F67 /* swypTiledContentViewController.h */; };
 		79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080731481A9B700306F67 /* swypTiledContentViewController.m */; };
 		79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080771481B00C00306F67 /* swypPhotoPlayground.h */; };
@@ -232,6 +234,8 @@
 		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
 		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
 		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
+		798A839414D891D300504333 /* swypSwypableContentSuperview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypSwypableContentSuperview.h; sourceTree = "<group>"; };
+		798A839514D891D300504333 /* swypSwypableContentSuperview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypSwypableContentSuperview.m; sourceTree = "<group>"; };
 		79C080721481A9B700306F67 /* swypTiledContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTiledContentViewController.h; sourceTree = "<group>"; };
 		79C080731481A9B700306F67 /* swypTiledContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTiledContentViewController.m; sourceTree = "<group>"; };
 		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoPlayground.h; sourceTree = "<group>"; };
@@ -388,6 +392,7 @@
 		680FC61613E30F4000509CF2 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
+				798A839214D8917F00504333 /* Inside-app usable  */,
 				79FD02DA14C9EA2B00BD4382 /* workspace components */,
 				680FC61413E30F2300509CF2 /* Content Display */,
 			);
@@ -589,6 +594,15 @@
 			name = "Handling Outside Data";
 			sourceTree = "<group>";
 		};
+		798A839214D8917F00504333 /* Inside-app usable  */ = {
+			isa = PBXGroup;
+			children = (
+				798A839414D891D300504333 /* swypSwypableContentSuperview.h */,
+				798A839514D891D300504333 /* swypSwypableContentSuperview.m */,
+			);
+			name = "Inside-app usable ";
+			sourceTree = "<group>";
+		};
 		799F83E514CB260700F642F3 /* helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -741,6 +755,7 @@
 				3EA111AC14CA04D40073A717 /* swypThumbView.h in Headers */,
 				3EA111B114CA1F6F0073A717 /* SSPieProgressView.h in Headers */,
 				3EA111B514CA1FF00073A717 /* SSDrawingUtilities.h in Headers */,
+				798A839614D891D300504333 /* swypSwypableContentSuperview.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,6 +871,7 @@
 				3EA111AD14CA04D40073A717 /* swypThumbView.m in Sources */,
 				3EA111B214CA1F6F0073A717 /* SSPieProgressView.m in Sources */,
 				3EA111B614CA1FF00073A717 /* SSDrawingUtilities.m in Sources */,
+				798A839714D891D300504333 /* swypSwypableContentSuperview.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

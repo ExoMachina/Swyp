@@ -14,13 +14,14 @@
 #import "swypWorkspaceBackgroundView.h"
 
 @class swypWorkspaceViewController;
+///@warning Depreciated! The workspace now dismisses itself. 
 @protocol swypWorkspaceDelegate <NSObject>
--(void)	delegateShouldDismissSwypWorkspace: (swypWorkspaceViewController*)workspace;
 @end
 
 /** This class is the UIViewController displayed to the user. 
  
  Set a datasource using [swypWorkspace setContentDataSource:(NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*) contentDataSource], then display this swyp workspace as a modal view!
+ 
  */
 @interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;
@@ -37,7 +38,6 @@
 	UIButton *							_swypNetworkInterfaceClassButton;
     UIView *                            _downArrowView;
 }
-
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
 @property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
@@ -48,12 +48,19 @@
 ///Sets the swypContentInteractionManager's contentDataSource
 @property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
 
-/** the main workspace init method 
-
- You'll need to set the workpace delegate to be told when workspace wants to be dismissed.
- 
+/** 
+ DEPRECATED; the workspace now dismisses itself. 
+ Use regular init, instead.
  */
 -(id)   initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
+
+///The primary init function
+-(id) init;
+
+/**
+ Self retaining singleton swyp workspace for apps that use swyp everywhere.
+ */
++(swypWorkspaceViewController*)	sharedSwypWorkspace;
 
 //
 //private

@@ -10,6 +10,8 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 
+
+static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
             worspaceDelegate = _worspaceDelegate, backgroundView = _backgroundView;
@@ -176,18 +178,33 @@
 	return FALSE;
 }
 
--(void)	leaveWorkspaceButtonPressed:(id)sender {
-	[_worspaceDelegate delegateShouldDismissSwypWorkspace:self];
+-(void)	leaveWorkspaceWantedBySender:(id)sender {
+	[self dismissModalViewControllerAnimated:TRUE];
+
 }
 
 
 #pragma mark UIViewController
--(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
+
++(swypWorkspaceViewController*)	sharedSwypWorkspace{
+	if (_singleton_sharedSwypWorkspace == nil){
+		_singleton_sharedSwypWorkspace	=	[[swypWorkspaceViewController alloc] init];
+	}
+	return _singleton_sharedSwypWorkspace;
+}
+
+-(id) init{
 	if (self = [super initWithNibName:nil bundle:nil]){
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];
 		
-		_worspaceDelegate	=	worspaceDelegate;
+	}
+	return self;
+}
+
+-(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
+	if (self = [self init]){
+
 	}
 	return self;
 }
@@ -233,12 +250,12 @@
         [curlButton addTarget:self action:@selector(_animateArrows:) forControlEvents:UIControlEventTouchDown];
     }
     
-    [curlButton addTarget:self action:@selector(leaveWorkspaceButtonPressed:) 
+    [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
          forControlEvents:UIControlEventTouchUpInside];
          
     [curlButton addTarget:self action:@selector(_stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
     
-    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
+    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:swipeDownRecognizer];
     
