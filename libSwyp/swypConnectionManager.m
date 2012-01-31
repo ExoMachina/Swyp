@@ -340,11 +340,11 @@
 	//
 	//set defaults 
 //	_supportedConnectionMethods	|= swypConnectionMethodWifiLoc;
-	_supportedConnectionMethods	|= swypConnectionMethodWifiCloud;
-	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
+//	_supportedConnectionMethods	|= swypConnectionMethodWifiCloud;
+//	_supportedConnectionMethods	|= swypConnectionMethodWWANCloud;
 	_supportedConnectionMethods	|= swypConnectionMethodBluetooth;
 	
-	_userPreferedConnectionClass	= swypConnectionClassNone;
+	_userPreferedConnectionClass	= swypConnectionClassBluetooth;
 	
 	//
 	//setup service managers

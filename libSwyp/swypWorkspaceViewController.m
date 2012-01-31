@@ -317,7 +317,7 @@
 		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
 		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
 		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-		[_swypNetworkInterfaceClassButton setEnabled:TRUE];
+		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
 	}
 	
 	[self _setupUIForCurrentOrientation];
