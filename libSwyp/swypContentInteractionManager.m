@@ -91,15 +91,22 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 	
 	SRELS(supportedReceiveFileTypes);
-	[_contentDataSource setDatasourceDelegate:nil];
+	if ([_contentDataSource respondsToSelector:@selector(setDatasourceDelegate:)]){
+		[_contentDataSource setDatasourceDelegate:nil];
+	}
 	SRELS(_contentDataSource);
 	
 	if (contentDataSource == nil)
 		return;
 	
 	_contentDataSource	=	[contentDataSource retain];
-	[_contentDataSource setDatasourceDelegate:self];
-	supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
+	if ([_contentDataSource respondsToSelector:@selector(setDatasourceDelegate:)]){
+		[_contentDataSource setDatasourceDelegate:self];
+	}
+	
+	if ([_contentDataSource respondsToSelector:@selector(supportedFileTypesForReceipt)]){
+		supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
+	}
 	
 	for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
 		[[connectionSession nonretainedObjectValue] addDataDelegate:contentDataSource];
@@ -115,8 +122,11 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session{
+
+	//If you display content, you must be able to send it
+	assert ([_contentDataSource respondsToSelector:@selector(supportedFileTypesForContentWithID:)]);
 	
-	NSString * fileTypeToUse	= [[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentWithID:contentID]];
+	NSString * fileTypeToUse	= 	[[[session representedCandidate] supportedFiletypes] firstObjectCommonWithArray:[_contentDataSource supportedFileTypesForContentWithID:contentID]];
 	
 	if (fileTypeToUse == nil){
 		[[[[UIAlertView alloc] initWithTitle:@"No Support" message:@"The recipient app doesn't want any form of this file... This is a bug on one of your apps' part" delegate:nil cancelButtonTitle:@"okay" otherButtonTitles:nil] autorelease] show];
@@ -125,6 +135,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	NSString * tag	=	@"userContent";
 	
+	assert([_contentDataSource respondsToSelector:@selector(iconImageForContentWithID:ofMaxSize:)]);
 	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentWithID:contentID ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
 	if (thumbnailImageData != nil){
 		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
@@ -133,10 +144,29 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	
 	NSUInteger dataLength 		= 0;
+	
 
-	NSInputStream*	dataSendStream	=	[_contentDataSource inputStreamForContentWithID:contentID fileType:fileTypeToUse length:&dataLength];
-	[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
+	NSInputStream*	dataSendStream	=	nil;
+	
+	if ([_contentDataSource respondsToSelector:@selector(dataForContentWithID:fileType:)]){
+		NSData * streamData	=	[_contentDataSource dataForContentWithID:contentID fileType:fileTypeToUse];
 
+		if (streamData != nil && [streamData length] > 0){
+			dataSendStream	=	[NSInputStream inputStreamWithData:streamData];
+			dataLength		=	[streamData length];
+		}
+
+	}else if ([_contentDataSource respondsToSelector:@selector(inputStreamForContentWithID:fileType:length:)]){
+		dataSendStream	= 	[_contentDataSource inputStreamForContentWithID:contentID fileType:fileTypeToUse length:&dataLength];
+	}else{
+		[NSException raise:@"_contentDataSource didn't implement any swypContentDataSourceProtocol methods for 'Providing data'" format:nil];
+	}
+	
+	if (dataSendStream != nil){
+		[session beginSendingFileStreamWithTag:tag type:fileTypeToUse dataStreamForSend:dataSendStream length:dataLength];
+	}else{
+		EXOLog(@"No stream created for content id '%@'; send aborted!,",contentID);
+	}
 }
 
 
@@ -258,7 +288,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		return TRUE;
 	}
 	
-	if ([[_contentDataSource supportedFileTypesForReceipt] containsObject:[discernedStream streamType]]){
+	if ([supportedReceiveFileTypes containsObject:[discernedStream streamType]]){
 		[discernedStream addStatusDelegate:self];
 	}
 	
@@ -373,6 +403,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 	
 	if (cachedView == nil){
+		//If you've got content, you must implem
+		assert([_contentDataSource respondsToSelector:@selector(iconImageForContentWithID:ofMaxSize:)]);
 		UIImage * previewImage =	[_contentDataSource iconImageForContentWithID:contentID ofMaxSize:maxIconSize];
 		
 		//you should remove from view first, then remove from local storage
@@ -407,7 +439,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(NSArray*)		allIDsForContentInController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	NSMutableArray * ids = [NSMutableArray array];
-	[ids addObjectsFromArray:[_contentDataSource idsForAllContent]];
+	if ([_contentDataSource respondsToSelector:@selector(idsForAllContent)]){
+		[ids addObjectsFromArray:[_contentDataSource idsForAllContent]];
+	}
 	[ids addObjectsFromArray:[_thumbnailLoadingViewsByContentID allKeys]];
 	return ids;
 }

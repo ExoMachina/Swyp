@@ -20,8 +20,7 @@
 
 /** This class is the UIViewController displayed to the user. 
  
- Set a datasource, display it to the user, and you're off!
- See swypContentInteractionManager for methods for setting display view controller and data model.
+ Set a datasource using [swypWorkspace setContentDataSource:(NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*) contentDataSource], then display this swyp workspace as a modal view!
  */
 @interface swypWorkspaceViewController : UIViewController <swypConnectionManagerDelegate, UIGestureRecognizerDelegate> {
 	swypContentInteractionManager *		_contentManager;
@@ -44,6 +43,9 @@
 @property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
 
 @property (nonatomic, assign)	id<swypWorkspaceDelegate>		worspaceDelegate;
+
+///Sets the swypContentInteractionManager's contentDataSource
+@property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
 
 /** the main workspace init method 
 

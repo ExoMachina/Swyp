@@ -44,14 +44,20 @@
  Content is represented on a contentViewController iconImageForContentWithID:ofMaxSize:, then when that contentViewController detects a swyp-out of the content, the swypContentInteractionManager requests inputStreamForContentWithID:fileType:length: for that content, which is then added to the output for a particular session.
  */
 @protocol swypContentDataSourceProtocol <NSObject>
+@optional
+
 /** Returns list of all unique IDs for each piece of content to displayed to swyp workspace. 
+
  @return	NSArray choc full of NSStrings.
 			Can be as simple as [[NSNumber numberWithInt:index] stringValue];
+			Most methods must be implemented if the Array is not empty or nil.
  
   Content can be ordered, or not, in returning the 'idsForAllContent' array.
-
  */
 - (NSArray*)		idsForAllContent;
+
+
+///The following are optional when idsForAllContent returns empty or nil, or is not implemented.
 
 /** Returns a UIImage representing content, which has dimensions no greater than maxIconSize.
 	This image is displayed by the swypContentViewController.
@@ -61,14 +67,31 @@
 /// Returns swypFileTypeString array that a specifc contentID supports
 - (NSArray*)		supportedFileTypesForContentWithID: (NSString*)contentID;
 
-/** Gets an NSInputStream for a specific piece of content for sending over connectionSession
- 
-	@param contentLengthDestOrNULL is a pointer that after function call should contain length of inputStream, or not if indefinite or unknown. 
- */
-- (NSInputStream*)	inputStreamForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL; 
 
-///Sets the delegate
+///Sets the swypContentDataSourceDelegate for the dataSource
 -(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate;
 ///Retrieves the delegate
 -(id<swypContentDataSourceDelegate>)	datasourceDelegate;
+
+
+/** Providing data; 
+ 
+	Either dataForContentWithID:fileType: or inputStreamForContentWithID:fileType:length: must be implemented if idsForAllContent returns != nil or empty.
+ */
+ 
+/** Returns the data for the specified file type. 
+ 
+ This is a convenience method in leu of inputStreamForContentWithID:fileType:length:
+ 
+ @return NSData must contain the complete file of a given format. Returning nil causes no data to be sent. 
+ */
+- (NSData*)	dataForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type; 
+
+/** Gets an NSInputStream for a specific piece of content for sending over connectionSession
+ 
+ @param contentLengthDestOrNULL is a pointer that after function call should contain length of inputStream, or not if indefinite or unknown. 
+ */
+- (NSInputStream*)	inputStreamForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL; 
+
+
 @end

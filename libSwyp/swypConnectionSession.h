@@ -60,6 +60,21 @@ typedef enum {
 */
 -(NSArray*)	supportedFileTypesForReceipt;
 
+
+/** A convenience method for delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:. Return true to accept the enclosed discernedStream as NSData through yieldedData:discernedStream:inConnectionSession: when it's done being received. 
+ 
+ @warning if you want to do anything special with NSStream functionality, don't implement this method on your datasource. 
+ 
+ @param streamType is a shortcut for discernedStream.streamType
+ 
+Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
+Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
+If no one handles, an exception is thrown
+ 
+ @return true or false depending on interest in stream. 
+ */
+-(BOOL) delegateWillReceiveDataFromDiscernedStream:(swypDiscernedInputStream*)discernedStream ofType:(NSString*)streamType inConnectionSession:(swypConnectionSession*)session;
+
 /** See whether delegate will handle data stream.
  
 	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
@@ -69,9 +84,11 @@ typedef enum {
 	All delegates will be notified using this method, but only one should return TRUE.
 	
 	discernedStream can be read as an input stream, and attached to output streams using SwypInputToOutput, for example
-	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, *wantsProvidedAsNSData = TRUE;, to have data provided in a method bellow
+	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, '*wantsProvidedAsNSData = TRUE;', to have data provided by yieldedData:discernedStream:inConnectionSession:
+
 */
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session;
+
 
 /**
 	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.

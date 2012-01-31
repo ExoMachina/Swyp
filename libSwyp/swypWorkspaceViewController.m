@@ -13,6 +13,7 @@
 @implementation swypWorkspaceViewController
 @synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
             worspaceDelegate = _worspaceDelegate, backgroundView = _backgroundView;
+@synthesize contentDataSource;
 
 #pragma mark -
 #pragma mark swypConnectionManagerDelegate
@@ -101,6 +102,15 @@
 
 #pragma mark -
 #pragma mark public
+
+-(void)setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)dataSource{
+	[[self contentManager] setContentDataSource:dataSource];
+}
+
+-(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
+	return [[self contentManager] contentDataSource];
+}
+
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
 		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.backgroundView];

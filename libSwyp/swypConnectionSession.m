@@ -230,12 +230,27 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	id<swypConnectionSessionDataDelegate> handlingDelegate	= nil;
 	for (NSValue * delegateValue in _dataDelegates){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
-		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
+		willHandleStream = FALSE;
+		
+		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)] || [delegate respondsToSelector:@selector(delegateWillReceiveDataFromDiscernedStream:ofType:inConnectionSession:)]){
 			
 			BOOL	delegateWantsData = FALSE;
-			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
 			
+			//first check to see if delegateWillReceiveDataFromDiscernedStream
+			if ([delegate respondsToSelector:@selector(delegateWillReceiveDataFromDiscernedStream:ofType:inConnectionSession:)]){
+				delegateWantsData	=	[delegate delegateWillReceiveDataFromDiscernedStream:discernedStream ofType:discernedStream.streamType inConnectionSession:self];
+
+				willHandleStream	=	delegateWantsData;
+			}
+			
+//			if not, then we'll try a delegateWillHandleDiscernedStream
+			if (willHandleStream == NO){
+				willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
+			}
+			
+			//great, something will, let's finalize
 			if (willHandleStream){
+				EXOLog(@"OBj: %@ handling stream :%@ tag: %@",[delegate description], discernedStream.streamType, discernedStream.streamTag);
 				if (delegateWantsData){
 					
 					swypInputToDataBridge* pendingInputBridge = [[swypInputToDataBridge alloc] initWithInputStream:discernedStream dataBrdigeDelegate:self];
@@ -251,7 +266,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 					SRELS(pendingInputBridge);
 					
 				}
-				assert (handlingDelegate == nil);
+				assert (handlingDelegate == nil); //no more than 1
 				handlingDelegate = delegate;
 			}
 		}
@@ -259,7 +274,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	if (willHandleStream == FALSE){
 		EXOLog(@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]);
-//		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
 	}else{
 		for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
 			id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];

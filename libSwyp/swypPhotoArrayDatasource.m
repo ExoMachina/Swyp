@@ -113,7 +113,7 @@
 	return [NSArray arrayWithObjects:[NSString imagePNGFileType],[NSString imageJPEGFileType],nil];
 }
 
-- (NSInputStream*)	inputStreamForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type	length: (NSUInteger*)contentLengthDestOrNULL{
+- (NSData*)	dataForContentWithID: (NSString*)contentID fileType:	(swypFileTypeString*)type{
 	
 	NSData *	photoPNGData		=	[_photoDataByContentID objectForKey:contentID];
 	
@@ -123,15 +123,8 @@
 	}else if ([type isEqualToString:[swypFileTypeString imageJPEGFileType]]){
 		sendPhotoData	=	UIImageJPEGRepresentation([UIImage imageWithData:photoPNGData],.8);
 	}
-	
-	if (sendPhotoData == nil){
-		EXOLog(@"No supported export types in datasource");
-	}
-	
-	*contentLengthDestOrNULL	=	[sendPhotoData length];
-	
-	return [NSInputStream inputStreamWithData:sendPhotoData];
 
+	return sendPhotoData;
 }
 
 -(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate{
@@ -146,10 +139,19 @@
 	return [NSArray arrayWithObjects:[NSString imageJPEGFileType] ,[NSString imagePNGFileType], nil];
 }
 
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
-	
+//the OLD Way no longer will be called with the NEW Way is implemented
+//-(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
+//	
+//	if ([[NSSet setWithArray:[swypContentInteractionManager supportedReceiptFileTypes]] containsObject:[discernedStream streamType]]){
+//		*wantsProvidedAsNSData = TRUE;
+//		return TRUE;
+//	}else{
+//		return FALSE;
+//	}
+//}
+
+-(BOOL) delegateWillReceiveDataFromDiscernedStream:(swypDiscernedInputStream*)discernedStream ofType:(NSString*)streamType inConnectionSession:(swypConnectionSession*)session{
 	if ([[NSSet setWithArray:[swypContentInteractionManager supportedReceiptFileTypes]] containsObject:[discernedStream streamType]]){
-		*wantsProvidedAsNSData = TRUE;
 		return TRUE;
 	}else{
 		return FALSE;
