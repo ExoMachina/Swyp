@@ -240,7 +240,7 @@
     
     UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceButtonPressed:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    [curlButton addGestureRecognizer:swipeDownRecognizer];
+    [self.view addGestureRecognizer:swipeDownRecognizer];
     
     [self.backgroundView addSubview:curlButton];
 	
