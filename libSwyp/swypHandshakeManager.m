@@ -46,15 +46,17 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
 	
 	NSNumber * refForSwypOut	=	[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue];
-	NSInteger referenceCount	=	[refForSwypOut intValue];
-	referenceCount --;
-	assert(referenceCount >= 0);
-	if (referenceCount == 0){
-		[_swypOutRefReferenceCountBySwypRef removeObjectForKey:swypValue];
-		[_swypOutRefRetention	removeObject:ref];
-	}else{
-		[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
-	}
+    if (!refForSwypOut) return;
+    
+    NSInteger referenceCount	=	[refForSwypOut intValue];
+    referenceCount --;
+    assert(referenceCount >= 0);
+    if (referenceCount == 0){
+        [_swypOutRefReferenceCountBySwypRef removeObjectForKey:swypValue];
+        [_swypOutRefRetention	removeObject:ref];
+    }else{
+        [_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
+    }
 }
 
 #pragma mark -

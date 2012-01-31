@@ -269,12 +269,12 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark swypConnectionSessionDataDelegate
 -(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setTransferringData:YES];
+	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:YES];
 
 }
 
 -(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session{
-	[[self maintainedSwypSessionViewControllerForSession:session] setTransferringData:NO];
+	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:NO];
 }
 
 -(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
@@ -363,10 +363,11 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session{
-	
+	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:NO];
 }
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session{
 	EXOLog(@"Completed sending stream in session!:%@", [session description]);
+	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:NO];
 }
 
 #pragma mark swypConnectionSessionInfoDelegate
@@ -390,7 +391,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if (overlapSession){
 		[self sendContentWithID:contentID throughConnectionSession:[overlapSession connectionSession]];
 		
-		[overlapSession setTransferringData:YES];
+		[overlapSession indicateTransferringData:YES];
 	}
 
 }

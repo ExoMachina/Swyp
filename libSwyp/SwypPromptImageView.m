@@ -32,7 +32,7 @@
         [self addSubview:_imageView];
     }
     
-    [self setBluetoothReady:NO];
+    [self showBluetoothLoadingPrompt:NO];
     
     return self;
 }
@@ -51,9 +51,9 @@
     [super dealloc];
 }
 
-- (void) setBluetoothReady:(BOOL)isReady {
-    [UIView transitionFromView:(isReady ? _bluetoothView: _imageView)
-                        toView:(isReady ? _imageView: _bluetoothView) 
+- (void) showBluetoothLoadingPrompt:(BOOL)showBT {
+    [UIView transitionFromView:(showBT ? _imageView: _bluetoothView)
+                        toView:(showBT ?  _bluetoothView : _imageView) 
                       duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)
                     completion:^(BOOL completed){
         if (completed){

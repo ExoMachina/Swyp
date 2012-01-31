@@ -7,7 +7,7 @@
 //
 
 #import "swypPairServerInteractionManger.h"
-static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
+static NSString * const swypPairServerURL	=	@"https://swyp.herokuapp.com/";
 
 
 @implementation swypPairServerInteractionManger
@@ -44,6 +44,7 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 	[swypPairParameters setValue:[[NSNumber numberWithDouble:[swyp velocity]] stringValue] forKey:@"velocity"];
 	[swypPairParameters setValue:@"some publicKey" forKey:@"publicKey"];
 	[swypPairParameters setValue:@"some where (longlat)" forKey:@"where"];
+    [swypPairParameters setValue:@"testing123" forKey:@"api_key"];
 	
 	NSString * pairPath					=	([swyp swypType] == swypInfoRefTypeSwypOut)? @"swyp_outs": @"swyp_ins";
 	NSMutableURLRequest * pairRequest	=	[[self httpRequestManager] requestWithMethod:@"POST" path:pairPath parameters:swypPairParameters];
@@ -116,11 +117,13 @@ static NSString * const swypPairServerURL	=	@"https://swyppair.heroku.com/";
 		}
 		[peerInfo setValue:port forKey:@"port"];
 		
-		NSString * address	= [peerResponse valueForKey:@"address"];
-		if (StringHasText(address) == NO){
+		NSString * ip	= [peerResponse valueForKey:@"ip"];
+		if (StringHasText(ip) == NO){
 			peerInfo = nil;
 		}
-		[peerInfo setValue:address forKey:@"address"];
+		[peerInfo setValue:ip forKey:@"ip"];
+        
+        EXOLog(@"Got peer info %@", peerInfo);
 		
 		if (peerInfo == nil){
 			[_delegate swypPairServerInteractionManger:self didFailToGetSwypInfoForSwypRef:swyp orSwypToken:nil];

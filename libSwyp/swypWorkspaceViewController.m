@@ -64,6 +64,7 @@
 	if (StringHasText(contentID)){
 
 #pragma mark TODO: make some runloop excuse for this not being a cludge		
+		//sadly I think we're just messy
 		NSBlockOperation *	contentSwypOp	=	[NSBlockOperation blockOperationWithBlock:^{
 			
 				[_contentManager sendContentWithID:contentID throughConnectionSession:session];
@@ -75,7 +76,6 @@
 			
 }
 -(void)	swypConnectionSessionWasInvalidated:(swypConnectionSession*)session	withConnectionManager:(swypConnectionManager*)manager error:(NSError*)error{
-	
 }
 
 //update UI
@@ -98,7 +98,16 @@
 
 }
 
+-(void) swypConnectionMethod:(swypConnectionMethod)method setReadyStatus:(BOOL)isReady withConnectionManager:(swypConnectionManager*)manager{
 
+	if (method == swypConnectionMethodBluetooth){
+		if ([_connectionManager activeConnectionClass] == swypConnectionClassBluetooth){
+			[_swypPromptImageView showBluetoothLoadingPrompt:!isReady];
+		}else{
+			[_swypPromptImageView showBluetoothLoadingPrompt:FALSE];
+		}
+	}
+}
 
 #pragma mark -
 #pragma mark public
@@ -288,10 +297,6 @@
 	}
 }
 
-- (void)setBluetoothReady:(NSNumber *)isReady {
-    [_swypPromptImageView setBluetoothReady:[isReady boolValue]];
-}
-
 #pragma mark - Internal
 
 -(void) _setupUIForCurrentOrientation{
@@ -312,7 +317,7 @@
 		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
 		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
 		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
+		[_swypNetworkInterfaceClassButton setEnabled:TRUE];
 	}
 	
 	[self _setupUIForCurrentOrientation];

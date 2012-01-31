@@ -42,6 +42,7 @@
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
 @property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
 
+///Sets the swypWorkspaceDelegate which alerts when the view wishes to dismiss
 @property (nonatomic, assign)	id<swypWorkspaceDelegate>		worspaceDelegate;
 
 ///Sets the swypContentInteractionManager's contentDataSource
@@ -53,7 +54,6 @@
  
  */
 -(id)   initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate;
--(void) setBluetoothReady:(NSNumber *)isReady;
 
 //
 //private
