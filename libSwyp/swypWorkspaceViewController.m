@@ -131,13 +131,13 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 	
+	[_prettyOverlay setBackgroundColor:nil];
 	[_prettyOverlay setAlpha:.1];
 	[_prettyOverlay setImage:image];
 	
-//	[_leaveWorkspaceTapRecog setEnabled:TRUE];
-//	[_swipeDownRecognizer setEnabled:FALSE];
-	[controller presentModalViewController:self animated:TRUE];
-
+	[UIView animateWithDuration:.3 animations:nil completion:^(BOOL complete){
+		[controller presentModalViewController:self animated:TRUE];
+	}];
 	
 }
 
@@ -146,16 +146,16 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 #pragma mark public
 
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
-	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
 	
-	[_prettyOverlay setAlpha:.4];
 	[_prettyOverlay setImage:nil];
+	[_prettyOverlay setAlpha:.4];
 	[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
-	
-//	[_leaveWorkspaceTapRecog setEnabled:FALSE];
-//	[_swipeDownRecognizer setEnabled:TRUE];
-	
-	[controller presentModalViewController:self animated:TRUE];
+		
+	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
+
+	[UIView animateWithDuration:.3 animations:nil completion:^(BOOL complete){
+			[controller presentModalViewController:self animated:TRUE];
+	}];
 
 }
 

@@ -19,7 +19,7 @@
 	}
 	
 	if (recognizer.state == UIGestureRecognizerStateBegan){
-		for (UIView * nextTestView = recognizerView; recognizerView != self; nextTestView = [nextTestView superview]){
+		for (UIView * nextTestView = recognizerView; nextTestView != self && nextTestView != nil; nextTestView = [nextTestView superview]){
 			if ([_superviewContentDelegate subview:nextTestView isSwypableWithSwypableContentSuperview:self]){
 				//cause content to be added to datasource
 				NSString * contentID =	[_superviewContentDelegate contentIDForSwypableSubview:recognizerView withinSwypableContentSuperview:self];
@@ -28,7 +28,7 @@
 				
 				//compute coordinate scheme origin difference
 				CGPoint localLoc		=	CGPointZero;
-				CGPoint workspaceLoc	=	[self convertPoint:localLoc toView:[_superviewWorkspaceDelegate workspaceView]];
+				CGPoint workspaceLoc	=	[self convertPoint:localLoc toView:[[UIApplication sharedApplication] keyWindow]];
 				CGSize coordinateDiff	=	CGSizeMake(workspaceLoc.x-localLoc.x, workspaceLoc.y-localLoc.y);
 				
 				CGRect workspaceFrame	=	[recognizerView frame];
