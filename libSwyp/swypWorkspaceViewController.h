@@ -30,11 +30,10 @@
 	//workspace UI Items	
 	SwypPromptImageView *				_swypPromptImageView;
 	UIButton *							_swypNetworkInterfaceClassButton;
-    UIView *                            _downArrowView;
 }
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
-@property (nonatomic, retain) swypWorkspaceBackgroundView*      backgroundView;
+@property (nonatomic, retain)	swypWorkspaceBackgroundView*	backgroundView;
 
 ///Sets the swypContentInteractionManager's contentDataSource
 @property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
@@ -47,6 +46,12 @@
  Self retaining singleton swyp workspace for apps that use swyp everywhere.
  */
 +(swypWorkspaceViewController*)	sharedSwypWorkspace;
+
+///Dispays workspace with nice texture, with scroll up from bottom
+-(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller;
+
+///displays the workspace with content in background, with fade from background, with content under finger
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 
 //
 //private

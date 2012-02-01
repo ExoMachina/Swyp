@@ -32,7 +32,7 @@
 ///The view for touch forwarding; the swyp workspace
 -(UIView*)workspaceView;
 ///Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
--(void)	presentContentSwypWorkspaceAtopSwypableContentSuperview:(swypSwypableContentSuperview*)superview forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 @end
 
 
@@ -45,13 +45,23 @@
 @interface swypSwypableContentSuperview : UIView{
 	id<swypSwypableContentSuperviewContentDelegate>			_superviewContentDelegate;
 	id<swypSwypableContentSuperviewWorkspaceDelegate>		_superviewWorkspaceDelegate;
+	
+	NSMutableSet *					_trackedTouchesToForward;
+	NSMutableSet *					_remoteTrackingTouches;
+	UILongPressGestureRecognizer *	_pressRecognizer;
+	UIEvent * _storedEvent;
 }
+@property(nonatomic, assign) id<swypSwypableContentSuperviewContentDelegate>		superviewContentDelegate;
+@property(nonatomic, assign) id<swypSwypableContentSuperviewWorkspaceDelegate>		superviewWorkspaceDelegate;
 
-/** The one and only init function supported.
+
+/** Convenience function for init.
  @param contentDelegate
  @param workspaceDelegate always the swypWorkspaceViewController .
  
  @warning Doing this requires you to initiallize the workspace. Right now network connectivity begins after the workspace is intiallized. We're working on a fix for this undesired behavior.
  */
 -(id)	initWithContentDelegate:(id<swypSwypableContentSuperviewContentDelegate>)contentDelegate workspaceDelegate:(id<swypSwypableContentSuperviewWorkspaceDelegate>)workspaceDelegate frame:(CGRect)frame;
+
+- (id) _parentUIViewController;
 @end

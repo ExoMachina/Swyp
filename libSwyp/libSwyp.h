@@ -26,6 +26,9 @@
 //the main workspace view controller to show the "Swÿp interface"
 #import "swypWorkspaceViewController.h"
 
+//This class allows you to add subviews and for them to to be pieces of swypable content
+#import "swypSwypableContentSuperview.h"
+
 //the following are how you determine what files are available to share on swyp
 #import "swypContentDataSourceProtocol.h"
 //here is an example of a photo datasource

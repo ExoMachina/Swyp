@@ -235,6 +235,14 @@
 	return _photoSize;
 }
 
+-(void)	moveContentWithID: (NSString*)objectID toFrame:(CGRect)frame animated:(BOOL)animate{
+	UIView * view = [_contentViewTilesByID objectForKey:objectID];
+	if (animate){
+		[UIView animateWithDuration:.4 animations:^{[view setFrame:frame];} completion:nil];
+	}else{
+		[view setFrame:frame];
+	}
+}
 
 #pragma mark - private
 -(UIView*) _setupTileWithID:(NSString*)tileID{

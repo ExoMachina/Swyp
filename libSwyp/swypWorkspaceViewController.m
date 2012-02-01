@@ -14,8 +14,7 @@
 
 static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 @implementation swypWorkspaceViewController
-@synthesize connectionManager = _connectionManager, contentManager = _contentManager, 
-            backgroundView = _backgroundView;
+@synthesize connectionManager = _connectionManager, contentManager = _contentManager, backgroundView = _backgroundView;
 @synthesize contentDataSource;
 
 #pragma mark -
@@ -116,14 +115,26 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(UIView*)workspaceView{
 	return self.view;
 }
--(void)	presentContentSwypWorkspaceAtopSwypableContentSuperview:(swypSwypableContentSuperview*)superview forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
 	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
 	//
+	[[_contentManager contentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
+	if ([[_contentManager contentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
+		[[_contentManager contentDisplayController] moveContentWithID:contentID toFrame:contentRect animated:FALSE];
+	}
+	
+	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+	[controller presentModalViewController:self animated:TRUE];
 }
 
 
 #pragma mark -
 #pragma mark public
+
+-(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
+	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+	[controller presentModalViewController:self animated:TRUE];
+}
 
 -(void)setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)dataSource{
 	[[self contentManager] setContentDataSource:dataSource];
@@ -190,7 +201,14 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 }
 
 -(void)	leaveWorkspaceWantedBySender:(id)sender {
-	[self dismissModalViewControllerAnimated:TRUE];
+	if ([sender isKindOfClass:[UIGestureRecognizer class]]){
+		UIGestureRecognizer * recognizer = (UIGestureRecognizer*)sender;
+		if ([recognizer state] == UIGestureRecognizerStateRecognized){
+			[self dismissModalViewControllerAnimated:TRUE];			
+		}
+	}else{
+		[self dismissModalViewControllerAnimated:TRUE];
+	}
 
 }
 
@@ -213,7 +231,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	return self;
 }
 
--(id)	initWithWorkspaceDelegate:(id<swypWorkspaceDelegate>)	worspaceDelegate{
+-(id)	initWithWorkspaceDelegate:(id)	worspaceDelegate{
 	if (self = [self init]){
 
 	}
@@ -243,30 +261,20 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
     
     self.backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:self.backgroundView];
-    
-    _downArrowView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 20)];
-    _downArrowView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"down_arrow"]];
-    // workaround for bug in iOS 4
-    [_downArrowView.layer setOpaque:NO];
-    [self.backgroundView addSubview:_downArrowView];
-    
+        
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
     [curlButton.layer setOpaque:NO];
-    
-    // weird ios4 bug
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
-        [curlButton addTarget:self action:@selector(_animateArrows:) forControlEvents:UIControlEventTouchDown];
-    }
-    
+        
     [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
          forControlEvents:UIControlEventTouchUpInside];
-         
-    [curlButton addTarget:self action:@selector(_stopArrows:) forControlEvents:(UIControlEventTouchCancel|UIControlEventTouchUpInside|UIControlEventTouchDragOutside)];
-    
-    UISwipeGestureRecognizer *swipeDownRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
+	
+	UITapGestureRecognizer * leaveWorkspaceTapRecog	= [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
+	[self.view addGestureRecognizer:leaveWorkspaceTapRecog];
+             
+    UISwipeGestureRecognizer *swipeDownRecognizer	= [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
     swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:swipeDownRecognizer];
     
@@ -295,7 +303,6 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(void)	dealloc{
 	
-    SRELS( _downArrowView);
 	SRELS( _swypPromptImageView);
 	SRELS(_swypNetworkInterfaceClassButton);
     SRELS(_backgroundView);
@@ -365,15 +372,6 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		[_swypPromptImageView setAlpha:0.5];
 		[_swypNetworkInterfaceClassButton setAlpha:1];
 	}completion:nil];
-}
-
-- (void) _animateArrows:(id)sender {
-    [UIView animateWithDuration:0.5 delay:0 options:(UIViewAnimationOptionAutoreverse|UIViewAnimationOptionCurveEaseInOut|UIViewAnimationOptionRepeat) animations:^(void){
-        _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 10);
-    } completion:nil];
-}
-- (void) _stopArrows:(id)sender {
-    _downArrowView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, 0);
 }
 
 @end
