@@ -244,7 +244,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 			}
 			
 //			if not, then we'll try a delegateWillHandleDiscernedStream
-			if (willHandleStream == NO){
+			if (willHandleStream == NO && [delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
 				willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
 			}
 			

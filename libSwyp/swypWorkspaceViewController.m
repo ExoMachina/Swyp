@@ -148,7 +148,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
 	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
 	
-	[_prettyOverlay setAlpha:.5];
+	[_prettyOverlay setAlpha:.4];
 	[_prettyOverlay setImage:nil];
 	[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
 	
