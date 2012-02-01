@@ -119,6 +119,8 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
 	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
 	//
+	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+
 	[[_contentManager contentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
 	if ([[_contentManager contentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
 		[[_contentManager contentDisplayController] moveContentWithID:contentID toFrame:contentRect animated:FALSE];
@@ -134,9 +136,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	
 //	[_leaveWorkspaceTapRecog setEnabled:TRUE];
 //	[_swipeDownRecognizer setEnabled:FALSE];
-	
-	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 	[controller presentModalViewController:self animated:TRUE];
+
+	
 }
 
 
@@ -144,6 +146,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 #pragma mark public
 
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
+	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
 	
 	[_prettyOverlay setAlpha:.5];
 	[_prettyOverlay setImage:nil];
@@ -152,10 +155,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 //	[_leaveWorkspaceTapRecog setEnabled:FALSE];
 //	[_swipeDownRecognizer setEnabled:TRUE];
 	
-	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
-
 	[controller presentModalViewController:self animated:TRUE];
-
 
 }
 
