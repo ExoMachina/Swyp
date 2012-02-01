@@ -116,15 +116,12 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(UIView*)workspaceView{
 	return self.view;
 }
--(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
 	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
 	//
 	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
-	[[_contentManager contentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
-	if ([[_contentManager contentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
-		[[_contentManager contentDisplayController] moveContentWithID:contentID toFrame:contentRect animated:FALSE];
-	}
+	[_contentManager handleContentSwypOfContentWithID:contentID withContentImage:contentImage toRect:contentRect];
 	
 	UIGraphicsBeginImageContextWithOptions([[[UIApplication sharedApplication] keyWindow] frame].size,YES, 0);
 	[[[UIApplication sharedApplication] keyWindow].layer renderInContext:UIGraphicsGetCurrentContext()];

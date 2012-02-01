@@ -32,6 +32,9 @@
 ///How modal updates propigate added content through swypContentInteractionManager
 -(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate;
 
+///Returns everything displayed on the VC
+-(NSArray*)	allDisplayedObjectIDs;
+
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate;
 -(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate;
 

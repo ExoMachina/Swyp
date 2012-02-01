@@ -32,7 +32,7 @@
 ///The view for touch forwarding; the swyp workspace
 -(UIView*)workspaceView;
 ///Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
--(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 @end
 
 

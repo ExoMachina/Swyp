@@ -7,6 +7,7 @@
 //
 
 #import "swypSwypableContentSuperview.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation swypSwypableContentSuperview
 @synthesize superviewContentDelegate = _superviewContentDelegate, superviewWorkspaceDelegate = _superviewWorkspaceDelegate;
@@ -44,8 +45,15 @@
 					workspaceFrame.origin.y	+=	coordinateDiff.height;					
 				}
 				
+				//grab preview of displayed view
+				UIGraphicsBeginImageContextWithOptions(nextTestView.size,YES, 0);
+				[nextTestView.layer renderInContext:UIGraphicsGetCurrentContext()];
+				UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+				UIGraphicsEndImageContext();
+
+				
 				//show workpace
-				[_superviewWorkspaceDelegate presentContentSwypWorkspaceAtopViewController:[self _parentUIViewController] withContentView:self forContentOfID:contentID atRect:workspaceFrame];
+				[_superviewWorkspaceDelegate presentContentSwypWorkspaceAtopViewController:[self _parentUIViewController] withContentView:self swypableContentImage:image forContentOfID:contentID atRect:workspaceFrame];
 				
 				//forward touches
 				//need to work on the following

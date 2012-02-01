@@ -60,11 +60,16 @@
  */
 +(NSArray*)	supportedReceiptFileTypes;
 
+///Causes a sessionViewController to be displayed on workspace, and for it to be tracked locally
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;
 
+///Removes from display, releases
 -(void)		stopMaintainingViewControllerForSwypSession:(swypConnectionSession*)session;
+
+///Gets the viewController for an associated session
 -(swypSessionViewController*)	maintainedSwypSessionViewControllerForSession:(swypConnectionSession*)session;
 
+///Removes all, typically for app exit
 -(void)		stopMaintainingAllSessionViewControllers;
 
 //this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
@@ -73,10 +78,16 @@
 //simply attempts to post conent to a session, as used during "contentSwyps"
 -(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session;
 
+/** Used by swypWorkspaceManager to indicate swypSwypableContentSuperview content addition. 
+ 
+ Adds to cached tiles, and sets to display in contentDisplayViewController, then moves content to frame 'destination.'
+ */
+-(void)		handleContentSwypOfContentWithID:(NSString*)contentID withContentImage:(UIImage*)contentImage toRect:(CGRect)destination;
 //
 //private
+-(UIImageView*)	_gloirifiedFramedImageViewWithUIImage:(UIImage*)image;
+
 -(swypSessionViewController*)		_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
-//-(void)							_contentRepresentationViewWasReleased:;
 
 -(void)		_displayContentDisplayController:(BOOL)display;
 

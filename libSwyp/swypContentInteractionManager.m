@@ -169,6 +169,20 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 }
 
+-(void)		handleContentSwypOfContentWithID:(NSString*)contentID withContentImage:(UIImage*)contentImage toRect:(CGRect)destination{
+
+	UIImageView * imageView	= [self _gloirifiedFramedImageViewWithUIImage:contentImage];
+		
+	if ([[[self contentDisplayController] allDisplayedObjectIDs] containsObject:contentID]){
+		[[self contentDisplayController] removeContentFromDisplayWithID:contentID animated:FALSE];
+	}
+	[_contentViewsByContentID setValue:imageView forKey:contentID];
+	[[self contentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
+	
+	if ([[self contentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
+		[[self contentDisplayController] moveContentWithID:contentID toFrame:destination animated:FALSE];
+	}
+}
 
 #pragma mark NSObject
 
@@ -411,28 +425,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		//you should remove from view first, then remove from local storage
 		assert(previewImage != nil);
 		
-		UIImageView * photoTileView	=	[[UIImageView alloc] initWithImage:previewImage];
-		
-		[photoTileView setUserInteractionEnabled:TRUE];
-		[photoTileView setBackgroundColor:[UIColor blackColor]];
-		
-		CALayer	*layer	=	photoTileView.layer;
-		[layer setBorderColor: [[UIColor whiteColor] CGColor]];
-		[layer setBorderWidth:8.0f];
-		[layer setShadowColor: [[UIColor blackColor] CGColor]];
-		[layer setShadowOpacity:0.9f];
-		[layer setShadowOffset: CGSizeMake(1, 3)];
-		[layer setShadowRadius:4.0];
-		CGMutablePathRef shadowPath		=	CGPathCreateMutable();
-		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.height));
-		[layer setShadowPath:shadowPath];
-        CFRelease(shadowPath);
-		[photoTileView setClipsToBounds:NO];
-		
+		UIImageView * photoTileView	=	[self _gloirifiedFramedImageViewWithUIImage:previewImage];
 		
 		[_contentViewsByContentID setValue:photoTileView forKey:contentID];
 		cachedView = photoTileView;
-		SRELS(photoTileView);
 	}
 	return cachedView;
 	
@@ -450,6 +446,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark swypContentDataSourceDelegate 
 -(void)	datasourceInsertedContentWithID:(NSString*)insertID withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
+
 	[_contentDisplayController addContentToDisplayWithID:insertID animated:TRUE];
 }
 
@@ -466,6 +463,28 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark -
 #pragma mark private
+-(UIImageView*)	_gloirifiedFramedImageViewWithUIImage:(UIImage*)image{
+	UIImageView * photoTileView	=	[[UIImageView alloc] initWithImage:image];
+	
+	[photoTileView setUserInteractionEnabled:TRUE];
+	[photoTileView setBackgroundColor:[UIColor blackColor]];
+	
+	CALayer	*layer	=	photoTileView.layer;
+	[layer setBorderColor: [[UIColor whiteColor] CGColor]];
+	[layer setBorderWidth:8.0f];
+	[layer setShadowColor: [[UIColor blackColor] CGColor]];
+	[layer setShadowOpacity:0.9f];
+	[layer setShadowOffset: CGSizeMake(1, 3)];
+	[layer setShadowRadius:4.0];
+	CGMutablePathRef shadowPath		=	CGPathCreateMutable();
+	CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.height));
+	[layer setShadowPath:shadowPath];
+	CFRelease(shadowPath);
+	[photoTileView setClipsToBounds:NO];
+	
+	return [photoTileView autorelease];
+}
+
 -(swypSessionViewController*)	_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect{
 	
 	

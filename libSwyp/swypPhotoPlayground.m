@@ -194,11 +194,14 @@
 										
 #pragma mark swypContentDisplayViewController <NSObject>
 -(void)	removeContentFromDisplayWithID:	(NSString*)removeID animated:(BOOL)animate{
-	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:removeID ofMaxSize:_photoSize inController:self];
+	UIView * tileView	=	[_contentViewTilesByID objectForKey:removeID];
 	[_tiledContentViewController removeTile:tileView animated:animate];
+	[_contentViewTilesByID removeObjectForKey:removeID];
 }
 
 -(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate{
+	//this view refuses duplicate tiles of identicalID
+	assert ([_contentViewTilesByID objectForKey:insertID] == nil);
 	
 	UIView * tileView	=	[self _setupTileWithID:insertID];
 	[_contentViewTilesByID setObject:tileView forKey:insertID];
@@ -206,6 +209,9 @@
 	[_tiledContentViewController addTile:tileView animated:animate];
 }
 
+-(NSArray*)	allDisplayedObjectIDs{
+	return [_contentViewTilesByID allKeys];
+}
 
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate{
 	_contentDisplayControllerDelegate = contentDisplayControllerDelegate;

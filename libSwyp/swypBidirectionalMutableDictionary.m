@@ -25,11 +25,21 @@
 
 #pragma mark Overrides
 -(void)setValue:(id)value forKey:(NSString *)key{
+	id oldInverseKey	= [_normalDictionary valueForKey:key];
+	if (oldInverseKey != nil){
+		[_inverseDictionary removeObjectForKey:[NSValue valueWithNonretainedObject:oldInverseKey]];
+	}
+	
 	[_inverseDictionary	 setObject:key forKey:[NSValue valueWithNonretainedObject:value]];
 	[_normalDictionary setValue:value forKey:key];
 }
 
 -(void)setObject:(id)anObject forKey:(id)aKey{
+	id oldInverseKey	= [_normalDictionary objectForKey:aKey];
+	if (oldInverseKey != nil){
+		[_inverseDictionary removeObjectForKey:[NSValue valueWithNonretainedObject:oldInverseKey]];
+	}
+	
 	[_inverseDictionary	 setObject:aKey forKey:[NSValue valueWithNonretainedObject:anObject]];
 	
 	[_normalDictionary setObject:anObject forKey:aKey];
