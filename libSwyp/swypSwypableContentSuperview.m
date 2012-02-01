@@ -27,8 +27,7 @@
 				assert(contentID);
 				
 				//compute coordinate scheme origin difference
-				UITouch * testTouch		=	[_trackedTouchesToForward anyObject];
-				CGPoint localLoc		=	[testTouch locationInView:self];
+				CGPoint localLoc		=	CGPointZero;
 				CGPoint workspaceLoc	=	[self convertPoint:localLoc toView:[_superviewWorkspaceDelegate workspaceView]];
 				CGSize coordinateDiff	=	CGSizeMake(workspaceLoc.x-localLoc.x, workspaceLoc.y-localLoc.y);
 				
