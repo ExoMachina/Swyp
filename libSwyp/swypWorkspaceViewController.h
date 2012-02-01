@@ -28,8 +28,12 @@
 	
 	
 	//workspace UI Items	
+	UITapGestureRecognizer *			_leaveWorkspaceTapRecog;
+	UISwipeGestureRecognizer *			_swipeDownRecognizer;
+	
 	SwypPromptImageView *				_swypPromptImageView;
 	UIButton *							_swypNetworkInterfaceClassButton;
+	UIImageView	*						_prettyOverlay;
 }
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;

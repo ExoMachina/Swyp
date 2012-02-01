@@ -23,11 +23,27 @@
 			if ([_superviewContentDelegate subview:nextTestView isSwypableWithSwypableContentSuperview:self]){
 				//cause content to be added to datasource
 				NSString * contentID =	[_superviewContentDelegate contentIDForSwypableSubview:recognizerView withinSwypableContentSuperview:self];
-				EXOLog(@"swypableContentView did begin swyp on %@",contentID);
+//				EXOLog(@"swypableContentView did begin swyp on %@",contentID);
 				assert(contentID);
 				
 				//compute coordinate scheme origin difference
-				CGRect workspaceFrame	=	[self convertRect: [recognizerView frame] toView:[_superviewWorkspaceDelegate workspaceView]];
+				UITouch * testTouch		=	[_trackedTouchesToForward anyObject];
+				CGPoint localLoc		=	[testTouch locationInView:self];
+				CGPoint workspaceLoc	=	[self convertPoint:localLoc toView:[_superviewWorkspaceDelegate workspaceView]];
+				CGSize coordinateDiff	=	CGSizeMake(workspaceLoc.x-localLoc.x, workspaceLoc.y-localLoc.y);
+				
+				CGRect workspaceFrame	=	[recognizerView frame];
+				
+				if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
+					([UIScreen mainScreen].scale == 2.0)) {
+					// Retina display
+					workspaceFrame.origin.x	+=	coordinateDiff.width/2;
+					workspaceFrame.origin.y	+=	coordinateDiff.height/2;					
+
+				}else{
+					workspaceFrame.origin.x	+=	coordinateDiff.width;
+					workspaceFrame.origin.y	+=	coordinateDiff.height;					
+				}
 				
 				//show workpace
 				[_superviewWorkspaceDelegate presentContentSwypWorkspaceAtopViewController:[self _parentUIViewController] withContentView:self forContentOfID:contentID atRect:workspaceFrame];

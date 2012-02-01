@@ -492,7 +492,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
 #pragma mark CLUDGE: TGTBSB
-			[_mainWorkspaceView	insertSubview:_contentDisplayController.view atIndex:1];
+			[_mainWorkspaceView	insertSubview:_contentDisplayController.view atIndex:2];
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];

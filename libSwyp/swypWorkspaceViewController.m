@@ -10,6 +10,7 @@
 #import "swypInGestureRecognizer.h"
 #import "swypOutGestureRecognizer.h"
 #import "swypSessionViewController.h"
+#include <QuartzCore/QuartzCore.h>
 
 
 static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
@@ -123,6 +124,17 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		[[_contentManager contentDisplayController] moveContentWithID:contentID toFrame:contentRect animated:FALSE];
 	}
 	
+	UIGraphicsBeginImageContextWithOptions([[[UIApplication sharedApplication] keyWindow] frame].size,YES, 0);
+	[[[UIApplication sharedApplication] keyWindow].layer renderInContext:UIGraphicsGetCurrentContext()];
+	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	[_prettyOverlay setAlpha:.1];
+	[_prettyOverlay setImage:image];
+	
+//	[_leaveWorkspaceTapRecog setEnabled:TRUE];
+//	[_swipeDownRecognizer setEnabled:FALSE];
+	
 	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 	[controller presentModalViewController:self animated:TRUE];
 }
@@ -132,8 +144,19 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 #pragma mark public
 
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
-	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+	
+	[_prettyOverlay setAlpha:.5];
+	[_prettyOverlay setImage:nil];
+	[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
+	
+//	[_leaveWorkspaceTapRecog setEnabled:FALSE];
+//	[_swipeDownRecognizer setEnabled:TRUE];
+	
+	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
+
 	[controller presentModalViewController:self animated:TRUE];
+
+
 }
 
 -(void)setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)dataSource{
@@ -261,6 +284,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
     
     self.backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:self.backgroundView];
+	
+	_prettyOverlay		=	[[UIImageView alloc] initWithFrame:self.view.frame];
+	[self.backgroundView addSubview:_prettyOverlay];
+
         
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
@@ -270,15 +297,16 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
         
     [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
          forControlEvents:UIControlEventTouchUpInside];
+	[self.backgroundView addSubview:curlButton];
+
 	
-	UITapGestureRecognizer * leaveWorkspaceTapRecog	= [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
-	[self.view addGestureRecognizer:leaveWorkspaceTapRecog];
+	_leaveWorkspaceTapRecog	= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] ;
+	[self.view addGestureRecognizer:_leaveWorkspaceTapRecog];
              
-    UISwipeGestureRecognizer *swipeDownRecognizer	= [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] autorelease];
-    swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:swipeDownRecognizer];
+    _swipeDownRecognizer	= [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] ;
+    _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:_swipeDownRecognizer];
     
-    [self.backgroundView addSubview:curlButton];
 	
 	[[self connectionManager] startServices];
 	
@@ -302,7 +330,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 }
 
 -(void)	dealloc{
+	SRELS(_swipeDownRecognizer);
+	SRELS(_leaveWorkspaceTapRecog);
 	
+	SRELS(_prettyOverlay);
 	SRELS( _swypPromptImageView);
 	SRELS(_swypNetworkInterfaceClassButton);
     SRELS(_backgroundView);
