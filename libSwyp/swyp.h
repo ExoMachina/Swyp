@@ -35,6 +35,8 @@
 
 #define rectDescriptionString(rect) [NSString stringWithFormat:@"w:%f h:%f x:%f y:%f",rect.size.width,rect.size.height, rect.origin.x,rect.origin.y] 
 
+#define windowFrameForOrientation() UIDeviceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])? [[UIApplication sharedApplication] keyWindow].frame:CGRectMake(0, 0,[[UIApplication sharedApplication] keyWindow].frame.size.height, [[UIApplication sharedApplication] keyWindow].frame.size.width);
+
 #if DEBUG_MODE_ENABLED == 1
 #if CONFIGURATION == Debug
 	#define EXOLog NSLog

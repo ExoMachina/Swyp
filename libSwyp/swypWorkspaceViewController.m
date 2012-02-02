@@ -278,18 +278,33 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
     
+	EXOLog(@"VWA %@",rectDescriptionString(self.view.frame));
+	EXOLog(@"SV: %@",[self.view.superview recursiveDescription]);
+	
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     }
-	
 	[self _setupUIForCurrentOrientation];
 
+}
+-(void) viewDidAppear:(BOOL)animated{
+	[super viewDidAppear:animated];
+	//between viewWillAppear and 
+
+//	EXOLog(@"VDA %@",rectDescriptionString(self.view.frame));
+//	CGRect frameForOrientation = windowFrameForOrientation();
+//	[self.view setFrame:frameForOrientation];
+//	
+//	EXOLog(@"SV2: %@",[self.view.superview recursiveDescription]);
+
+	[self _setupUIForCurrentOrientation];
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
 	[super viewWillDisappear:animated];
+
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
 }
 
@@ -303,7 +318,8 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	[self.view setFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
 	
 	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-
+	[self.view setClipsToBounds:FALSE];
+	
     self.view.backgroundColor = [UIColor whiteColor];
 	
     [self.view addSubview:self.backgroundView];
@@ -368,24 +384,17 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {	
-	[super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-
-	return TRUE;
-	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
-		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		
-	}else{
-		return UIInterfaceOrientationIsLandscape(interfaceOrientation);
-	}
-	
+	return interfaceOrientation == _openingOrientation;
+//	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
+//		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		
+//	}else{
+//		return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+//	}	
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 	
-	[UIView animateWithDuration:2 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent animations:^{
-		[self _setupUIForCurrentOrientation];
-	} completion:^(BOOL completed){
-		[self _setupUIForCurrentOrientation];
-	}];
+	[UIView animateWithDuration:2 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent animations:nil completion:^(BOOL complete){[self _setupUIForCurrentOrientation];}];
 }
 			
 
@@ -398,11 +407,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 #pragma mark - Internal
 
--(void) _setupUIForCurrentOrientation{
-//	EXOLog(@"_setupUI w/  frame: %@", rectDescriptionString(self.view.frame));
-//	EXOLog(@"Superview: %@",[self.view.superview description]);
-//	EXOLog(@"SUPERSuperview: %@",[self.view.superview.superview description]);
-	
+-(void) _setupUIForCurrentOrientation{	
 	//very oddness. 
 	//here's the story w/ iPhone rot.
 	//When the app opens this modal while in portrait, its superview is UIWindow, and its frame is  320X480
@@ -410,8 +415,26 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	//weirdly, when the modal is displayed in landscape, its superview is NIL, and its frame is 480X320
 	//when brought portrait, its superview become UIWindow(!), and its frame is 320X480; the workspace will not subsequently return to 480X320 through rotation
 	
-	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
-	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, self.view.size.height-32)];
+	
+//	CGRect frameForOrientation = windowFrameForOrientation();
+//	if (UIDeviceOrientationIsLandscape(	[[UIApplication sharedApplication] statusBarOrientation])){
+//		double difference	=	[[UIApplication sharedApplication] keyWindow].frame.size.height - [[UIApplication sharedApplication] keyWindow].frame.size.width;
+//		[[[UIApplication sharedApplication] keyWindow] setClipsToBounds:FALSE];
+//		if ([[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationLandscapeLeft){
+//			frameForOrientation.origin.x = (-1)*difference;			
+//		}else{
+//			frameForOrientation.origin.y = difference;
+//		}
+//	}
+//	[self.view setFrame:frameForOrientation];
+	
+	//the following shows that we simply DO NOT trust our current orientation
+	CGRect frameForOrientation = windowFrameForOrientation();
+	CGRect promptImageFrame	=	CGRectMake(frameForOrientation.size.width/2 - (250/2), frameForOrientation.size.height/2 - (250/2), 250, 250);
+	[_swypPromptImageView setFrame:promptImageFrame];
+	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, frameForOrientation.size.height-32)];
+	
+	[self.view setBounds:frameForOrientation];
 }
 
 -(void) _setupWorkspacePromptUI{

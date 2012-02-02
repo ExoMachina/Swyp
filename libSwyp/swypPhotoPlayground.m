@@ -106,7 +106,6 @@
 		[recognizer setTranslation:CGPointZero inView:self.view];
         
         if (centerY < 60) {
-            EXOLog(@"Dragged to top!");
             float fraction = powf(0.98, (60-centerY));
             recognizer.view.transform = CGAffineTransformMakeScale(fraction, fraction);
             recognizer.view.alpha = fraction;
