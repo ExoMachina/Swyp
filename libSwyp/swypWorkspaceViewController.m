@@ -122,21 +122,31 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	//
 	
 	_openingOrientation	=	[[UIApplication sharedApplication] statusBarOrientation];
-	[self _setupUIForCurrentOrientation];
-	
-	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
-	[_contentManager handleContentSwypOfContentWithID:contentID withContentImage:contentImage toRect:contentRect];
-	
 	UIGraphicsBeginImageContextWithOptions([[[UIApplication sharedApplication] keyWindow] frame].size,YES, 0);
 	[[[UIApplication sharedApplication] keyWindow].layer renderInContext:UIGraphicsGetCurrentContext()];
-	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIImage *image	= UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
+	
+	if (_openingOrientation == UIInterfaceOrientationLandscapeRight){
+		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationRight];
+	}else if(_openingOrientation == UIInterfaceOrientationLandscapeLeft){
+		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationLeft];			
+	}else if (_openingOrientation == UIInterfaceOrientationPortraitUpsideDown){
+		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationDown];			
+	}
 	
 	[_prettyOverlay setBackgroundColor:nil];
 	[_prettyOverlay setAlpha:.1];
 	[_prettyOverlay setImage:image];
 	
+	
+	[self _setupUIForCurrentOrientation];
+	
+	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+
+	[_contentManager handleContentSwypOfContentWithID:contentID withContentImage:contentImage toRect:contentRect];
+		
 	[UIView animateWithDuration:.3 animations:nil completion:^(BOOL complete){
 		[controller presentModalViewController:self animated:TRUE];
 	}];
