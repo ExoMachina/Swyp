@@ -278,8 +278,8 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
     
-	EXOLog(@"VWA %@",rectDescriptionString(self.view.frame));
-	EXOLog(@"SV: %@",[self.view.superview recursiveDescription]);
+//	EXOLog(@"VWA %@",rectDescriptionString(self.view.frame));
+//	EXOLog(@"SV: %@",[self.view.superview recursiveDescription]);//recursive is not public
 	
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
@@ -291,13 +291,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 }
 -(void) viewDidAppear:(BOOL)animated{
 	[super viewDidAppear:animated];
-	//between viewWillAppear and 
-
-//	EXOLog(@"VDA %@",rectDescriptionString(self.view.frame));
-//	CGRect frameForOrientation = windowFrameForOrientation();
-//	[self.view setFrame:frameForOrientation];
-//	
-//	EXOLog(@"SV2: %@",[self.view.superview recursiveDescription]);
+	//between viewWillAppear and viewDidLoad, the UIWindow is set as superview, and the frame is messed-up
 
 	[self _setupUIForCurrentOrientation];
 }
@@ -434,6 +428,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	[_swypPromptImageView setFrame:promptImageFrame];
 	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, frameForOrientation.size.height-32)];
 	
+	//We now re-arrange the bounds for the subviews... For some reason it works HERE.
 	[self.view setBounds:frameForOrientation];
 }
 
