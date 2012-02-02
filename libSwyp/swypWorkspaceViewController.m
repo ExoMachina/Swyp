@@ -128,9 +128,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	UIImage *image	= UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 	
-	if (_openingOrientation == UIInterfaceOrientationLandscapeRight){
+	if (_openingOrientation == UIInterfaceOrientationLandscapeLeft){
 		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationRight];
-	}else if(_openingOrientation == UIInterfaceOrientationLandscapeLeft){
+	}else if(_openingOrientation == UIInterfaceOrientationLandscapeRight){
 		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationLeft];			
 	}else if (_openingOrientation == UIInterfaceOrientationPortraitUpsideDown){
 		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationDown];			

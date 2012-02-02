@@ -27,24 +27,31 @@
 //				EXOLog(@"swypableContentView did begin swyp on %@",contentID);
 				assert(contentID);
 				
-				//compute coordinate scheme origin difference
-				CGPoint localLoc		=	CGPointZero;
-				CGPoint workspaceLoc	=	[self convertPoint:localLoc toView:[[UIApplication sharedApplication] keyWindow]];
-				CGSize coordinateDiff	=	CGSizeMake(workspaceLoc.x-localLoc.x, workspaceLoc.y-localLoc.y);
-				
-				CGRect workspaceFrame	=	[recognizerView frame];
-				
-				if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
-					([UIScreen mainScreen].scale == 2.0)) {
-					// Retina display
-					workspaceFrame.origin.x	+=	coordinateDiff.width/2;
-					workspaceFrame.origin.y	+=	coordinateDiff.height/2;					
+				//compute coordinate scheme origin difference				
+				CGRect workspaceFrame	=	[nextTestView frame];
+				workspaceFrame.origin	=	[self convertRect:nextTestView.frame toView:[[UIApplication sharedApplication] keyWindow]].origin;
 
-				}else{
-					workspaceFrame.origin.x	+=	coordinateDiff.width;
-					workspaceFrame.origin.y	+=	coordinateDiff.height;					
+				double swap = 0;
+				switch ([[UIApplication sharedApplication] statusBarOrientation]) {
+					case UIInterfaceOrientationPortraitUpsideDown:
+						workspaceFrame.origin.y	=	[[UIApplication sharedApplication] keyWindow].frame.size.height - (workspaceFrame.origin.y + workspaceFrame.size.height);
+						break;
+					case UIInterfaceOrientationLandscapeRight:
+						swap				=	workspaceFrame.origin.y;
+						workspaceFrame.origin.y	=	workspaceFrame.origin.x;
+						workspaceFrame.origin.x	=	swap;
+						workspaceFrame.origin.y	=	windowFrameForOrientation().size.height - (workspaceFrame.origin.y + workspaceFrame.size.height);
+						break;
+					case UIInterfaceOrientationLandscapeLeft:
+						swap				=	workspaceFrame.origin.y;
+						workspaceFrame.origin.y	=	workspaceFrame.origin.x;
+						workspaceFrame.origin.x	=	swap;
+						workspaceFrame.origin.x	=	windowFrameForOrientation().size.width - (workspaceFrame.origin.x + workspaceFrame.size.width);
+						break;
+					default:
+						break;
 				}
-				
+								
 				//grab preview of displayed view
 				UIGraphicsBeginImageContextWithOptions(nextTestView.size,YES, 0);
 				[nextTestView.layer renderInContext:UIGraphicsGetCurrentContext()];
