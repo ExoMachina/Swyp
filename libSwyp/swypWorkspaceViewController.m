@@ -283,6 +283,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
     } else {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     }
+	
+	[self _setupUIForCurrentOrientation];
+
 }
 
 -(void) viewWillDisappear:(BOOL)animated{
@@ -366,7 +369,8 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {	
 	[super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-	
+
+	return TRUE;
 	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
 		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		
 	}else{
@@ -377,7 +381,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 	
-	[UIView animateWithDuration:.5 animations:^{
+	[UIView animateWithDuration:2 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent animations:^{
+		[self _setupUIForCurrentOrientation];
+	} completion:^(BOOL completed){
 		[self _setupUIForCurrentOrientation];
 	}];
 }
@@ -393,6 +399,17 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 #pragma mark - Internal
 
 -(void) _setupUIForCurrentOrientation{
+//	EXOLog(@"_setupUI w/  frame: %@", rectDescriptionString(self.view.frame));
+//	EXOLog(@"Superview: %@",[self.view.superview description]);
+//	EXOLog(@"SUPERSuperview: %@",[self.view.superview.superview description]);
+	
+	//very oddness. 
+	//here's the story w/ iPhone rot.
+	//When the app opens this modal while in portrait, its superview is UIWindow, and its frame is  320X480
+	//When the device rotates, UIWindow and the workspace UIView retain 320X480, yet the content of the view does rotate
+	//weirdly, when the modal is displayed in landscape, its superview is NIL, and its frame is 480X320
+	//when brought portrait, its superview become UIWindow(!), and its frame is 320X480; the workspace will not subsequently return to 480X320 through rotation
+	
 	[_swypPromptImageView setFrame:CGRectMake(self.view.size.width/2 - (250/2), self.view.size.height/2 - (250/2), 250, 250)];
 	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, self.view.size.height-32)];
 }
