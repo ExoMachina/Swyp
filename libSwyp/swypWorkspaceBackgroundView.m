@@ -31,8 +31,10 @@
     if ((self = [super initWithFrame:frame])) {
 		
 		_touchToPathCoordinationDictionary =	[[NSMutableDictionary alloc] initWithCapacity:1];
-		
+				
         // Initialization code.
+		[self setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+		
 		self.backgroundColor		= [UIColor grayColor];
 		self.opaque					= YES;
 		self.multipleTouchEnabled	= YES;

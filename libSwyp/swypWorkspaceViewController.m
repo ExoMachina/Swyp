@@ -112,6 +112,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	}
 }
 
+
 #pragma mark swypSwypableContentSuperviewWorkspaceDelegate
 -(UIView*)workspaceView{
 	return self.view;
@@ -119,6 +120,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
 	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
 	//
+	
+	_openingOrientation	=	[[UIApplication sharedApplication] statusBarOrientation];
+	[self _setupUIForCurrentOrientation];
+	
 	[self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
 	[_contentManager handleContentSwypOfContentWithID:contentID withContentImage:contentImage toRect:contentRect];
@@ -144,6 +149,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller{
 	
+	_openingOrientation	=	[[UIApplication sharedApplication] statusBarOrientation];
+	[self _setupUIForCurrentOrientation];
+	
 	[_prettyOverlay setImage:nil];
 	[_prettyOverlay setAlpha:.4];
 	[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
@@ -166,7 +174,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(swypContentInteractionManager*)	contentManager{
 	if (_contentManager == nil){
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:self.backgroundView];
+		if (!self.view){//is hack
+			
+		}
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:[self backgroundView]];
 		
 		#pragma mark TODO: File bug; we need to wait until next runloop otherwise no user interface works
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
@@ -180,6 +191,13 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	}
 	
 	return _contentManager;
+}
+
+-(UIView*)backgroundView{
+	if (_backgroundView == nil){
+		_backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
+	}
+	return _backgroundView;
 }
 
 #pragma mark -
@@ -245,8 +263,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(id) init{
 	if (self = [super initWithNibName:nil bundle:nil]){
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
-		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];
-		
+		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];		
 	}
 	return self;
 }
@@ -276,13 +293,20 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 -(void)	viewDidLoad{
 	[super viewDidLoad];
         
-	self.view	= [[[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds] autorelease];
+	CGSize windowSize	=	[UIScreen mainScreen].bounds.size;
+	if (UIDeviceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])){
+		windowSize		=	CGSizeMake(windowSize.height, windowSize.width);
+	}
+	[self.view setFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
+	
+	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+
     self.view.backgroundColor = [UIColor whiteColor];
-    
-    self.backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
+	
     [self.view addSubview:self.backgroundView];
 	
 	_prettyOverlay		=	[[UIImageView alloc] initWithFrame:self.view.frame];
+	[_prettyOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
 	[self.backgroundView addSubview:_prettyOverlay];
 
         
@@ -290,6 +314,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
     curlButton.adjustsImageWhenHighlighted = YES;
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
+	[curlButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [curlButton.layer setOpaque:NO];
         
     [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
@@ -342,7 +367,12 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 {	
 	[super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
 	
-	return UIInterfaceOrientationIsPortrait(interfaceOrientation);
+	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
+		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		
+	}else{
+		return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+	}
+	
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];

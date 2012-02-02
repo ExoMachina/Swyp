@@ -81,8 +81,9 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
 
-	if (_contentDataSource == contentDataSource)
+	if (_contentDataSource == contentDataSource){
 		return;
+	}
 	
 	if (_contentDataSource != contentDataSource){
 		for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
@@ -502,7 +503,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if (display){
 		
 		if (_contentDisplayController == nil){
-			_contentDisplayController	=	[[swypPhotoPlayground alloc] init];
+			_contentDisplayController	=	[[swypPhotoPlayground alloc] initWithPhotoSize:CGSizeMake(250, 200)];
 			[_contentDisplayController setContentDisplayControllerDelegate:self];
 		}
 					

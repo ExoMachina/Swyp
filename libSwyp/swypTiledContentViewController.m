@@ -99,6 +99,8 @@
 #pragma mark lifecycle
 -(void)	viewDidLoad{
 	[super viewDidLoad];
+
+	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
 	
 	[self.view setFrame:_tileDisplayFrame];
 		

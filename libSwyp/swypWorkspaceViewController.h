@@ -27,7 +27,9 @@
 	BOOL								_showContentWithoutConnection;
 	
 	
-	//workspace UI Items	
+	//workspace UI Items
+	UIInterfaceOrientation				_openingOrientation; //allow rotation to same of current kind
+	
 	UITapGestureRecognizer *			_leaveWorkspaceTapRecog;
 	UISwipeGestureRecognizer *			_swipeDownRecognizer;
 	
