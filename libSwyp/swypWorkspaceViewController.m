@@ -440,6 +440,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	
 	//We now re-arrange the bounds for the subviews... For some reason it works HERE.
 	[self.view setBounds:frameForOrientation];
+	[[[[self contentManager] contentDisplayController] view] setSize:windowFrameForOrientation().size];
+//	EXOLog(@"Content view: %@",[[[[self contentManager] contentDisplayController] view] description]);
+//	[[[[self contentManager] contentDisplayController] view] setBounds:frameForOrientation];
 }
 
 -(void) _setupWorkspacePromptUI{
