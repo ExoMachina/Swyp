@@ -116,6 +116,8 @@
 				
 	} else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
         
+        NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
+        
         if (centerY > 60) {
             CGRect keneticTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
                                     
@@ -133,9 +135,6 @@
 				revisedKeneticTranslationFrame.origin.y = 50;
 			}
 			
-			
-            NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
-
             [UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
                 [[recognizer view] setFrame:revisedKeneticTranslationFrame];
             }completion:^(BOOL completed){
@@ -152,6 +151,7 @@
             }completion:^(BOOL completed){
                 if (completed) {
                     [_tiledContentViewController removeTile:recognizer.view animated:NO];
+                    [self removeContentFromDisplayWithID:swypOutContentID animated:NO];
                 }
             }];
         }		
