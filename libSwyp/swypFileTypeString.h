@@ -41,11 +41,16 @@
  */
 +(id) imageJPEGFileType;
 
-/*
+/**
 		MIME: "video/mpeg"
 */
 +(id) videoMPEGFileType;
 
+
+/**
+	MIME: "text/plain"
+ */
++(id) textPlainFileType;
 
 /**
 		Used in conjunction with specifc tags during connection negotiation.

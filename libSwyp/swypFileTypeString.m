@@ -27,6 +27,11 @@
 	return type;	
 }
 
++(id) textPlainFileType{
+	static NSString * type = @"text/plain";
+	return type;
+}
+
 +(id) swypControlPacketFileType{
 	static NSString * type = @"swyp/ControlPacket";
 	return type;
