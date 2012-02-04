@@ -362,6 +362,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {	
+	return TRUE;
 	return interfaceOrientation == _openingOrientation;
 //	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
 //		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		

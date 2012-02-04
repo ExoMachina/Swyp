@@ -35,7 +35,7 @@
 		[self addSubview:_swypPromptImageView];
 
 		
-		swypInGestureRecognizer*	swypInRecognizer	=	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
+		swypInGestureRecognizer*	swypInRecognizer	=	[[swypInGestureRecognizer alloc] initWithTarget:workspace action:@selector(swypInGestureChanged:)];
 		[swypInRecognizer setDelegate:workspace];
 		[swypInRecognizer setDelaysTouchesBegan:FALSE];
 		[swypInRecognizer setDelaysTouchesEnded:FALSE];
@@ -43,7 +43,7 @@
 		[self.backgroundView addGestureRecognizer:swypInRecognizer];
 		SRELS(swypInRecognizer);
 		
-		swypOutGestureRecognizer*	swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
+		swypOutGestureRecognizer*	swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:workspace action:@selector(swypOutGestureChanged:)];
 		[swypOutRecognizer setDelegate:workspace];
 		[swypOutRecognizer setDelaysTouchesBegan:FALSE];
 		[swypOutRecognizer setDelaysTouchesEnded:FALSE];
@@ -53,7 +53,7 @@
 
 		
 		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
-		[_swypNetworkInterfaceClassButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin];
+		[_swypNetworkInterfaceClassButton setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin];
 		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
 		[_swypNetworkInterfaceClassButton addTarget:workspace action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
