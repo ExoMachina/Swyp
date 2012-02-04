@@ -13,6 +13,9 @@
 
 -(id)init {
     if (self = [super initWithFrame:_imageView.frame]){
+		
+		[self setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin];
+		
         _imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"swypPromptHud"]];
         _bluetoothView = [[UIView alloc] initWithFrame:_imageView.frame];
         

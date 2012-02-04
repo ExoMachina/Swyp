@@ -12,6 +12,7 @@
 #import "swypPromptImageView.h"
 #import "swypWorkspaceBackgroundView.h"
 #import "swypSwypableContentSuperview.h"
+#import "swypWorkspaceView.h"
 
 /** This class is the UIViewController displayed to the user. 
  
@@ -32,14 +33,13 @@
 	
 	UITapGestureRecognizer *			_leaveWorkspaceTapRecog;
 	UISwipeGestureRecognizer *			_swipeDownRecognizer;
+
+	swypWorkspaceView *					_mainWorkspaceView;
+	NSMutableSet *						_allWorkspaceViews;
 	
-	SwypPromptImageView *				_swypPromptImageView;
-	UIButton *							_swypNetworkInterfaceClassButton;
-	UIImageView	*						_prettyOverlay;
 }
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
-@property (nonatomic, retain)	swypWorkspaceBackgroundView*	backgroundView;
 
 ///Sets the swypContentInteractionManager's contentDataSource
 @property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
@@ -62,7 +62,6 @@
 //
 //private
 -(void) _setupUIForCurrentOrientation;
--(void) _setupWorkspacePromptUI;
 -(void) _animateArrows:(id)sender;
 -(void) _stopArrows:(id)sender;
 

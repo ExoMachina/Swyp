@@ -15,7 +15,7 @@
 
 static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 @implementation swypWorkspaceViewController
-@synthesize connectionManager = _connectionManager, contentManager = _contentManager, backgroundView = _backgroundView;
+@synthesize connectionManager = _connectionManager, contentManager = _contentManager;
 @synthesize contentDataSource;
 
 #pragma mark -
@@ -43,19 +43,19 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
             [sessionViewController.view setCenter:CGPointMake(0, oldCenter.y)];
             break;
         case swypScreenEdgeTypeRight:
-            [sessionViewController.view setCenter:CGPointMake(self.view.size.width, oldCenter.y)];
+            [sessionViewController.view setCenter:CGPointMake(_mainWorkspaceView.size.width, oldCenter.y)];
             break;
         case swypScreenEdgeTypeBottom:
             [sessionViewController makeLandscape];
-            [sessionViewController.view setCenter:CGPointMake(oldCenter.x, self.view.size.height)];
+            [sessionViewController.view setCenter:CGPointMake(oldCenter.x, _mainWorkspaceView.size.height)];
             break;
         default:
             break;
     }
     
     
-	[self.backgroundView addSubview:sessionViewController.view];
-	[self.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	[_mainWorkspaceView.backgroundView addSubview:sessionViewController.view];
+	[_mainWorkspaceView.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
 	
@@ -84,30 +84,34 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 //update UI
 -(void) swypConnectionMethodsUpdated:(swypConnectionMethod)availableMethods withConnectionManager:(swypConnectionManager*)manager{
 		
-	if ([manager activeConnectionClass] == swypConnectionClassWifiAndCloud){
-		if (availableMethods & (swypConnectionMethodWifiLoc |swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud)){
-			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
-		}else{
-			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-world-disabled.png"] forState:UIControlStateNormal];
-		}
-	}else if ([manager activeConnectionClass] == swypConnectionClassBluetooth) {
-		if (availableMethods & swypConnectionMethodBluetooth){
-			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-enabled.png"] forState:UIControlStateNormal];
-		}else{
-			[_swypNetworkInterfaceClassButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-disabled.png"] forState:UIControlStateNormal];
+	for (swypWorkspaceView * workspaceView in _allWorkspaceViews){
+		UIButton * interfaceButton	=	[workspaceView swypNetworkInterfaceClassButton];
+		if ([manager activeConnectionClass] == swypConnectionClassWifiAndCloud){
+			if (availableMethods & (swypConnectionMethodWifiLoc |swypConnectionMethodWifiCloud | swypConnectionMethodWWANCloud)){
+				[interfaceButton setImage:[UIImage imageNamed:@"connectivity-world-enabled.png"] forState:UIControlStateNormal];
+			}else{
+				[interfaceButton setImage:[UIImage imageNamed:@"connectivity-world-disabled.png"] forState:UIControlStateNormal];
+			}
+		}else if ([manager activeConnectionClass] == swypConnectionClassBluetooth) {
+			if (availableMethods & swypConnectionMethodBluetooth){
+				[interfaceButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-enabled.png"] forState:UIControlStateNormal];
+			}else{
+				[interfaceButton setImage:[UIImage imageNamed:@"connectivity-bluetooth-disabled.png"] forState:UIControlStateNormal];
+			}
 		}
 	}
-	
 
 }
 
 -(void) swypConnectionMethod:(swypConnectionMethod)method setReadyStatus:(BOOL)isReady withConnectionManager:(swypConnectionManager*)manager{
-
-	if (method == swypConnectionMethodBluetooth){
-		if ([_connectionManager activeConnectionClass] == swypConnectionClassBluetooth){
-			[_swypPromptImageView showBluetoothLoadingPrompt:!isReady];
-		}else{
-			[_swypPromptImageView showBluetoothLoadingPrompt:FALSE];
+	for (swypWorkspaceView * workspaceView in _allWorkspaceViews){
+		SwypPromptImageView * promptImageView	=	[workspaceView swypPromptImageView];
+		if (method == swypConnectionMethodBluetooth){
+			if ([_connectionManager activeConnectionClass] == swypConnectionClassBluetooth){
+				[promptImageView showBluetoothLoadingPrompt:!isReady];
+			}else{
+				[promptImageView showBluetoothLoadingPrompt:FALSE];
+			}
 		}
 	}
 }
@@ -115,7 +119,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 #pragma mark swypSwypableContentSuperviewWorkspaceDelegate
 -(UIView*)workspaceView{
-	return self.view;
+	return self.view; //or _mainWorkspaceView
 }
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect{
 	//Causes the workspace to appear, and automatically positions the content of contentID under the user's finger
@@ -136,9 +140,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		image		= [UIImage imageWithCGImage:image.CGImage scale:0 orientation:UIImageOrientationDown];			
 	}
 	
-	[_prettyOverlay setBackgroundColor:nil];
-	[_prettyOverlay setAlpha:.1];
-	[_prettyOverlay setImage:image];
+	[_mainWorkspaceView.prettyOverlay setBackgroundColor:nil];
+	[_mainWorkspaceView.prettyOverlay setAlpha:.1];
+	[_mainWorkspaceView.prettyOverlay setImage:image];
 	
 	
 	[self _setupUIForCurrentOrientation];
@@ -162,9 +166,9 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	_openingOrientation	=	[[UIApplication sharedApplication] statusBarOrientation];
 	[self _setupUIForCurrentOrientation];
 	
-	[_prettyOverlay setImage:nil];
-	[_prettyOverlay setAlpha:.4];
-	[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
+	[_mainWorkspaceView.prettyOverlay setImage:nil];
+	[_mainWorkspaceView.prettyOverlay setAlpha:.4];
+	[_mainWorkspaceView.prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
 		
 	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
 
@@ -187,7 +191,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		if (!self.view){//is hack
 			
 		}
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:[self backgroundView]];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:[_mainWorkspaceView backgroundView]];
 		
 		#pragma mark TODO: File bug; we need to wait until next runloop otherwise no user interface works
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
@@ -204,10 +208,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 }
 
 -(UIView*)backgroundView{
-	if (_backgroundView == nil){
-		_backgroundView	= [[swypWorkspaceBackgroundView alloc] initWithFrame:self.view.frame];
-	}
-	return _backgroundView;
+	return [[self.view subviews] objectAtIndex:0];
 }
 
 #pragma mark -
@@ -272,6 +273,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(id) init{
 	if (self = [super initWithNibName:nil bundle:nil]){
+		_allWorkspaceViews		= [[NSMutableSet alloc] init];
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];		
 	}
@@ -287,10 +289,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(void) viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
-    
-//	EXOLog(@"VWA %@",rectDescriptionString(self.view.frame));
-//	EXOLog(@"SV: %@",[self.view.superview recursiveDescription]);//recursive is not public
-	
+    	
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5) {
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     } else {
@@ -319,20 +318,14 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	if (UIDeviceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])){
 		windowSize		=	CGSizeMake(windowSize.height, windowSize.width);
 	}
-	[self.view setFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
 	
-	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-	[self.view setClipsToBounds:FALSE];
-	
-    self.view.backgroundColor = [UIColor whiteColor];
-	
-    [self.view addSubview:self.backgroundView];
-	
-	_prettyOverlay		=	[[UIImageView alloc] initWithFrame:self.view.frame];
-	[_prettyOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-	[self.backgroundView addSubview:_prettyOverlay];
+	_mainWorkspaceView	=	[[swypWorkspaceView alloc] initWithFrame :CGRectMake(0, 0, windowSize.width, windowSize.height) workspaceTarget:self];
+	[_allWorkspaceViews addObject:_mainWorkspaceView];
 
-        
+	self.view								=	_mainWorkspaceView;
+	
+	[self.view setClipsToBounds:FALSE];
+
     UIButton *curlButton = [UIButton buttonWithType:UIButtonTypeCustom];
     curlButton.adjustsImageWhenHighlighted = YES;
     curlButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 60);
@@ -342,47 +335,28 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
         
     [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
          forControlEvents:UIControlEventTouchUpInside];
-	[self.backgroundView addSubview:curlButton];
+	[_mainWorkspaceView addSubview:curlButton];
 
 	
 	_leaveWorkspaceTapRecog	= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] ;
-	[self.view addGestureRecognizer:_leaveWorkspaceTapRecog];
+	[_mainWorkspaceView.backgroundView addGestureRecognizer:_leaveWorkspaceTapRecog];
              
     _swipeDownRecognizer	= [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leaveWorkspaceWantedBySender:)] ;
     _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:_swipeDownRecognizer];
+    [_mainWorkspaceView addGestureRecognizer:_swipeDownRecognizer];
     
 	
 	[[self connectionManager] startServices];
-	
-	swypInGestureRecognizer*	swypInRecognizer	=	[[swypInGestureRecognizer alloc] initWithTarget:self action:@selector(swypInGestureChanged:)];
-	[swypInRecognizer setDelegate:self];
-	[swypInRecognizer setDelaysTouchesBegan:FALSE];
-	[swypInRecognizer setDelaysTouchesEnded:FALSE];
-	[swypInRecognizer setCancelsTouchesInView:FALSE];
-	[self.backgroundView addGestureRecognizer:swypInRecognizer];
-	SRELS(swypInRecognizer);
-
-	swypOutGestureRecognizer*	swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
-	[swypOutRecognizer setDelegate:self];
-	[swypOutRecognizer setDelaysTouchesBegan:FALSE];
-	[swypOutRecognizer setDelaysTouchesEnded:FALSE];
-	[swypOutRecognizer setCancelsTouchesInView:FALSE];
-	[self.backgroundView addGestureRecognizer:swypOutRecognizer];	
-	SRELS(swypOutRecognizer);
-    
-	[self _setupWorkspacePromptUI];    
+	    
+	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
 }
 
 -(void)	dealloc{
 	SRELS(_swipeDownRecognizer);
 	SRELS(_leaveWorkspaceTapRecog);
 	
-	SRELS(_prettyOverlay);
-	SRELS( _swypPromptImageView);
-	SRELS(_swypNetworkInterfaceClassButton);
-    SRELS(_backgroundView);
-    
+	SRELS(_allWorkspaceViews);
+	
 	[super dealloc];
 }
 
@@ -403,14 +377,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 			
 
 - (void)didReceiveMemoryWarning {
-	if ([_swypPromptImageView superview] == nil){
-		SRELS(_swypPromptImageView);
-		SRELS(_swypNetworkInterfaceClassButton);
-	}
+	[super didReceiveMemoryWarning];
 }
 
 #pragma mark - Internal
-
 -(void) _setupUIForCurrentOrientation{	
 	//very oddness. 
 	//here's the story w/ iPhone rot.
@@ -420,64 +390,15 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	//when brought portrait, its superview become UIWindow(!), and its frame is 320X480; the workspace will not subsequently return to 480X320 through rotation
 	
 	
-//	CGRect frameForOrientation = windowFrameForOrientation();
-//	if (UIDeviceOrientationIsLandscape(	[[UIApplication sharedApplication] statusBarOrientation])){
-//		double difference	=	[[UIApplication sharedApplication] keyWindow].frame.size.height - [[UIApplication sharedApplication] keyWindow].frame.size.width;
-//		[[[UIApplication sharedApplication] keyWindow] setClipsToBounds:FALSE];
-//		if ([[UIApplication sharedApplication] statusBarOrientation] == UIDeviceOrientationLandscapeLeft){
-//			frameForOrientation.origin.x = (-1)*difference;			
-//		}else{
-//			frameForOrientation.origin.y = difference;
-//		}
-//	}
-//	[self.view setFrame:frameForOrientation];
-	
 	//the following shows that we simply DO NOT trust our current orientation
 	CGRect frameForOrientation = windowFrameForOrientation();
-	CGRect promptImageFrame	=	CGRectMake(frameForOrientation.size.width/2 - (250/2), frameForOrientation.size.height/2 - (250/2), 250, 250);
-	[_swypPromptImageView setFrame:promptImageFrame];
-	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, frameForOrientation.size.height-32)];
-	
-	//We now re-arrange the bounds for the subviews... For some reason it works HERE.
+//	CGRect promptImageFrame	=	CGRectMake(frameForOrientation.size.width/2 - (250/2), frameForOrientation.size.height/2 - (250/2), 250, 250);
+//	[_swypPromptImageView setFrame:promptImageFrame];
+//	[_swypNetworkInterfaceClassButton setOrigin:CGPointMake(9, frameForOrientation.size.height-32)];
+//	
+//	//We now re-arrange the bounds for the subviews... For some reason it works HERE.
 	[self.view setBounds:frameForOrientation];
 	[[[[self contentManager] contentDisplayController] view] setSize:windowFrameForOrientation().size];
-//	EXOLog(@"Content view: %@",[[[[self contentManager] contentDisplayController] view] description]);
-//	[[[[self contentManager] contentDisplayController] view] setBounds:frameForOrientation];
-}
-
--(void) _setupWorkspacePromptUI{
-	if (_swypPromptImageView == nil){
-		_swypPromptImageView = [[SwypPromptImageView alloc] init];
-		[_swypPromptImageView setUserInteractionEnabled:FALSE];
-	}
-	
-	//we're phasing out wifi as a availability-selectable type in favor of globe vs bluetooth
-	
-	
-	if (_swypNetworkInterfaceClassButton == nil){
-		_swypNetworkInterfaceClassButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 27)];
-		[_swypNetworkInterfaceClassButton setShowsTouchWhenHighlighted:TRUE];
-		[_swypNetworkInterfaceClassButton addTarget:self action:@selector(networkInterfaceClassButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-		[_swypNetworkInterfaceClassButton setEnabled:FALSE];
-	}
-	
-	[self _setupUIForCurrentOrientation];
-	
-	
-	
-	//set background images
-	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
-	
-	[_swypNetworkInterfaceClassButton setAlpha:0];
-	[_swypPromptImageView setAlpha:0];
-	[self.backgroundView addSubview:_swypNetworkInterfaceClassButton];	
-	[self.backgroundView addSubview:_swypPromptImageView];
-	[self.backgroundView sendSubviewToBack:_swypPromptImageView];
-	
-	[UIView animateWithDuration:.75 animations:^{
-		[_swypPromptImageView setAlpha:0.5];
-		[_swypNetworkInterfaceClassButton setAlpha:1];
-	}completion:nil];
 }
 
 @end
