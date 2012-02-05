@@ -243,6 +243,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
+		EXOLog(@"No remote supported file types identified! %@",@"NONE!");
 		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
 		return;
 	}
