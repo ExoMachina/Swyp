@@ -149,8 +149,7 @@
                 recognizer.view.transform = CGAffineTransformMakeScale(0.01, 0.01);
             }completion:^(BOOL completed){
                 if (completed) {
-                    [_tiledContentViewController removeTile:recognizer.view animated:NO];
-                    [self removeContentFromDisplayWithID:swypOutContentID animated:NO];
+					[_contentDisplayControllerDelegate contentWithIDWasDraggedOffWorkspace:swypOutContentID inController:self];
                 }
             }];
         }		

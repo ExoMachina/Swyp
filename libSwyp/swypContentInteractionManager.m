@@ -276,6 +276,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 		
+		
 		//settm loose
 		[[sessionVC contentLoadingThumbs] removeObject:thumProgView];
 	}
@@ -409,6 +410,15 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[overlapSession indicateTransferringData:YES];
 	}
 
+}
+
+-(void) contentWithIDWasDraggedOffWorkspace:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+	if ([[_contentDataSource idsForAllContent] containsObject:contentID]){
+		[_contentDataSource contentWithIDWasDraggedOffWorkspace:contentID];
+	}else if ([[_thumbnailLoadingViewsByContentID allKeys] containsObject:contentID]){
+		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:FALSE];
+		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+	}
 }
 
 -(UIView*)		viewForContentWithID:(NSString*)contentID ofMaxSize:(CGSize)maxIconSize inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{

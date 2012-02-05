@@ -67,6 +67,8 @@
 /// Returns swypFileTypeString array that a specifc contentID supports
 - (NSArray*)		supportedFileTypesForContentWithID: (NSString*)contentID;
 
+///Alerts when "drag-off" occured on content; this is typically a drag-up for dissapearance and removal of the content
+-(void)	contentWithIDWasDraggedOffWorkspace:(NSString*)contentID;
 
 ///Sets the swypContentDataSourceDelegate for the dataSource
 -(void)	setDatasourceDelegate:			(id<swypContentDataSourceDelegate>)delegate;

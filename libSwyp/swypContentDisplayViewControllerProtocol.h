@@ -16,6 +16,11 @@
  */
 -(void)	contentWithIDUnderwentSwypOut:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
 
+/**
+	Indicates that content was swyped-up and off the workspace. The data model will subsequently remove this content, then push the update back to the sending contentDisplayController.
+ */
+-(void) contentWithIDWasDraggedOffWorkspace:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
+
 ///the returned UIView will be as close as possible to and no larger than maxIconSize, while in proper-perspective and not distorted
 -(UIView*)		viewForContentWithID:(NSString*)contentID ofMaxSize:(CGSize)maxIconSize inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
 
