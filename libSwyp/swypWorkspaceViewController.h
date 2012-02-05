@@ -59,6 +59,8 @@
 ///displays the workspace with content in background, with fade from background, with content under finger
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 
+-(swypWorkspaceView*)	workspaceViewForEmbeddedSwypInWithFrame:(CGRect)frame;
+
 //
 //private
 -(void) _setupUIForCurrentOrientation;

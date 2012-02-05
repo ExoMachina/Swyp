@@ -211,6 +211,15 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	return [[self.view subviews] objectAtIndex:0];
 }
 
+-(swypWorkspaceView*)	workspaceViewForEmbeddedSwypInWithFrame:(CGRect)frame{
+	swypWorkspaceView * workspaceView	=	[[swypWorkspaceView alloc] initWithFrame:frame workspaceTarget:self];
+	[_allWorkspaceViews addObject:workspaceView];
+	[workspaceView autorelease];
+	[[self connectionManager] startServices];
+	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
+	return workspaceView;
+}
+
 #pragma mark -
 #pragma mark workspaceInteraction
 
@@ -273,7 +282,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 -(id) init{
 	if (self = [super initWithNibName:nil bundle:nil]){
-		_allWorkspaceViews		= [[NSMutableSet alloc] init];
+		_allWorkspaceViews		=			[[NSMutableSet alloc] init];
 		[self setModalPresentationStyle:	UIModalPresentationFullScreen];
 		[self setModalTransitionStyle:		UIModalTransitionStyleCoverVertical];		
 	}
@@ -356,6 +365,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	SRELS(_leaveWorkspaceTapRecog);
 	
 	SRELS(_allWorkspaceViews);
+	SRELS(_mainWorkspaceView);
 	
 	[super dealloc];
 }
@@ -363,12 +373,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {	
 	return TRUE;
-	return interfaceOrientation == _openingOrientation;
-//	if (UIInterfaceOrientationIsPortrait(_openingOrientation)){
-//		return UIInterfaceOrientationIsPortrait(interfaceOrientation);		
-//	}else{
-//		return UIInterfaceOrientationIsLandscape(interfaceOrientation);
-//	}	
+//	return interfaceOrientation == _openingOrientation;
 }
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 	[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];

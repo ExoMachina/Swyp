@@ -24,10 +24,10 @@
 		
 		_prettyOverlay		=	[[UIImageView alloc] initWithFrame:self.frame];
 		[_prettyOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-		[self.backgroundView addSubview:_prettyOverlay];
 		[_prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
-
-		
+		[_prettyOverlay setAlpha:.4];
+		[self.backgroundView addSubview:_prettyOverlay];
+	
 		_swypPromptImageView = [[SwypPromptImageView alloc] init];
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 		CGRect promptImageFrame	=	CGRectMake(self.frame.size.width/2 - (250/2), self.frame.size.height/2 - (250/2), 250, 250);

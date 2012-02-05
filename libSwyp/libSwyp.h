@@ -28,6 +28,8 @@
 
 //This class allows you to add subviews and for them to to be pieces of swypable content
 #import "swypSwypableContentSuperview.h"
+//This class, administerd by the swypWorkspaceViewController allows you to embed swyp-in zones
+#import "swypWorkspaceView.h"
 
 //the following are how you determine what files are available to share on swyp
 #import "swypContentDataSourceProtocol.h"
