@@ -521,8 +521,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		if (_contentDisplayController.view.superview == nil){
 			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
-#pragma mark CLUDGE: TGTBSB
-			[_mainWorkspaceView	insertSubview:_contentDisplayController.view atIndex:2];
+
+			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];
