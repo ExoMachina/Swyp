@@ -11,6 +11,14 @@
 
 @implementation swypInfoRef
 @synthesize velocity,startPoint,endPoint,startDate,endDate,swypBeginningContentView,swypType;
+
+-(id) init{
+	if (self = [super init]){
+		self.startDate = [NSDate new];
+	}
+	return self;
+}
+
 -(void) setSwypBeginningContentView:(UIView *)swypOutView{
 	SRELS(swypBeginningContentView);
 	swypBeginningContentView = [swypOutView retain];
