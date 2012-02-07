@@ -58,6 +58,7 @@
 	self.view.layer.borderColor		=	[UIColor blackColor].CGColor;
 	[self.view setBounds:CGRectMake(0, 0, 50, 150)];
 	[self.view setBackgroundColor:[_connectionSession sessionHueColor]];
+	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin];
 	
 	UITapGestureRecognizer * cancelationRecognizer	=	[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognized:)];
 	[cancelationRecognizer setNumberOfTapsRequired:1];
