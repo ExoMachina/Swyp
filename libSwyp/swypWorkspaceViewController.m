@@ -53,9 +53,25 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
             break;
     }
     
-    
-	[_mainWorkspaceView.backgroundView addSubview:sessionViewController.view];
-	[_mainWorkspaceView.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];
+	BOOL handledSessionDisplay = FALSE;
+	if (_mainWorkspaceView != nil  && ([_mainWorkspaceView isDescendantOfView:[[UIApplication sharedApplication] keyWindow]] == NO) && [_allWorkspaceViews count] > 1){
+
+		for (swypWorkspaceView * workspaceView	in _allWorkspaceViews){
+			if ([workspaceView isDescendantOfView:[[UIApplication sharedApplication] keyWindow]]){
+		
+				[workspaceView.backgroundView addSubview:sessionViewController.view];
+				[workspaceView.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];	
+				handledSessionDisplay	=	TRUE;
+			}
+		}
+
+	}
+	if (handledSessionDisplay == NO){
+		[_mainWorkspaceView.backgroundView addSubview:sessionViewController.view];
+		[_mainWorkspaceView.backgroundView setBackgroundColor:[[session sessionHueColor] colorWithAlphaComponent:.4]];	
+		handledSessionDisplay	=	TRUE;
+	}
+	
 	[[self contentManager] maintainSwypSessionViewController:sessionViewController];
 	SRELS(sessionViewController);
 	
