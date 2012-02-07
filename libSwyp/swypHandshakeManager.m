@@ -19,7 +19,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	[session addConnectionSessionInfoDelegate:self];
 	[session initiate];
 		
-	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
 	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
 	
 	[_pendingSwypConnectionSessions addObject:session];
@@ -243,6 +243,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
+		EXOLog(@"No remote supported file types identified! %@",@"NONE!");
 		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
 		return;
 	}
@@ -382,7 +383,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	//mostly under 700ms when not debugging
 	//when debugging, make sure no breakpoints delay absorbtion of remote intervalInPast into NSDate
-	if (milisecondDifference < 1500){
+	//three seconds to swyp in though, for seperated gestures!
+	if (milisecondDifference < 3000){
 		EXOLog(@"Swyp match: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 		return TRUE;		
 	}else {

@@ -32,7 +32,7 @@
 		[_swypPromptImageView setUserInteractionEnabled:FALSE];
 		CGRect promptImageFrame	=	CGRectMake(self.frame.size.width/2 - (250/2), self.frame.size.height/2 - (250/2), 250, 250);
 		[_swypPromptImageView setFrame:promptImageFrame];
-		[self addSubview:_swypPromptImageView];
+		[self.backgroundView addSubview:_swypPromptImageView];
 
 		
 		swypInGestureRecognizer*	swypInRecognizer	=	[[swypInGestureRecognizer alloc] initWithTarget:workspace action:@selector(swypInGestureChanged:)];

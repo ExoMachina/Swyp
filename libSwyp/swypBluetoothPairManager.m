@@ -62,9 +62,23 @@
 }
 
 -(void) advertiseSwypOutAsPending:(swypInfoRef*)ref{
-	NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseAsPendingTimedOutWithTimer:) userInfo:ref repeats:NO];
-	[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 	
+	if ([_swypOutTimeoutTimerBySwypInfoRef count] > 0){
+		EXOLog(@"%i Swyp-out already pending; swyp-out dropped to avoid conflicts", [_swypOutTimeoutTimerBySwypInfoRef count]);
+		
+		//hack to check for stuck swyps
+		swypInfoRef * oldRef = (swypInfoRef*)  [[[_swypOutTimeoutTimerBySwypInfoRef allKeys] objectAtIndex:0] nonretainedObjectValue];
+		if (ABS([[oldRef startDate]timeIntervalSinceNow]*1000) > 4000){
+			EXOLog(@"Stuck ref removed from date diff %i", (int)[[oldRef startDate]timeIntervalSinceNow]*1000);
+			[self stopAdvertisingSwypOut:oldRef];
+		}else{
+			[_delegate interfaceManager:self isDoneAdvertisingSwypOutAsPending:ref forConnectionMethod:swypConnectionMethodBluetooth];
+			return;
+		}
+	}
+	
+	NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_advertiseAsPendingTimedOutWithTimer:) userInfo:ref repeats:NO];
+	[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
 }
 
 -(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{

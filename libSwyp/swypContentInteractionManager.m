@@ -276,6 +276,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 		
+		
 		//settm loose
 		[[sessionVC contentLoadingThumbs] removeObject:thumProgView];
 	}
@@ -411,6 +412,15 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 }
 
+-(void) contentWithIDWasDraggedOffWorkspace:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+	if ([[_contentDataSource idsForAllContent] containsObject:contentID]){
+		[_contentDataSource contentWithIDWasDraggedOffWorkspace:contentID];
+	}else if ([[_thumbnailLoadingViewsByContentID allKeys] containsObject:contentID]){
+		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:FALSE];
+		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+	}
+}
+
 -(UIView*)		viewForContentWithID:(NSString*)contentID ofMaxSize:(CGSize)maxIconSize inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
 	
 	UIView * cachedView	=	[_contentViewsByContentID valueForKey:contentID];
@@ -511,8 +521,8 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		if (_contentDisplayController.view.superview == nil){
 			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
 			[_contentDisplayController.view		setAlpha:0];
-#pragma mark CLUDGE: TGTBSB
-			[_mainWorkspaceView	insertSubview:_contentDisplayController.view atIndex:2];
+
+			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
 			[UIView animateWithDuration:.75 animations:^{
 				_contentDisplayController.view.alpha = 1;
 			}completion:nil];
