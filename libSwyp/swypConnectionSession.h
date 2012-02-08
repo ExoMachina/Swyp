@@ -53,51 +53,24 @@ typedef enum {
 
 ///How a swypConnectionSession gives away its received data. See addDataDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionDataDelegate <NSObject>
-@optional
-
 /** swypFileTypeStrings in order of preference where 0 = most preferent
-	Use this on your datasource set in swypContentInteractionManager to choose what files your app accepts.
-*/
+ Use this on your datasource set in swypContentInteractionManager to choose what files your app accepts.
+ 
+ If you don't adopt this protocol, you'll never be notified when data is received, nor will your app receive data.
+ */
 -(NSArray*)	supportedFileTypesForReceipt;
 
-
-/** A convenience method for delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:. Return true to accept the enclosed discernedStream as NSData through yieldedData:discernedStream:inConnectionSession: when it's done being received. 
- 
- @warning if you want to do anything special with NSStream functionality, don't implement this method on your datasource. 
- 
- @param streamType is a shortcut for discernedStream.streamType
- 
-Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
-Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
-If no one handles, an exception is thrown
- 
- @return true or false depending on interest in stream. 
- */
--(BOOL) delegateWillReceiveDataFromDiscernedStream:(swypDiscernedInputStream*)discernedStream ofType:(NSString*)streamType inConnectionSession:(swypConnectionSession*)session;
-
-/** See whether delegate will handle data stream.
- 
-	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
-		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
-		If no one handles, an exception is thrown
-	
-	All delegates will be notified using this method, but only one should return TRUE.
-	
-	discernedStream can be read as an input stream, and attached to output streams using SwypInputToOutput, for example
-	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, '*wantsProvidedAsNSData = TRUE;', to have data provided by yieldedData:discernedStream:inConnectionSession:
-
-*/
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session;
-
-
 /**
-	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
-	
-	@param discernedStream the stream containing properties like streamType, and streamTag.
-	@param streamData Data from the discernedStream.
-*/
+ The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
+ 
+ @param discernedStream the stream containing properties like streamType, and streamTag.
+ @param streamData Data from the discernedStream.
+ */
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString*)streamType fromDiscernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
+
+@optional
+
 
 /** Upon failing to send data */
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
@@ -106,9 +79,9 @@ If no one handles, an exception is thrown
 
 
 ///	Will notify you when the data IN stream is receiving so that UI can be updated accordingly
--(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session;
+-(void)	didBeginReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
 ///	Will notify you when the data IN stream is DONE receiving so that UI can be updated accordingly
--(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
+-(void) didFinnishReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
 @end
 
 /** This class represents and manages the connection between this and one other device. 

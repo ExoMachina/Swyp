@@ -10,7 +10,7 @@
 
 @implementation swypBackedPhotoDataSource
 @synthesize backingDelegate = _backingDelegate;
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 	
 	[_backingDelegate swypBackedPhotoDataSourceRecievedPhoto:[UIImage imageWithData:streamData] withDataSource:self];
 }

@@ -32,6 +32,12 @@
 	return type;
 }
 
++(id) textAddressFileType{
+	static NSString * type = @"text/address";
+	return type;
+}
+
+
 +(id) swypControlPacketFileType{
 	static NSString * type = @"swyp/ControlPacket";
 	return type;

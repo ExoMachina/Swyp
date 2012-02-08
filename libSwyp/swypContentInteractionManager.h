@@ -30,7 +30,7 @@
 	
 	UIView*													_mainWorkspaceView;
 		
-}	
+}
 @property (nonatomic, readonly) swypBidirectionalMutableDictionary * contentViewsByContentID;
 
 /** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 

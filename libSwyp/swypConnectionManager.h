@@ -54,7 +54,7 @@ typedef enum {
  */
 @interface swypConnectionManager : NSObject <swypPendingConnectionManagerDelegate, swypInterfaceManagerDelegate,
 swypConnectionSessionInfoDelegate,swypConnectionSessionDataDelegate, swypHandshakeManagerDelegate,
-swypNetworkAccessMonitorDelegate, swypInputToDataBridgeDelegate> {
+swypNetworkAccessMonitorDelegate> {
 	NSMutableSet *					_activeConnectionSessions;
 
 	swypBonjourPairManager *		_bonjourPairManager;

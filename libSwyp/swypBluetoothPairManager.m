@@ -62,6 +62,12 @@
 }
 
 -(void) advertiseSwypOutAsPending:(swypInfoRef*)ref{
+	//we do nothing with this info; we wait until swyp-out has completed
+	
+}
+
+-(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
+	//We'll try clearing out existing swypOuts to see if we get more responsivenes	
 	
 	if ([_swypOutTimeoutTimerBySwypInfoRef count] > 0){
 		EXOLog(@"%i Swyp-out already pending; swyp-out dropped to avoid conflicts", [_swypOutTimeoutTimerBySwypInfoRef count]);
@@ -76,30 +82,13 @@
 			return;
 		}
 	}
-	
-	NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(_advertiseAsPendingTimedOutWithTimer:) userInfo:ref repeats:NO];
-	[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
-}
 
--(void) advertiseSwypOutAsCompleted:(swypInfoRef*)ref{
-	//We'll try clearing out existing swypOuts to see if we get more responsivenes
-//	for (swypInfoRef * ref in _validSwypOutsForConnectionReceipt){
-//		[self stopAdvertisingSwypOut:ref];
-//	}
-	
-	NSTimer * pendingTimer	=	[_swypOutTimeoutTimerBySwypInfoRef objectForKey:[NSValue valueWithNonretainedObject:ref]];
-	if (pendingTimer == nil){
-		return;	
-	}else{
-//		EXOLog(@"advertiseSwypOutAsCompleted in swypBluetoothPairManager from ref@time:%@",[[ref startDate]description]);
-		[pendingTimer invalidate];
 		
-		NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
-		[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
-		[_validSwypOutsForConnectionReceipt addObject:ref];
+	NSTimer * advertiseTimer	=	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(_advertiseTimedOutWithTimer:) userInfo:ref repeats:NO];
+	[_swypOutTimeoutTimerBySwypInfoRef setObject:advertiseTimer forKey:[NSValue valueWithNonretainedObject:ref]];	
+	[_validSwypOutsForConnectionReceipt addObject:ref];
 
-		[self _createSessionsIfNeeded];
-	}
+	[self _createSessionsIfNeeded];
 	
 }
 

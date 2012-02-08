@@ -118,22 +118,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 #pragma mark connectionSession data delegates
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
-	
-	if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
-		*wantsProvidedAsNSData = TRUE;
-		return TRUE;
-	}else {
-		swypCandidate	*	candidate	=	[session representedCandidate];
-		EXOLog(@"Session connection returned unexpected type '%@' during HELLO sequence for candidate appearing at time:%@",[discernedStream streamType],[candidate appearanceDate]);
-		[self _removeAndInvalidateSession:session];		
-		return FALSE;
-	}
+
+-(NSArray*) supportedFileTypesForReceipt{
+	return [NSArray arrayWithObjects:[NSString swypControlPacketFileType], nil];
 }
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 	if ([streamData length] > 0){
-		if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
+		if ([streamType isFileType:[discernedStream streamType]]){
 						
 			NSDictionary *	receivedDictionary = nil;
 			if ([streamData length] >0){

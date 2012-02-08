@@ -284,34 +284,24 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 #pragma mark swypConnectionSessionDataDelegate
--(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session{
+-(void) didBeginReceivingDataInDiscernedStream:(swypDiscernedInputStream *)stream withConnectionSession:(swypConnectionSession *)session{
+	if ([supportedReceiveFileTypes containsObject:[stream streamType]]){
+		[stream addStatusDelegate:self];
+	}
 	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:YES];
 
 }
 
--(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session{
+-(void) didFinnishReceivingDataInDiscernedStream:(swypDiscernedInputStream *)stream withConnectionSession:(swypConnectionSession *)session{
 	[[self maintainedSwypSessionViewControllerForSession:session] indicateTransferringData:NO];
+
 }
 
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
-	
-	if ([self maintainedSwypSessionViewControllerForSession:session] == nil){
-		return FALSE;
-	}
-	
-	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){
-		*wantsProvidedAsNSData = TRUE;
-		return TRUE;
-	}
-	
-	if ([supportedReceiveFileTypes containsObject:[discernedStream streamType]]){
-		[discernedStream addStatusDelegate:self];
-	}
-	
-	return FALSE;//we wont be handling here.. the datasource should
+-(NSArray*) supportedFileTypesForReceipt{
+	return [NSArray arrayWithObjects:[NSString swypWorkspaceThumbnailFileType], nil];
 }
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 
 	EXOLog(@"Successfully received data of type %@",[discernedStream streamType]);
 	if ([[discernedStream streamType] isFileType:[NSString swypWorkspaceThumbnailFileType]]){

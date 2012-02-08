@@ -57,14 +57,12 @@
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller;
 
 ///displays the workspace with content in background, with fade from background, with content under finger
--(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
+-(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 
 -(swypWorkspaceView*)	workspaceViewForEmbeddedSwypInWithFrame:(CGRect)frame;
 
 //
 //private
 -(void) _setupUIForCurrentOrientation;
--(void) _animateArrows:(id)sender;
--(void) _stopArrows:(id)sender;
 
 @end

@@ -158,7 +158,7 @@
 	}
 }
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 	EXOLog(@"swypPhotoArrayDataSource datasource received data of type: %@",[discernedStream streamType]);
 	//you may want to see the swypBackedPhotoDataSource override
 }

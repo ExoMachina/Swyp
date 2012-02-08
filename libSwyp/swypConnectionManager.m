@@ -385,19 +385,6 @@
 }
 
 #pragma mark -
-#pragma mark swypInputToDataBridgeDelegate
--(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge{
-	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){
-		EXOLog(@"Yielded data %@ with type '%@' tag '%@'",[NSString  stringWithUTF8String:[yieldedData bytes]], [(swypDiscernedInputStream*)inputStream streamType], [(swypDiscernedInputStream*)inputStream streamTag]);	
-	}else{
-		EXOLog(@"Unexpected bridge response with data :%@",[NSString  stringWithUTF8String:[yieldedData bytes]]);
-	}
-}
--(void)	dataBridgeFailedYieldingDataFromInputStream:(NSInputStream*) inputStream withError: (NSError*) error inInputToDataBridge:(swypInputToDataBridge*)bridge{
-	
-}
-
-#pragma mark -
 #pragma mark swypConnectionSessionInfoDelegate
 -(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session{
 }
@@ -409,35 +396,17 @@
 }
 #pragma mark swypConnectionSessionDataDelegate
 
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
+-(NSArray*)supportedFileTypesForReceipt{
+	return [NSArray arrayWithObjects:[NSString swypControlPacketFileType], nil];
+}
+
+-(void)yieldedData:(NSData *)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 	if ([[discernedStream streamType] isFileType:[NSString swypControlPacketFileType]]){
 		if ([[discernedStream streamTag] isEqualToString:@"goodbye"]){
 			[session invalidate];
 		}
-		*wantsProvidedAsNSData = TRUE;
-		return TRUE;
-	}	
-	return FALSE;
-}
-
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
-	if ([[discernedStream streamType] isFileType:[NSString swypControlPacketFileType]]){
-		//do something to handle this :)
 		
-		NSDictionary *	receivedDictionary = nil;
-		if ([streamData length] >0){
-			NSString *	readStreamString	=	[[[NSString alloc]  initWithBytes:[streamData bytes] length:[streamData length] encoding: NSUTF8StringEncoding] autorelease];
-			if (StringHasText(readStreamString))
-				receivedDictionary				=	[NSDictionary dictionaryWithJSONString:readStreamString];
-		}		
-		
-		if (receivedDictionary != nil){
-			EXOLog(@"Received %@ dictionary of contents:%@",[discernedStream streamType],[receivedDictionary description]);
-		}
 	}
-	
 }
-
-
 
 @end

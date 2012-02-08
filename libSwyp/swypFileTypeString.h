@@ -52,6 +52,15 @@
  */
 +(id) textPlainFileType;
 
+
+/**
+ Specifies a mapable address in text format. Like something that copy would provide in iOS maps.
+ 
+ FAKE-MIME: "text/address"
+ */
+
++(id) textAddressFileType;
+
 /**
 		Used in conjunction with specifc tags during connection negotiation.
 		Used to set things like session hue color.
