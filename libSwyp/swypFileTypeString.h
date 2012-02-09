@@ -46,6 +46,11 @@
 */
 +(id) videoMPEGFileType;
 
+/** Specifies a pdf file type.
+ 
+ MIME: "application/pdf
+*/
++(id) applicationPDFFileType;
 
 /**
 	MIME: "text/plain"
@@ -54,12 +59,20 @@
 
 
 /**
- Specifies a mapable address in text format. Like something that copy would provide in iOS maps.
+ Specifies a contact in swyp's special json format.
  
- FAKE-MIME: "text/address"
+ MIME: "swyp/contact"
  */
 
-+(id) textAddressFileType;
++(id) swypContactFileType;
+
+/**
+ Specifies a mapable address in swyp's special json format.
+ 
+ MIME: "swyp/address"
+ */
+
++(id) swypAddressFileType;
 
 /**
 		Used in conjunction with specifc tags during connection negotiation.

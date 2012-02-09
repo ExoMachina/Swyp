@@ -27,12 +27,22 @@
 	return type;	
 }
 
++(id) applicationPDFFileType{
+	static NSString * type = @"application/pdf";
+	return type;
+}
+
 +(id) textPlainFileType{
 	static NSString * type = @"text/plain";
 	return type;
 }
 
-+(id) textAddressFileType{
++(id) swypContactFileType{
+	static NSString * type = @"text/contact";
+	return type;
+}
+
++(id) swypAddressFileType{
 	static NSString * type = @"text/address";
 	return type;
 }
