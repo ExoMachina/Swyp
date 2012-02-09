@@ -303,6 +303,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 			
 			if ([delegate respondsToSelector:@selector(yieldedData:ofType:fromDiscernedStream:inConnectionSession:)]){
 				[delegate yieldedData:yieldedData ofType:discernedStream.streamType fromDiscernedStream:discernedStream inConnectionSession:self];
+			}else if ([delegate respondsToSelector:@selector(yieldedData:fromDiscernedStream:inConnectionSession:)]){
+				EXOLog(@"Depreicated yieldedData:fromDiscernedStream:inConnectionSession: called for datatype: %@; implement yieldedData:ofType:fromDiscernedStream:inConnectionSession:", discernedStream.streamType);
+				[delegate yieldedData:yieldedData fromDiscernedStream:discernedStream inConnectionSession:self];
 			}
 		}
 		

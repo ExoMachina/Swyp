@@ -59,7 +59,18 @@
 ///displays the workspace with content in background, with fade from background, with content under finger
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 
--(swypWorkspaceView*)	workspaceViewForEmbeddedSwypInWithFrame:(CGRect)frame;
+/** Use this method to grab a UIView that can be used as a "swyp-in zone" on your existing view hierarchy.
+ 
+ returns a swypWorkspaceView that has a contentDisplayController that can show received thumbnails from swyp-ins, and will delegate to swypWorkspaceViewController on swyp-gestures.
+ 
+ This object is retained within the swyp framework, so you must call discardEmbeddableSwypWorkspaceView: after use.
+ */
+-(swypWorkspaceView*)	embeddableSwypWorkspaceViewForWithFrame:(CGRect)frame;
+
+/**
+ After calling this method, the swyp framwork will no longer be retaining the swypWorkspaceView, nor will it update it for connectivity or contentReceipt.
+ */
+-(void)					removeEmbeddableSwypWorkspaceView:(swypWorkspaceView*)workspaceView;
 
 //
 //private

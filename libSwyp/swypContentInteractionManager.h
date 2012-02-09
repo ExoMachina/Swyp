@@ -12,7 +12,7 @@
 #import "swypContentDataSourceProtocol.h"
 #import "swypContentDisplayViewControllerProtocol.h"
 #import "swypBidirectionalMutableDictionary.h"
-
+#import "swypWorkspaceView.h"
 
 /** This class is responsible for unifying modal and controller, and displaying them upon the workspace. 
  
@@ -24,11 +24,11 @@
 	swypBidirectionalMutableDictionary*	_contentViewsByContentID;
 	swypBidirectionalMutableDictionary*	_thumbnailLoadingViewsByContentID;
 		
-	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
+	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*		_contentDataSource;
 	
-	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
+	NSMutableDictionary *															_contentDisplayControllerByWorkspaceView;
 	
-	UIView*													_mainWorkspaceView;
+	swypWorkspaceView*																_mainWorkspaceView;
 		
 }
 @property (nonatomic, readonly) swypBidirectionalMutableDictionary * contentViewsByContentID;
@@ -42,17 +42,14 @@
 @property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
 
 
-/** This property is the view controller that contentDataSource content is displayed from. 
- 
- @warning if not set, the standard will be assigned. That is swypPhotoPlayground currently.
- @warning this class must obey the swypContentDisplayViewController protocol. 
- */
-@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
-
-
 /** The main init function. 
+
+ Automatically populates contentDisplayControllerByWorkspaceView with primary swyp workspace view, and creates a new swyp photo playground for manipulation therein. 
+ 
+ @param workspaceView relevant because it's the default 'active' view
+
  */
--(id)	initWithMainWorkspaceView: (UIView*)workspaceView;
+-(id)	initWithMainWorkspaceView: (swypWorkspaceView*)workspaceView;
 
 
 /** Supported swyp receipt file types; in order of greatest preference, where index 0=most preferant 
@@ -72,10 +69,24 @@
 ///Removes all, typically for app exit
 -(void)		stopMaintainingAllSessionViewControllers;
 
-//this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
--(void)		initializeInteractionWorkspace;
+/** 
+ Returns the contentDisplayController showing the content id, or nil if none.
+ */
+-(UIViewController<swypContentDisplayViewController>*)	displayControllerForContentID:(NSString*)contentID;
 
-//simply attempts to post conent to a session, as used during "contentSwyps"
+/** 
+ Returns the viewController whos view is displayed currently, or the _mainWorkspaceView's contentDisplayController
+ */
+-(UIViewController<swypContentDisplayViewController>*)	currentActiveContentDisplayController;
+
+
+///	associates a content display view with a workspaceView
+-(void)	addSwypWorkspaceViewToInteractionLoop:(swypWorkspaceView*)worksapceView;
+
+/// removes the association of a workspace view with its content display controller
+-(void)	removeSwypWorkspaceViewFromInteractionLoop:(swypWorkspaceView*)worksapceView;
+
+///simply attempts to post conent to a session, as used during "contentSwyps"
 -(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session;
 
 /** Used by swypWorkspaceManager to indicate swypSwypableContentSuperview content addition. 
@@ -89,6 +100,5 @@
 
 -(swypSessionViewController*)		_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
 
--(void)		_displayContentDisplayController:(BOOL)display;
-
+-(void)	_addContentDisplayControllerToWorkspaceView:(swypWorkspaceView*)view;
 @end

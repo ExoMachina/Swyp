@@ -14,7 +14,7 @@
 static NSArray * supportedReceiveFileTypes =  nil;
 
 @implementation swypContentInteractionManager
-@synthesize contentDataSource = _contentDataSource, contentDisplayController = _contentDisplayController;
+@synthesize contentDataSource = _contentDataSource;
 @synthesize contentViewsByContentID = _contentViewsByContentID;
 
 #pragma public
@@ -48,7 +48,11 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumb];
 		
-		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+		for (UIViewController <swypContentDisplayViewController>* contentDisplay in [_contentDisplayControllerByWorkspaceView allValues]){
+			if ([[contentDisplay allDisplayedObjectIDs] containsObject:contentID]){
+				[contentDisplay removeContentFromDisplayWithID:contentID animated:TRUE];				
+			}
+		}
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 	}
 	
@@ -67,16 +71,6 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		swypConnectionSession * session = [sessionValue nonretainedObjectValue];
 		[self stopMaintainingViewControllerForSwypSession:session];
 	}
-}
--(void) setContentDisplayController:(UIViewController<swypContentDisplayViewController> *)contentDisplayController{
-	//we make it nicely sized for you!
-	CGRect contentRect	=	CGRectMake(0,0, [_mainWorkspaceView bounds].size.width,[_mainWorkspaceView bounds].size.height);
-	[contentDisplayController.view setFrame:contentRect];
-	[contentDisplayController.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
-	
-	SRELS(_contentDisplayController);
-	_contentDisplayController = [contentDisplayController retain];
-	[_contentDisplayController setContentDisplayControllerDelegate:self];
 }
 
 -(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
@@ -113,14 +107,53 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[[connectionSession nonretainedObjectValue] addDataDelegate:contentDataSource];
 	}
 	
-	
-	[[self contentDisplayController] reloadAllData];
+	for (UIViewController <swypContentDisplayViewController>* contentDisplay in [_contentDisplayControllerByWorkspaceView allValues]){
+		[contentDisplay reloadAllData];
+	}
+
 }
 
--(void)		initializeInteractionWorkspace{
+-(UIViewController<swypContentDisplayViewController>*)	currentActiveContentDisplayController{
+	UIViewController<swypContentDisplayViewController>* activeDisplay	=	[_contentDisplayControllerByWorkspaceView objectForKey:[NSValue valueWithNonretainedObject:_mainWorkspaceView]];
 	
-	[self _displayContentDisplayController:TRUE];
+	for (UIViewController<swypContentDisplayViewController>* testDisplayC in [_contentDisplayControllerByWorkspaceView allValues]){
+		//careful here, the testView might be nil; if so, you've probably released the view elsewhere without removing it from interaciton manager
+		
+		if ([testDisplayC.view isDescendantOfView:[[UIApplication sharedApplication] keyWindow]]){
+			activeDisplay = testDisplayC;
+		}
+	}
+	
+	return activeDisplay;
 }
+
+-(UIViewController<swypContentDisplayViewController>*)	displayControllerForContentID:(NSString*)contentID{
+	for (UIViewController<swypContentDisplayViewController>* testDisplayC in [_contentDisplayControllerByWorkspaceView allValues]){
+		if ([[testDisplayC allDisplayedObjectIDs] containsObject:contentID]){
+			return testDisplayC;
+		}
+	}
+	return nil;
+}
+
+-(void)	addSwypWorkspaceViewToInteractionLoop:(swypWorkspaceView*)worksapceView{
+	assert([_contentDisplayControllerByWorkspaceView objectForKey:[NSValue valueWithNonretainedObject:worksapceView]] == nil);
+	[self _addContentDisplayControllerToWorkspaceView:worksapceView];
+}
+
+-(void)	removeSwypWorkspaceViewFromInteractionLoop:(swypWorkspaceView*)worksapceView{
+	UIViewController * existingVC	=	[_contentDisplayControllerByWorkspaceView objectForKey:[NSValue valueWithNonretainedObject:worksapceView]];
+	assert(existingVC != nil);
+	
+	[UIView animateWithDuration:.75 animations:^{
+		existingVC.view.alpha = 0;
+	}completion:^(BOOL complet){
+		[existingVC.view removeFromSuperview];
+	}];
+	
+	[_contentDisplayControllerByWorkspaceView removeObjectForKey:[NSValue valueWithNonretainedObject:worksapceView]];
+}
+
 
 -(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session{
 
@@ -137,7 +170,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	NSString * tag	=	@"userContent";
 	
 	assert([_contentDataSource respondsToSelector:@selector(iconImageForContentWithID:ofMaxSize:)]);
-	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentWithID:contentID ofMaxSize:[_contentDisplayController choiceMaxSizeForContentDisplay]], .8);
+	NSData * thumbnailImageData	=	UIImageJPEGRepresentation([_contentDataSource iconImageForContentWithID:contentID ofMaxSize:[[self currentActiveContentDisplayController] choiceMaxSizeForContentDisplay]], .8);
 	if (thumbnailImageData != nil){
 		NSInputStream*	thumbnailSendStream	=	[NSInputStream inputStreamWithData:thumbnailImageData];
 		[session beginSendingFileStreamWithTag:tag type:[NSString swypWorkspaceThumbnailFileType] dataStreamForSend:thumbnailSendStream length:[thumbnailImageData length]];
@@ -174,25 +207,26 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 	UIImageView * imageView	= [self _gloirifiedFramedImageViewWithUIImage:contentImage];
 		
-	if ([[[self contentDisplayController] allDisplayedObjectIDs] containsObject:contentID]){
-		[[self contentDisplayController] removeContentFromDisplayWithID:contentID animated:FALSE];
-	}
-	[_contentViewsByContentID setValue:imageView forKey:contentID];
-	[[self contentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
+	[[self displayControllerForContentID:contentID] removeContentFromDisplayWithID:contentID animated:FALSE];
 	
-	if ([[self contentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
-		[[self contentDisplayController] moveContentWithID:contentID toFrame:destination animated:FALSE];
+	[_contentViewsByContentID setValue:imageView forKey:contentID];
+	[[self currentActiveContentDisplayController] addContentToDisplayWithID:contentID animated:TRUE];
+	
+	if ([[self currentActiveContentDisplayController] respondsToSelector:@selector(moveContentWithID:toFrame:animated:)]){
+		[[self currentActiveContentDisplayController] moveContentWithID:contentID toFrame:destination animated:FALSE];
 	}
 }
 
 #pragma mark NSObject
 
--(id)	initWithMainWorkspaceView: (UIView*)workspaceView{
+-(id)	initWithMainWorkspaceView: (swypWorkspaceView*)workspaceView{
 	if (self = [super init]){
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_contentViewsByContentID			=	[[swypBidirectionalMutableDictionary alloc] init];
 		_thumbnailLoadingViewsByContentID	=	[[swypBidirectionalMutableDictionary alloc] init];
-		_mainWorkspaceView					=	[workspaceView retain];
+
+		_mainWorkspaceView							=	[workspaceView retain];
+		_contentDisplayControllerByWorkspaceView	=	[[NSMutableDictionary alloc] init];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
 	}
 	return self;
@@ -205,7 +239,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(void) dealloc{
 	[self stopMaintainingAllSessionViewControllers];
-	SRELS(_contentDisplayController);
+	SRELS(_contentDisplayControllerByWorkspaceView);
 	SRELS(_contentDataSource);
 	SRELS(_mainWorkspaceView);
 	SRELS(_contentViewsByContentID);
@@ -244,7 +278,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		EXOLog(@"Done tracking content receipt for type: %@", [discernedStream streamType]);
 		
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
-
+		
 		[thumProgView setLoading:FALSE];
 		
 		[UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionCurveEaseIn|UIViewAnimationOptionAllowUserInteraction animations:^{
@@ -254,10 +288,12 @@ static NSArray * supportedReceiveFileTypes =  nil;
 			[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionAllowUserInteraction animations:^{
 
 				[thumProgView setTransform:CGAffineTransformMakeScale(.1, .1)];
-				[thumProgView setCenter:CGPointMake([_contentDisplayController view].size.width/2, 20)];
-			}completion:^(BOOL completed){
-				[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+				[thumProgView setCenter:CGPointMake([[self displayControllerForContentID:contentID] view].size.width/2, 20)];
+			}completion:^(BOOL completed){				
+				
 				[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
+
+				[[self displayControllerForContentID:contentID] removeContentFromDisplayWithID:contentID animated:TRUE];
 			}];
 		}];
 
@@ -273,7 +309,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	for( swypThumbView * thumProgView in [[[sessionVC contentLoadingThumbs] copy] autorelease]){
 		NSString * contentID	= [_thumbnailLoadingViewsByContentID keyForObject:thumProgView];
 		
-		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:TRUE];
+		[[self displayControllerForContentID:contentID] removeContentFromDisplayWithID:contentID animated:TRUE];
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 		
 		
@@ -316,7 +352,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[thumbView setLoading:YES];
 
 		[_thumbnailLoadingViewsByContentID setObject:thumbView forKey:thumbID];
-		[_contentDisplayController addContentToDisplayWithID:thumbID animated:TRUE];
+		[[self currentActiveContentDisplayController] addContentToDisplayWithID:thumbID animated:TRUE];
 
 		
 		swypSessionViewController * sessionView =	[_sessionViewControllersBySession objectForKey:[NSValue valueWithNonretainedObject:session]];
@@ -406,7 +442,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	if ([[_contentDataSource idsForAllContent] containsObject:contentID]){
 		[_contentDataSource contentWithIDWasDraggedOffWorkspace:contentID];
 	}else if ([[_thumbnailLoadingViewsByContentID allKeys] containsObject:contentID]){
-		[_contentDisplayController removeContentFromDisplayWithID:contentID animated:FALSE];
+		[[self displayControllerForContentID:contentID] removeContentFromDisplayWithID:contentID animated:FALSE];
 		[_thumbnailLoadingViewsByContentID removeObjectForKey:contentID];
 	}
 }
@@ -436,6 +472,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 }
 
 -(NSArray*)		allIDsForContentInController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController{
+	if (contentDisplayController != [_contentDisplayControllerByWorkspaceView objectForKey:[NSValue valueWithNonretainedObject:_mainWorkspaceView]]){
+		return nil;
+	}
+
 	NSMutableArray * ids = [NSMutableArray array];
 	if ([_contentDataSource respondsToSelector:@selector(idsForAllContent)]){
 		[ids addObjectsFromArray:[_contentDataSource idsForAllContent]];
@@ -447,18 +487,21 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 #pragma mark swypContentDataSourceDelegate 
 -(void)	datasourceInsertedContentWithID:(NSString*)insertID withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
-
-	[_contentDisplayController addContentToDisplayWithID:insertID animated:TRUE];
+	[[self currentActiveContentDisplayController] addContentToDisplayWithID:insertID animated:TRUE];
 }
 
 -(void)	datasourceRemovedContentWithID:(NSString*)removeID withDatasource:	(id<swypContentDataSourceProtocol>)datasource{
 	[_contentViewsByContentID removeObjectForKey:removeID];
-	[_contentDisplayController removeContentFromDisplayWithID:removeID animated:TRUE];
+	[[self displayControllerForContentID:removeID] removeContentFromDisplayWithID:removeID animated:TRUE];
 }
 
 -(void)	datasourceSignificantlyModifiedContent:	(id<swypContentDataSourceProtocol>)datasource{
 	[_contentViewsByContentID removeAllObjects];
-	[_contentDisplayController reloadAllData];
+	
+	
+	for (UIViewController <swypContentDisplayViewController>* contentDisplay in [_contentDisplayControllerByWorkspaceView allValues]){
+		[contentDisplay reloadAllData];
+	}
 }
 
 
@@ -499,33 +542,27 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	return nil;
 }
 
--(void) _displayContentDisplayController:(BOOL)display{
-	if (display){
-		
-		if (_contentDisplayController == nil){
-			_contentDisplayController	=	[[swypPhotoPlayground alloc] initWithPhotoSize:CGSizeMake(250, 200)];
-			[_contentDisplayController setContentDisplayControllerDelegate:self];
-		}
-					
+-(void) _addContentDisplayControllerToWorkspaceView:(swypWorkspaceView*)view{
+	UIViewController<swypContentDisplayViewController>* contentDisplayVC = [_contentDisplayControllerByWorkspaceView objectForKey:[NSValue valueWithNonretainedObject:view]];
+	
+	if (contentDisplayVC == nil){
+		contentDisplayVC	=	[[swypPhotoPlayground alloc] initWithPhotoSize:CGSizeMake(250, 200)];
+		[contentDisplayVC.view setFrame:view.bounds];
+		[contentDisplayVC.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 
-		if (_contentDisplayController.view.superview == nil){
-			[_contentDisplayController.view setOrigin:CGPointMake(0, 0)];
-			[_contentDisplayController.view		setAlpha:0];
+		[contentDisplayVC setContentDisplayControllerDelegate:self];
+		[_contentDisplayControllerByWorkspaceView setObject:contentDisplayVC forKey:[NSValue valueWithNonretainedObject:view]];
+	}
 
-			[_mainWorkspaceView	addSubview:_contentDisplayController.view];
-			[UIView animateWithDuration:.75 animations:^{
-				_contentDisplayController.view.alpha = 1;
-			}completion:nil];
-			[_contentDisplayController reloadAllData];
-		}
+	if (contentDisplayVC.view.superview == nil){
+		[contentDisplayVC.view setOrigin:CGPointMake(0, 0)];
+		[contentDisplayVC.view		setAlpha:0];
 
-	}else{
+		[view.backgroundView	addSubview:contentDisplayVC.view];
 		[UIView animateWithDuration:.75 animations:^{
-			_contentDisplayController.view.alpha = 0;
-		}completion:^(BOOL completed){
-			[_contentDisplayController.view removeFromSuperview];	
-			
-		}];
+			contentDisplayVC.view.alpha = 1;
+		}completion:nil];
+		[contentDisplayVC reloadAllData];
 	}
 	
 }

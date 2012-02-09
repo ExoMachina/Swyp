@@ -68,9 +68,7 @@ typedef enum {
  */
 -(void)	yieldedData:(NSData*)streamData ofType:(NSString*)streamType fromDiscernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
 
-
 @optional
-
 
 /** Upon failing to send data */
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
@@ -82,6 +80,10 @@ typedef enum {
 -(void)	didBeginReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
 ///	Will notify you when the data IN stream is DONE receiving so that UI can be updated accordingly
 -(void) didFinnishReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
+
+///Deprecated
+///Deprecated method in leu of yieldedData:ofType:fromDiscernedStream:inConnectionSession: which reduces developer overhead slightly.
+-(void)	yieldedData:(NSData*)streamData fromDiscernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
 @end
 
 /** This class represents and manages the connection between this and one other device. 

@@ -207,13 +207,13 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 		if (!self.view){//is hack
 			
 		}
-		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:[_mainWorkspaceView backgroundView]];
+		_contentManager = [[swypContentInteractionManager alloc] initWithMainWorkspaceView:_mainWorkspaceView];
 		
 		#pragma mark TODO: File bug; we need to wait until next runloop otherwise no user interface works
 		//	this is where plainly	[_contentManager initializeInteractionWorkspace]; should be; It's cludged because otherwise contentInteractionController is un-interactable 
 		//	So we just run this at the beginning of the next runLoop
 		NSBlockOperation * initializeWorkspaceOperation = [NSBlockOperation blockOperationWithBlock:^{
-			[[self contentManager] initializeInteractionWorkspace];
+			[[self contentManager] addSwypWorkspaceViewToInteractionLoop:_mainWorkspaceView];
 		}];
 		[[NSOperationQueue mainQueue] addOperation:initializeWorkspaceOperation];
 		[[NSOperationQueue mainQueue] setSuspended:FALSE];
@@ -227,13 +227,18 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	return [[self.view subviews] objectAtIndex:0];
 }
 
--(swypWorkspaceView*)	workspaceViewForEmbeddedSwypInWithFrame:(CGRect)frame{
+-(swypWorkspaceView*)	embeddableSwypWorkspaceViewForWithFrame:(CGRect)frame{
 	swypWorkspaceView * workspaceView	=	[[swypWorkspaceView alloc] initWithFrame:frame workspaceTarget:self];
+	[[self contentManager] addSwypWorkspaceViewToInteractionLoop:workspaceView];
 	[_allWorkspaceViews addObject:workspaceView];
-	[workspaceView autorelease];
 	[[self connectionManager] startServices];
 	[self swypConnectionMethodsUpdated:[_connectionManager availableConnectionMethods] withConnectionManager:nil];
-	return workspaceView;
+	return 	[workspaceView autorelease];
+}
+
+-(void)	removeEmbeddableSwypWorkspaceView:(swypWorkspaceView*)workspaceView{
+	[_allWorkspaceViews removeObject:workspaceView];
+	[[self contentManager] removeSwypWorkspaceViewFromInteractionLoop:workspaceView];
 }
 
 #pragma mark -
@@ -380,6 +385,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	SRELS(_swipeDownRecognizer);
 	SRELS(_leaveWorkspaceTapRecog);
 	
+	for (swypWorkspaceView * eachWorkspace in _allWorkspaceViews){
+		[self removeEmbeddableSwypWorkspaceView:eachWorkspace];
+	}
+	
 	SRELS(_allWorkspaceViews);
 	SRELS(_mainWorkspaceView);
 	
@@ -420,7 +429,7 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 //	
 //	//We now re-arrange the bounds for the subviews... For some reason it works HERE.
 	[self.view setBounds:frameForOrientation];
-	[[[[self contentManager] contentDisplayController] view] setSize:windowFrameForOrientation().size];
+//	[[[[self contentManager] contentDisplayController] view] setSize:windowFrameForOrientation().size];
 }
 
 @end
