@@ -235,9 +235,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
-		EXOLog(@"No remote supported file types identified! %@",@"NONE!");
-		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
-		return;
+		EXOLog(@"No supported file types identified in client-hello %@",[helloPacket description]);
 	}
 	
 	if ([intervalSinceSwypNumber isKindOfClass:[NSNumber class]]){
@@ -326,8 +324,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
-		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
-		return;
+		EXOLog(@"No supported file types identified in server-hello %@",[helloPacket description]);
 	}
 
 	
