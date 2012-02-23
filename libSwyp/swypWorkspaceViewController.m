@@ -187,9 +187,14 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 	[_mainWorkspaceView.prettyOverlay setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"swypWorkspaceBackground.png"]]];
 		
 	[self setModalTransitionStyle:UIModalTransitionStyleCoverVertical];	
+	
+	if ([controller modalViewController] == self){
+		EXOLog(@"Already a modal view for object: %@", [controller description]);
+		return;
+	}
 
 	[UIView animateWithDuration:.3 animations:nil completion:^(BOOL complete){
-			[controller presentModalViewController:self animated:TRUE];
+		[controller presentModalViewController:self animated:TRUE];
 	}];
 
 }
