@@ -19,8 +19,9 @@ typedef enum {
 
 - (CGPoint)origin;
 - (void)setOrigin:(CGPoint)origin;
-- (CGSize)size ;
+- (CGSize)size;
 - (void)setSize:(CGSize)size;
+- (void)addSubviews:(UIView *)firstSubview, ...;
 
 @property(nonatomic) CGFloat width;
 @property(nonatomic) CGFloat height;

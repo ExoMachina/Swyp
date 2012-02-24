@@ -52,6 +52,19 @@
 	self.frame = frame;
 }
 
+- (void)addSubviews:(UIView *)firstSubview, ... {    
+    va_list args;
+    va_start(args, firstSubview);
+    UIView *nextView = firstSubview;
+    
+    while (nextView) {
+        [self addSubview:nextView];
+        nextView = va_arg(args, UIView *);
+    }
+    
+    va_end(args);
+}
+
 
 +(void)performPageSwitchAnimationWithExistingView:(UIView*)existingView viewUpdateBlock:(void (^)(void))updateBlock nextViewGrabBlock:(UIView* (^)(void))nextViewGrabBlockOrNil direction:(UIViewPageAnimationDirection)animationDirection{
 	
