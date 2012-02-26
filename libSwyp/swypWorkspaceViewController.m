@@ -199,6 +199,10 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
 
 }
 
+- (void)presentContentWorkspaceAtopRootViewController {
+    [self presentContentWorkspaceAtopViewController:[[[UIApplication sharedApplication] keyWindow] rootViewController]];
+}
+
 -(void)setContentDataSource:(NSObject<swypContentDataSourceProtocol> *)dataSource{
 	[[self contentManager] setContentDataSource:dataSource];
 }

@@ -64,6 +64,9 @@
 ///Dispays workspace with nice texture, with scroll up from bottom
 -(void)presentContentWorkspaceAtopViewController:(UIViewController*)controller;
 
+//Displays workspace atop the main application's root view controller
+-(void)presentContentWorkspaceAtopRootViewController;
+
 ///displays the workspace with content in background, with fade from background, with content under finger
 -(void)	presentContentSwypWorkspaceAtopViewController:(UIViewController*)controller withContentView:(swypSwypableContentSuperview*)contentView swypableContentImage:(UIImage*)contentImage forContentOfID:(NSString*)contentID atRect:(CGRect)contentRect;
 
