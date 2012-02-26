@@ -23,6 +23,16 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	return supportedReceiveFileTypes;
 }
 
+-(void)		updateSupportedReceiptTypes{
+	NSMutableArray * types	=	[NSMutableArray array];
+	for (id <swypConnectionSessionDataDelegate> delelgate in [_dataDelegates reverseObjectEnumerator]){
+		[types addObjectsFromArray:[delelgate supportedFileTypesForReceipt]];
+	}
+	
+	SRELS(supportedReceiveFileTypes);
+	supportedReceiveFileTypes	=	[types retain];
+}
+
 -(swypSessionViewController*)	maintainedSwypSessionViewControllerForSession:(swypConnectionSession*)session{
 	if (session == nil)
 		return nil;
@@ -33,13 +43,18 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	swypConnectionSession * session =	[sessionViewController connectionSession];
 	[_sessionViewControllersBySession setObject:sessionViewController forKey:[NSValue valueWithNonretainedObject:session]];
 	[session addDataDelegate:self];
-	[session addDataDelegate:_contentDataSource];
+	for (id<swypConnectionSessionDataDelegate> dDel in _dataDelegates){
+		[session addDataDelegate:dDel];
+	}
+	
 	[session addConnectionSessionInfoDelegate:self];
 }
 
 -(void)		stopMaintainingViewControllerForSwypSession:(swypConnectionSession*)session{
 	[session removeDataDelegate:self];
-	[session removeDataDelegate:_contentDataSource];
+	for (id <swypConnectionSessionDataDelegate> dataDelegate in _dataDelegates){
+		[session removeDataDelegate:dataDelegate];	
+	}
 	[session removeConnectionSessionInfoDelegate:self];
 	
 	swypSessionViewController*	sessionViewController	=	[self maintainedSwypSessionViewControllerForSession:session];
@@ -73,18 +88,36 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	}
 }
 
--(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol,swypConnectionSessionDataDelegate> *)contentDataSource{
+-(void) addDataDelegate: (id <swypConnectionSessionDataDelegate> )		dataDelegate{
+	NSUInteger existingIndex	=	[_dataDelegates indexOfObject:dataDelegate];
+	if (existingIndex != NSNotFound){
+		[_dataDelegates removeObjectAtIndex:existingIndex];
+	}
+	[_dataDelegates addObject:dataDelegate];
+	
+	for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
+		[[connectionSession nonretainedObjectValue] addDataDelegate:dataDelegate];
+	}
+	[self updateSupportedReceiptTypes];
+}
 
+-(void) removeDataDelegate: (id <swypConnectionSessionDataDelegate> )	dataDelegate{
+	NSUInteger existingIndex	=	[_dataDelegates indexOfObject:dataDelegate];
+	if (existingIndex != NSNotFound){
+		[_dataDelegates removeObjectAtIndex:existingIndex];
+	}	
+	
+	for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
+		[[connectionSession nonretainedObjectValue] removeDataDelegate:dataDelegate];
+	}
+	[self updateSupportedReceiptTypes];
+}
+
+-(void)	setContentDataSource:(NSObject<swypContentDataSourceProtocol> *)contentDataSource{
 	if (_contentDataSource == contentDataSource){
 		return;
 	}
-	
-	if (_contentDataSource != contentDataSource){
-		for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
-			[[connectionSession nonretainedObjectValue] removeDataDelegate:_contentDataSource];
-		}
-	}
-	
+		
 	SRELS(supportedReceiveFileTypes);
 	if ([_contentDataSource respondsToSelector:@selector(setDatasourceDelegate:)]){
 		[_contentDataSource setDatasourceDelegate:nil];
@@ -99,13 +132,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		[_contentDataSource setDatasourceDelegate:self];
 	}
 	
-	if ([_contentDataSource respondsToSelector:@selector(supportedFileTypesForReceipt)]){
-		supportedReceiveFileTypes = [[_contentDataSource supportedFileTypesForReceipt] retain];
-	}
-	
-	for (NSValue * connectionSession in [_sessionViewControllersBySession allKeys]){
-		[[connectionSession nonretainedObjectValue] addDataDelegate:contentDataSource];
-	}
+	[self updateSupportedReceiptTypes];
 	
 	for (UIViewController <swypContentDisplayViewController>* contentDisplay in [_contentDisplayControllerByWorkspaceView allValues]){
 		[contentDisplay reloadAllData];
@@ -224,6 +251,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 		_sessionViewControllersBySession	=	[[NSMutableDictionary alloc] init];
 		_contentViewsByContentID			=	[[swypBidirectionalMutableDictionary alloc] init];
 		_thumbnailLoadingViewsByContentID	=	[[swypBidirectionalMutableDictionary alloc] init];
+		_dataDelegates						=	[[NSMutableArray alloc] init];
 
 		_mainWorkspaceView							=	[workspaceView retain];
 		_contentDisplayControllerByWorkspaceView	=	[[NSMutableDictionary alloc] init];
@@ -239,6 +267,7 @@ static NSArray * supportedReceiveFileTypes =  nil;
 
 -(void) dealloc{
 	[self stopMaintainingAllSessionViewControllers];
+	SRELS(_dataDelegates);
 	SRELS(_contentDisplayControllerByWorkspaceView);
 	SRELS(_contentDataSource);
 	SRELS(_mainWorkspaceView);
@@ -534,8 +563,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 		//CGRectApplyAffineTransform(sessionViewController.view.frame, CGAffineTransformMakeTranslation(_contentDisplayController.view.frame.origin.x, _contentDisplayController.view.frame.origin.y))
-		if (CGRectIntersectsRect(sessionViewController.view.frame, testRect)){
-			return sessionViewController;
+		if ([[[self currentActiveContentDisplayController].view subviews]containsObject:sessionViewController.view]){		
+			if (CGRectIntersectsRect(sessionViewController.view.frame, testRect)){
+				return sessionViewController;
+			}
 		}
 	}
 	

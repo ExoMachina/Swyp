@@ -10,9 +10,9 @@
 
 @protocol swypContentDisplayViewControllerDelegate <NSObject>
 
-/** Signals that a view was swyped-out ontop of a certain content with the enclosed contentID.
+/** Signals that a swyp-out occured ontop of a certain content with the enclosed contentID.
 
-	If there is no tray in the location swyped-out to, the swypContentInteractionManager should notify the workspace.
+	If there is a connection-indicator in the location swyped-out to, then the object will be swyped across to the remote device.
  */
 -(void)	contentWithIDUnderwentSwypOut:(NSString*)contentID inController:(UIViewController<swypContentDisplayViewController>*)contentDisplayController;
 

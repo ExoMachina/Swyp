@@ -41,31 +41,32 @@
  
  Content can be ordered, or not, in returning the 'idsForAllContent' array.
  
+ Your datasource must adopt the first three methods, and one of the data-providing methods. 
+ 
  Content is represented on a contentViewController iconImageForContentWithID:ofMaxSize:, then when that contentViewController detects a swyp-out of the content, the swypContentInteractionManager requests inputStreamForContentWithID:fileType:length: for that content, which is then added to the output for a particular session.
  */
 @protocol swypContentDataSourceProtocol <NSObject>
-@optional
 
 /** Returns list of all unique IDs for each piece of content to displayed to swyp workspace. 
-
- @return	NSArray choc full of NSStrings.
-			Can be as simple as [[NSNumber numberWithInt:index] stringValue];
-			Most methods must be implemented if the Array is not empty or nil.
  
-  Content can be ordered, or not, in returning the 'idsForAllContent' array.
+ @return	NSArray choc full of NSStrings.
+ Can be as simple as [[NSNumber numberWithInt:index] stringValue];
+ Most methods must be implemented if the Array is not empty or nil.
+ 
+ Content can be ordered, or not, in returning the 'idsForAllContent' array.
  */
 - (NSArray*)		idsForAllContent;
 
-
-///The following are optional when idsForAllContent returns empty or nil, or is not implemented.
-
 /** Returns a UIImage representing content, which has dimensions no greater than maxIconSize.
-	This image is displayed by the swypContentViewController.
+ This image is displayed by the swypContentViewController.
  */
 - (UIImage *)		iconImageForContentWithID: (NSString*)contentID ofMaxSize:(CGSize)maxIconSize;
 
 /// Returns swypFileTypeString array that a specifc contentID supports
 - (NSArray*)		supportedFileTypesForContentWithID: (NSString*)contentID;
+
+@optional
+///The following are optional
 
 ///Alerts when "drag-off" occured on content; this is typically a drag-up for dissapearance and removal of the content
 -(void)	contentWithIDWasDraggedOffWorkspace:(NSString*)contentID;

@@ -163,6 +163,28 @@
 		if (StringHasText(swypOutContentID)){
 			EXOLog(@"swypOutGestureChanged recogn in contentDisplayViewController on: %@",swypOutContentID);
 			[_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
+			
+			//now we make a beatiful dissapear animation
+			CGRect originalFrame	=	[gestureView frame];
+			CGRect disappearFrame	=	originalFrame;
+			if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeRight){
+				disappearFrame.origin.x	=	self.view.width;
+			}else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeLeft){
+				disappearFrame.origin.x	=	0 - originalFrame.size.width;
+			} else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeBottom){
+				disappearFrame.origin.y	=	self.view.height;
+			}else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeTop){
+				disappearFrame.origin.y	=	0 - originalFrame.size.height;
+			}
+			double distance		=	euclideanDistance(originalFrame.origin,disappearFrame.origin);
+			double animateTime	=	distance/ ([recognizer velocity] * [swypGestureRecognizer currentDevicePixelsPerLinearMillimeter]);
+			[UIView animateWithDuration:animateTime delay:0 options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionAllowUserInteraction animations:^{
+				[gestureView setFrame:disappearFrame];
+			}completion:^(BOOL complete){
+				[UIView animateWithDuration:animateTime delay:1 options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionAllowUserInteraction animations:^{ [gestureView setFrame:originalFrame];} completion:nil];
+
+			}];
+			
 		}
 	}
 }
