@@ -55,14 +55,17 @@
 }
 
 - (void) showBluetoothLoadingPrompt:(BOOL)showBT {
-    [UIView transitionFromView:(showBT ? _imageView: _bluetoothView)
-                        toView:(showBT ?  _bluetoothView : _imageView) 
-                      duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)
-                    completion:^(BOOL completed){
-        if (completed){
-//            EXOLog(@"Flipped %i", isReady);
-        }
-    }];
+	
+	double delayInSeconds = (hasDoneFirstPromptDisplay == FALSE)?2:0;
+	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+		[UIView transitionFromView:(showBT ? _imageView: _bluetoothView)
+							toView:(showBT ?  _bluetoothView : _imageView) 
+						  duration:1.0 options:(UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionBeginFromCurrentState)
+						completion:nil];
+		hasDoneFirstPromptDisplay	=	TRUE;
+
+	});
 }
 
 @end

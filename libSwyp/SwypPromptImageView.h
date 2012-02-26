@@ -15,6 +15,8 @@
 @interface SwypPromptImageView : UIView {
     UIImageView *_imageView;
     UIView *_bluetoothView;
+	
+	BOOL	hasDoneFirstPromptDisplay;
 }
 
 /** 
