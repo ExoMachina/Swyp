@@ -378,6 +378,11 @@ static swypWorkspaceViewController	* _singleton_sharedSwypWorkspace = nil;
     curlButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"top_curl"]];
 	[curlButton setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [curlButton.layer setOpaque:NO];
+    UIImage *gripperImage = [[UIImage imageNamed:@"grippers"] stretchableImageWithLeftCapWidth:8 topCapHeight:12];
+    UIImageView *gripperView = [[UIImageView alloc] initWithImage:gripperImage];
+    gripperView.frame = CGRectMake((curlButton.width - 32)/2, 16, 32, 12);
+    gripperView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin;
+    [curlButton addSubview:gripperView];
         
     [curlButton addTarget:self action:@selector(leaveWorkspaceWantedBySender:) 
          forControlEvents:UIControlEventTouchUpInside];
