@@ -54,7 +54,7 @@ typedef enum {
 ///How a swypConnectionSession gives away its received data. See addDataDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionDataDelegate <NSObject>
 /** swypFileTypeStrings in order of preference where 0 = most preferent
- Use this on your datasource set in swypContentInteractionManager to choose what files your app accepts.
+ Use this on your datasources set in swypWorkspaceViewController to choose what files your app accepts.
  
  If you don't adopt this protocol, you'll never be notified when data is received, nor will your app receive data.
  */

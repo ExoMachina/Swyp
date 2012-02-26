@@ -41,8 +41,16 @@
 @property (nonatomic, readonly)	swypConnectionManager*			connectionManager;
 @property (nonatomic, readonly)	swypContentInteractionManager*	contentManager;
 
-///Sets the swypContentInteractionManager's contentDataSource
-@property (nonatomic, retain) NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>* contentDataSource;
+/// Proxy method that sets the swypContentInteractionManager's contentDataSource.
+@property (nonatomic, retain) NSObject<swypContentDataSourceProtocol>* contentDataSource;
+
+/** Adds a delegate for notification when data received w/o retention. 
+
+ A proxy method for [[self contentManager] addDataDelegate:]... See the documentation on swypContentInteractionManager.
+ */
+-(void) addDataDelegate: (id <swypConnectionSessionDataDelegate> )		delegate;
+///Removes the dataDelegate
+-(void) removeDataDelegate: (id <swypConnectionSessionDataDelegate>)	delegate;
 
 
 ///The primary init function

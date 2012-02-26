@@ -24,23 +24,36 @@
 	swypBidirectionalMutableDictionary*	_contentViewsByContentID;
 	swypBidirectionalMutableDictionary*	_thumbnailLoadingViewsByContentID;
 		
-	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*		_contentDataSource;
+	NSObject<swypContentDataSourceProtocol>*					_contentDataSource;
+
+	NSMutableArray *											_dataDelegates;
 	
-	NSMutableDictionary *															_contentDisplayControllerByWorkspaceView;
-	
-	swypWorkspaceView*																_mainWorkspaceView;
+	NSMutableDictionary *										_contentDisplayControllerByWorkspaceView;
+
+	swypWorkspaceView*											_mainWorkspaceView;
 		
 }
 @property (nonatomic, readonly) swypBidirectionalMutableDictionary * contentViewsByContentID;
 
 /** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 
- 
- By default, this is also the default swypConnectionSessionDataDelegate delegate for received data.
+
+ The datasource is retained. There is only one datasource at a time, the previous one is released when setting another. 
  
  @warning there is no default datasource.
  */
-@property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
+@property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol>*				contentDataSource;
 
+/**
+	Adds a data delegate for future notification on session data events; does not retain, be sure to release. Simply adds to existing sessions, and stores w/o retention for adding to future sessions.
+	Any delegate added will be queried for supported file types for receipt. 
+
+	This delegate does retain your delegate. You must remove your data delegate when it become invalid, otherwise your app will crash.
+
+ Data delegates' supportedFileTypesForReceipt property works from this method in a LIFO basis. Re-adding an existing object adds it to the end. 
+ */
+-(void) addDataDelegate: (id <swypConnectionSessionDataDelegate>)		dataDelegate;
+///Removes delegate from existing sessions; removes from local storage.
+-(void) removeDataDelegate: (id <swypConnectionSessionDataDelegate>)	dataDelegate;
 
 /** The main init function. 
 
@@ -56,6 +69,9 @@
  @warning	This value is only non-nil after setting a dataSource
  */
 +(NSArray*)	supportedReceiptFileTypes;
+
+///Updates the supportedReceiptFileTypes singleton-backed class method with each dataDelegate
+-(void)		updateSupportedReceiptTypes;
 
 ///Causes a sessionViewController to be displayed on workspace, and for it to be tracked locally
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;
