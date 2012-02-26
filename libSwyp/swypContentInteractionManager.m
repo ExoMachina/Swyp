@@ -563,8 +563,10 @@ static NSArray * supportedReceiveFileTypes =  nil;
 	
 	for (swypSessionViewController * sessionViewController in [_sessionViewControllersBySession allValues]){
 		//CGRectApplyAffineTransform(sessionViewController.view.frame, CGAffineTransformMakeTranslation(_contentDisplayController.view.frame.origin.x, _contentDisplayController.view.frame.origin.y))
-		if (CGRectIntersectsRect(sessionViewController.view.frame, testRect)){
-			return sessionViewController;
+		if ([[[self currentActiveContentDisplayController].view subviews]containsObject:sessionViewController.view]){		
+			if (CGRectIntersectsRect(sessionViewController.view.frame, testRect)){
+				return sessionViewController;
+			}
 		}
 	}
 	
