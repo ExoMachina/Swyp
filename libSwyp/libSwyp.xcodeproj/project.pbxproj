@@ -393,16 +393,6 @@
 			name = Sessions;
 			sourceTree = "<group>";
 		};
-		680FC61613E30F4000509CF2 /* Interface */ = {
-			isa = PBXGroup;
-			children = (
-				798A839214D8917F00504333 /* Inside-app usable  */,
-				79FD02DA14C9EA2B00BD4382 /* workspace components */,
-				680FC61413E30F2300509CF2 /* Content Display */,
-			);
-			name = Interface;
-			sourceTree = "<group>";
-		};
 		680FC64D13E3460E00509CF2 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
@@ -479,7 +469,9 @@
 			children = (
 				680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */,
 				680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */,
-				680FC61613E30F4000509CF2 /* Interface */,
+				798A839214D8917F00504333 /* Inside-app usable  */,
+				79FD02DA14C9EA2B00BD4382 /* workspace components */,
+				680FC61413E30F2300509CF2 /* Content Display */,
 				680FC61513E30F2B00509CF2 /* Sessions */,
 				68B18E0313E0B2D600D094A9 /* gestures */,
 			);
