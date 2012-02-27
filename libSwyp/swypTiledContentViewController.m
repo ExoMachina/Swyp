@@ -88,7 +88,7 @@
 	NSInteger column		= tileNumber % (int)_maxTileColumns;
 	
 	frameRect.origin.x += column * (_tileSize.width + _tileMarginSize.width);
-	frameRect.origin.y += row *  (_tileSize.height + _tileMarginSize.height) + 40;
+	frameRect.origin.y += round(row *  (_tileSize.height + _tileMarginSize.height) + 40);
 	
 	
 	return frameRect;
@@ -125,8 +125,8 @@
 		_maxTileRows	= tileDisplayFrame.size.height / (tileSize.height + tileMargins.height);
 		_maxTileColumns	= tileDisplayFrame.size.width / (tileSize.width + tileMargins.width);
 		
-		double	xStartPoint	=	(_tileMarginSize.width)/2; 
-		double	yStartPoint	=	(_tileMarginSize.height)/2; 
+		double	xStartPoint	=	round((_tileMarginSize.width)/2);
+		double	yStartPoint	=	round((_tileMarginSize.height)/2);
 
 		_layoutStartPoint	=	CGPointMake(xStartPoint, yStartPoint);
 	}

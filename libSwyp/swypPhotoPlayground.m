@@ -118,7 +118,7 @@
         NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
         
         if (centerY > 60) {
-            CGRect keneticTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
+            CGRect keneticTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation( round([recognizer velocityInView:recognizer.view].x * .125), round([recognizer velocityInView:recognizer.view].y * .125)));
                                     
             double tossDistance	=	euclideanDistance(keneticTranslationFrame.origin, [[recognizer view] frame].origin);
             BOOL recognizeToss	= FALSE;
