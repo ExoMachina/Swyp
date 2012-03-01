@@ -66,6 +66,16 @@
 
 +(id) swypContactFileType;
 
+
+/**
+ Specifies calendar events in swyp's special json format including an array of objects in 'events'.
+ 
+ MIME: "swyp/calendarEvents"
+ */
+
++(id) swypCalendarEventsFileType;
+
+
 /**
  Specifies a mapable address in swyp's special json format.
  

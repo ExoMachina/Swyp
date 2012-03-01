@@ -38,9 +38,15 @@
 }
 
 +(id) swypContactFileType{
-	static NSString * type = @"text/contact";
+	static NSString * type = @"swyp/contact";
 	return type;
 }
+
++(id) swypCalendarEventsFileType{
+	static NSString * type = @"swyp/calendarEvents";
+	return type;
+}
+
 
 +(id) swypAddressFileType{
 	static NSString * type = @"text/address";
