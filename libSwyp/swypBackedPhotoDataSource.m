@@ -16,6 +16,10 @@
 }
 
 
+-(void)contentWithIDWasDraggedOffWorkspace:(NSString *)contentID{
+    
+}
+
 -(id) initWithBackingDelegate: (id<swypBackedPhotoDataSourceDelegate>)	backingDelegate{
 	if (self = [super init]){
 		[self setBackingDelegate:backingDelegate];

@@ -119,14 +119,10 @@
 		79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379FC14B50AC700C09690 /* swypCloudNetService.h */; };
 		79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379FD14B50AC700C09690 /* swypCloudNetService.m */; };
 		79E37A1814B5FF3A00C09690 /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A0D14B5FF3A00C09690 /* AFHTTPClient.h */; };
-		79E37A1914B5FF3A00C09690 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A0E14B5FF3A00C09690 /* AFHTTPClient.m */; };
 		79E37A1A14B5FF3A00C09690 /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A0F14B5FF3A00C09690 /* AFHTTPRequestOperation.h */; };
-		79E37A1B14B5FF3A00C09690 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A1014B5FF3A00C09690 /* AFHTTPRequestOperation.m */; };
 		79E37A1E14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1314B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h */; };
-		79E37A1F14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A1414B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m */; };
 		79E37A2014B5FF3A00C09690 /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1514B5FF3A00C09690 /* AFNetworking.h */; };
 		79E37A2114B5FF3A00C09690 /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1614B5FF3A00C09690 /* AFURLConnectionOperation.h */; };
-		79E37A2214B5FF3A00C09690 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A1714B5FF3A00C09690 /* AFURLConnectionOperation.m */; };
 		79E37A2A14B60C6000C09690 /* swypPairServerInteractionManger.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */; };
 		79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */; };
 		79F1466814C0B9A100107170 /* swypPendingConnectionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */; };
@@ -854,10 +850,6 @@
 				79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */,
 				79E379F714B508A800C09690 /* swypCloudPairManager.m in Sources */,
 				79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */,
-				79E37A1914B5FF3A00C09690 /* AFHTTPClient.m in Sources */,
-				79E37A1B14B5FF3A00C09690 /* AFHTTPRequestOperation.m in Sources */,
-				79E37A1F14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m in Sources */,
-				79E37A2214B5FF3A00C09690 /* AFURLConnectionOperation.m in Sources */,
 				79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */,
 				796B8E1F14BF7AA8004FEBE3 /* swypPendingConnectionManager.m in Sources */,
 				79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */,
