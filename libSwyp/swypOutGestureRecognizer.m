@@ -11,19 +11,24 @@
 
 @implementation swypOutGestureRecognizer
 
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+	[super touchesBegan:touches withEvent:event];
+	
+	[[self swypGestureInfo] setSwypType:swypInfoRefTypeSwypOut];
+}
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
 	[super touchesMoved:touches withEvent:event];
 	
+	if ([self distanceFromViewCenterWithPoint:[self locationInView:self.view]] < [self distanceFromViewCenterWithPoint:[[self swypGestureInfo]startPoint]]){
+		[[self swypGestureInfo] setStartPoint:[self locationInView:self.view]];
+	}
+	
 	if (self.state == UIGestureRecognizerStatePossible){
-		if ([self startedOnEdge]){
-			if ([self absoluteTravel] > 400){
-				self.state = UIGestureRecognizerStateBegan;
-			}else {
-				self.state = UIGestureRecognizerStatePossible;
-			}
-
-		}else{
+		if ([self travelAwayFromCenter] > 50){
 			self.state = UIGestureRecognizerStateBegan;
+		}else{
+			self.state = UIGestureRecognizerStatePossible;
 		}
 	}else if (self.state == UIGestureRecognizerStateBegan){
 		self.state = UIGestureRecognizerStateChanged;	
@@ -48,6 +53,7 @@
 	return NO;
 }
 
+
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{	
 	[super touchesEnded:touches withEvent:event];
 	
@@ -55,12 +61,7 @@
 	CGPoint firstPoint						= [[self swypGestureInfo] startPoint];
 	
 	CGRect	viewRect						= self.view.frame;
-	if ([self startedOnEdge]){
-		//if you started in the margin, you're given an unfair disadvantage on euclidian deltas
-		//		-so we'll just pretend we started in the center
-		firstPoint					= self.view.center;
-	}
-	
+
 	CGPoint lastPoint			= [[self swypGestureInfo] endPoint];
 	CGPoint viewCenterPoint	= self.view.center;
 	

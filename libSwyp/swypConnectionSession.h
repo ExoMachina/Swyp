@@ -27,51 +27,68 @@ typedef enum {
 
 @class swypConnectionSession;
 
+///Defines the various connectionStatus states the swypConnectionSession can be in. 
 typedef enum {
+	///The connection is closed. No data may be sent.
 	swypConnectionSessionStatusClosed = -1,
-	swypConnectionSessionStatusNotReady = 0,
+	///The connection is going down.
 	swypConnectionSessionStatusWillDie,
+	///Indicates that a swypConnectionSession is currently opening via the 'initiate' function
 	swypConnectionSessionStatusPreparing,
+	///Indicates that a connection is ready for transfers; commonly used by swypHandshakeManager for handshaking connecition, so don't expect a sessionStatusChanged with it. 
 	swypConnectionSessionStatusReady
 } swypConnectionSessionStatus;
 
+///The protocol for deleages of the swypConnectionSession, which wish to hear about connectivity updates from the session. See addInfoDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionInfoDelegate <NSObject>
+///Alerts that the session is over. Error is commonly nil because we r lazy.
 -(void) sessionDied:			(swypConnectionSession*)session withError:(NSError*)error;
 
 @optional
+///Alerts that the session will be dying VERY soon. IE, even including this runlooop.
 -(void) sessionWillDie:			(swypConnectionSession*)session;
+///Alerts that the status of the connection session changed. Perhaps it's swypConnectionSessionStatusReady
 -(void) sessionStatusChanged:	(swypConnectionSessionStatus)status	inSession:(swypConnectionSession*)session;
 @end
 
+///How a swypConnectionSession gives away its received data. See addDataDelegate: of swypConnectionSession.
 @protocol swypConnectionSessionDataDelegate <NSObject>
+/** swypFileTypeStrings in order of preference where 0 = most preferent
+ Use this on your datasources set in swypWorkspaceViewController to choose what files your app accepts.
+ 
+ If you don't adopt this protocol, you'll never be notified when data is received, nor will your app receive data.
+ */
+-(NSArray*)	supportedFileTypesForReceipt;
+
+/**
+ The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
+ 
+ @param discernedStream the stream containing properties like streamType, and streamTag.
+ @param streamData Data from the discernedStream.
+ */
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString*)streamType fromDiscernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
+
 @optional
-/*
-	Though there are several data delegates, only one delegate should handle and return TRUE, all else returning false
-		Delegates should see if they're interested through discerned stream's properities like 'streamType' and 'streamTag'
-		If no one handles, an exception is thrown
-	
-	discernedStream can be read as an input stream, and attached to output streams using SwypInputToOutput, for example
-	Alternatively, 'wantsProvidedAsNSData,' the bool passed as a reference, can be set to true, *wantsProvidedAsNSData = TRUE;, to have data provided in a method bellow
-*/
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session;
-/*
-	The following function is called if 'delegateWillHandleDiscernedStream' returns true and sets 'wantsProvidedAsNSData' to true.
-*/
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
-
-
+/** Upon failing to send data */
 -(void)	failedSendingStream:(NSInputStream*)stream error:(NSError*)error connectionSession:(swypConnectionSession*)session;;
+/** Upon happily sending data */
 -(void) completedSendingStream:(NSInputStream*)stream connectionSession:(swypConnectionSession*)session;
 
 
-//	These functions should notify you when the data IN stream is receiving or NOT so that UI can be updated accordingly
--(void)	didBeginReceivingDataInConnectionSession:(swypConnectionSession*)session;
+///	Will notify you when the data IN stream is receiving so that UI can be updated accordingly
+-(void)	didBeginReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
+///	Will notify you when the data IN stream is DONE receiving so that UI can be updated accordingly
+-(void) didFinnishReceivingDataInDiscernedStream:(swypDiscernedInputStream*)stream withConnectionSession:(swypConnectionSession*)session;
 
--(void) didFinnishReceivingDataInConnectionSession:(swypConnectionSession*)session;
+///Deprecated
+///Deprecated method in leu of yieldedData:ofType:fromDiscernedStream:inConnectionSession: which reduces developer overhead slightly.
+-(void)	yieldedData:(NSData*)streamData fromDiscernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session;
 @end
 
-
+/** This class represents and manages the connection between this and one other device. 
+ 
+ Use this class to send data, and set data delegates for recieved data. */
 @interface swypConnectionSession : NSObject <NSStreamDelegate, swypConcatenatedInputStreamDelegate, swypInputToOutputStreamConnectorDelegate, swypInputStreamDiscernerDelegate, swypInputToDataBridgeDelegate> {
 	NSMutableSet *	_dataDelegates;
 	NSMutableSet *	_connectionSessionInfoDelegates;
@@ -97,25 +114,38 @@ typedef enum {
 	NSInputStream *			_socketInputStream;
 	NSOutputStream *		_socketOutputStream;
 }
-@property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
-@property (nonatomic, retain)	UIColor*					sessionHueColor;
-@property (nonatomic, readonly)	swypCandidate *				representedCandidate;
-@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketInputTransformStream;
-@property (nonatomic, readonly)	swypTransformPathwayInputStream	*	socketOutputTransformStream;
 
+///The connection status property contains the current session's state w/ a swypConnectionSessionStatus value.
+@property (nonatomic, readonly)	swypConnectionSessionStatus	connectionStatus;
+///The hue of swyp workspace background and connection indicators, proving that you're connected to the appropiate individual.
+@property (nonatomic, retain)	UIColor*					sessionHueColor;
+///The remote candidate that you're communicating with through this connectionSession.
+@property (nonatomic, readonly)	swypCandidate *				representedCandidate;
+
+/** swypConnectionSessions are initialized with their candidate, and input and an output stream. 
+ 
+ Connections are opened with the 'inititate' function.
+ */
 -(id)	initWithSwypCandidate:	(swypCandidate*)candidate inputStream:(NSInputStream*)inputStream outputStream:(NSOutputStream*)outputStream;
 
+/** Start connection; schedule in runloop */
+-(void) initiate;
+/** Destroy connection; remove from runloop */
 -(void)	invalidate;
 
+///For adding a swypConnectionSessionDataDelegate.
 -(void)	addDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
+///For removing a swypConnectionSessionDataDelegate.
 -(void)	removeDataDelegate:(id<swypConnectionSessionDataDelegate>)delegate;
 
+///For adding a swypConnectionSessionInfoDelegate.
 -(void)	addConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
+///For removing a swypConnectionSessionInfoDelegate.
 -(void)	removeConnectionSessionInfoDelegate:(id<swypConnectionSessionInfoDelegate>)delegate;
 
-//sending data
-/*
-	length: the length of the 'stream' property
+/** @name sending data */
+/**
+	@param length the length of the 'stream' property
 		if length is specified as 0, the stream will be written without a length specifier, to allow devs to do fun stuff
 		be aware, some malicious endpoints will try to overload the length of a stream to cause buffer overruns 
 			1) Don't rely on length parameter for buffer sizes without validity checks 2) Don't execute recieved data!
@@ -131,4 +161,5 @@ typedef enum {
 -(void)	_changeStatus:	(swypConnectionSessionStatus)status;
 -(void) _teardownConnection;
 -(void) _setupStreamPathways;
+-(void) _destroyConnectionWithError:(NSError*)error;
 @end

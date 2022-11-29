@@ -23,14 +23,20 @@ typedef enum{
 
 @class swypInputToDataBridge;
 
+/** Data Recipient for stream soakage */
 @protocol swypInputToDataBridgeDelegate <NSObject>
-
+/** Data retrieved notification */
 -(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge;
-
+/** Data failed notfication... Sorry. */
 -(void)	dataBridgeFailedYieldingDataFromInputStream:(NSInputStream*) inputStream withError: (NSError*) error inInputToDataBridge:(swypInputToDataBridge*)bridge;
 
 @end
 
+
+/** This class written by alex soaks an NSInputStream into NSData
+ 
+ Set an input within init and set a delegate. Be notified when the stream is at end and data is ready.
+ */
 @interface swypInputToDataBridge : NSObject <swypInputToOutputStreamConnectorDelegate> {
 	swypInputToOutputStreamConnector *	_streamConnector;
 	NSInputStream*	_inputStream;
@@ -44,6 +50,10 @@ typedef enum{
 
 @property (nonatomic, assign)	id<swypInputToDataBridgeDelegate> delegate;
 
+/** Set NSInputStream and your delegate 
+ 
+ @param inputStream Stream should not be yet opened or attached to any runloop.
+ */
 -(id)	initWithInputStream:(NSInputStream*)inputStream dataBrdigeDelegate: (id<swypInputToDataBridgeDelegate>)delegate;
 
 //

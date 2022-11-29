@@ -8,16 +8,17 @@
 
 #import "swypPhotoPlayground.h"
 #import "swypTiledContentViewController.h"
-#import <QuartzCore/QuartzCore.h>
-@implementation swypPhotoPlayground
+#import "swypOutGestureRecognizer.h"
 
+@implementation swypPhotoPlayground
 
 #pragma mark UIViewController
 -(id) initWithPhotoSize:(CGSize)imageSize{
 	if (self = [super initWithNibName:nil bundle:nil]){
-		_viewTilesByIndex	=	[[NSMutableDictionary alloc] init];
 		
 		_photoSize			=	imageSize;
+		
+		_contentViewTilesByID	=	[[swypBidirectionalMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -25,11 +26,28 @@
 	[super viewDidLoad];
 	[self.view setClipsToBounds:FALSE];
 	
-	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(120, 10)];
+	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+	
+	_tiledContentViewController = [[swypTiledContentViewController alloc] initWithDisplayFrame:self.view.bounds tileContentControllerDelegate:(id<swypTiledContentViewControllerContentDelegate>)self withCenteredTilesSized:_photoSize andMargins:CGSizeMake(15, 15)];
+
 	[[_tiledContentViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
 	[[_tiledContentViewController view] setClipsToBounds:FALSE];
 	[[self view] addSubview:[_tiledContentViewController view]];
+	
+	_swypOutRecognizer	=	[[swypOutGestureRecognizer alloc] initWithTarget:self action:@selector(swypOutGestureChanged:)];
+	[_swypOutRecognizer setDelegate:self];
+	[_swypOutRecognizer setDelaysTouchesBegan:FALSE];
+	[_swypOutRecognizer setDelaysTouchesEnded:TRUE];
+	[_swypOutRecognizer setCancelsTouchesInView:FALSE];
+	[[self view] addGestureRecognizer:_swypOutRecognizer];
+	
 }
+												
+														 
+-(void)viewDidUnload {
+    [super viewDidUnload];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return TRUE;
@@ -37,22 +55,11 @@
 
 -(void) dealloc{
 	SRELS(_tiledContentViewController);
-	SRELS(_viewTilesByIndex);
+	SRELS(_swypOutRecognizer);
 	
 	[super dealloc];
 }
 
--(void)		setViewTile:(UIView*)view forTileIndex: (NSUInteger)tileIndex{
-	if (view == nil){
-		[_viewTilesByIndex removeObjectForKey:[NSNumber numberWithInt:tileIndex]];
-	}else{
-		[_viewTilesByIndex setObject:view forKey:[NSNumber numberWithInt:tileIndex]];
-	}
-}
--(UIView*)	viewForTileIndex:(NSUInteger)tileIndex{
-	
-	return 	[_viewTilesByIndex objectForKey:[NSNumber numberWithInt:tileIndex]];
-}
 
 -(CGRect)	rectToKeepInPlaygroundWithIntendedRect:	(CGRect)intendedRect{
 	
@@ -77,92 +84,155 @@
 		revisedRect.origin.y	-= negativeOverflow.height;
 	}
 	
+	
 	return revisedRect;
 }
 
 #pragma mark delegation
 #pragma mark gestures
--(void)		contentPanOccuredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
+-(void)		contentPanOccurredWithRecognizer: (UIPanGestureRecognizer*) recognizer{
+    
+    float centerY = recognizer.view.center.y;
 	
 	if ([recognizer state] == UIGestureRecognizerStateBegan){
+        // change z index to top here
+        [_tiledContentViewController.view bringSubviewToFront:[recognizer view]];
 		
-	}else if ([recognizer state] == UIGestureRecognizerStateChanged){
+	} else if ([recognizer state] == UIGestureRecognizerStateChanged){
 		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame], CGAffineTransformMakeTranslation([recognizer translationInView:self.view].x, [recognizer translationInView:self.view].y));
 		newTranslationFrame	=	[self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
 		
-		
 		[[recognizer view] setFrame:newTranslationFrame];
 		[recognizer setTranslation:CGPointZero inView:self.view];
-		
-		NSInteger pannedIndex	= [self contentIndexMatchingSwypOutView:(UIImageView*)recognizer.view];
-		if (pannedIndex != -1){
-			[_contentDisplayControllerDelegate contentAtIndex:pannedIndex wasDraggedToFrame:[recognizer.view frame] inController:self];
-		}
+        
+        if (centerY < 60) {
+            float fraction = powf(0.98, (60-centerY));
+            recognizer.view.transform = CGAffineTransformMakeScale(fraction, fraction);
+            recognizer.view.alpha = fraction;
+        } else {
+            recognizer.view.transform = CGAffineTransformMakeScale(1, 1);
+        }
+				
+	} else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
+        
+        NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:[recognizer view]];
+        
+        if (centerY > 60) {
+            CGRect keneticTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation( round([recognizer velocityInView:recognizer.view].x * .125), round([recognizer velocityInView:recognizer.view].y * .125)));
+                                    
+            double tossDistance	=	euclideanDistance(keneticTranslationFrame.origin, [[recognizer view] frame].origin);
+            BOOL recognizeToss	= FALSE;
+            if (tossDistance > 100 && [_swypOutRecognizer state] != UIGestureRecognizerStateRecognized){
+				EXOLog(@"TOSSER! %f",tossDistance);
+                recognizeToss = TRUE;
+            }
+            
+			CGRect revisedKeneticTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:keneticTranslationFrame];
+			
+			//Toss mode should have different upper bound
+			if (revisedKeneticTranslationFrame.origin.y < 50) {
+				revisedKeneticTranslationFrame.origin.y = 50;
+			}
+			
+            [UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
+                [[recognizer view] setFrame:revisedKeneticTranslationFrame];
+            }completion:^(BOOL completed){
+                if (recognizeToss){
+                    if (StringHasText(swypOutContentID)){
+                        [_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
+                    }
+                }
+            }];
+        } else {
+            [UIView animateWithDuration:0.25 animations:^{
+                recognizer.view.alpha = 0;
+                recognizer.view.transform = CGAffineTransformMakeScale(0.01, 0.01);
+            }completion:^(BOOL completed){
+                if (completed) {
+					[_contentDisplayControllerDelegate contentWithIDWasDraggedOffWorkspace:swypOutContentID inController:self];
+                }
+            }];
+        }		
+	}
+}
 
-		
-	}else if ([recognizer state] == UIGestureRecognizerStateEnded || [recognizer state] == UIGestureRecognizerStateFailed || [recognizer state] == UIGestureRecognizerStateCancelled){
-		CGRect newTranslationFrame	= CGRectApplyAffineTransform([[recognizer view] frame],CGAffineTransformMakeTranslation([recognizer velocityInView:recognizer.view].x * .125, [recognizer velocityInView:recognizer.view].y * .125));
-		newTranslationFrame			= [self rectToKeepInPlaygroundWithIntendedRect:newTranslationFrame];
-		[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionAllowAnimatedContent|UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
-			[[recognizer view] setFrame:newTranslationFrame];
-		}completion:nil];
-		
-		
-		NSInteger pannedIndex	= [self contentIndexMatchingSwypOutView:(UIImageView*)recognizer.view];
-		if (pannedIndex != -1){
-			[_contentDisplayControllerDelegate contentAtIndex:pannedIndex wasReleasedWithFrame:[recognizer.view frame] inController:self];
+-(void)	swypOutGestureChanged:(swypOutGestureRecognizer*)recognizer{
+	if (recognizer.state == UIGestureRecognizerStateRecognized){
+		UIView * gestureView	=	[[recognizer swypGestureInfo] swypBeginningContentView];
+		NSString * swypOutContentID	= [_contentViewTilesByID keyForObject:gestureView];
+		if (StringHasText(swypOutContentID)){
+			EXOLog(@"swypOutGestureChanged recogn in contentDisplayViewController on: %@",swypOutContentID);
+			[_contentDisplayControllerDelegate contentWithIDUnderwentSwypOut:swypOutContentID inController:self];
+			
+			//now we make a beatiful dissapear animation
+			CGRect originalFrame	=	[gestureView frame];
+			CGRect disappearFrame	=	originalFrame;
+			if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeRight){
+				disappearFrame.origin.x	=	self.view.width;
+			}else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeLeft){
+				disappearFrame.origin.x	=	0 - originalFrame.size.width;
+			} else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeBottom){
+				disappearFrame.origin.y	=	self.view.height;
+			}else if ([[recognizer swypGestureInfo] screenEdgeOfSwyp] == swypScreenEdgeTypeTop){
+				disappearFrame.origin.y	=	0 - originalFrame.size.height;
+			}
+			double distance		=	euclideanDistance(originalFrame.origin,disappearFrame.origin);
+			double animateTime	=	distance/ ([recognizer velocity] * [swypGestureRecognizer currentDevicePixelsPerLinearMillimeter]);
+			[UIView animateWithDuration:animateTime delay:0 options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionAllowUserInteraction animations:^{
+				[gestureView setFrame:disappearFrame];
+			}completion:^(BOOL complete){
+				[UIView animateWithDuration:animateTime delay:1 options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionAllowUserInteraction animations:^{ [gestureView setFrame:originalFrame];} completion:nil];
+
+			}];
+			
 		}
 	}
 }
+
+
+-(BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+	
+	if ([gestureRecognizer isKindOfClass:[swypGestureRecognizer class]])
+		return TRUE;
+	
+	return FALSE;
+}
+
+
 
 #pragma mark swypTiledContentViewControllerContentDelegate
--(NSInteger)tileCountForTiledContentController:(swypTiledContentViewController*)tileContentController{
-	return [_contentDisplayControllerDelegate totalContentCountInController:self];
-}
--(UIView*)tileViewAtIndex:(NSInteger)tileIndex forTiledContentController:(swypTiledContentViewController*)tileContentController{
-	UIImageView * photoTileView =	(UIImageView*)[self viewForTileIndex:tileIndex];
-	if (photoTileView == nil){
-		photoTileView	=	[[UIImageView alloc] initWithImage:[_contentDisplayControllerDelegate imageForContentAtIndex:tileIndex ofMaxSize:_photoSize inController:self]];
-		[photoTileView setUserInteractionEnabled:TRUE];
-		[photoTileView setBackgroundColor:[UIColor blackColor]];
+-(NSArray*) allTileViewsForTiledContentController:(swypTiledContentViewController*)tileContentController{
+
+	NSMutableArray * allTilesArray = [NSMutableArray array];
+	for (NSString * tileID  in [_contentDisplayControllerDelegate allIDsForContentInController:self]){
 		
-		CALayer	*layer	=	photoTileView.layer;
-		[layer setBorderColor: [[UIColor whiteColor] CGColor]];
-		[layer setBorderWidth:8.0f];
-		[layer setShadowColor: [[UIColor blackColor] CGColor]];
-		[layer setShadowOpacity:0.9f];
-		[layer setShadowOffset: CGSizeMake(1, 3)];
-		[layer setShadowRadius:4.0];
-		CGMutablePathRef shadowPath		=	CGPathCreateMutable();
-		CGPathAddRect(shadowPath, NULL, CGRectMake(0, 0, photoTileView.size.width, photoTileView.size.width));
-		[layer setShadowPath:shadowPath];
-		[photoTileView setClipsToBounds:NO];
-		
-		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccuredWithRecognizer:)];
-		[photoTileView addGestureRecognizer:dragRecognizer];
-		SRELS(dragRecognizer);
-		[self setViewTile:photoTileView forTileIndex:tileIndex];
-		[photoTileView release];
+		UIView * tileView	=	[self _setupTileWithID:tileID];
+		[_contentViewTilesByID setObject:tileView forKey:tileID];
+				
+		[allTilesArray addObject:tileView];
 	}
-	
-	return photoTileView;
+	return allTilesArray;
 }
 										
-
 #pragma mark swypContentDisplayViewController <NSObject>
--(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate{
-	[_viewTilesByIndex removeAllObjects];
-	[_tiledContentViewController reloadTileObjectData];
+-(void)	removeContentFromDisplayWithID:	(NSString*)removeID animated:(BOOL)animate{
+	UIView * tileView	=	[_contentViewTilesByID objectForKey:removeID];
+	[_tiledContentViewController removeTile:tileView animated:animate];
+	[_contentViewTilesByID removeObjectForKey:removeID];
 }
--(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation{
-	[_viewTilesByIndex removeAllObjects];
-	[_tiledContentViewController reloadTileObjectData];
 
-	if (CGPointEqualToPoint(startLocation, CGPointZero) == NO){
-		UIView * viewAtIndex	=	[self viewForTileIndex:insertIndex];
-		[viewAtIndex setOrigin:startLocation];
-		[self returnContentAtIndexToNormalLocation:insertIndex animated:TRUE];
-	}
+-(void)	addContentToDisplayWithID: (NSString*)insertID animated:(BOOL)animate{
+	//this view refuses duplicate tiles of identicalID
+	assert ([_contentViewTilesByID objectForKey:insertID] == nil);
+	
+	UIView * tileView	=	[self _setupTileWithID:insertID];
+	[_contentViewTilesByID setObject:tileView forKey:insertID];
+	
+	[_tiledContentViewController addTile:tileView animated:animate];
+}
+
+-(NSArray*)	allDisplayedObjectIDs{
+	return [_contentViewTilesByID allKeys];
 }
 
 -(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate{
@@ -173,41 +243,52 @@
 }
 
 -(void)	reloadAllData{
-	[_viewTilesByIndex removeAllObjects];
+	[_contentViewTilesByID removeAllObjects];
 	[_tiledContentViewController reloadTileObjectData];
 }
 
--(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate{
+  
+
+-(NSString*)	contentIDMatchingSwypOutView:	(UIView*)swypedView{
 	
-	NSIndexSet * returnIndexes	=	[NSIndexSet indexSetWithIndex:index];
-	
-	if (index == -1){
-		returnIndexes	=	[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_contentDisplayControllerDelegate totalContentCountInController:self])];
+	for (UIView * swypView in [_contentViewTilesByID allValues]){
+		if (swypView == swypedView){
+			return [_contentViewTilesByID keyForValue:swypedView];
+		}
 	}
-	
-	if (animate){
-		[UIView animateWithDuration:.5 animations:^{
-			[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-				[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
-			}];
-		}];
-	}else{
-		[returnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
-			[[self tileViewAtIndex:idx forTiledContentController:_tiledContentViewController] setOrigin:[_tiledContentViewController frameForTileNumber:idx].origin];
-		}];
-	}		
+	return nil;
+}
+ 
+-(CGSize) choiceMaxSizeForContentDisplay{
+	return _photoSize;
 }
 
--(NSInteger)	contentIndexMatchingSwypOutView:	(UIView*)swypedView{
-	NSUInteger contentCount = [_contentDisplayControllerDelegate totalContentCountInController:self];
-	NSInteger	returnContentIndex	=	-1;
-	for (int i = 0; i < contentCount; i++){
-		if ([self viewForTileIndex:i] == swypedView){
-			returnContentIndex = i;
+-(void)	moveContentWithID: (NSString*)objectID toFrame:(CGRect)frame animated:(BOOL)animate{
+	UIView * view = [_contentViewTilesByID objectForKey:objectID];
+	if (animate){
+		[UIView animateWithDuration:.4 animations:^{[view setFrame:frame];} completion:nil];
+	}else{
+		[view setFrame:frame];
+	}
+}
+
+#pragma mark - private
+-(UIView*) _setupTileWithID:(NSString*)tileID{
+	UIView * tileView	=	[_contentDisplayControllerDelegate viewForContentWithID:tileID ofMaxSize:_photoSize inController:self];
+	
+	BOOL needAddPanRecognizer = TRUE;
+	for (UIGestureRecognizer * recognizer in [tileView gestureRecognizers]){
+		if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]){
+			needAddPanRecognizer = FALSE;
 			break;
 		}
 	}
-	return returnContentIndex;
+	if (needAddPanRecognizer){
+		UIPanGestureRecognizer * dragRecognizer		=	[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(contentPanOccurredWithRecognizer:)];
+		[tileView addGestureRecognizer:dragRecognizer];
+		SRELS(dragRecognizer);
+	}
+	
+	return tileView;
 }
-
 @end

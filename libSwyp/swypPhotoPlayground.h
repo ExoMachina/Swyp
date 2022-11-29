@@ -8,21 +8,29 @@
 
 #import <UIKit/UIKit.h>
 #import "swypTiledContentViewController.h"
+#import "swypBidirectionalMutableDictionary.h"
+#import "swypOutGestureRecognizer.h"
 
-@interface swypPhotoPlayground : UIViewController <swypTiledContentViewControllerContentDelegate,swypContentDisplayViewController>{
-	swypTiledContentViewController *					_tiledContentViewController;
+
+@interface swypPhotoPlayground : UIViewController <swypTiledContentViewControllerContentDelegate,swypContentDisplayViewController, UIGestureRecognizerDelegate>{
+	swypTiledContentViewController *		_tiledContentViewController;
 	
 	id<swypContentDisplayViewControllerDelegate>	_contentDisplayControllerDelegate;	
 	
-	NSMutableDictionary *							_viewTilesByIndex;
+	swypBidirectionalMutableDictionary *	_contentViewTilesByID;
 	
-	CGSize											_photoSize;
+	swypOutGestureRecognizer *				_swypOutRecognizer;
+		
+	CGSize									_photoSize;
 }
--(id)		initWithPhotoSize:(CGSize)imageSize;
+///Init'd with the max image size permissable in the contentDisplayCont
+-(id)	initWithPhotoSize:(CGSize)imageSize;
 
--(UIView*)	viewForTileIndex:(NSUInteger)tileIndex;
--(void)		setViewTile:(UIView*)view forTileIndex: (NSUInteger)tileIndex;
 
-//this just keeps the photo in bounds
+///this just keeps the photo in bounds
 -(CGRect)	rectToKeepInPlaygroundWithIntendedRect:	(CGRect)intendedRect;
+
+//
+//private 
+-(UIView*) _setupTileWithID:(NSString*)tileID;
 @end

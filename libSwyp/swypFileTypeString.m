@@ -27,8 +27,40 @@
 	return type;	
 }
 
++(id) applicationPDFFileType{
+	static NSString * type = @"application/pdf";
+	return type;
+}
+
++(id) textPlainFileType{
+	static NSString * type = @"text/plain";
+	return type;
+}
+
++(id) swypContactFileType{
+	static NSString * type = @"swyp/contact";
+	return type;
+}
+
++(id) swypCalendarEventsFileType{
+	static NSString * type = @"swyp/calendarEvents";
+	return type;
+}
+
+
++(id) swypAddressFileType{
+	static NSString * type = @"text/address";
+	return type;
+}
+
+
 +(id) swypControlPacketFileType{
 	static NSString * type = @"swyp/ControlPacket";
+	return type;
+}
+
++(id) swypWorkspaceThumbnailFileType{
+	static NSString * type = @"swyp/WorkspaceThumbnail";
 	return type;
 }
 

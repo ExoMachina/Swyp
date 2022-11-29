@@ -21,17 +21,12 @@
 	id<NSStreamDelegate>		_delegate;
 	NSStreamStatus				_streamStatus;
 }
-@property (nonatomic, readonly) NSInputStream *		dataInputStream;
-@property (nonatomic, readonly) NSArray	*			transformStreams;
-@property (nonatomic, assign) id<NSStreamDelegate>	delegate;
+@property (nonatomic, retain)	NSInputStream *		dataInputStream;
+@property (nonatomic, retain)	NSArray	*			transformStreams;
+@property (nonatomic, assign)	id<NSStreamDelegate>	delegate;
 
-//array of swypTransformInputStreams
+///array of swypTransformInputStreams
 -(id)	initWithDataInputStream:	(NSInputStream*)dataInStream transformStreamArray:(NSArray*)transformStreams; 
-
-
-//array of swypTransformInputStreams
--(void)	setTransformStreamArray:	(NSArray*)transformStreams;
--(void)	setDataInputStream:			(NSInputStream*)dataInStream;
 
 //
 //private

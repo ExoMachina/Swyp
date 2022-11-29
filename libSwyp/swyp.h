@@ -14,7 +14,7 @@
 
 //see libSwyp.h for how-to
 
-
+//1 = regular logs; 2=logoverlay + logs
 #define DEBUG_MODE_ENABLED 1
 
 //	Developer conviniences
@@ -31,7 +31,11 @@
 
 #define euclideanDistance(pointOne, pointTwo) sqrt(pow((pointOne.x - pointTwo.x),2) + pow((pointOne.y - pointTwo.y),2))
 
+#define rectCenter(rect) CGPointMake((rect.origin.x + rect.size.width/2), (rect.origin.y + rect.size.height/2))
+
 #define rectDescriptionString(rect) [NSString stringWithFormat:@"w:%f h:%f x:%f y:%f",rect.size.width,rect.size.height, rect.origin.x,rect.origin.y] 
+
+#define windowFrameForOrientation() (UIDeviceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])? [[UIApplication sharedApplication] keyWindow].frame:CGRectMake(0, 0,[[UIApplication sharedApplication] keyWindow].frame.size.height, [[UIApplication sharedApplication] keyWindow].frame.size.width))
 
 #if DEBUG_MODE_ENABLED == 1
 #if CONFIGURATION == Debug
@@ -52,5 +56,8 @@
 #import "swypFileTypeString.h"
 #import "swypContentDataSourceProtocol.h"
 #import "NSDictionary+BSJSONAdditions.h"
+#import "swypBidirectionalMutableDictionary.h"
+#import "swypInputStreamDiscerner.h"
 #import "UIColorAdditions.h"
 #import "UIViewAdditions+swypAdditions.h"
+#import "swypInterfaceManager.h"

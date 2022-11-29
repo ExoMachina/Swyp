@@ -10,7 +10,7 @@
 
 @implementation swypDiscernedInputStream
 @synthesize isIndefinite = _isIndefinite, streamLength = _streamLength, streamTag = _streamTag, streamType = _streamType,lastProvidedByteIndex = _lastProvidedByteIndex, streamEndByteIndex=_streamEndByteIndex;
-@synthesize dataSource = _dataSource, delegate = _delegate;
+@synthesize dataSource = _dataSource, delegate = _delegate, sourceConnectionSession = _sourceConnectionSession;
 
 
 #pragma mark -
@@ -20,7 +20,8 @@
 		_dataSource = source;
 		_streamTag	= [tag retain];
 		_streamType	= [type retain];
-
+		_statusDelegates	=	(NSMutableSet*) CFSetCreateMutable(NULL, 0, NULL);
+		
 		_pulledDataBuffer =	[[NSMutableData alloc] init];
 							 
 		if (streamLength == 0){
@@ -42,6 +43,11 @@
 	
 	NSInteger endStreamOffset	=	_lastPulledByteIndex - byteIndex;
 	if (endStreamOffset < 1024 && endStreamOffset > 0){
+		
+		for (id<swypDiscernedInputStreamStatusDelegate> delegate in _statusDelegates){
+			[delegate discernedInputStreamCompletedReceivingData:self];
+		}
+		
 		[_dataSource discernedStreamEndedAtStreamByteIndex:_streamEndByteIndex discernedInputStream:self];
 	}else if (endStreamOffset > 1024){
 		[NSException raise:@"swypDiscernedInputStreamIndefiniteStreamException" format:@"The last pulled byte from data source '%i' was '%i' bytes in past.. You must calculate stream end before next stream read.",_lastPulledByteIndex,endStreamOffset];
@@ -58,6 +64,15 @@
 	}
 }
 
+-(void)	addStatusDelegate:(id<swypDiscernedInputStreamStatusDelegate>)delegate{
+	EXOLog(@"Retain before addStatusDelegate :%i",[delegate retainCount]);
+	[_statusDelegates addObject:delegate];
+	EXOLog(@"Retain after addStatusDelegate :%i",[delegate retainCount]);
+}
+-(void)	removeStatusDelegate:(id<swypDiscernedInputStreamStatusDelegate>)delegate{
+	[_statusDelegates removeObject:delegate];
+}
+
 #pragma mark NSObject
 - (id)init
 {
@@ -66,6 +81,15 @@
 
 -(void)dealloc{
 	
+	if (_streamLength - _lastPulledByteIndex > 0){
+		for (id<swypDiscernedInputStreamStatusDelegate> delegate in _statusDelegates){
+			[delegate discernedInputStreamFailedReceivingData:self];
+		}
+	}
+	SRELS(_statusDelegates);
+
+	_sourceConnectionSession	=	nil;
+	_dataSource	=	nil;
 	[self removeFromRunLoop:nil forMode:nil];
 	SRELS(_pulledDataBuffer);
 	SRELS(_streamType);
@@ -175,7 +199,16 @@
 		
 		NSInteger	remainingLengthToStreamEnd	= _streamLength - _lastPulledByteIndex;
 		if (remainingLengthToStreamEnd <= 0){
+			
+			for (id<swypDiscernedInputStreamStatusDelegate> delegate in _statusDelegates){
+				[delegate discernedInputStreamCompletedReceivingData:self];
+			}
+			
 			[_dataSource discernedStreamEndedAtStreamByteIndex:_streamEndByteIndex discernedInputStream:self];
+		}else{
+			for (id<swypDiscernedInputStreamStatusDelegate> statusDelegate in _statusDelegates){
+				[statusDelegate updatedProgressToPercentage:((double)_lastPulledByteIndex /(double)_streamLength) withDiscernedInputStream:self];
+			}
 		}
 	}
 	

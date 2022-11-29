@@ -14,7 +14,6 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 @implementation swypConnectionSession
 @synthesize representedCandidate = _representedCandidate, connectionStatus = _connectionStatus, sessionHueColor	= _sessionHueColor;
-@synthesize socketOutputTransformStream = _socketOutputTransformStream, socketInputTransformStream = _socketInputTransformStream;
 
 #pragma mark -
 #pragma mark public
@@ -61,6 +60,23 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	return [self beginSendingFileStreamWithTag:tag type:type dataStreamForSend:payloadStream length:dataLength];
 }
 
+-(void) initiate{
+	if ([_socketInputStream streamStatus] < NSStreamStatusOpen){			
+		
+		[_socketInputStream	setDelegate:self];
+		[_socketInputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		[_socketInputStream	open];
+	}
+	if ([_socketOutputStream streamStatus] < NSStreamStatusOpen){
+		
+		[_socketOutputStream	setDelegate:self];
+		[_socketOutputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		[_socketOutputStream	open];
+	}
+	
+	[self _changeStatus:swypConnectionSessionStatusPreparing];
+}
+
 -(void)	invalidate{
 	// 1) tell delegates everything will die 2) change status to closing 3) add goodbye packet to queue
 	// 4) reason only is only for debugging purposes
@@ -74,8 +90,15 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	
 	[_sendDataQueueStream removeAllQueuedStreamsAfterCurrent];
 	
+	
 	NSData	* sendDictionaryData = [[[NSDictionary dictionaryWithObject:@"hangup" forKey:@"reason"] jsonStringValue] dataUsingEncoding:NSUTF8StringEncoding];
 	[self beginSendingDataWithTag:@"goodbye" type:[NSString swypControlPacketFileType] dataForSend:sendDictionaryData];
+	
+	//give the goodbye time to send
+	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+		[self _destroyConnectionWithError:nil];
+	}];
+	
 }
 
 #pragma mark delegatation
@@ -101,20 +124,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 
 	if (self = [super init]){
 		_representedCandidate	=	[candidate retain];
-		
-		if ([inputStream streamStatus] < NSStreamStatusOpen){			
-			
-			[inputStream	setDelegate:self];
-			[inputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-			[inputStream	open];
-		}
-		if ([outputStream streamStatus] < NSStreamStatusOpen){
-			
-			[outputStream	setDelegate:self];
-			[outputStream	scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-			[outputStream	open];
-		}
-		
+				
 		_socketInputStream	= [inputStream retain];
 		_socketOutputStream	= [outputStream retain];
 		
@@ -122,8 +132,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		
 		_dataDelegates						=	[[NSMutableSet alloc] init];
 		_connectionSessionInfoDelegates		=	[[NSMutableSet alloc] init];
-		[self _changeStatus:swypConnectionSessionStatusPreparing];
-		
+
 	}
 	
 	return self;
@@ -132,8 +141,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void)	dealloc{
 
 	SRELS(_delegatesForPendingInputBridges);
-	for (NSValue * unretainedBridge in _pendingInputBridges){
-		swypInputToDataBridge * bridge	=	[unretainedBridge nonretainedObjectValue];
+	for (swypInputToDataBridge * bridge in _pendingInputBridges){
 		[bridge setDelegate:nil];
 	}
 	SRELS(_pendingInputBridges);
@@ -141,7 +149,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	SRELS(_inputStreamDiscerner);
 	SRELS(_socketInputTransformInputStream);
 	
-	[self _teardownConnection];
+//	[self _teardownConnection];
 	SRELS(_dataDelegates);					
 	SRELS(_connectionSessionInfoDelegates);	
 	
@@ -160,7 +168,9 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void) _teardownConnection{
 	[_socketInputStream		setDelegate:nil];
 	[_socketOutputStream	setDelegate:nil];
+	[_socketInputStream close];
 	SRELS(_socketInputStream);
+	[_socketOutputStream close];
 	SRELS(_socketOutputStream);	
 	
 	SRELS(_sendDataQueueStream);
@@ -199,47 +209,60 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 	}
 }
 
+-(void) _destroyConnectionWithError:(NSError*)error{
+	[self _teardownConnection];
+	[self _changeStatus:swypConnectionSessionStatusClosed];
+
+	for (NSValue * delegateValue in [[_connectionSessionInfoDelegates copy] autorelease]){
+		id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
+		if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
+			[delegate sessionDied:self withError:error];
+	}
+}
+
 #pragma mark -
 #pragma mark swypInputStreamDiscernerDelegate
 
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
-	BOOL willHandleStream = FALSE;
-	for (NSValue * delegateValue in _dataDelegates){
+	[discernedStream setSourceConnectionSession:self];
+	
+	
+	NSMutableSet * dataDelegatesWantingData	=	[NSMutableSet set];
+		for (NSValue * delegateValue in _dataDelegates){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
-		if ([delegate respondsToSelector:@selector(delegateWillHandleDiscernedStream:wantsAsData:inConnectionSession:)]){
-			
-			BOOL	delegateWantsData = FALSE;
-			willHandleStream = [delegate delegateWillHandleDiscernedStream:discernedStream wantsAsData:&delegateWantsData inConnectionSession:self];
-			
-			if (willHandleStream){
-				if (delegateWantsData){
-					
-					swypInputToDataBridge* pendingInputBridge = [[swypInputToDataBridge alloc] initWithInputStream:discernedStream dataBrdigeDelegate:self];
-					
-					if (_delegatesForPendingInputBridges == nil)
-						_delegatesForPendingInputBridges = [[NSMutableDictionary alloc] init];
-					[_delegatesForPendingInputBridges setObject:[NSValue valueWithNonretainedObject:delegate] forKey:[NSValue valueWithNonretainedObject:pendingInputBridge]];
-					
-					if (_pendingInputBridges == nil)
-						_pendingInputBridges = [[NSMutableSet alloc] init];
-					[_pendingInputBridges addObject:pendingInputBridge];
-					
-					SRELS(pendingInputBridge);
-					
-				}
-				break;
+
+		if ([delegate respondsToSelector:@selector(supportedFileTypesForReceipt)]){
+			if ([[delegate supportedFileTypesForReceipt] containsObject:[discernedStream streamType]]){
+				[dataDelegatesWantingData addObject:delegateValue];
 			}
 		}
-	}	
+	}
 	
-	if (willHandleStream == FALSE){
+	//great, something will, let's finalize
+	if ([dataDelegatesWantingData count] >0){
+		swypInputToDataBridge* pendingInputBridge = [[swypInputToDataBridge alloc] initWithInputStream:discernedStream dataBrdigeDelegate:self];
+			
+		if (_delegatesForPendingInputBridges == nil)
+			_delegatesForPendingInputBridges = [[NSMutableDictionary alloc] init];
+		[_delegatesForPendingInputBridges setObject:dataDelegatesWantingData forKey:[NSValue valueWithNonretainedObject:pendingInputBridge]];
+		
+		if (_pendingInputBridges == nil){
+				_pendingInputBridges = [[NSMutableSet alloc] init];
+		}
+
+		[_pendingInputBridges addObject:pendingInputBridge];
+		
+		SRELS(pendingInputBridge);
+	}
+
+	
+	if ([dataDelegatesWantingData count] == 0){
 		EXOLog(@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]);
-//		[NSException raise:@"SwypConnectionSessionNoStreamHandlerException" format:@"There was no data delegate willing to accept stream of tag %@ and type %@",[discernedStream streamTag],[discernedStream streamType]];
 	}else{
 		for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
 			id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
-			if ([delegate respondsToSelector:@selector(didBeginReceivingDataInConnectionSession:)])
-				[delegate didBeginReceivingDataInConnectionSession:self];
+			if ([delegate respondsToSelector:@selector(didBeginReceivingDataInDiscernedStream:withConnectionSession:)])
+				[delegate didBeginReceivingDataInDiscernedStream:discernedStream withConnectionSession:self];
 		}
 	}
 }
@@ -247,8 +270,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void)	concludedDiscernedStream: (swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner{
 	for (NSValue * delegateValue in [[_dataDelegates copy] autorelease]){
 		id<swypConnectionSessionDataDelegate> delegate	= [delegateValue nonretainedObjectValue];
-		if ([delegate respondsToSelector:@selector(didFinnishReceivingDataInConnectionSession:)])
-			[delegate didFinnishReceivingDataInConnectionSession:self];
+		if ([delegate respondsToSelector:@selector(didFinnishReceivingDataInDiscernedStream:withConnectionSession:)])
+			[delegate didFinnishReceivingDataInDiscernedStream:discernedStream withConnectionSession:self];
 	}
 }
 
@@ -273,15 +296,22 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void)	dataBridgeYieldedData:(NSData*) yieldedData fromInputStream:(NSInputStream*) inputStream withInputToDataBridge:(swypInputToDataBridge*)bridge{
 	if ([inputStream isKindOfClass:[swypDiscernedInputStream class]]){
 		swypDiscernedInputStream * discernedStream 	=	(swypDiscernedInputStream*) inputStream;
-		id <swypConnectionSessionDataDelegate> delegate	=	[[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]] nonretainedObjectValue];
-		
-		if ([delegate respondsToSelector:@selector(yieldedData:discernedStream:inConnectionSession:)]){
-			[delegate yieldedData:yieldedData discernedStream:discernedStream inConnectionSession:self];
+
+		NSSet * allDelegates	=	[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]];
+		for (NSValue * delegateValue in allDelegates){
+			id <swypConnectionSessionDataDelegate> delegate	=	[delegateValue nonretainedObjectValue];
+			
+			if ([delegate respondsToSelector:@selector(yieldedData:ofType:fromDiscernedStream:inConnectionSession:)]){
+				[delegate yieldedData:yieldedData ofType:discernedStream.streamType fromDiscernedStream:discernedStream inConnectionSession:self];
+			}else if ([delegate respondsToSelector:@selector(yieldedData:fromDiscernedStream:inConnectionSession:)]){
+				EXOLog(@"Depreicated yieldedData:fromDiscernedStream:inConnectionSession: called for datatype: %@; implement yieldedData:ofType:fromDiscernedStream:inConnectionSession:", discernedStream.streamType);
+				[delegate yieldedData:yieldedData fromDiscernedStream:discernedStream inConnectionSession:self];
+			}
 		}
-		
 		
 		[_delegatesForPendingInputBridges removeObjectForKey:[NSValue valueWithNonretainedObject:bridge]];
 		[_pendingInputBridges removeObject:bridge];
+			
 	}
 }
 
@@ -291,9 +321,13 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		EXOLog(@"Failed data yield on stream with tag '%@' type '%@'",[discernedStream streamTag],[discernedStream streamType]);
 		
 		
-		id <swypConnectionSessionDataDelegate> delegate	=	[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]];
-		if ([delegate respondsToSelector:@selector(yieldedData:discernedStream:inConnectionSession:)]){
-			[delegate yieldedData:nil discernedStream:discernedStream inConnectionSession:self];
+		NSSet * allDelegates	=	[_delegatesForPendingInputBridges objectForKey:[NSValue valueWithNonretainedObject:bridge]];
+		for (NSValue * delegateValue in allDelegates){
+			id <swypConnectionSessionDataDelegate> delegate	=	[delegateValue nonretainedObjectValue];
+			
+			if ([delegate respondsToSelector:@selector(yieldedData:ofType:fromDiscernedStream:inConnectionSession:)]){
+				[delegate yieldedData:nil ofType:nil fromDiscernedStream:discernedStream inConnectionSession:self];
+			}
 		}
 		
 		[_delegatesForPendingInputBridges removeObjectForKey:[NSValue valueWithNonretainedObject:bridge]];
@@ -311,15 +345,8 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 		}
 	}else if (eventCode == NSStreamEventErrorOccurred){
 		EXOLog(@"Stream error occured in connection session w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
-		[self _teardownConnection];
-		[self _changeStatus:swypConnectionSessionStatusClosed];
-
 		NSError *error = [NSError errorWithDomain:swypConnectionSessionErrorDomain code:swypConnectionSessionSocketError userInfo:nil];
-		for (NSValue * delegateValue in _connectionSessionInfoDelegates){
-			id<swypConnectionSessionInfoDelegate> delegate	= [delegateValue nonretainedObjectValue];
-			if ([delegate respondsToSelector:@selector(sessionDied:withError:)])
-				[delegate sessionDied:self withError:error];
-		}
+		[self _destroyConnectionWithError:error];
 		
 	}else if (eventCode == NSStreamEventEndEncountered){
 		EXOLog(@"Stream end encountered in connection session with represented candidate w/ appear date: %@", [[_representedCandidate appearanceDate] description]);
@@ -354,7 +381,7 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 -(void) didBeginInputStream:(NSInputStream*)stream withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
 	
 }
--(bool) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
+-(BOOL) shouldContinueAfterFailingStream:(NSInputStream*)stream withError:(NSError*)error withConcatenatedInputStream:(swypConcatenatedInputStream*)concatenatedStream{
 	/*
 		Returning NO will close the stream and invalidate the session
 	 
@@ -374,9 +401,11 @@ static NSString * const swypConnectionSessionErrorDomain = @"swypConnectionSessi
 #pragma mark swypInputToOutputStreamConnectorDelegate
 -(void) encounteredErrorInInputStream: (NSInputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
 	EXOLog(@"encounteredErrorInInputStream withInputToOutputConnector");
+	[self _destroyConnectionWithError:nil];
 }
 -(void) encounteredErrorInOutputStream: (NSOutputStream*)stream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{
 	EXOLog(@"encounteredErrorInOutputStream withInputToOutputConnector");
+	[self _destroyConnectionWithError:nil];
 }
 
 -(void) completedInputStream: (NSInputStream*)stream forOutputStream:(NSOutputStream*)outputStream withInputToOutputConnector:(swypInputToOutputStreamConnector*)connector{

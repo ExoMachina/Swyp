@@ -46,6 +46,24 @@
 	return	euclideanDistance(currentPoint, firstPoint);
 }
 
+-(double)travelAwayFromCenter{
+	CGPoint startPoint		= [[self swypGestureInfo] startPoint];
+	CGPoint currentPoint	= [self locationInView:self.view];
+	double firstEuclid, lastEuclid, euclidDelta = 0;
+	firstEuclid		= [self distanceFromViewCenterWithPoint:startPoint];
+	lastEuclid		= [self distanceFromViewCenterWithPoint:currentPoint];
+	euclidDelta		= lastEuclid - firstEuclid; //positive values move away from the center point
+	return euclidDelta;
+}
+
+-(double)distanceFromViewCenterWithPoint:(CGPoint)point{
+	CGPoint viewCenterPoint	= self.view.center;
+	
+	double euclidDelta		= euclideanDistance(viewCenterPoint, point);
+	
+	return euclidDelta;
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{	
 	[super touchesBegan:touches withEvent:event];
 	NSMutableSet * relevantTouches = [NSMutableSet set];

@@ -62,15 +62,16 @@
 	NSData * yield = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
 	if (yield){
 		_yieldedData = [yield retain];
-		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];
-
-		//no longer need these
 		[_streamConnector setDelegate:nil];
 		SRELS(_streamConnector);
-		SRELS(_outputStream);
+		//we don't need the stream connector anymore, but we'll dealloc it later to be kind to the runloop
+		
+		[_delegate dataBridgeYieldedData:_yieldedData fromInputStream:_inputStream withInputToDataBridge:self];
+
 	}else{
 		[_delegate dataBridgeFailedYieldingDataFromInputStream:_inputStream withError:[NSError errorWithDomain:swypInputToOutputStreamConnectorErrorDomain code:swypInputToOutputStreamConnectorErrorUnknown userInfo:nil] inInputToDataBridge:self];
 	}
 }
+
 
 @end

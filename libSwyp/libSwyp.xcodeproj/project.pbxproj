@@ -1,0 +1,979 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3EA111AC14CA04D40073A717 /* swypThumbView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111AA14CA04D40073A717 /* swypThumbView.h */; };
+		3EA111AD14CA04D40073A717 /* swypThumbView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111AB14CA04D40073A717 /* swypThumbView.m */; };
+		3EA111B114CA1F6F0073A717 /* SSPieProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */; };
+		3EA111B214CA1F6F0073A717 /* SSPieProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */; };
+		3EA111B514CA1FF00073A717 /* SSDrawingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */; };
+		3EA111B614CA1FF00073A717 /* SSDrawingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */; };
+		3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */; };
+		3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */; };
+		680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03613E0C3CD00509CF2 /* CFNetwork.framework */; };
+		680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC03813E0C3D600509CF2 /* Security.framework */; };
+		680FC05213E0C63700509CF2 /* swypInfoRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC05013E0C63700509CF2 /* swypInfoRef.h */; };
+		680FC05313E0C63700509CF2 /* swypInfoRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC05113E0C63700509CF2 /* swypInfoRef.m */; };
+		680FC05613E0CA8D00509CF2 /* swypWorkspaceViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */; };
+		680FC05713E0CA8D00509CF2 /* swypWorkspaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */; };
+		680FC08013E0CFF900509CF2 /* swypClientCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */; };
+		680FC08113E0CFF900509CF2 /* swypClientCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */; };
+		680FC08413E0D00700509CF2 /* swypServerCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC08213E0D00700509CF2 /* swypServerCandidate.h */; };
+		680FC08513E0D00700509CF2 /* swypServerCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC08313E0D00700509CF2 /* swypServerCandidate.m */; };
+		680FC0BC13E0D62100509CF2 /* swypFileTypeString.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */; };
+		680FC0BD13E0D62100509CF2 /* swypFileTypeString.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */; };
+		680FC1F713E2407E00509CF2 /* swyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC1F613E2407E00509CF2 /* swyp.h */; };
+		680FC4F013E2473E00509CF2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC4EF13E2473E00509CF2 /* UIKit.framework */; };
+		680FC5B713E251DA00509CF2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680FC5B613E251DA00509CF2 /* CoreFoundation.framework */; };
+		680FC62A13E3109500509CF2 /* swypSessionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC62813E3109500509CF2 /* swypSessionViewController.h */; };
+		680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC62913E3109500509CF2 /* swypSessionViewController.m */; };
+		680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */; };
+		680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */; };
+		680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */; };
+		680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */; };
+		680FC90613E4D62B00509CF2 /* swypBlockOperationAlertView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */; };
+		680FC90713E4D62B00509CF2 /* swypBlockOperationAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */; };
+		680FCB0513E757B500509CF2 /* libSwyp.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FCB0413E757B500509CF2 /* libSwyp.h */; };
+		680FD27D13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */; };
+		680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */; };
+		680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 680FD34613E9CC9F00509CF2 /* exoLogOverlay.h */; };
+		680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 680FD34713E9CC9F00509CF2 /* exoLogOverlay.m */; };
+		686A5A7413EC766C00EDD24B /* NSDataAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 686A5A7213EC766C00EDD24B /* NSDataAdditions.h */; };
+		686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 686A5A7313EC766C00EDD24B /* NSDataAdditions.m */; };
+		686A5A7813EC767200EDD24B /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 686A5A7613EC767200EDD24B /* NSStringAdditions.h */; };
+		686A5A7913EC767200EDD24B /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 686A5A7713EC767200EDD24B /* NSStringAdditions.m */; };
+		68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DF713E0B23200D094A9 /* swypConnectionManager.h */; };
+		68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DF813E0B23200D094A9 /* swypConnectionManager.m */; };
+		68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */; };
+		68B18DFE13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */; };
+		68B18E0113E0B2B800D094A9 /* swypBonjourServiceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */; };
+		68B18E0213E0B2B800D094A9 /* swypBonjourServiceListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */; };
+		68B18E0A13E0B2FB00D094A9 /* swypGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */; };
+		68B18E0B13E0B2FB00D094A9 /* swypGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */; };
+		68B18E0E13E0B31B00D094A9 /* swypInGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */; };
+		68B18E0F13E0B31B00D094A9 /* swypInGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */; };
+		68B18E1213E0B33A00D094A9 /* swypOutGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */; };
+		68B18E1313E0B33A00D094A9 /* swypOutGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */; };
+		68B18E1C13E0B38600D094A9 /* swypHandshakeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */; };
+		68B18E1D13E0B38600D094A9 /* swypHandshakeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */; };
+		68B18E2013E0B3A900D094A9 /* swypCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E1E13E0B3A900D094A9 /* swypCandidate.h */; };
+		68B18E2113E0B3A900D094A9 /* swypCandidate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E1F13E0B3A900D094A9 /* swypCandidate.m */; };
+		68B18E2413E0B3B700D094A9 /* swypConnectionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */; };
+		68B18E2513E0B3B700D094A9 /* swypConnectionSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */; };
+		68B18E3013E0B42300D094A9 /* swypContentInteractionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */; };
+		68B18E3113E0B42300D094A9 /* swypContentInteractionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */; };
+		68B18E3413E0B45600D094A9 /* swypConcatenatedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */; };
+		68B18E3513E0B45600D094A9 /* swypConcatenatedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */; };
+		68B18E3813E0B47500D094A9 /* swypTransformInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */; };
+		68B18E3913E0B47500D094A9 /* swypTransformInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */; };
+		68B18E3C13E0B49A00D094A9 /* swypTransformPathwayInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */; };
+		68B18E3D13E0B49A00D094A9 /* swypTransformPathwayInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */; };
+		68B18E4013E0B4B800D094A9 /* swypInputToOutputStreamConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */; };
+		68B18E4113E0B4B800D094A9 /* swypInputToOutputStreamConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */; };
+		68B18E5313E0B52000D094A9 /* swypEncryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */; };
+		68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */; };
+		68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */; };
+		68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */; };
+		790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 790A397A13FC5F8E0053A47D /* UIColorAdditions.h */; };
+		790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 790A397B13FC5F8E0053A47D /* UIColorAdditions.m */; };
+		790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 790A39E713FC6D580053A47D /* NSData+Base64.h */; };
+		790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 790A39E813FC6D590053A47D /* NSData+Base64.m */; };
+		792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */; };
+		792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */; };
+		792D5C311416B98D0050DF57 /* swypPhotoArrayDatasource.h in Headers */ = {isa = PBXBuildFile; fileRef = 792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */; };
+		792D5C321416B98D0050DF57 /* swypPhotoArrayDatasource.m in Sources */ = {isa = PBXBuildFile; fileRef = 792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */; };
+		7932E65A14DDE34200E1A017 /* swypWorkspaceView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7932E65814DDE34200E1A017 /* swypWorkspaceView.h */; };
+		7932E65B14DDE34200E1A017 /* swypWorkspaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7932E65914DDE34200E1A017 /* swypWorkspaceView.m */; };
+		794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */; };
+		794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */; };
+		794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */; };
+		79635A7414904DAF0098C265 /* swypNetworkAccessMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */; };
+		79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */; };
+		79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79635A7614904DE90098C265 /* SystemConfiguration.framework */; };
+		796B8E1E14BF7AA8004FEBE3 /* swypPendingConnectionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 796B8E1C14BF7AA8004FEBE3 /* swypPendingConnectionManager.h */; };
+		796B8E1F14BF7AA8004FEBE3 /* swypPendingConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 796B8E1D14BF7AA8004FEBE3 /* swypPendingConnectionManager.m */; };
+		79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */ = {isa = PBXBuildFile; fileRef = 79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */; };
+		79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */ = {isa = PBXBuildFile; fileRef = 79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */; };
+		7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */; };
+		7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */; };
+		798A839614D891D300504333 /* swypSwypableContentSuperview.h in Headers */ = {isa = PBXBuildFile; fileRef = 798A839414D891D300504333 /* swypSwypableContentSuperview.h */; };
+		798A839714D891D300504333 /* swypSwypableContentSuperview.m in Sources */ = {isa = PBXBuildFile; fileRef = 798A839514D891D300504333 /* swypSwypableContentSuperview.m */; };
+		79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080721481A9B700306F67 /* swypTiledContentViewController.h */; };
+		79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080731481A9B700306F67 /* swypTiledContentViewController.m */; };
+		79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C080771481B00C00306F67 /* swypPhotoPlayground.h */; };
+		79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C080781481B00C00306F67 /* swypPhotoPlayground.m */; };
+		79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */; };
+		79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */; };
+		79DF3AA914C329930086CF85 /* swypGKPeerAbstractedStreamSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF3AA714C329930086CF85 /* swypGKPeerAbstractedStreamSet.h */; };
+		79DF3AAA14C329930086CF85 /* swypGKPeerAbstractedStreamSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 79DF3AA814C329930086CF85 /* swypGKPeerAbstractedStreamSet.m */; };
+		79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF3AAB14C32C000086CF85 /* swypOutputToDataStream.h */; };
+		79DF3AAE14C32C000086CF85 /* swypOutputToDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 79DF3AAC14C32C000086CF85 /* swypOutputToDataStream.m */; };
+		79DF3AB014C34B4B0086CF85 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79DF3AAF14C34B4B0086CF85 /* GameKit.framework */; };
+		79E379F614B508A800C09690 /* swypCloudPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379F414B508A800C09690 /* swypCloudPairManager.h */; };
+		79E379F714B508A800C09690 /* swypCloudPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379F514B508A800C09690 /* swypCloudPairManager.m */; };
+		79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E379FC14B50AC700C09690 /* swypCloudNetService.h */; };
+		79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E379FD14B50AC700C09690 /* swypCloudNetService.m */; };
+		79E37A1814B5FF3A00C09690 /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A0D14B5FF3A00C09690 /* AFHTTPClient.h */; };
+		79E37A1A14B5FF3A00C09690 /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A0F14B5FF3A00C09690 /* AFHTTPRequestOperation.h */; };
+		79E37A1E14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1314B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h */; };
+		79E37A2014B5FF3A00C09690 /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1514B5FF3A00C09690 /* AFNetworking.h */; };
+		79E37A2114B5FF3A00C09690 /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A1614B5FF3A00C09690 /* AFURLConnectionOperation.h */; };
+		79E37A2A14B60C6000C09690 /* swypPairServerInteractionManger.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */; };
+		79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */; };
+		79F1466814C0B9A100107170 /* swypPendingConnectionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */; };
+		79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */; };
+		79F1466D14C1AA4300107170 /* swypBidirectionalMutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466B14C1AA4300107170 /* swypBidirectionalMutableDictionary.h */; };
+		79F1466E14C1AA4300107170 /* swypBidirectionalMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1466C14C1AA4300107170 /* swypBidirectionalMutableDictionary.m */; };
+		79F1467114C1B50C00107170 /* swypBonjourPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1466F14C1B50C00107170 /* swypBonjourPairManager.h */; };
+		79F1467214C1B50C00107170 /* swypBonjourPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467014C1B50C00107170 /* swypBonjourPairManager.m */; };
+		79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467514C1CA6C00107170 /* swypInterfaceManager.h */; };
+		79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F1467714C244E300107170 /* swypBluetoothPairManager.h */; };
+		79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 79F1467814C244E300107170 /* swypBluetoothPairManager.m */; };
+		79FD02DD14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */; };
+		AA747D9F0F9514B9006C5449 /* libSwyp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */; };
+		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3EA111AA14CA04D40073A717 /* swypThumbView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypThumbView.h; sourceTree = "<group>"; };
+		3EA111AB14CA04D40073A717 /* swypThumbView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypThumbView.m; sourceTree = "<group>"; };
+		3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPieProgressView.h; sourceTree = "<group>"; };
+		3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSPieProgressView.m; sourceTree = "<group>"; };
+		3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSDrawingUtilities.h; sourceTree = "<group>"; };
+		3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSDrawingUtilities.m; sourceTree = "<group>"; };
+		3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPromptImageView.h; sourceTree = "<group>"; };
+		3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPromptImageView.m; sourceTree = "<group>"; };
+		680FC03613E0C3CD00509CF2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		680FC03813E0C3D600509CF2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		680FC05013E0C63700509CF2 /* swypInfoRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInfoRef.h; sourceTree = "<group>"; };
+		680FC05113E0C63700509CF2 /* swypInfoRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypInfoRef.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceViewController.h; sourceTree = "<group>"; };
+		680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypWorkspaceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypClientCandidate.h; sourceTree = "<group>"; };
+		680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypClientCandidate.m; sourceTree = "<group>"; };
+		680FC08213E0D00700509CF2 /* swypServerCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypServerCandidate.h; sourceTree = "<group>"; };
+		680FC08313E0D00700509CF2 /* swypServerCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypServerCandidate.m; sourceTree = "<group>"; };
+		680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypFileTypeString.h; sourceTree = "<group>"; };
+		680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypFileTypeString.m; sourceTree = "<group>"; };
+		680FC1F613E2407E00509CF2 /* swyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swyp.h; sourceTree = "<group>"; };
+		680FC4EF13E2473E00509CF2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		680FC5B613E251DA00509CF2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		680FC62813E3109500509CF2 /* swypSessionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypSessionViewController.h; sourceTree = "<group>"; };
+		680FC62913E3109500509CF2 /* swypSessionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypSessionViewController.m; sourceTree = "<group>"; };
+		680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+BSJSONAdditions.h"; sourceTree = "<group>"; };
+		680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+BSJSONAdditions.m"; sourceTree = "<group>"; };
+		680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+BSJSONAdditions.h"; sourceTree = "<group>"; };
+		680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+BSJSONAdditions.m"; sourceTree = "<group>"; };
+		680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBlockOperationAlertView.h; sourceTree = "<group>"; };
+		680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBlockOperationAlertView.m; sourceTree = "<group>"; };
+		680FCB0413E757B500509CF2 /* libSwyp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libSwyp.h; sourceTree = "<group>"; };
+		680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceBackgroundView.h; sourceTree = "<group>"; };
+		680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceBackgroundView.m; sourceTree = "<group>"; };
+		680FD34613E9CC9F00509CF2 /* exoLogOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exoLogOverlay.h; sourceTree = "<group>"; };
+		680FD34713E9CC9F00509CF2 /* exoLogOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exoLogOverlay.m; sourceTree = "<group>"; };
+		686A5A7213EC766C00EDD24B /* NSDataAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataAdditions.h; sourceTree = "<group>"; };
+		686A5A7313EC766C00EDD24B /* NSDataAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataAdditions.m; sourceTree = "<group>"; };
+		686A5A7613EC767200EDD24B /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
+		686A5A7713EC767200EDD24B /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
+		68B18DF713E0B23200D094A9 /* swypConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionManager.h; sourceTree = "<group>"; };
+		68B18DF813E0B23200D094A9 /* swypConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConnectionManager.m; sourceTree = "<group>"; };
+		68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceAdvertiser.h; sourceTree = "<group>"; };
+		68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourServiceAdvertiser.m; sourceTree = "<group>"; };
+		68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourServiceListener.h; sourceTree = "<group>"; };
+		68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourServiceListener.m; sourceTree = "<group>"; };
+		68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypOutGestureRecognizer.h; sourceTree = "<group>"; };
+		68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypOutGestureRecognizer.m; sourceTree = "<group>"; };
+		68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypHandshakeManager.h; sourceTree = "<group>"; };
+		68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypHandshakeManager.m; sourceTree = "<group>"; };
+		68B18E1E13E0B3A900D094A9 /* swypCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCandidate.h; sourceTree = "<group>"; };
+		68B18E1F13E0B3A900D094A9 /* swypCandidate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCandidate.m; sourceTree = "<group>"; };
+		68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConnectionSession.h; sourceTree = "<group>"; };
+		68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypConnectionSession.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypContentInteractionManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = swypContentInteractionManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypConcatenatedInputStream.h; sourceTree = "<group>"; };
+		68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypConcatenatedInputStream.m; sourceTree = "<group>"; };
+		68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTransformInputStream.h; sourceTree = "<group>"; };
+		68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTransformInputStream.m; sourceTree = "<group>"; };
+		68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTransformPathwayInputStream.h; sourceTree = "<group>"; };
+		68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTransformPathwayInputStream.m; sourceTree = "<group>"; };
+		68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputToOutputStreamConnector.h; sourceTree = "<group>"; };
+		68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToOutputStreamConnector.m; sourceTree = "<group>"; };
+		68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypEncryptingTransform.h; sourceTree = "<group>"; };
+		68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypEncryptingTransform.m; sourceTree = "<group>"; };
+		68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypUnencryptingTransform.h; sourceTree = "<group>"; };
+		68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypUnencryptingTransform.m; sourceTree = "<group>"; };
+		790A397A13FC5F8E0053A47D /* UIColorAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorAdditions.h; sourceTree = "<group>"; };
+		790A397B13FC5F8E0053A47D /* UIColorAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIColorAdditions.m; sourceTree = "<group>"; };
+		790A39E713FC6D580053A47D /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		790A39E813FC6D590053A47D /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInputToDataBridge.h; sourceTree = "<group>"; };
+		792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputToDataBridge.m; sourceTree = "<group>"; };
+		792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoArrayDatasource.h; sourceTree = "<group>"; };
+		792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPhotoArrayDatasource.m; sourceTree = "<group>"; };
+		7932E65814DDE34200E1A017 /* swypWorkspaceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypWorkspaceView.h; sourceTree = "<group>"; };
+		7932E65914DDE34200E1A017 /* swypWorkspaceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypWorkspaceView.m; sourceTree = "<group>"; };
+		794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDataSourceProtocol.h; sourceTree = "<group>"; };
+		794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewAdditions+swypAdditions.h"; sourceTree = "<group>"; };
+		794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewAdditions+swypAdditions.m"; sourceTree = "<group>"; };
+		79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypNetworkAccessMonitor.h; sourceTree = "<group>"; };
+		79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypNetworkAccessMonitor.m; sourceTree = "<group>"; };
+		79635A7614904DE90098C265 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		796B8E1C14BF7AA8004FEBE3 /* swypPendingConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPendingConnectionManager.h; sourceTree = "<group>"; };
+		796B8E1D14BF7AA8004FEBE3 /* swypPendingConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPendingConnectionManager.m; sourceTree = "<group>"; };
+		79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = swypInputStreamDiscerner.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypInputStreamDiscerner.m; sourceTree = "<group>"; };
+		7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypDiscernedInputStream.h; sourceTree = "<group>"; };
+		7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypDiscernedInputStream.m; sourceTree = "<group>"; };
+		798A839414D891D300504333 /* swypSwypableContentSuperview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypSwypableContentSuperview.h; sourceTree = "<group>"; };
+		798A839514D891D300504333 /* swypSwypableContentSuperview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypSwypableContentSuperview.m; sourceTree = "<group>"; };
+		79C080721481A9B700306F67 /* swypTiledContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypTiledContentViewController.h; sourceTree = "<group>"; };
+		79C080731481A9B700306F67 /* swypTiledContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypTiledContentViewController.m; sourceTree = "<group>"; };
+		79C080771481B00C00306F67 /* swypPhotoPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPhotoPlayground.h; sourceTree = "<group>"; };
+		79C080781481B00C00306F67 /* swypPhotoPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPhotoPlayground.m; sourceTree = "<group>"; };
+		79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBackedPhotoDataSource.h; sourceTree = "<group>"; };
+		79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBackedPhotoDataSource.m; sourceTree = "<group>"; };
+		79DF3AA714C329930086CF85 /* swypGKPeerAbstractedStreamSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypGKPeerAbstractedStreamSet.h; sourceTree = "<group>"; };
+		79DF3AA814C329930086CF85 /* swypGKPeerAbstractedStreamSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypGKPeerAbstractedStreamSet.m; sourceTree = "<group>"; };
+		79DF3AAB14C32C000086CF85 /* swypOutputToDataStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypOutputToDataStream.h; sourceTree = "<group>"; };
+		79DF3AAC14C32C000086CF85 /* swypOutputToDataStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypOutputToDataStream.m; sourceTree = "<group>"; };
+		79DF3AAF14C34B4B0086CF85 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		79E379F414B508A800C09690 /* swypCloudPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudPairManager.h; sourceTree = "<group>"; };
+		79E379F514B508A800C09690 /* swypCloudPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudPairManager.m; sourceTree = "<group>"; };
+		79E379FC14B50AC700C09690 /* swypCloudNetService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypCloudNetService.h; sourceTree = "<group>"; };
+		79E379FD14B50AC700C09690 /* swypCloudNetService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypCloudNetService.m; sourceTree = "<group>"; };
+		79E37A0D14B5FF3A00C09690 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
+		79E37A0E14B5FF3A00C09690 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
+		79E37A0F14B5FF3A00C09690 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
+		79E37A1014B5FF3A00C09690 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
+		79E37A1314B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
+		79E37A1414B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkActivityIndicatorManager.m; sourceTree = "<group>"; };
+		79E37A1514B5FF3A00C09690 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
+		79E37A1614B5FF3A00C09690 /* AFURLConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLConnectionOperation.h; sourceTree = "<group>"; };
+		79E37A1714B5FF3A00C09690 /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
+		79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPairServerInteractionManger.h; sourceTree = "<group>"; };
+		79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPairServerInteractionManger.m; sourceTree = "<group>"; };
+		79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypPendingConnectionQueue.h; sourceTree = "<group>"; };
+		79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypPendingConnectionQueue.m; sourceTree = "<group>"; };
+		79F1466B14C1AA4300107170 /* swypBidirectionalMutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBidirectionalMutableDictionary.h; sourceTree = "<group>"; };
+		79F1466C14C1AA4300107170 /* swypBidirectionalMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBidirectionalMutableDictionary.m; sourceTree = "<group>"; };
+		79F1466F14C1B50C00107170 /* swypBonjourPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBonjourPairManager.h; sourceTree = "<group>"; };
+		79F1467014C1B50C00107170 /* swypBonjourPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBonjourPairManager.m; sourceTree = "<group>"; };
+		79F1467514C1CA6C00107170 /* swypInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypInterfaceManager.h; sourceTree = "<group>"; };
+		79F1467714C244E300107170 /* swypBluetoothPairManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypBluetoothPairManager.h; sourceTree = "<group>"; };
+		79F1467814C244E300107170 /* swypBluetoothPairManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = swypBluetoothPairManager.m; sourceTree = "<group>"; };
+		79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swypContentDisplayViewControllerProtocol.h; sourceTree = "<group>"; };
+		AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libSwyp_Prefix.pch; path = Users/alist/Documents/highFyve/dev/swypPhotos/lib/swyp/libSwyp/libSwyp_Prefix.pch; sourceTree = SDKROOT; };
+		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D2AAC07E0554694100DB518D /* liblibSwyp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibSwyp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC07C0554694100DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79DF3AB014C34B4B0086CF85 /* GameKit.framework in Frameworks */,
+				79635A7714904DE90098C265 /* SystemConfiguration.framework in Frameworks */,
+				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
+				680FC03713E0C3CD00509CF2 /* CFNetwork.framework in Frameworks */,
+				680FC03913E0C3D600509CF2 /* Security.framework in Frameworks */,
+				680FC4F013E2473E00509CF2 /* UIKit.framework in Frameworks */,
+				680FC5B713E251DA00509CF2 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC07E0554694100DB518D /* liblibSwyp.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* swyp */ = {
+			isa = PBXGroup;
+			children = (
+				680FCB0413E757B500509CF2 /* libSwyp.h */,
+				680FC1F513E2405C00509CF2 /* Other Logic */,
+				68B18DED13E0B14500D094A9 /* Communications */,
+				68B18DF613E0B20000D094A9 /* Content */,
+				68B18DEC13E0B11300D094A9 /* View Components */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = swyp;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				79DF3AAF14C34B4B0086CF85 /* GameKit.framework */,
+				79635A7614904DE90098C265 /* SystemConfiguration.framework */,
+				680FC5B613E251DA00509CF2 /* CoreFoundation.framework */,
+				680FC4EF13E2473E00509CF2 /* UIKit.framework */,
+				680FC03613E0C3CD00509CF2 /* CFNetwork.framework */,
+				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
+				680FC03813E0C3D600509CF2 /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				79E3236A1454B6EC0028CD42 /* External Libraries */,
+				AA747D9E0F9514B9006C5449 /* libSwyp_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		680FC08613E0D03C00509CF2 /* Candidates */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E1E13E0B3A900D094A9 /* swypCandidate.h */,
+				68B18E1F13E0B3A900D094A9 /* swypCandidate.m */,
+				680FC07E13E0CFF900509CF2 /* swypClientCandidate.h */,
+				680FC07F13E0CFF900509CF2 /* swypClientCandidate.m */,
+				680FC08213E0D00700509CF2 /* swypServerCandidate.h */,
+				680FC08313E0D00700509CF2 /* swypServerCandidate.m */,
+			);
+			name = Candidates;
+			sourceTree = "<group>";
+		};
+		680FC1F513E2405C00509CF2 /* Other Logic */ = {
+			isa = PBXGroup;
+			children = (
+				680FC1F613E2407E00509CF2 /* swyp.h */,
+				680FC8EE13E4D5FB00509CF2 /* core/uikit subclasses */,
+				680FC64D13E3460E00509CF2 /* Additions */,
+				680FD34513E9CC8C00509CF2 /* Debug Tools */,
+			);
+			name = "Other Logic";
+			sourceTree = "<group>";
+		};
+		680FC61413E30F2300509CF2 /* Content Display */ = {
+			isa = PBXGroup;
+			children = (
+				799F83E514CB260700F642F3 /* helpers */,
+				79FD02DC14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h */,
+				79C080771481B00C00306F67 /* swypPhotoPlayground.h */,
+				79C080781481B00C00306F67 /* swypPhotoPlayground.m */,
+				79C080721481A9B700306F67 /* swypTiledContentViewController.h */,
+				79C080731481A9B700306F67 /* swypTiledContentViewController.m */,
+				3EA111AA14CA04D40073A717 /* swypThumbView.h */,
+				3EA111AB14CA04D40073A717 /* swypThumbView.m */,
+			);
+			name = "Content Display";
+			sourceTree = "<group>";
+		};
+		680FC61513E30F2B00509CF2 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				680FC62813E3109500509CF2 /* swypSessionViewController.h */,
+				680FC62913E3109500509CF2 /* swypSessionViewController.m */,
+			);
+			name = Sessions;
+			sourceTree = "<group>";
+		};
+		680FC64D13E3460E00509CF2 /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				790A39E713FC6D580053A47D /* NSData+Base64.h */,
+				790A39E813FC6D590053A47D /* NSData+Base64.m */,
+				680FC6C113E3466400509CF2 /* NSDictionary+BSJSONAdditions.h */,
+				680FC6C213E3466400509CF2 /* NSDictionary+BSJSONAdditions.m */,
+				680FC6C313E3466400509CF2 /* NSScanner+BSJSONAdditions.h */,
+				680FC6C413E3466400509CF2 /* NSScanner+BSJSONAdditions.m */,
+				686A5A7213EC766C00EDD24B /* NSDataAdditions.h */,
+				686A5A7313EC766C00EDD24B /* NSDataAdditions.m */,
+				686A5A7613EC767200EDD24B /* NSStringAdditions.h */,
+				686A5A7713EC767200EDD24B /* NSStringAdditions.m */,
+				790A397A13FC5F8E0053A47D /* UIColorAdditions.h */,
+				790A397B13FC5F8E0053A47D /* UIColorAdditions.m */,
+				794181C014153AD9000E0113 /* UIViewAdditions+swypAdditions.h */,
+				794181C114153AD9000E0113 /* UIViewAdditions+swypAdditions.m */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
+		680FC8EE13E4D5FB00509CF2 /* core/uikit subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				680FC90413E4D62B00509CF2 /* swypBlockOperationAlertView.h */,
+				680FC90513E4D62B00509CF2 /* swypBlockOperationAlertView.m */,
+				79F1466B14C1AA4300107170 /* swypBidirectionalMutableDictionary.h */,
+				79F1466C14C1AA4300107170 /* swypBidirectionalMutableDictionary.m */,
+			);
+			name = "core/uikit subclasses";
+			sourceTree = "<group>";
+		};
+		680FD34513E9CC8C00509CF2 /* Debug Tools */ = {
+			isa = PBXGroup;
+			children = (
+				680FD34613E9CC9F00509CF2 /* exoLogOverlay.h */,
+				680FD34713E9CC9F00509CF2 /* exoLogOverlay.m */,
+			);
+			name = "Debug Tools";
+			sourceTree = "<group>";
+		};
+		68B18DE913E0B08F00D094A9 /* Streams */ = {
+			isa = PBXGroup;
+			children = (
+				7977201F13F1730800CF4F60 /* Handling Outside Data */,
+				68B18E3213E0B45600D094A9 /* swypConcatenatedInputStream.h */,
+				68B18E3313E0B45600D094A9 /* swypConcatenatedInputStream.m */,
+				68B18E3613E0B47500D094A9 /* swypTransformInputStream.h */,
+				68B18E3713E0B47500D094A9 /* swypTransformInputStream.m */,
+				68B18E3A13E0B49A00D094A9 /* swypTransformPathwayInputStream.h */,
+				68B18E3B13E0B49A00D094A9 /* swypTransformPathwayInputStream.m */,
+				68B18E3E13E0B4B800D094A9 /* swypInputToOutputStreamConnector.h */,
+				68B18E3F13E0B4B800D094A9 /* swypInputToOutputStreamConnector.m */,
+				79DF3AAB14C32C000086CF85 /* swypOutputToDataStream.h */,
+				79DF3AAC14C32C000086CF85 /* swypOutputToDataStream.m */,
+				68B18DEB13E0B0A800D094A9 /* Transforms */,
+			);
+			name = Streams;
+			sourceTree = "<group>";
+		};
+		68B18DEB13E0B0A800D094A9 /* Transforms */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E5113E0B52000D094A9 /* swypEncryptingTransform.h */,
+				68B18E5213E0B52000D094A9 /* swypEncryptingTransform.m */,
+				68B18E5513E0B53C00D094A9 /* swypUnencryptingTransform.h */,
+				68B18E5613E0B53C00D094A9 /* swypUnencryptingTransform.m */,
+			);
+			name = Transforms;
+			sourceTree = "<group>";
+		};
+		68B18DEC13E0B11300D094A9 /* View Components */ = {
+			isa = PBXGroup;
+			children = (
+				680FC05413E0CA8D00509CF2 /* swypWorkspaceViewController.h */,
+				680FC05513E0CA8D00509CF2 /* swypWorkspaceViewController.m */,
+				798A839214D8917F00504333 /* Inside-app usable  */,
+				79FD02DA14C9EA2B00BD4382 /* workspace components */,
+				680FC61413E30F2300509CF2 /* Content Display */,
+				680FC61513E30F2B00509CF2 /* Sessions */,
+				68B18E0313E0B2D600D094A9 /* gestures */,
+			);
+			name = "View Components";
+			sourceTree = "<group>";
+		};
+		68B18DED13E0B14500D094A9 /* Communications */ = {
+			isa = PBXGroup;
+			children = (
+				68B18DF713E0B23200D094A9 /* swypConnectionManager.h */,
+				68B18DF813E0B23200D094A9 /* swypConnectionManager.m */,
+				79635A7014904D8A0098C265 /* Networking */,
+				68B18DE913E0B08F00D094A9 /* Streams */,
+				79F1467314C1CA2600107170 /* Interface Methods */,
+				68B18DF513E0B1B000D094A9 /* Handshake */,
+				680FC08613E0D03C00509CF2 /* Candidates */,
+				68B18DEE13E0B16200D094A9 /* Active Connections */,
+			);
+			name = Communications;
+			sourceTree = "<group>";
+		};
+		68B18DEE13E0B16200D094A9 /* Active Connections */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E2213E0B3B700D094A9 /* swypConnectionSession.h */,
+				68B18E2313E0B3B700D094A9 /* swypConnectionSession.m */,
+			);
+			name = "Active Connections";
+			sourceTree = "<group>";
+		};
+		68B18DEF13E0B16900D094A9 /* Bonjour */ = {
+			isa = PBXGroup;
+			children = (
+				68B18DFB13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h */,
+				68B18DFC13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m */,
+				68B18DFF13E0B2B800D094A9 /* swypBonjourServiceListener.h */,
+				68B18E0013E0B2B800D094A9 /* swypBonjourServiceListener.m */,
+				79F1466F14C1B50C00107170 /* swypBonjourPairManager.h */,
+				79F1467014C1B50C00107170 /* swypBonjourPairManager.m */,
+			);
+			name = Bonjour;
+			sourceTree = "<group>";
+		};
+		68B18DF513E0B1B000D094A9 /* Handshake */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E1A13E0B38600D094A9 /* swypHandshakeManager.h */,
+				68B18E1B13E0B38600D094A9 /* swypHandshakeManager.m */,
+				796B8E1C14BF7AA8004FEBE3 /* swypPendingConnectionManager.h */,
+				796B8E1D14BF7AA8004FEBE3 /* swypPendingConnectionManager.m */,
+				79F1466614C0B9A100107170 /* swypPendingConnectionQueue.h */,
+				79F1466714C0B9A100107170 /* swypPendingConnectionQueue.m */,
+			);
+			name = Handshake;
+			sourceTree = "<group>";
+		};
+		68B18DF613E0B20000D094A9 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				794181BB14153819000E0113 /* DataSources */,
+				68B18E2E13E0B42300D094A9 /* swypContentInteractionManager.h */,
+				68B18E2F13E0B42300D094A9 /* swypContentInteractionManager.m */,
+				680FC0BA13E0D62100509CF2 /* swypFileTypeString.h */,
+				680FC0BB13E0D62100509CF2 /* swypFileTypeString.m */,
+			);
+			name = Content;
+			sourceTree = "<group>";
+		};
+		68B18E0313E0B2D600D094A9 /* gestures */ = {
+			isa = PBXGroup;
+			children = (
+				68B18E0813E0B2FB00D094A9 /* swypGestureRecognizer.h */,
+				68B18E0913E0B2FB00D094A9 /* swypGestureRecognizer.m */,
+				68B18E0C13E0B31B00D094A9 /* swypInGestureRecognizer.h */,
+				68B18E0D13E0B31B00D094A9 /* swypInGestureRecognizer.m */,
+				68B18E1013E0B33A00D094A9 /* swypOutGestureRecognizer.h */,
+				68B18E1113E0B33A00D094A9 /* swypOutGestureRecognizer.m */,
+				680FC05013E0C63700509CF2 /* swypInfoRef.h */,
+				680FC05113E0C63700509CF2 /* swypInfoRef.m */,
+			);
+			name = gestures;
+			sourceTree = "<group>";
+		};
+		794181BB14153819000E0113 /* DataSources */ = {
+			isa = PBXGroup;
+			children = (
+				794181B9141523AD000E0113 /* swypContentDataSourceProtocol.h */,
+				79C50A64148B1720000FDCA1 /* swypBackedPhotoDataSource.h */,
+				79C50A65148B1720000FDCA1 /* swypBackedPhotoDataSource.m */,
+				792D5C2F1416B98D0050DF57 /* swypPhotoArrayDatasource.h */,
+				792D5C301416B98D0050DF57 /* swypPhotoArrayDatasource.m */,
+			);
+			name = DataSources;
+			sourceTree = "<group>";
+		};
+		79635A7014904D8A0098C265 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				79E37A0C14B5FF0900C09690 /* HTTP Request lib */,
+				79635A7214904DAF0098C265 /* swypNetworkAccessMonitor.h */,
+				79635A7314904DAF0098C265 /* swypNetworkAccessMonitor.m */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		7977201F13F1730800CF4F60 /* Handling Outside Data */ = {
+			isa = PBXGroup;
+			children = (
+				79771E6113F0ABF400CF4F60 /* swypInputStreamDiscerner.h */,
+				79771E6213F0ABF400CF4F60 /* swypInputStreamDiscerner.m */,
+				7977202013F1732B00CF4F60 /* swypDiscernedInputStream.h */,
+				7977202113F1732B00CF4F60 /* swypDiscernedInputStream.m */,
+				792CE24113F2C46E0049B6F9 /* swypInputToDataBridge.h */,
+				792CE24213F2C46E0049B6F9 /* swypInputToDataBridge.m */,
+			);
+			name = "Handling Outside Data";
+			sourceTree = "<group>";
+		};
+		798A839214D8917F00504333 /* Inside-app usable  */ = {
+			isa = PBXGroup;
+			children = (
+				798A839414D891D300504333 /* swypSwypableContentSuperview.h */,
+				798A839514D891D300504333 /* swypSwypableContentSuperview.m */,
+			);
+			name = "Inside-app usable ";
+			sourceTree = "<group>";
+		};
+		799F83E514CB260700F642F3 /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3EA111B314CA1FEF0073A717 /* SSDrawingUtilities.h */,
+				3EA111B414CA1FF00073A717 /* SSDrawingUtilities.m */,
+				3EA111AF14CA1F6F0073A717 /* SSPieProgressView.h */,
+				3EA111B014CA1F6F0073A717 /* SSPieProgressView.m */,
+			);
+			name = helpers;
+			sourceTree = "<group>";
+		};
+		79E3236A1454B6EC0028CD42 /* External Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "External Libraries";
+			sourceTree = "<group>";
+		};
+		79E379F314B3732F00C09690 /* Cloud */ = {
+			isa = PBXGroup;
+			children = (
+				79E379F414B508A800C09690 /* swypCloudPairManager.h */,
+				79E379F514B508A800C09690 /* swypCloudPairManager.m */,
+				79E379FC14B50AC700C09690 /* swypCloudNetService.h */,
+				79E379FD14B50AC700C09690 /* swypCloudNetService.m */,
+				79E37A2814B60C6000C09690 /* swypPairServerInteractionManger.h */,
+				79E37A2914B60C6000C09690 /* swypPairServerInteractionManger.m */,
+			);
+			name = Cloud;
+			sourceTree = "<group>";
+		};
+		79E37A0C14B5FF0900C09690 /* HTTP Request lib */ = {
+			isa = PBXGroup;
+			children = (
+				79E37A0D14B5FF3A00C09690 /* AFHTTPClient.h */,
+				79E37A0E14B5FF3A00C09690 /* AFHTTPClient.m */,
+				79E37A0F14B5FF3A00C09690 /* AFHTTPRequestOperation.h */,
+				79E37A1014B5FF3A00C09690 /* AFHTTPRequestOperation.m */,
+				79E37A1314B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h */,
+				79E37A1414B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.m */,
+				79E37A1514B5FF3A00C09690 /* AFNetworking.h */,
+				79E37A1614B5FF3A00C09690 /* AFURLConnectionOperation.h */,
+				79E37A1714B5FF3A00C09690 /* AFURLConnectionOperation.m */,
+			);
+			name = "HTTP Request lib";
+			sourceTree = "<group>";
+		};
+		79F1467314C1CA2600107170 /* Interface Methods */ = {
+			isa = PBXGroup;
+			children = (
+				79F1467514C1CA6C00107170 /* swypInterfaceManager.h */,
+				79F1467414C1CA4100107170 /* Bluetooth */,
+				79E379F314B3732F00C09690 /* Cloud */,
+				68B18DEF13E0B16900D094A9 /* Bonjour */,
+			);
+			name = "Interface Methods";
+			sourceTree = "<group>";
+		};
+		79F1467414C1CA4100107170 /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				79F1467714C244E300107170 /* swypBluetoothPairManager.h */,
+				79F1467814C244E300107170 /* swypBluetoothPairManager.m */,
+				79DF3AA714C329930086CF85 /* swypGKPeerAbstractedStreamSet.h */,
+				79DF3AA814C329930086CF85 /* swypGKPeerAbstractedStreamSet.m */,
+			);
+			name = Bluetooth;
+			sourceTree = "<group>";
+		};
+		79FD02DA14C9EA2B00BD4382 /* workspace components */ = {
+			isa = PBXGroup;
+			children = (
+				7932E65814DDE34200E1A017 /* swypWorkspaceView.h */,
+				7932E65914DDE34200E1A017 /* swypWorkspaceView.m */,
+				3EE1417A14C77D6800E7EDE1 /* swypPromptImageView.h */,
+				3EE1417B14C77D6900E7EDE1 /* swypPromptImageView.m */,
+				680FD27B13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h */,
+				680FD27C13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m */,
+			);
+			name = "workspace components";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC07A0554694100DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA747D9F0F9514B9006C5449 /* libSwyp_Prefix.pch in Headers */,
+				68B18DF913E0B23200D094A9 /* swypConnectionManager.h in Headers */,
+				68B18DFD13E0B29200D094A9 /* swypBonjourServiceAdvertiser.h in Headers */,
+				68B18E0113E0B2B800D094A9 /* swypBonjourServiceListener.h in Headers */,
+				68B18E0A13E0B2FB00D094A9 /* swypGestureRecognizer.h in Headers */,
+				68B18E0E13E0B31B00D094A9 /* swypInGestureRecognizer.h in Headers */,
+				68B18E1213E0B33A00D094A9 /* swypOutGestureRecognizer.h in Headers */,
+				68B18E1C13E0B38600D094A9 /* swypHandshakeManager.h in Headers */,
+				68B18E2013E0B3A900D094A9 /* swypCandidate.h in Headers */,
+				68B18E2413E0B3B700D094A9 /* swypConnectionSession.h in Headers */,
+				68B18E3013E0B42300D094A9 /* swypContentInteractionManager.h in Headers */,
+				68B18E3413E0B45600D094A9 /* swypConcatenatedInputStream.h in Headers */,
+				68B18E3813E0B47500D094A9 /* swypTransformInputStream.h in Headers */,
+				68B18E3C13E0B49A00D094A9 /* swypTransformPathwayInputStream.h in Headers */,
+				68B18E4013E0B4B800D094A9 /* swypInputToOutputStreamConnector.h in Headers */,
+				68B18E5313E0B52000D094A9 /* swypEncryptingTransform.h in Headers */,
+				68B18E5713E0B53C00D094A9 /* swypUnencryptingTransform.h in Headers */,
+				680FC05213E0C63700509CF2 /* swypInfoRef.h in Headers */,
+				680FC05613E0CA8D00509CF2 /* swypWorkspaceViewController.h in Headers */,
+				680FC08013E0CFF900509CF2 /* swypClientCandidate.h in Headers */,
+				680FC08413E0D00700509CF2 /* swypServerCandidate.h in Headers */,
+				680FC0BC13E0D62100509CF2 /* swypFileTypeString.h in Headers */,
+				680FC1F713E2407E00509CF2 /* swyp.h in Headers */,
+				680FC62A13E3109500509CF2 /* swypSessionViewController.h in Headers */,
+				680FC6C513E3466400509CF2 /* NSDictionary+BSJSONAdditions.h in Headers */,
+				680FC6C713E3466400509CF2 /* NSScanner+BSJSONAdditions.h in Headers */,
+				680FC90613E4D62B00509CF2 /* swypBlockOperationAlertView.h in Headers */,
+				680FCB0513E757B500509CF2 /* libSwyp.h in Headers */,
+				680FD27D13E8A78B00509CF2 /* swypWorkspaceBackgroundView.h in Headers */,
+				680FD34813E9CC9F00509CF2 /* exoLogOverlay.h in Headers */,
+				686A5A7413EC766C00EDD24B /* NSDataAdditions.h in Headers */,
+				686A5A7813EC767200EDD24B /* NSStringAdditions.h in Headers */,
+				79771E6313F0ABF400CF4F60 /* swypInputStreamDiscerner.h in Headers */,
+				7977202213F1732B00CF4F60 /* swypDiscernedInputStream.h in Headers */,
+				792CE24313F2C46E0049B6F9 /* swypInputToDataBridge.h in Headers */,
+				790A397C13FC5F8E0053A47D /* UIColorAdditions.h in Headers */,
+				790A39E913FC6D5A0053A47D /* NSData+Base64.h in Headers */,
+				794181BA141523AD000E0113 /* swypContentDataSourceProtocol.h in Headers */,
+				794181C214153AD9000E0113 /* UIViewAdditions+swypAdditions.h in Headers */,
+				792D5C311416B98D0050DF57 /* swypPhotoArrayDatasource.h in Headers */,
+				79C080741481A9B700306F67 /* swypTiledContentViewController.h in Headers */,
+				79C080791481B00C00306F67 /* swypPhotoPlayground.h in Headers */,
+				79C50A66148B1720000FDCA1 /* swypBackedPhotoDataSource.h in Headers */,
+				79635A7414904DAF0098C265 /* swypNetworkAccessMonitor.h in Headers */,
+				79E379F614B508A800C09690 /* swypCloudPairManager.h in Headers */,
+				79E379FE14B50AC700C09690 /* swypCloudNetService.h in Headers */,
+				79E37A1814B5FF3A00C09690 /* AFHTTPClient.h in Headers */,
+				79E37A1A14B5FF3A00C09690 /* AFHTTPRequestOperation.h in Headers */,
+				79E37A1E14B5FF3A00C09690 /* AFNetworkActivityIndicatorManager.h in Headers */,
+				79E37A2014B5FF3A00C09690 /* AFNetworking.h in Headers */,
+				79E37A2114B5FF3A00C09690 /* AFURLConnectionOperation.h in Headers */,
+				79E37A2A14B60C6000C09690 /* swypPairServerInteractionManger.h in Headers */,
+				796B8E1E14BF7AA8004FEBE3 /* swypPendingConnectionManager.h in Headers */,
+				79F1466814C0B9A100107170 /* swypPendingConnectionQueue.h in Headers */,
+				79F1466D14C1AA4300107170 /* swypBidirectionalMutableDictionary.h in Headers */,
+				79F1467114C1B50C00107170 /* swypBonjourPairManager.h in Headers */,
+				79F1467614C1CA6C00107170 /* swypInterfaceManager.h in Headers */,
+				79F1467914C244E300107170 /* swypBluetoothPairManager.h in Headers */,
+				79DF3AA914C329930086CF85 /* swypGKPeerAbstractedStreamSet.h in Headers */,
+				79DF3AAD14C32C000086CF85 /* swypOutputToDataStream.h in Headers */,
+				3EE1417C14C77D6900E7EDE1 /* swypPromptImageView.h in Headers */,
+				79FD02DD14C9EB6C00BD4382 /* swypContentDisplayViewControllerProtocol.h in Headers */,
+				3EA111AC14CA04D40073A717 /* swypThumbView.h in Headers */,
+				3EA111B114CA1F6F0073A717 /* SSPieProgressView.h in Headers */,
+				3EA111B514CA1FF00073A717 /* SSDrawingUtilities.h in Headers */,
+				798A839614D891D300504333 /* swypSwypableContentSuperview.h in Headers */,
+				7932E65A14DDE34200E1A017 /* swypWorkspaceView.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC07D0554694100DB518D /* libSwyp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "libSwyp" */;
+			buildPhases = (
+				D2AAC07A0554694100DB518D /* Headers */,
+				D2AAC07B0554694100DB518D /* Sources */,
+				D2AAC07C0554694100DB518D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libSwyp;
+			productName = swyp;
+			productReference = D2AAC07E0554694100DB518D /* liblibSwyp.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = ExoMachina;
+			};
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "libSwyp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 0867D691FE84028FC02AAC07 /* swyp */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC07D0554694100DB518D /* libSwyp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC07B0554694100DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68B18DFA13E0B23200D094A9 /* swypConnectionManager.m in Sources */,
+				68B18DFE13E0B29200D094A9 /* swypBonjourServiceAdvertiser.m in Sources */,
+				68B18E0213E0B2B800D094A9 /* swypBonjourServiceListener.m in Sources */,
+				68B18E0B13E0B2FB00D094A9 /* swypGestureRecognizer.m in Sources */,
+				68B18E0F13E0B31B00D094A9 /* swypInGestureRecognizer.m in Sources */,
+				68B18E1313E0B33A00D094A9 /* swypOutGestureRecognizer.m in Sources */,
+				68B18E1D13E0B38600D094A9 /* swypHandshakeManager.m in Sources */,
+				68B18E2113E0B3A900D094A9 /* swypCandidate.m in Sources */,
+				68B18E2513E0B3B700D094A9 /* swypConnectionSession.m in Sources */,
+				68B18E3113E0B42300D094A9 /* swypContentInteractionManager.m in Sources */,
+				68B18E3513E0B45600D094A9 /* swypConcatenatedInputStream.m in Sources */,
+				68B18E3913E0B47500D094A9 /* swypTransformInputStream.m in Sources */,
+				68B18E3D13E0B49A00D094A9 /* swypTransformPathwayInputStream.m in Sources */,
+				68B18E4113E0B4B800D094A9 /* swypInputToOutputStreamConnector.m in Sources */,
+				68B18E5413E0B52000D094A9 /* swypEncryptingTransform.m in Sources */,
+				68B18E5813E0B53C00D094A9 /* swypUnencryptingTransform.m in Sources */,
+				680FC05313E0C63700509CF2 /* swypInfoRef.m in Sources */,
+				680FC05713E0CA8D00509CF2 /* swypWorkspaceViewController.m in Sources */,
+				680FC08113E0CFF900509CF2 /* swypClientCandidate.m in Sources */,
+				680FC08513E0D00700509CF2 /* swypServerCandidate.m in Sources */,
+				680FC0BD13E0D62100509CF2 /* swypFileTypeString.m in Sources */,
+				680FC62B13E3109500509CF2 /* swypSessionViewController.m in Sources */,
+				680FC6C613E3466400509CF2 /* NSDictionary+BSJSONAdditions.m in Sources */,
+				680FC6C813E3466400509CF2 /* NSScanner+BSJSONAdditions.m in Sources */,
+				680FC90713E4D62B00509CF2 /* swypBlockOperationAlertView.m in Sources */,
+				680FD27E13E8A78B00509CF2 /* swypWorkspaceBackgroundView.m in Sources */,
+				680FD34913E9CC9F00509CF2 /* exoLogOverlay.m in Sources */,
+				686A5A7513EC766C00EDD24B /* NSDataAdditions.m in Sources */,
+				686A5A7913EC767200EDD24B /* NSStringAdditions.m in Sources */,
+				79771E6413F0ABF400CF4F60 /* swypInputStreamDiscerner.m in Sources */,
+				7977202313F1732B00CF4F60 /* swypDiscernedInputStream.m in Sources */,
+				792CE24413F2C46E0049B6F9 /* swypInputToDataBridge.m in Sources */,
+				790A397D13FC5F8E0053A47D /* UIColorAdditions.m in Sources */,
+				790A39EA13FC6D5A0053A47D /* NSData+Base64.m in Sources */,
+				794181C314153AD9000E0113 /* UIViewAdditions+swypAdditions.m in Sources */,
+				792D5C321416B98D0050DF57 /* swypPhotoArrayDatasource.m in Sources */,
+				79C080751481A9B700306F67 /* swypTiledContentViewController.m in Sources */,
+				79C0807A1481B00C00306F67 /* swypPhotoPlayground.m in Sources */,
+				79C50A67148B1720000FDCA1 /* swypBackedPhotoDataSource.m in Sources */,
+				79635A7514904DAF0098C265 /* swypNetworkAccessMonitor.m in Sources */,
+				79E379F714B508A800C09690 /* swypCloudPairManager.m in Sources */,
+				79E379FF14B50AC700C09690 /* swypCloudNetService.m in Sources */,
+				79E37A2B14B60C6000C09690 /* swypPairServerInteractionManger.m in Sources */,
+				796B8E1F14BF7AA8004FEBE3 /* swypPendingConnectionManager.m in Sources */,
+				79F1466914C0B9A100107170 /* swypPendingConnectionQueue.m in Sources */,
+				79F1466E14C1AA4300107170 /* swypBidirectionalMutableDictionary.m in Sources */,
+				79F1467214C1B50C00107170 /* swypBonjourPairManager.m in Sources */,
+				79F1467A14C244E300107170 /* swypBluetoothPairManager.m in Sources */,
+				79DF3AAA14C329930086CF85 /* swypGKPeerAbstractedStreamSet.m in Sources */,
+				79DF3AAE14C32C000086CF85 /* swypOutputToDataStream.m in Sources */,
+				3EE1417D14C77D6900E7EDE1 /* swypPromptImageView.m in Sources */,
+				3EA111AD14CA04D40073A717 /* swypThumbView.m in Sources */,
+				3EA111B214CA1F6F0073A717 /* SSPieProgressView.m in Sources */,
+				3EA111B614CA1FF00073A717 /* SSDrawingUtilities.m in Sources */,
+				798A839714D891D300504333 /* swypSwypableContentSuperview.m in Sources */,
+				7932E65B14DDE34200E1A017 /* swypWorkspaceView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB921F08733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/swyp.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = libSwyp_Prefix.pch;
+				GCC_THUMB_SUPPORT = NO;
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_NAME = libSwyp;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1DEB922008733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DSTROOT = /tmp/swyp.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = libSwyp_Prefix.pch;
+				GCC_THUMB_SUPPORT = NO;
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_NAME = libSwyp;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1DEB922308733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		1DEB922408733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "libSwyp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB921F08733DC00010E9CD /* Debug */,
+				1DEB922008733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "libSwyp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB922308733DC00010E9CD /* Debug */,
+				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

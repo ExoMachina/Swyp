@@ -12,14 +12,19 @@
 
 @class swypInputStreamDiscerner;
 @protocol swypInputStreamDiscernerDelegate <NSObject>
-
+///Notifies that discerned stream is ready for consumption
 -(void)	discernedStream:(swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
+///Notifies that discerned stream has concluded
 -(void)	concludedDiscernedStream: (swypDiscernedInputStream*)discernedStream withDiscerner:(swypInputStreamDiscerner*)discerner;
+///Notifies that discerned stream has concluded with an error
 -(void)	inputStreamDiscernerFinishedWithError:(NSError*)error withDiscerner:(swypInputStreamDiscerner*)discerner;
-
 @end
 
 
+/** This class is responsible for orchastrating the breaking of an NSInputStream into its components.
+	
+ It basically the manager of an NSInputStream from a swypConnectionSession connection, and handles management of reading the stream data.
+ */
 @interface swypInputStreamDiscerner : NSObject <NSStreamDelegate, swypDiscernedInputStreamDataSource>{
 	
 	NSInputStream*					_discernmentStream;
@@ -34,9 +39,11 @@
 	id<swypInputStreamDiscernerDelegate>	_delegate;
 
 }
+///The primary input stream
 @property (nonatomic, readonly) NSInputStream *					discernmentStream;
 @property (nonatomic, assign)	id<swypInputStreamDiscernerDelegate>	delegate;
 
+/** The stream to manage during the connection */
 -(id)	initWithInputStream:(NSInputStream*)discernmentStream discernerDelegate:(id<swypInputStreamDiscernerDelegate>)delegate;
 
 //

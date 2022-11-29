@@ -10,13 +10,15 @@
 
 @implementation swypBackedPhotoDataSource
 @synthesize backingDelegate = _backingDelegate;
--(void)	addPhotoData:(NSData*)photoData atIndex:(NSUInteger)	insertIndex fromSession:(swypConnectionSession*)session{
-	[super addPhotoData:photoData atIndex:insertIndex fromSession:session];
-	if (session != nil){
-		[_backingDelegate swypBackedPhotoDataSourceRecievedPhoto:[UIImage imageWithData:photoData] withDataSource:self];
-	}
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
+	
+	[_backingDelegate swypBackedPhotoDataSourceRecievedPhoto:[UIImage imageWithData:streamData] withDataSource:self];
 }
 
+
+-(void)contentWithIDWasDraggedOffWorkspace:(NSString *)contentID{
+    
+}
 
 -(id) initWithBackingDelegate: (id<swypBackedPhotoDataSourceDelegate>)	backingDelegate{
 	if (self = [super init]){

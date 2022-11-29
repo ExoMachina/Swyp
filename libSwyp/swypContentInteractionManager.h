@@ -10,99 +10,111 @@
 #import "swypSessionViewController.h"
 #import "swypConnectionSession.h"
 #import "swypContentDataSourceProtocol.h"
+#import "swypContentDisplayViewControllerProtocol.h"
+#import "swypBidirectionalMutableDictionary.h"
+#import "swypWorkspaceView.h"
 
-
-@class swypContentInteractionManager;
-@protocol swypContentDisplayViewControllerDelegate <NSObject>
--(void)	contentAtIndex: (NSUInteger)index wasDraggedToFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController;
--(void)	contentAtIndex: (NSUInteger)index wasReleasedWithFrame: (CGRect)draggedFrame inController:(UIViewController*)contentDisplayController;
-
-//the returned UIImage will be as close as possible to and no larger than maxIconSize, while in proper-perspective and not distorted
--(UIImage*)		imageForContentAtIndex:	(NSUInteger)index ofMaxSize:(CGSize)maxIconSize inController:(UIViewController*)contentDisplayController;
--(NSInteger)	totalContentCountInController:(UIViewController*)contentDisplayController;
-@end
-
-#pragma mark TODO
-//bring me into seperate .h!
-@protocol swypContentDisplayViewController <NSObject>
--(void)	removeContentFromDisplayAtIndex:	(NSUInteger)removeIndex animated:(BOOL)animate;
--(void)	insertContentToDisplayAtIndex:		(NSUInteger)insertIndex animated:(BOOL)animate fromStartLocation:(CGPoint)startLocation;
-
--(void)	setContentDisplayControllerDelegate: (id<swypContentDisplayViewControllerDelegate>)contentDisplayControllerDelegate;
--(id<swypContentDisplayViewControllerDelegate>)	contentDisplayControllerDelegate;
-
--(void)	reloadAllData;
-
-@optional
-//-1 means all content
--(void)	returnContentAtIndexToNormalLocation:	(NSInteger)index	animated:(BOOL)animate;
-
-//If a swyp out begins on a content piece, the recognizer knows what view it started on, and especially if showContentBeforeConnection is TRUE, 
-//	we can use this to check whether we should commence a "content swyp"
-//We'll consider what to do if we already have dropped this thing on to the connection indicator soon	
--(NSInteger)	contentIndexMatchingSwypOutView:	(UIView*)swypedView;
-@end
-
-@protocol swypContentInteractionManagerDelegate <NSObject>
--(void) setupWorkspacePromptUIForAllConnectionsClosedWithInteractionManager:(swypContentInteractionManager*)interactionManager;
--(void) setupWorkspacePromptUIForConnectionEstablishedWithInterationManager:(swypContentInteractionManager*)interactionManager;
-@end
-
-
-@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
-	NSMutableDictionary *									_sessionViewControllersBySession;
+/** This class is responsible for unifying modal and controller, and displaying them upon the workspace. 
+ 
+	This class also caches UIImageViews for display by swypContentDisplayViewController, with image content from the contentDataSource.
+ */
+@interface swypContentInteractionManager : NSObject <swypConnectionSessionDataDelegate, swypConnectionSessionInfoDelegate, swypDiscernedInputStreamStatusDelegate,	swypContentDisplayViewControllerDelegate, swypContentDataSourceDelegate> {
+	NSMutableDictionary *									_sessionViewControllersBySession; //swypSessionViewControllers
 	
-	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				_contentDataSource;
+	swypBidirectionalMutableDictionary*	_contentViewsByContentID;
+	swypBidirectionalMutableDictionary*	_thumbnailLoadingViewsByContentID;
+		
+	NSObject<swypContentDataSourceProtocol>*					_contentDataSource;
+
+	NSMutableArray *											_dataDelegates;
 	
-	UIViewController<swypContentDisplayViewController>*		_contentDisplayController;
-	
-	UIView*													_mainWorkspaceView;
-	
-	BOOL													_showContentBeforeConnection;
-	
-	id<swypContentInteractionManagerDelegate>				_interactionManagerDelegate;
-}	
-@property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol, swypConnectionSessionDataDelegate>*				contentDataSource;
+	NSMutableDictionary *										_contentDisplayControllerByWorkspaceView;
 
-//if set to TRUE, then content is displayed before swyp connection is made, and if content is swyped, then connection + content transfer is made
-//this value is assigned at init by workspace manager
-@property (nonatomic, readonly)	BOOL														showContentBeforeConnection;
+	swypWorkspaceView*											_mainWorkspaceView;
+		
+}
+@property (nonatomic, readonly) swypBidirectionalMutableDictionary * contentViewsByContentID;
 
-//if not set, the standard will be assigned
-@property(nonatomic, retain)	UIViewController<swypContentDisplayViewController>*			contentDisplayController;
+/** This property is the datasource that the content in contentDisplayController is sourced from per the swypContentDataSourceProtocol protocol. 
+
+ The datasource is retained. There is only one datasource at a time, the previous one is released when setting another. 
+ 
+ @warning there is no default datasource.
+ */
+@property(nonatomic, retain)	NSObject<swypContentDataSourceProtocol>*				contentDataSource;
+
+/**
+	Adds a data delegate for future notification on session data events; does not retain, be sure to release. Simply adds to existing sessions, and stores w/o retention for adding to future sessions.
+	Any delegate added will be queried for supported file types for receipt. 
+
+	This delegate does retain your delegate. You must remove your data delegate when it become invalid, otherwise your app will crash.
+
+ Data delegates' supportedFileTypesForReceipt property works from this method in a LIFO basis. Re-adding an existing object adds it to the end. 
+ */
+-(void) addDataDelegate: (id <swypConnectionSessionDataDelegate>)		dataDelegate;
+///Removes delegate from existing sessions; removes from local storage.
+-(void) removeDataDelegate: (id <swypConnectionSessionDataDelegate>)	dataDelegate;
+
+/** The main init function. 
+
+ Automatically populates contentDisplayControllerByWorkspaceView with primary swyp workspace view, and creates a new swyp photo playground for manipulation therein. 
+ 
+ @param workspaceView relevant because it's the default 'active' view
+
+ */
+-(id)	initWithMainWorkspaceView: (swypWorkspaceView*)workspaceView;
 
 
-@property(nonatomic, assign)	id<swypContentInteractionManagerDelegate>					interactionManagerDelegate;
+/** Supported swyp receipt file types; in order of greatest preference, where index 0=most preferant 
+ @warning	This value is only non-nil after setting a dataSource
+ */
++(NSArray*)	supportedReceiptFileTypes;
 
+///Updates the supportedReceiptFileTypes singleton-backed class method with each dataDelegate
+-(void)		updateSupportedReceiptTypes;
 
--(id)	initWithMainWorkspaceView: (UIView*)workspaceView showingContentBeforeConnection:(BOOL)showContent;
-
-//in order of preference where index 0=most preferant 
-+(NSArray*)	supportedFileTypes;
-
+///Causes a sessionViewController to be displayed on workspace, and for it to be tracked locally
 -(void)		maintainSwypSessionViewController:(swypSessionViewController*)sessionViewController;
 
+///Removes from display, releases
 -(void)		stopMaintainingViewControllerForSwypSession:(swypConnectionSession*)session;
+
+///Gets the viewController for an associated session
 -(swypSessionViewController*)	maintainedSwypSessionViewControllerForSession:(swypConnectionSession*)session;
 
+///Removes all, typically for app exit
 -(void)		stopMaintainingAllSessionViewControllers;
 
-//this method sets-up the workspace for user prompts, and etc. Called when workspaceViewController's viewDidLoad
--(void)		initializeInteractionWorkspace;
+/** 
+ Returns the contentDisplayController showing the content id, or nil if none.
+ */
+-(UIViewController<swypContentDisplayViewController>*)	displayControllerForContentID:(NSString*)contentID;
 
-//simply attempts to post conent to a session, as used during "contentSwyps"
--(void)		sendContentAtIndex: (NSUInteger)index	throughConnectionSession: (swypConnectionSession*)	session;
+/** 
+ Returns the viewController whos view is displayed currently, or the _mainWorkspaceView's contentDisplayController
+ */
+-(UIViewController<swypContentDisplayViewController>*)	currentActiveContentDisplayController;
 
-//	sometimes one wants to giggle some content in some manner-- here's how
--(void)		temporarilyExagerateContentAtIndex:	(NSUInteger)index;
 
+///	associates a content display view with a workspaceView
+-(void)	addSwypWorkspaceViewToInteractionLoop:(swypWorkspaceView*)worksapceView;
+
+/// removes the association of a workspace view with its content display controller
+-(void)	removeSwypWorkspaceViewFromInteractionLoop:(swypWorkspaceView*)worksapceView;
+
+///simply attempts to post conent to a session, as used during "contentSwyps"
+-(void)		sendContentWithID: (NSString*)contentID	throughConnectionSession: (swypConnectionSession*)	session;
+
+/** Used by swypWorkspaceManager to indicate swypSwypableContentSuperview content addition. 
+ 
+ Adds to cached tiles, and sets to display in contentDisplayViewController, then moves content to frame 'destination.'
+ */
+-(void)		handleContentSwypOfContentWithID:(NSString*)contentID withContentImage:(UIImage*)contentImage toRect:(CGRect)destination;
 //
 //private
+-(UIImageView*)	_gloirifiedFramedImageViewWithUIImage:(UIImage*)image;
+
 -(swypSessionViewController*)		_sessionViewControllerInMainViewOverlappingRect:(CGRect) testRect;
-//-(void)							_contentRepresentationViewWasReleased:;
--(void)		_setupForAllSessionsRemoved;
--(void)		_setupForFirstSessionAdded;
 
--(void)		_displayContentDisplayController:(BOOL)display;
-
+-(void)	_addContentDisplayControllerToWorkspaceView:(swypWorkspaceView*)view;
 @end

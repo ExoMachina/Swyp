@@ -14,13 +14,49 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 @synthesize delegate = _delegate;
 #pragma mark -
 #pragma mark public
--(void)	beginHandshakeProcessWithServerCandidates:	(NSSet*)candidates{
-	for (swypServerCandidate * serverCandidate in candidates){
-		[self _startResolvingConnectionToServerCandidate:serverCandidate];
-	}
+-(void) beginHandshakeProcessWithConnectionSession:(swypConnectionSession*)session{
+	
+	[session addConnectionSessionInfoDelegate:self];
+	[session initiate];
+		
+	NSTimer * timeoutTimer	=	[NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(_timedOutHandshakeForConnectionSession:) userInfo:session repeats:FALSE];
+	[_swypTimeoutsByConnectionSession setObject:timeoutTimer forKey:[NSValue valueWithNonretainedObject:session]];
+	
+	[_pendingSwypConnectionSessions addObject:session];
 }
--(void)	beginHandshakeProcessWithClientCandidate:	(swypClientCandidate*)clientCandidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
-	[self _initializeConnectionSessionObjectForCandidate:clientCandidate streamIn:inputStream streamOut:outputStream];
+
+-(void)	referenceSwypOutAsPending:(swypInfoRef*)ref{
+	if (ref == nil) {
+		return;
+	}
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
+	
+	NSInteger referenceCount =	[[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue] intValue];
+	referenceCount ++;
+	assert(referenceCount > 0);
+	[_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];
+	[_swypOutRefRetention	addObject:ref];
+}
+
+-(void)	dereferenceSwypOutAsPending:(swypInfoRef*)ref{
+	if (ref == nil) {
+		return;
+	}
+
+	NSValue *swypValue	= [NSValue valueWithNonretainedObject:ref];
+	
+	NSNumber * refForSwypOut	=	[_swypOutRefReferenceCountBySwypRef objectForKey:swypValue];
+    if (!refForSwypOut) return;
+    
+    NSInteger referenceCount	=	[refForSwypOut intValue];
+    referenceCount --;
+    assert(referenceCount >= 0);
+    if (referenceCount == 0){
+        [_swypOutRefReferenceCountBySwypRef removeObjectForKey:swypValue];
+        [_swypOutRefRetention	removeObject:ref];
+    }else{
+        [_swypOutRefReferenceCountBySwypRef setObject:[NSNumber numberWithInt:referenceCount] forKey:swypValue];		
+    }
 }
 
 #pragma mark -
@@ -28,89 +64,31 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 
 -(id)	init{
 	if (self = [super init]){
-		_resolvingServerCandidates			=	[[NSMutableDictionary alloc] init];
-		_pendingConnectionSessions			=	[[NSMutableSet alloc] init];
+		
+		_swypTimeoutsByConnectionSession		= [NSMutableDictionary new];
+		_swypOutRefReferenceCountBySwypRef		= [NSMutableDictionary new];
+		_swypOutRefRetention					= [NSMutableSet new];
+		_pendingSwypConnectionSessions			= [NSMutableSet new];
 	}
 	
 	return self;
 }
 
 -(void)	dealloc{
-	for (swypServerCandidate * candidate in _resolvingServerCandidates){
-		NSNetService * resolvingService	=	[candidate netService];
-		[resolvingService setDelegate:nil];
-		[resolvingService stop];
+	
+	for (NSTimer * timer in [_swypTimeoutsByConnectionSession allValues]){
+		[timer invalidate];
 	}
+	SRELS(_swypTimeoutsByConnectionSession);
 	
-	SRELS(_pendingConnectionSessions);
-	SRELS(_resolvingServerCandidates);
+	SRELS(_swypOutRefReferenceCountBySwypRef);
+	SRELS(_swypOutRefRetention);
 	
+	SRELS(_pendingSwypConnectionSessions);
 	
 	[super dealloc];
 }
 
-
-#pragma mark -
-#pragma mark resolution and connection
--(void)	_startResolvingConnectionToServerCandidate:	(swypServerCandidate*)serverCandidate{
-	NSNetService * resolveService	=	[serverCandidate netService]; 
-	
-	if ([_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:resolveService]] != nil){
-		return;
-	}
-	
-	EXOLog(@"Began resolving server candidate: %@", [[serverCandidate netService] name]);
-	[resolveService				setDelegate:self];
-	[resolveService				resolveWithTimeout:3];
-	[_resolvingServerCandidates setObject:serverCandidate forKey:[NSValue valueWithNonretainedObject:resolveService]];
-}
-
--(void)	_startConnectionToServerCandidate:			(swypServerCandidate*)serverCandidate{
-	NSNetService *		connectService	=	[serverCandidate netService];
-	
-	NSInputStream *		inputStream		=	nil;
-	NSOutputStream *	outputSteam		=	nil;
-	
-	//neither are open
-	BOOL success	=	[connectService getInputStream:&inputStream outputStream:&outputSteam];
-	if (success && inputStream != nil && outputSteam != nil){
-		[self _initializeConnectionSessionObjectForCandidate:serverCandidate streamIn:inputStream streamOut:outputSteam];
-	}else {
-		[_delegate	connectionSessionCreationFailedForCandidate:serverCandidate withHandshakeManager:self error:[NSError errorWithDomain:swypHandshakeManagerErrorDomain code:swypHandshakeManagerSocketSetupError userInfo:nil]];
-	}
-
-}
-#pragma mark NSNetServiceDelegate
-- (void)netServiceDidResolveAddress:(NSNetService *)sender{
-	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
-
-	
-	EXOLog(@"Resolved candidate: %@", [sender name]);
-	
-	if (candidate != nil){
-		[self _startConnectionToServerCandidate:candidate];
-		[sender setDelegate:nil];
-		[_resolvingServerCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:sender]];
-	}
-}
-- (void)netService:(NSNetService *)sender didNotResolve:(NSDictionary *)errorDict{
-	swypServerCandidate	*	candidate	=	[_resolvingServerCandidates objectForKey:[NSValue valueWithNonretainedObject:sender]];
-	
-	EXOLog(@"Did not resolve candidate: %@", [sender name]);
-	if (candidate != nil){
-		[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:[NSError errorWithDomain:[errorDict valueForKey:NSNetServicesErrorDomain] code:[[errorDict valueForKey:NSNetServicesErrorCode] intValue] userInfo:nil]];
-		[sender setDelegate:nil];
-		[sender stop];
-		[_resolvingServerCandidates removeObjectForKey:[NSValue valueWithNonretainedObject:sender]];
-	}
-}
-
-#pragma mark socket connection
--(void)	_initializeConnectionSessionObjectForCandidate:	(swypCandidate*)candidate	streamIn:(NSInputStream*)inputStream	streamOut:(NSOutputStream*)outputStream{
-	swypConnectionSession * newSession	=	[[swypConnectionSession alloc] initWithSwypCandidate:candidate inputStream:inputStream outputStream:outputStream];
-	[newSession addConnectionSessionInfoDelegate:self];
-	[_pendingConnectionSessions addObject:newSession];
-}
 
 #pragma mark -
 #pragma mark connectionSession Delegates 
@@ -128,30 +106,26 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}
 }
 -(void) sessionDied:	(swypConnectionSession*)session withError:(NSError*)error{
-	swypCandidate	*	candidate	=	[session representedCandidate];
 	EXOLog(@"Session connection died for candidate: %@",[error description]);
-	[_delegate	connectionSessionCreationFailedForCandidate:candidate withHandshakeManager:self error:error];
+
+	swypInfoRef * ref	=	[[session representedCandidate] matchedLocalSwypInfo];
+	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:ref withHandshakeManager:self error:error];
+		
 	[session removeConnectionSessionInfoDelegate:self];
-	[_pendingConnectionSessions	removeObject:session];
+	
+	[self _removeSessionFromLocalStorage:session];
+	
 }
 
 #pragma mark connectionSession data delegates
--(BOOL) delegateWillHandleDiscernedStream:(swypDiscernedInputStream*)discernedStream wantsAsData:(BOOL *)wantsProvidedAsNSData inConnectionSession:(swypConnectionSession*)session{
-	
-	if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
-		*wantsProvidedAsNSData = TRUE;
-		return TRUE;
-	}else {
-		swypCandidate	*	candidate	=	[session representedCandidate];
-		EXOLog(@"Session connection returned unexpected type '%@' during HELLO sequence for candidate appearing at time:%@",[discernedStream streamType],[candidate appearanceDate]);
-		[self _removeAndInvalidateSession:session];		
-		return FALSE;
-	}
+
+-(NSArray*) supportedFileTypesForReceipt{
+	return [NSArray arrayWithObjects:[NSString swypControlPacketFileType], nil];
 }
 
--(void)	yieldedData:(NSData*)streamData discernedStream:(swypDiscernedInputStream*)discernedStream inConnectionSession:(swypConnectionSession*)session{
+-(void)	yieldedData:(NSData*)streamData ofType:(NSString *)streamType fromDiscernedStream:(swypDiscernedInputStream *)discernedStream inConnectionSession:(swypConnectionSession *)session{
 	if ([streamData length] > 0){
-		if ([[NSString swypControlPacketFileType] isFileType:[discernedStream streamType]]){
+		if ([streamType isFileType:[discernedStream streamType]]){
 						
 			NSDictionary *	receivedDictionary = nil;
 			if ([streamData length] >0){
@@ -187,7 +161,14 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 }
 
-#pragma mark -
+#pragma mark - private
+-(void)_timedOutHandshakeForConnectionSession:(NSTimer*)sender{
+	swypConnectionSession * timedOutSession	=	[sender userInfo];
+	EXOLog(@"Timed out handshake for connection session w/ tagname: %@",[[timedOutSession representedCandidate] nametag]);
+
+	[self _removeAndInvalidateSession:timedOutSession];
+}
+
 #pragma mark helloPacket
 -(void)	_sendServerHelloPacketToClientForSwypConnectionSession:	(swypConnectionSession*)session{
 	NSMutableDictionary *	helloDictionary	=	[NSMutableDictionary dictionary];
@@ -195,7 +176,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	if (matchedSwyp != nil){
 		[helloDictionary setValue:@"accepted" forKey:@"status"];
-		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
+		[helloDictionary setValue:[swypContentInteractionManager supportedReceiptFileTypes] forKey:@"supportedFileTypes"];
 		[helloDictionary setValue:[NSNumber numberWithDouble:[matchedSwyp velocity]] forKey:@"swypOutVelocity"];
 	}else {
 		[helloDictionary setValue:@"rejected" forKey:@"status"];
@@ -210,19 +191,19 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 -(void)	_sendClientHelloPacketToServerForSwypConnectionSession:	(swypConnectionSession*)session{
 	NSMutableDictionary *	helloDictionary	=	[NSMutableDictionary dictionary];
-	NSArray *				relevantSwyps	=	[_delegate relevantSwypsForCandidate:[session representedCandidate] withHandshakeManager:self];
-	swypInfoRef *			querySwyp		=	(ArrayHasItems(relevantSwyps))?[relevantSwyps objectAtIndex:0]: nil;
 	
+	swypInfoRef *			querySwyp		=	[[session representedCandidate] matchedLocalSwypInfo];	
+	assert(querySwyp != nil);
 	
 	if (querySwyp != nil){
 		[session setSessionHueColor:[UIColor randomSwypHueColor]];
 		
-		[helloDictionary setValue:[swypContentInteractionManager supportedFileTypes] forKey:@"supportedFileTypes"];
+		[helloDictionary setValue:[swypContentInteractionManager supportedReceiptFileTypes] forKey:@"supportedFileTypes"];
 		double intervalSinceSwyp	=	[[querySwyp startDate] timeIntervalSinceNow] * -1;
 		[helloDictionary setValue:[NSNumber numberWithDouble:intervalSinceSwyp] forKey:@"intervalSinceSwypIn"];
 		[helloDictionary setValue:[[session sessionHueColor] swypEncodedColorStringValue] forKey:@"sessionHue"];
 	}else {
-		EXOLog(@"No swypIns found... this is odd!, check expiration times for swypIns");
+		EXOLog(@"No swypIn set for matchedLocalSwypInfo... this is odd!");
 		return;
 	}
 	
@@ -235,6 +216,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 }
 
 -(void)	_handleClientHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
+	EXOLog(@"client hello received for session! :%@",[session description]);
 	swypClientCandidate	*	candidate		=	(swypClientCandidate*)[session representedCandidate];
 	swypInfoRef *	swypRefFromClientInfo	=	[[[swypInfoRef alloc] init] autorelease];
 
@@ -253,8 +235,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
-		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
-		return;
+		EXOLog(@"No supported file types identified in client-hello %@",[helloPacket description]);
 	}
 	
 	if ([intervalSinceSwypNumber isKindOfClass:[NSNumber class]]){
@@ -280,7 +261,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	
 	swypInfoRef * firstMatchingSwyp	=	nil;
-	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
+	for (swypInfoRef * localSwyp in _swypOutRefRetention){
 		if([self _clientCandidate:candidate isMatchForSwypInfo:localSwyp]){
 			firstMatchingSwyp	=	localSwyp;
 			break;
@@ -311,6 +292,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 }
 -(void)	_handleServerHelloPacket:	(NSDictionary*)helloPacket forConnectionSession:	(swypConnectionSession*)session{
+	EXOLog(@"server hello received for session! :%@",[session description]);
+	
 	swypServerCandidate	*	candidate		=	(swypServerCandidate*)[session representedCandidate];
 	swypInfoRef *	swypRefFromServerInfo	=	[[[swypInfoRef alloc] init] autorelease];
 	NSString *		statusString			=	[helloPacket valueForKey:@"status"];
@@ -341,8 +324,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		}
 		[candidate setSupportedFiletypes:cleanedTypesArray];
 	}else {
-		[self _removeAndInvalidateSession:session]; //invalid packet, so don't bother returning anything
-		return;
+		EXOLog(@"No supported file types identified in server-hello %@",[helloPacket description]);
 	}
 
 	
@@ -356,22 +338,17 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 		return;
 	}
 	[candidate setSwypInfo:swypRefFromServerInfo];
-	
-	
-	
 
+
+	swypInfoRef * localMatchSwyp	=	[[session representedCandidate] matchedLocalSwypInfo];
 	
-	swypInfoRef * firstMatchingSwyp	=	nil;
-	for (swypInfoRef * localSwyp in [_delegate relevantSwypsForCandidate:candidate withHandshakeManager:self]){
-		if([self _serverCandidate:candidate isMatchForSwypInfo:localSwyp]){
-			firstMatchingSwyp	=	localSwyp;
-			break;
-		}
+	if([self _serverCandidate:candidate isMatchForSwypInfo:localMatchSwyp] ==  NO){
+		localMatchSwyp = nil;
 	}
 	
-	if (firstMatchingSwyp != nil){
+	if (localMatchSwyp != nil){
 		EXOLog(@"Server accepted hello:, Matching swyp-in found");
-		[candidate setMatchedLocalSwypInfo:firstMatchingSwyp];
+		[candidate setMatchedLocalSwypInfo:localMatchSwyp];
 		/*
 			The server has returned a matching swyp so we're happy to begin crypto!
 		*/
@@ -380,9 +357,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	}else {
 		EXOLog(@"Server accepted Hello: No matching swyp-in found");
 		/*
-			No match from any of our swypInfoRefs -- which is sorta odd if we got this far, 
-				so set a breakpoint here if things are off..
-		*/
+			No match from any of our swypInfoRefs; 
+		 */
 
 		[self _removeAndInvalidateSession:session];
 	}
@@ -396,7 +372,8 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	//mostly under 700ms when not debugging
 	//when debugging, make sure no breakpoints delay absorbtion of remote intervalInPast into NSDate
-	if (milisecondDifference < 1500){
+	//three seconds to swyp in though, for seperated gestures!
+	if (milisecondDifference < 3000){
 		EXOLog(@"Swyp match: client start %f our end %f, ms diff= %i",[[[clientCandidate swypInfo] startDate] timeIntervalSinceNow],[[swypInfo endDate] timeIntervalSinceNow],milisecondDifference);
 		return TRUE;		
 	}else {
@@ -416,7 +393,7 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 	
 	double velocityDifference	=	 abs(localVelocity - remoteVelocity);
 	
-	EXOLog(@"NEEDIMPR: Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
+//	EXOLog(@"NEEDIMPR: Local velocity: %f, remote velocity: %f diff:%f",localVelocity,remoteVelocity, velocityDifference);
 	
 	if (velocityDifference >= 0){ //fix algorithm for determining velocity
 		return TRUE;
@@ -428,20 +405,37 @@ static NSString * const swypHandshakeManagerErrorDomain = @"swypHandshakeManager
 #pragma mark -
 #pragma mark finalization
 -(void)	_postNegotiationSessionHandOff:	(swypConnectionSession*)session{
+	//SUCCESS!
+	
+	EXOLog(@"Successful connection with session w/ swyp from time %@",[[[[session representedCandidate] matchedLocalSwypInfo] startDate] description]);
+	NSTimer * timeoutTimer	=	[_swypTimeoutsByConnectionSession objectForKey:[NSValue valueWithNonretainedObject:session]];
+	[timeoutTimer invalidate];
+	[_swypTimeoutsByConnectionSession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
+	
 	
 	[session removeConnectionSessionInfoDelegate:self];
 	[session removeDataDelegate:self];
 
-	[_delegate connectionSessionWasCreatedSuccessfully:session withHandshakeManager:self];
+	[_delegate connectionSessionWasCreatedSuccessfully:session forSwypRef:[[session representedCandidate] matchedLocalSwypInfo] withHandshakeManager:self];
+	
+	[self _removeSessionFromLocalStorage:session];
 }
 
 -(void) _removeAndInvalidateSession:			(swypConnectionSession*)session{
-	[_delegate	connectionSessionCreationFailedForCandidate:[session representedCandidate] withHandshakeManager:self error:nil];
+
+	[_delegate connectionSessionCreationFailedForConnectionSession:session forSwypRef:[[session representedCandidate] matchedLocalSwypInfo] withHandshakeManager:self error:nil];
+
 	[session	removeConnectionSessionInfoDelegate:self];
 	[session	removeDataDelegate:self];
 	[session	invalidate];
-	[_pendingConnectionSessions	removeObject:session];			
+
+	[self _removeSessionFromLocalStorage:session];
 }
 
-
+-(void)	_removeSessionFromLocalStorage: (swypConnectionSession*)session{
+	[[_swypTimeoutsByConnectionSession objectForKey:[NSValue valueWithNonretainedObject:session]] invalidate];
+	[_swypTimeoutsByConnectionSession removeObjectForKey:[NSValue valueWithNonretainedObject:session]];
+	
+	[_pendingSwypConnectionSessions removeObject:session];
+}
 @end

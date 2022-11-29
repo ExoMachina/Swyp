@@ -47,6 +47,7 @@
 -(void) dealloc{
 	[self _teardownInputStream:_inputStream];
 	[self _teardownOutputStream];
+	_delegate = nil;
 	SRELS(_bufferedData);
 
 	[super dealloc];
@@ -86,7 +87,8 @@
 
 -(void)	_attemptDataHandoff{
 	
-	if ([_bufferedData length] < 1024 && [_inputStream hasBytesAvailable]){
+	if ([_bufferedData length] < 1024 && [_inputStream hasBytesAvailable]) //deallocs can occur here... carefull
+	{
 		uint8_t readBuffer[1024];
 		unsigned int readLength = 0;
 		readLength =	[_inputStream read:readBuffer maxLength:1024];
@@ -127,7 +129,13 @@
 		}else if (eventCode == NSStreamEventHasBytesAvailable){
 			[self _attemptDataHandoff];
 		}else if (eventCode == NSStreamEventEndEncountered){
-			[_delegate completedInputStream:_inputStream forOutputStream:_outputStream withInputToOutputConnector:self];
+			//the following seems to be a good thing for preventing multiple creations of the delegate block
+			[_inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+			
+			//we need to do this on the next run loop or we'll crash
+			[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+				[_delegate completedInputStream:_inputStream forOutputStream:_outputStream withInputToOutputConnector:self];				
+			}];
 		}else if (eventCode == NSStreamEventErrorOccurred){
 			[_delegate encounteredErrorInInputStream:_inputStream withInputToOutputConnector:self];
 		}

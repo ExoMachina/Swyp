@@ -19,13 +19,17 @@
  display the swypWorkspaceViewController
  */
 
-// Uncomment the following if you wish to support bluetooth; only support iOS5+ 
-// be sure to include CoreBluetooth Framework; this still needs some work, as I'm getting weird issues with
-//		core bluetooth telling me that CBCentralManagerState is always 2 (low-power unsupported)
-//#define BLUETOOTH_ENABLED
+
+//The file that contains technicals for the swyp project
+#import "swyp.h"
 
 //the main workspace view controller to show the "Swÿp interface"
 #import "swypWorkspaceViewController.h"
+
+//This class allows you to add subviews and for them to to be pieces of swypable content
+#import "swypSwypableContentSuperview.h"
+//This class, administerd by the swypWorkspaceViewController allows you to embed swyp-in zones
+#import "swypWorkspaceView.h"
 
 //the following are how you determine what files are available to share on swyp
 #import "swypContentDataSourceProtocol.h"
@@ -40,7 +44,9 @@
 //the photo playground makes a nice interface for browsing images on a background
 #import "swypPhotoPlayground.h"
 #import "swypContentInteractionManager.h"
+//here's the protocol file for all contentDisplayControllers
+#import "swypContentDisplayViewControllerProtocol.h"
 
+//the following are for conneciton creation
+#import "swypHandshakeManager.h"
 #import "swypConnectionSession.h"
-
-#import "swyp.h"
